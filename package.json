@@ -12,6 +12,22 @@
   "author": "Dharshana B",
   "license": "MIT",
   "devDependencies": {
+<<<<<<< HEAD
+    "concurrently": "^8.0.0",
+    "eslint": "^9.37.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.3",
+    "nodemon": "^3.1.10",
+    "prettier": "^3.6.2"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "mongodb": "^6.20.0",
+    "mongoose": "^8.19.1"
+=======
     "concurrently": "^8.0.0"
+>>>>>>> a8f880d27b2e4fb1be1084a587d8d90d2d764e19
   }
 }
