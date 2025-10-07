@@ -1,0 +1,17 @@
+{
+  "name": "food-news-india",
+  "version": "1.0.0",
+  "private": true,
+  "description": "MERN stack MVP for Food News India - business compliance & document management",
+  "main": "index.js",
+  "scripts": {
+    "install-all": "npm install --prefix client && npm install --prefix server",
+    "dev": "concurrently \"npm start --prefix client\" \"npm run dev --prefix server\""
+  },
+  "keywords": ["mern", "food", "compliance", "business"],
+  "author": "Dharshana B",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.0.0"
+  }
+}
