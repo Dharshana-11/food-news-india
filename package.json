@@ -8,19 +8,10 @@
     "install-all": "npm install --prefix client && npm install --prefix server",
     "dev": "concurrently \"npm start --prefix client\" \"npm run dev --prefix server\""
   },
-  "keywords": [
-    "mern",
-    "food",
-    "compliance",
-    "business"
-  ],
+  "keywords": ["mern", "food", "compliance", "business"],
   "author": "Dharshana B",
   "license": "MIT",
   "devDependencies": {
-    "concurrently": "^8.0.0",
-    "eslint": "^9.37.0",
-    "husky": "^9.1.7",
-    "lint-staged": "^16.2.3",
-    "prettier": "^3.6.2"
+    "concurrently": "^8.0.0"
   }
 }
