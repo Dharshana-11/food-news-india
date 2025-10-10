@@ -20,3 +20,6 @@ npm-debug.log*
 # Build folders
 client/build/
 server/dist/
+
+#Firebase Admin SDK 
+server/food-news-india-firebase-adminsdk-fbsvc-07d56482c6.json
