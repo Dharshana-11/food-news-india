@@ -1,12 +1,12 @@
-const express = require('express');
-const mongoose = require('mongoose');
+import express, { json } from 'express';
+import { connect } from 'mongoose';
 require('dotenv').config();
 
 const app = express();
-app.use(express.json());
+app.use(json());
 
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('MongoDB connected ✅'))
+connect(process.env.MONGO_URI)
+  .then(() => console.log('MongoDB connected'))
   .catch(err => console.log('MongoDB connection error:', err));
 
 app.get('/', (req, res) => {
