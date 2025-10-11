@@ -1,35 +1,79 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useEffect, useState } from "react";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../firebase";
 
-function App() {
-  const [count, setCount] = useState(0)
+import ProtectedRoute from "./components/ProtectedRoute";
+import SuperAdminDashboard from "./pages/SuperAdminDashboard";
+import AdminLogin from "./pages/AdminLogin";
+// import Unauthorized from "./pages/Unauthorized";
+
+const App = () => {
+  const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        try {
+          // Get Firebase ID token
+          const token = await user.getIdToken();
+
+          // Fetch user info from backend protected route
+          const res = await fetch("http://localhost:5000/super-admin/dashboard", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (!res.ok) throw new Error("Not authorized");
+
+          const data = await res.json();
+
+          // Save user info (including role) from backend
+          setCurrentUser({
+            uid: user.uid,
+            name: data.message.replace("Welcome ", "").replace(", Super Admin!", ""),
+            role: "super-admin",
+          });
+        } catch (err) {
+          //console.error(err);
+          setCurrentUser(null);
+        }
+      } else {
+        setCurrentUser(null); // User logged out
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  if (loading) return <div>Loading...</div>; // optional loading screen
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <Router>
+      <Routes>
 
-export default App
+         {/* Redirect root path to login */}
+  <Route path="/" element={<Navigate to="/login" replace />} />
+
+        <Route path="/login" element={<AdminLogin />} />
+
+        {/* Protected Super Admin Route */}
+        <Route
+          path="/super-admin/dashboard"
+          element={
+            <ProtectedRoute user={currentUser} requiredRole="super-admin">
+              <SuperAdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </Router>
+  );
+};
+
+export default App;
