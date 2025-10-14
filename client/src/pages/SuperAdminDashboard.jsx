@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 const SuperAdminDashboard = () => {
   return (
@@ -6,7 +6,7 @@ const SuperAdminDashboard = () => {
       <h2>Hi Admin!</h2>
       <h4>This is your dashboard</h4>
     </div>
-  )
-}
+  );
+};
 
-export default SuperAdminDashboard
+export default SuperAdminDashboard;
