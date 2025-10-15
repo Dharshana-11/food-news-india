@@ -1,34 +1,25 @@
+// server/firebase.js
+/**
+ * Initializes Firebase Admin SDK with service account credentials.
+ * Provides backend access to verify users, manage Firebase data, and send FCM notifications.
+ */
+
+import admin from "firebase-admin";
 import dotenv from "dotenv";
+import fs from "fs";
 import path from "path";
-dotenv.config({ path: path.resolve('server/.env') });
-import mongoose from "mongoose";
-import Admin from "../models/Admin.js";
 
-mongoose.connect(process.env.MONGO_URI)
-.then(() => console.log("MongoDB connected"))
-.catch(err => console.error(err));
+dotenv.config();
 
-const seedSuperAdmin = async () => {
-  try {
-    const existing = await Admin.findOne({ uid: process.env.SUPER_ADMIN_UID }); //searches if super admin exists in collection
-    if (existing) {
-      console.log("Super Admin already exists");
-      process.exit(); //If super admin exists, stop script
-    }
+// Get absolute path to the Firebase service account JSON key
+const serviceAccountPath = path.resolve(process.env.FIREBASE_KEY_PATH);
 
-    const admin = new Admin({
-      uid: process.env.SUPER_ADMIN_UID,
-      name: process.env.SUPER_ADMIN_NAME,
-      role: "super-admin",
-    });  //Create a new super admin document in the collection
+// Read and parse the JSON key
+const serviceAccountKey = JSON.parse(fs.readFileSync(serviceAccountPath, "utf8"));
 
-    await admin.save();
-    console.log("Super Admin created successfully");
-    process.exit();
-  } catch (error) {
-    console.error("Error creating Super Admin:", error);
-    process.exit(1);
-  }
-};
+// Initialize Firebase Admin SDK
+const firebaseAdmin = admin.initializeApp({
+  credential: admin.credential.cert(serviceAccountKey), // Credential object for token verification, user management, etc.
+});
 
-seedSuperAdmin();
+export default firebaseAdmin;

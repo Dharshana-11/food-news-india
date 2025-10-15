@@ -1,19 +1,38 @@
-import express, { json } from 'express';
-import { connect } from 'mongoose';
-require('dotenv').config();
+import express, { json } from "express";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import superAdminRoutes from "./routes/superAdminRoutes.js";
+import cors from "cors";
+import authRoutes from "./routes/authRoutes.js";
+
+dotenv.config();
 
 const app = express();
+
+// Allow cross-origin requests from frontend
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL, 
+    credentials: true, // for cookies/session
+  }),
+);
+
 app.use(json());
 
-connect(process.env.MONGO_URI)
-  .then(() => console.log('MongoDB connected'))
-  .catch(err => console.log('MongoDB connection error:', err));
+mongoose
+  .connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.log("MongoDB connection error:", err));
 
-app.get('/', (req, res) => {
-  res.send('Server is running!');
-});
+//Routes for authentication
+app.use("/api/auth", authRoutes);
+
+//Super-Admin Routes
+app.use("/api/super-admin", superAdminRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
+

@@ -7,12 +7,14 @@
     "dev": "nodemon index.js",
     "seed:admin": "node scripts/seedAdmin.js"
   },
+  "type": "module",
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
     "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "firebase-admin": "^13.5.0",
     "mongoose": "^8.19.1"
