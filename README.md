@@ -109,6 +109,6 @@ server/ # Node + Express backend
 
 ## License
 
-© 2025 Your Company / Your Name. All rights reserved.
+© 2025 Food News India. All rights reserved.
 
 This software is proprietary and confidential. Unauthorized copying, distribution, or use of this software, in whole or in part, is strictly prohibited. See [LICENSE](LICENSE) for details.
