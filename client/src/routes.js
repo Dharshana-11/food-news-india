@@ -10,6 +10,7 @@ export const ROUTES = {
 
     // Super Admin protected routes
     SUPER_ADMIN_DASHBOARD: "/super-admin/dashboard",
-    ADMIN_DASHBOARD: "/admin/dashboard",
+    ADMIN_DASHBOARD: "/super-admin/dashboard",
+    SUPER_ADMIN_USERS: "/super-admin/users"
 
 };
