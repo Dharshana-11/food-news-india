@@ -1,7 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import ProtectedRoute from "./components/ProtectedRoute";
 import SuperAdminDashboard from "./pages/SuperAdminDashboard";
-import AdminLogin from "./pages/AdminLogin";
+import AdminLogin from "./pages/auth/AdminLogin";
 import Login from "./pages/Login";
 import { useAuth } from "./context/AuthContext";
 import { Spin } from "antd";
