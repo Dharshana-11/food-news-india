@@ -2,11 +2,11 @@ import { useState } from "react";
 import { Form, Input, Button, message, Typography, Image } from "antd";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import image from "../assets/compliance_image.png";
+import { useAuth } from "../../context/AuthContext";
+import image from "../../assets/compliance_image.png";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
-import { ROUTES } from "../routes";
+import { ROUTES } from "../../routes";
 
 const { Text, Link } = Typography;
 
