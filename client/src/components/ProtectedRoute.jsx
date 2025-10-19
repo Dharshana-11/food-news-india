@@ -17,12 +17,12 @@ const ProtectedRoute = ({ user, requiredRole, children }) => {
     return <Navigate to={ROUTES.LOGIN} replace />;
   }
 
-   // If a specific role is required and user doesn't match it
+  // If a specific role is required and user doesn't match it
   if (requiredRole && user.role !== requiredRole) {
     return <Navigate to="/unauthorized" replace />;
   }
 
-   // If authenticated (and role matches, if required), render the protected content
+  // If authenticated (and role matches, if required), render the protected content
   return children;
 };
 

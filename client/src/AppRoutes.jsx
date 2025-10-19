@@ -13,7 +13,12 @@ const AppRoutes = () => {
   const { currentUser, loading } = useAuth();
 
   // --- Show a loading screen while auth state is being determined ---
- if (loading) return <div className="text-center py-20"><Spin size="large" /></div>;
+  if (loading)
+    return (
+      <div className="text-center py-20">
+        <Spin size="large" />
+      </div>
+    );
 
   return (
     <Routes>

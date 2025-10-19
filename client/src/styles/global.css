@@ -1,0 +1,326 @@
+/* ================= Reset ================= */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  font-family: "Inter", system-ui, Avenir, Helvetica, Arial, sans-serif;
+  color: #212529;
+  background: #ffffff;
+}
+
+/* ================= Admin Login Container ================= */
+.admin-login-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ================= Admin Login Main Grid ================= */
+.admin-login-main {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    "left right-top"
+    "left right";
+  height: 100vh;
+}
+
+/* ================= Admin Login LEFT (Blue) ================= */
+.admin-login-left {
+  grid-area: left;
+  background-color: #162247;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3rem;
+  gap: 1.25rem;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  box-shadow: -4px 0 25px rgba(0, 0, 0, 0.08);
+}
+
+.admin-login-left img {
+  max-width: 90%;
+  height: auto;
+}
+
+.admin-login-slogan {
+  font-size: 1.6rem;
+  font-weight: 620;
+  line-height: 1.35;
+}
+
+/* =================Admin Login RIGHT-TOP (Brand + Buttons) ================= */
+.admin-login-right-top {
+  grid-area: right-top;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  background-color: #ffffff;
+  width: 100%;
+}
+
+.admin-login-brand-left {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.admin-login-brand-logo {
+  height: 30px;
+  width: 33px;
+}
+
+.admin-login-brand-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #162247;
+}
+
+.admin-login-text-orange {
+  color: #ff6c1f;
+}
+
+.admin-login-right-buttons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.admin-login-btn-home {
+  border-radius: 15px;
+  padding: 0.5rem 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid #162247;
+  background-color: transparent;
+  color: #ff6c1f;
+}
+
+.admin-login-btn-home:hover {
+  background: #ff6c1f !important;
+  color: #fff !important;
+  border: 1px solid #ff6c1f !important;
+}
+
+/* ================= Admin Login RIGHT (Form Panel) ================= */
+.admin-login-right {
+  grid-area: right;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  border-bottom-left-radius: 20px;
+  height: 100%;
+}
+
+/* ================= Admin Login Form Card ================= */
+.admin-login-form-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 2rem;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  margin-top: 0.5rem;
+}
+
+.admin-login-form-card__title {
+  margin-bottom: 3rem;
+  text-align: center;
+  font-size: 20px !important;
+  font-family: "Poppins";
+  color: #162247;
+}
+
+.admin-login-btn-login {
+  background: #162247 !important;
+  color: #fff !important;
+  font-family: "Poppins";
+  border-radius: 8px;
+  font-weight: 400;
+  padding: 0.6rem;
+}
+
+.admin-login-btn-login:hover {
+  background: #ff6c1f !important;
+}
+
+.admin-login-form-forgot-password {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  margin-bottom: 0.75rem;
+  color: #162247 !important;
+  font-family: "Poppins" !important;
+}
+
+.admin-login-form-forgot-password .ant-typography {
+  font-family: "Poppins" !important;
+  color: #162247;
+}
+
+.admin-login-link-reset-password {
+  color: #ff6c1f !important;
+  font-weight: 500;
+  font-family: "Poppins" !important;
+}
+.admin-login-link-reset-password:hover {
+  color: #ff6c1f !important;
+  font-weight: 600;
+}
+
+/* Divider */
+.admin-login-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.admin-login-divider-line {
+  flex: 1;
+  height: 1px;
+  background: #e0e0e0;
+  border: none;
+}
+
+.admin-login-divider-text {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+/* Google button */
+.admin-login-btn-google {
+  border-radius: 8px;
+  padding: 0.6rem;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  font-family: "Poppins";
+  color: #ff6c1f !important;
+  border: 1px solid #ff6c1f !important;
+}
+.admin-login-btn-google:hover {
+  color: #162247 !important;
+  border: 1px solid #162247 !important;
+}
+
+/* Input Focus + Label + Error (unchanged except prefix added) */
+.ant-input:focus,
+.ant-input-focused {
+  border-color: #ff6c1f !important;
+  box-shadow: 0 0 0 2px rgba(255, 108, 31, 0.2) !important;
+}
+.ant-input-affix-wrapper:focus,
+.ant-input-affix-wrapper-focused {
+  border-color: #ff6c1f !important;
+  box-shadow: 0 0 0 2px rgba(255, 108, 31, 0.2) !important;
+}
+.ant-input:hover,
+.ant-input-affix-wrapper:hover {
+  border-color: #ff6c1f !important;
+}
+.ant-form-item-label > label {
+  font-family: "Poppins" !important;
+  color: #7c838a !important;
+}
+.ant-form-item-explain {
+  font-family: "Poppins";
+  color: #7c838a !important;
+}
+
+/* ================= Responsive ================= */
+@media (max-width: 1024px) {
+  .admin-login-main {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto 1fr;
+    grid-template-areas:
+      "right-top"
+      "left"
+      "right";
+    height: auto;
+  }
+
+  .admin-login-left,
+  .admin-login-right {
+    padding: 2rem 1.25rem;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .admin-login-right-top {
+    padding: 1rem 1rem;
+    flex-direction: row;
+    gap: 1rem;
+    align-items: center;
+    background-color: #162247;
+  }
+
+  .admin-login-brand-title {
+    color: white;
+    font-size: medium !important;
+  }
+
+  .admin-login-brand-logo {
+    height: 20px;
+    width: 23px;
+    margin-top: 2px;
+  }
+
+  .admin-login-right-buttons {
+    justify-content: center;
+    border: 1.5px solid #ffffff;
+    border-radius: 30px;
+  }
+
+  .admin-login-form-card {
+    margin-top: 1rem;
+    padding: 2rem;
+  }
+
+  .admin-login-form-card__title {
+    font-size: 17px !important;
+  }
+
+  .admin-login-slogan {
+    font-size: 1.25rem;
+  }
+
+  .admin-login-btn-login {
+    margin-top: 20px;
+  }
+
+  .admin-login-btn-home {
+    padding: 0.45rem 0.9rem;
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-login-slogan {
+    font-size: 1.1rem;
+  }
+
+  .admin-login-form-card {
+    padding: 1rem;
+    max-width: 100%;
+  }
+}

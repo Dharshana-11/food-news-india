@@ -1,11 +1,7 @@
-import React from 'react'
+import React from "react";
 
 const SuperAdminUsers = () => {
-  return (
-    <div>
-      
-    </div>
-  )
-}
+  return <div></div>;
+};
 
-export default SuperAdminUsers
+export default SuperAdminUsers;

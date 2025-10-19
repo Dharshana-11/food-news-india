@@ -1,6 +1,10 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { auth } from "../../firebase";
-import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut,
+} from "firebase/auth";
 
 // --- Create global Auth context ---
 const AuthContext = createContext();
@@ -56,7 +60,11 @@ export const AuthProvider = ({ children }) => {
 
     if (identifier.includes("@")) {
       // Email login (for super-admin or admin)
-      userCredential = await signInWithEmailAndPassword(auth, identifier, password);
+      userCredential = await signInWithEmailAndPassword(
+        auth,
+        identifier,
+        password,
+      );
     } else {
       // Phone-based login (custom implementation)
       userCredential = await signInWithPhoneAuth(auth, identifier, password);
