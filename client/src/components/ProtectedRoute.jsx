@@ -1,4 +1,5 @@
 import { Navigate } from "react-router-dom";
+import { ROUTES } from "../routes";
 
 /**
  * ProtectedRoute component
@@ -13,15 +14,15 @@ import { Navigate } from "react-router-dom";
 const ProtectedRoute = ({ user, requiredRole, children }) => {
   // If no user is logged in, redirect to login page
   if (!user) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to={ROUTES.LOGIN} replace />;
   }
 
-   // If a specific role is required and user doesn't match it
+  // If a specific role is required and user doesn't match it
   if (requiredRole && user.role !== requiredRole) {
     return <Navigate to="/unauthorized" replace />;
   }
 
-   // If authenticated (and role matches, if required), render the protected content
+  // If authenticated (and role matches, if required), render the protected content
   return children;
 };
 

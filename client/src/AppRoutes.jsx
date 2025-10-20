@@ -3,6 +3,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import SuperAdminDashboard from "./pages/superadmin/SuperAdminDashboard";
 import AdminLogin from "./pages/auth/AdminLogin";
 import Login from "./pages/auth/Login";
+import SuperAdminUsers from "./pages/superadmin/SuperAdminUsers";
 import { useAuth } from "./context/AuthContext";
 import { Spin } from "antd";
 import { ROUTES } from "./routes";
@@ -12,7 +13,12 @@ const AppRoutes = () => {
   const { currentUser, loading } = useAuth();
 
   // --- Show a loading screen while auth state is being determined ---
- if (loading) return <div className="text-center py-20"><Spin size="large" /></div>;
+  if (loading)
+    return (
+      <div className="text-center py-20">
+        <Spin size="large" />
+      </div>
+    );
 
   return (
     <Routes>
@@ -26,6 +32,7 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute user={currentUser} requiredRole="super-admin">
             <SuperAdminDashboard />
+            <SuperAdminUsers />
           </ProtectedRoute>
         }
       />
