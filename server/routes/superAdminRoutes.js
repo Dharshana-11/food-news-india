@@ -1,6 +1,7 @@
 import express from "express";
 import authenticateUser from "../middleware/authMiddleware.js";
 import authorizeSuperAdmin from "../middleware/authSuperAdminMiddleware.js";
+import { verifySession } from "../middleware/sessionMiddleware.js";
 
 const router = express.Router();
 
@@ -13,6 +14,7 @@ router.get(
   "/dashboard",
   authenticateUser,       // validates token & sets req.user
   authorizeSuperAdmin,    // ensures user is super-admin
+  verifySession,
   (req, res) => {
     // Respond with minimal user info
     return res.status(200).json({ user: req.user });
