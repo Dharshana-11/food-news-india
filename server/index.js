@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import superAdminRoutes from "./routes/superAdminRoutes.js";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
+import sessionRoutes from './routes/sessionRoutes.js';
 
 dotenv.config();
 
@@ -24,11 +25,9 @@ mongoose
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.log("MongoDB connection error:", err));
 
-//Routes for authentication
-app.use("/api/auth", authRoutes);
-
-//Super-Admin Routes
-app.use("/api/super-admin", superAdminRoutes);
+app.use("/api/auth", authRoutes); //Routes for authentication
+app.use("/api/session", sessionRoutes); //Routes for session management
+app.use("/api/super-admin", superAdminRoutes); //Super-Admin Routes
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
