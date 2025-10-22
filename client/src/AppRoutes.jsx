@@ -7,6 +7,7 @@ import SuperAdminUsers from "./pages/superadmin/SuperAdminUsers";
 import { useAuth } from "./context/AuthContext";
 import { Spin } from "antd";
 import { ROUTES } from "./routes";
+import ROLES from "./constants/roles";
 
 const AppRoutes = () => {
   // --- Get current user and loading state from AuthContext ---
@@ -30,7 +31,7 @@ const AppRoutes = () => {
       <Route
         path={ROUTES.SUPER_ADMIN_DASHBOARD}
         element={
-          <ProtectedRoute user={currentUser} requiredRole="super-admin">
+          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
             <SuperAdminDashboard />
             <SuperAdminUsers />
           </ProtectedRoute>

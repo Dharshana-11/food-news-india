@@ -5,13 +5,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 export const createSession = async (req, res) => {
     try{
-        if (!req.headers.authorization) {
-            return res.status(401).json({ message: "Authorization header missing" });
-        }
-        const token = req.headers.authorization?.split(" ")[1]; //extracting uid from request authorization header
-
-        const decodedToken = await admin.auth().verifyIdToken(token); // Firebase admin authenticates the user & returns the uid, email/phone
-        const uid = decodedToken.uid; //Extracting uid from decodedToken
+         // authenticateUser middleware verifies the user & returns the uid along with user information.
+        const {uid} = req.user;
         console.log("Successfully verified ID token for user:",uid)
 
         const user = await Users.findOne({uid}); //Check is the uid exists in Users collection

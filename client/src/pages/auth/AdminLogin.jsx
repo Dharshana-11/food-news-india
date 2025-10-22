@@ -10,6 +10,7 @@ import "../../styles/global.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 import { ROUTES } from "../../routes";
+import ROLES from "../../constants/roles";
 
 const { Text, Link } = Typography;
 
@@ -22,8 +23,9 @@ const AdminLogin = () => {
     setLoadingForm(true);
     try {
       const user = await login(values.identifier, values.password);
-      if (user.role === "super-admin") navigate(ROUTES.SUPER_ADMIN_DASHBOARD);
-      else if (user.role === "admin") navigate(ROUTES.ADMIN_DASHBOARD);
+  
+      if (user.role === ROLES.SUPER_ADMIN) navigate(ROUTES.SUPER_ADMIN_DASHBOARD);
+      else if (user.role === ROLES.ADMIN ) navigate(ROUTES.ADMIN_DASHBOARD);
       else navigate(ROUTES.LOGIN);
       message.success(`Welcome ${user.name}!`);
     } catch (error) {

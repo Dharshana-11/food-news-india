@@ -21,27 +21,31 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   /**
-   * Handler : Fetch user details from backend using Firebase ID token.
+   * Handler : Verifies whether session is active & returns user details from backend using Session ID.
    * Ensures we get role, name, etc., verified from the server.
    */
-  const fetchUserFromBackend = async (firebaseUser) => {
-    const token = await firebaseUser.getIdToken();
-    console.log(token);
+  const verifyActiveSession = async () => {
+    //const token = await firebaseUser.getIdToken();
+    // console.log(token);
 
-    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/verify`, {
-      method: "GET",
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const sessionToken = localStorage.getItem("sessionToken");
 
-    try {
+    try{
+      // Verifies whether user has active session
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/session/verify-session`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${sessionToken}` },
+      });
+
+      if (!res.ok) {
+        localStorage.removeItem("sessionToken");
+        return null;
+      }
+
       const data = await res.json();
       if (!data.user) throw new Error("Invalid user data");
 
-      return {
-        uid: data.user.uid,
-        name: data.user.name,
-        role: data.user.role,
-      };
+      return data.user;
     } catch (err) {
       // Log the raw response to help debugging non-JSON backend issues
       const text = await res.text();
@@ -71,7 +75,25 @@ export const AuthProvider = ({ children }) => {
       userCredential = await signInWithPhoneAuth(auth, identifier, password);
     }
 
-    const backendUser = await fetchUserFromBackend(userCredential.user);
+    //Extract JWT ID Token from Firebase usercredential object
+    const idToken = await userCredential.user.getIdToken();
+
+    // POST /api/session creates a new session for user
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/session`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${idToken}`,
+      },
+    }); 
+
+    // Extract user data & session token from response
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || "Failed to create session");
+
+    //Store session token in local storage for future API calls
+    localStorage.setItem("sessionToken", data.sessionToken);
+
+    const backendUser = await verifyActiveSession();
     setCurrentUser(backendUser);
 
     return backendUser;
@@ -79,6 +101,15 @@ export const AuthProvider = ({ children }) => {
 
   /** Logout the user from Firebase and clear context */
   const logout = async () => {
+
+    const sessionToken = localStorage.getItem("sessionToken");
+
+    await fetch( `${import.meta.env.VITE_API_URL}/api/session/logout`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${sessionToken}`},
+    });
+
+    localStorage.removeItem("sessionToken")
     await signOut(auth);
     setCurrentUser(null);
   };
@@ -89,17 +120,18 @@ export const AuthProvider = ({ children }) => {
    */
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        try {
-          const backendUser = await fetchUserFromBackend(firebaseUser);
+      try {
+        if (firebaseUser) {
+          const backendUser = await verifyActiveSession();
           setCurrentUser(backendUser);
-        } catch {
+        } else {
           setCurrentUser(null);
         }
-      } else {
-        setCurrentUser(null);
-      }
-      setLoading(false);
+      } catch {
+          setCurrentUser(null);
+      } finally{
+          setLoading(false);
+        }
     });
 
     return unsubscribe; // Cleanup listener on unmount

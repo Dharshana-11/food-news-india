@@ -1,3 +1,4 @@
+import Users from "../models/Users.js";
 import UserSession from "../models/UserSession.js";
 
 export const verifySession = async (req, res, next) => {
@@ -19,9 +20,12 @@ export const verifySession = async (req, res, next) => {
             return res.status(401).json({message: "Unauthorized"});
         }
 
-        // Attach session info for downstream usage
-        req.session = session;
-        next();
+        // Attach user info for downstream usage
+        const user = await Users.findOne({ uid: session.uid }); // fetch from User model
+        return res.status(200).json({
+            message: "Session is valid",
+            user,
+        });
 
 
     }catch(error){
