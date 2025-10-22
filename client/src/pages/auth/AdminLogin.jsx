@@ -23,11 +23,19 @@ const AdminLogin = () => {
     setLoadingForm(true);
     try {
       const user = await login(values.identifier, values.password);
+
+      if (!user) {
+        message.error("You are not authorized. Please login again.");
+        return;
+      }
   
-      if (user.role === ROLES.SUPER_ADMIN) navigate(ROUTES.SUPER_ADMIN_DASHBOARD);
+      if (user.role === ROLES.SUPER_ADMIN){
+        message.success(`Welcome ${user.name}!`);
+        navigate(ROUTES.SUPER_ADMIN_DASHBOARD);
+      }
       else if (user.role === ROLES.ADMIN ) navigate(ROUTES.ADMIN_DASHBOARD);
       else navigate(ROUTES.LOGIN);
-      message.success(`Welcome ${user.name}!`);
+
     } catch (error) {
       message.error(error.response?.data?.message || error.message);
     } finally {

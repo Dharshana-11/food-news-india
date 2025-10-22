@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
+
 import { auth } from "../../firebase";
 import {
   signInWithEmailAndPassword,
@@ -122,20 +123,26 @@ export const AuthProvider = ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       try {
         if (firebaseUser) {
-          const backendUser = await verifyActiveSession();
-          setCurrentUser(backendUser);
+          const sessionToken = localStorage.getItem("sessionToken");
+          if (sessionToken) {
+            const backendUser = await verifyActiveSession();
+            setCurrentUser(backendUser);
+          } else {
+            setCurrentUser(null); // no session token yet
+          }
         } else {
           setCurrentUser(null);
         }
       } catch {
-          setCurrentUser(null);
-      } finally{
-          setLoading(false);
-        }
+        setCurrentUser(null);
+      } finally {
+        setLoading(false);
+      }
     });
 
-    return unsubscribe; // Cleanup listener on unmount
+    return unsubscribe;
   }, []);
+
 
   return (
     <AuthContext.Provider value={{ currentUser, loading, login, logout }}>

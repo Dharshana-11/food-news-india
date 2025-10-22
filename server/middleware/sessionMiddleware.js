@@ -20,13 +20,17 @@ export const verifySession = async (req, res, next) => {
             return res.status(401).json({message: "Unauthorized"});
         }
 
+        if(new Date() > session.expiresAt){
+            session.is_active = false;
+            session.logout_time = new Date();
+            await session.save();
+            return res.status(401).json({message: "Session expired. Please login again"})
+        }
+
         // Attach user info for downstream usage
         const user = await Users.findOne({ uid: session.uid }); // fetch from User model
-        return res.status(200).json({
-            message: "Session is valid",
-            user,
-        });
-
+        req.user = user;
+        next();
 
     }catch(error){
         console.log("Session verification error", error);

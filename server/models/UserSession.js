@@ -22,7 +22,13 @@ const userSessionSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true
+    },
+    expiresAt: {
+        type: Date,
+        required: true
     }
 }, {timestamps: true})
+
+userSessionSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 export default mongoose.model('UserSession',userSessionSchema);
