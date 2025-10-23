@@ -5,6 +5,7 @@ import superAdminRoutes from "./routes/superAdminRoutes.js";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
 import sessionRoutes from './routes/sessionRoutes.js';
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
@@ -19,6 +20,8 @@ app.use(
 );
 
 app.use(json());
+
+app.use(cookieParser());
 
 mongoose
   .connect(process.env.MONGO_URI)

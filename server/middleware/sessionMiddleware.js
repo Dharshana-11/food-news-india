@@ -3,11 +3,8 @@ import UserSession from "../models/UserSession.js";
 
 export const verifySession = async (req, res, next) => {
     try{
-        if(!req.headers.authorization){
-            return res.status(401).json({message: "Authorization header missing!"});
-        }
-        // Extract session token from Authorization Header
-        const sessionToken = req.headers.authorization?.split(" ")[1];
+        // Extract session token from cookie
+        const sessionToken = req.cookies.sessionToken;
 
         if(!sessionToken){
             return res.status(400).json({message: "Session token required!"});

@@ -29,28 +29,18 @@ export const AuthProvider = ({ children }) => {
     //const token = await firebaseUser.getIdToken();
     // console.log(token);
 
-    const sessionToken = localStorage.getItem("sessionToken");
-
     try{
       // Verifies whether user has active session
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/session/verify-session`, {
         method: "GET",
-        headers: { Authorization: `Bearer ${sessionToken}` },
+        credentials: "include",
       });
-
-      if (!res.ok) {
-        localStorage.removeItem("sessionToken");
-        return null;
-      }
 
       const data = await res.json();
       if (!data.user) throw new Error("Invalid user data");
 
       return data.user;
     } catch (err) {
-      // Log the raw response to help debugging non-JSON backend issues
-      const text = await res.text();
-      console.error("Backend response not JSON:", text);
       throw new Error("Backend returned invalid response");
     }
   };
@@ -82,17 +72,16 @@ export const AuthProvider = ({ children }) => {
     // POST /api/session creates a new session for user
     const res = await fetch(`${import.meta.env.VITE_API_URL}/api/session`, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${idToken}`,
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${idToken}`,
       },
+      credentials: "include"
     }); 
 
-    // Extract user data & session token from response
+    // Extract user data from response
     const data = await res.json();
     if (!res.ok) throw new Error(data.message || "Failed to create session");
-
-    //Store session token in local storage for future API calls
-    localStorage.setItem("sessionToken", data.sessionToken);
 
     const backendUser = await verifyActiveSession();
     setCurrentUser(backendUser);
@@ -103,14 +92,11 @@ export const AuthProvider = ({ children }) => {
   /** Logout the user from Firebase and clear context */
   const logout = async () => {
 
-    const sessionToken = localStorage.getItem("sessionToken");
-
     await fetch( `${import.meta.env.VITE_API_URL}/api/session/logout`, {
       method: "POST",
-      headers: { Authorization: `Bearer ${sessionToken}`},
+      credentials: "include",
     });
 
-    localStorage.removeItem("sessionToken")
     await signOut(auth);
     setCurrentUser(null);
   };
@@ -123,22 +109,17 @@ export const AuthProvider = ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       try {
         if (firebaseUser) {
-          const sessionToken = localStorage.getItem("sessionToken");
-          if (sessionToken) {
             const backendUser = await verifyActiveSession();
             setCurrentUser(backendUser);
           } else {
-            setCurrentUser(null); // no session token yet
+            setCurrentUser(null);
           }
-        } else {
+        } catch {
           setCurrentUser(null);
+        } finally {
+          setLoading(false);
         }
-      } catch {
-        setCurrentUser(null);
-      } finally {
-        setLoading(false);
-      }
-    });
+      });
 
     return unsubscribe;
   }, []);

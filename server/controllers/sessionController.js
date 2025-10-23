@@ -23,7 +23,15 @@ export const createSession = async (req, res) => {
                 sessionToken: uuidv4(), 
                 expiresAt})
 
-            res.json({message: "Session created successfully", sessionToken: newSession.sessionToken, user})
+            res.cookie("sessionToken", newSession.sessionToken,{
+                httpOnly: true,
+                secure:  process.env.NODE_ENV === "production",
+                sameSite: "Strict",
+                maxAge: sessionTTL * 60 * 60 * 1000,
+                expires: expiresAt
+            })
+
+            res.json({message: "Session created successfully", user})
         }else{
             res.status(404).json({ message: "User not found" });
         }
@@ -38,11 +46,8 @@ export const createSession = async (req, res) => {
 
 export const logoutSession = async (req, res) => {
     try{
-        if (!req.headers.authorization) {
-            return res.status(401).json({ message: "Authorization header missing" });
-    }
         //Extract session token
-        const sessionToken = req.headers.authorization?.split(" ")[1] 
+        const sessionToken = req.cookies.sessionToken;
 
         if (!sessionToken) {
              return res.status(400).json({ message: "Session token required" }); 
@@ -57,8 +62,9 @@ export const logoutSession = async (req, res) => {
         //Update document to record logut time and set is_active to false
         session.is_active = false;
         session.logout_time = new Date();
-        session.expiresAt = null;
         await session.save();
+
+        res.clearCookie("sessionToken");
 
         return res.json({message: "Logged out successfully"});
     }catch(error){
