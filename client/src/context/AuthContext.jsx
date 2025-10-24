@@ -31,16 +31,33 @@ export const AuthProvider = ({ children }) => {
 
     try{
       // Verifies whether user has active session
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/session/verify-session`, {
+      let res = await fetch(`${import.meta.env.VITE_API_URL}/api/session/verify-session`, {
         method: "GET",
         credentials: "include",
       });
 
+      if(res.status === 401){
+        const refreshRes = await fetch(`${import.meta.env.VITE_API_URL}/api/session/refresh-session`, {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if(!refreshRes.ok){
+        throw new Error("Failed to refresh session");
+      }
+
+      res = await fetch(`${import.meta.env.VITE_API_URL}/api/session/verify-session`, {
+        method: "GET",
+        credentials: "include",
+      });
+    }
       const data = await res.json();
-      if (!data.user) throw new Error("Invalid user data");
+      if (!data.user || !res.ok) throw new Error("Invalid user data");
 
       return data.user;
+    
     } catch (err) {
+      console.log("Session verification error", err);
       throw new Error("Backend returned invalid response");
     }
   };

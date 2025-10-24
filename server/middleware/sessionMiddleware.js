@@ -14,18 +14,16 @@ export const verifySession = async (req, res, next) => {
         const session = await UserSession.findOne({sessionToken, is_active: true});
 
         if(!session){
-            return res.status(401).json({message: "Unauthorized"});
+            return res.status(401).json({ message: "Session expired. Please refresh." });
         }
 
         if(new Date() > session.expiresAt){
-            session.is_active = false;
-            session.logout_time = new Date();
-            await session.save();
             return res.status(401).json({message: "Session expired. Please login again"})
         }
 
         // Attach user info for downstream usage
         const user = await Users.findOne({ uid: session.uid }); // fetch from User model
+        if (!user) return res.status(404).json({ message: "User not found" });
         req.user = user;
         next();
 

@@ -26,6 +26,18 @@ const userSessionSchema = new mongoose.Schema({
     expiresAt: {
         type: Date,
         required: true
+    },
+    refreshToken: {
+        type: String,
+        required: true
+    },
+    refreshExpiresAt: {
+        type: Date,
+        required: true
+    },
+    rotated: {
+        type: Boolean,
+        default: false
     }
 }, {timestamps: true})
 

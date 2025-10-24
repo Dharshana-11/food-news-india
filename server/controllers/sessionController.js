@@ -15,13 +15,18 @@ export const createSession = async (req, res) => {
 
             const sessionTTL = parseInt(process.env.SESSION_TTL_HOURS || "1", 10)
             const expiresAt = new Date(Date.now() + sessionTTL * 60 * 60 * 1000);
+
+            const refreshExpiresAt = new Date(Date.now() + 24 * 7 * 60 * 60 * 1000);
  
             const newSession = await UserSession.create({
                 uid, 
                 login_time: now, 
                 is_active: true, 
                 sessionToken: uuidv4(), 
-                expiresAt})
+                expiresAt,
+                refreshToken: uuidv4(),
+                refreshExpiresAt
+            })
 
             res.cookie("sessionToken", newSession.sessionToken,{
                 httpOnly: true,
@@ -29,6 +34,14 @@ export const createSession = async (req, res) => {
                 sameSite: "Strict",
                 maxAge: sessionTTL * 60 * 60 * 1000,
                 expires: expiresAt
+            })
+
+            res.cookie("refreshToken", newSession.refreshToken,{
+                httpOnly: true,
+                secure:  process.env.NODE_ENV === "production",
+                sameSite: "Strict",
+                maxAge: 24 * 7 * 60 * 60 * 1000,
+                expires: refreshExpiresAt
             })
 
             res.json({message: "Session created successfully", user})
@@ -72,3 +85,75 @@ export const logoutSession = async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 };
+
+export const refreshSession = async(req, res) => {
+    try{
+        const refreshToken = req.cookies.refreshToken;
+
+        if (!refreshToken) {
+            return res.status(400).json({ message: "Refresh token required" });
+        }
+
+        //atomic update to prevent race condition
+        const session = await UserSession.findOneAndUpdate(
+            { refreshToken: refreshToken, is_active: true, rotated: false, refreshExpiresAt: { $gt: new Date() } },
+            { $set: { rotated: true, is_active: false, logout_time: new Date() } },
+            { new: true }
+        );
+        //update log out time for old session (for logging)
+        // await UserSession.updateOne({ _id: session._id }, { logout_time: new Date() });
+        console.log("Cookies received at refresh:", req.cookies);
+        console.log("Found session:", session);
+
+        if(!session){
+            const expiredSession = await UserSession.findOne({refreshToken: refreshToken});
+            if(expiredSession){
+                expiredSession.is_active = false;
+                expiredSession.logout_time = new Date();
+                await expiredSession.save();
+            }
+            return res.status(401).json({message: "Active session not found or already logged out"})
+        }
+
+        const newSessionToken = uuidv4();
+        const newRefreshToken = uuidv4();
+        const sessionTTL = parseInt(process.env.SESSION_TTL_HOURS || "1", 10);
+        const refreshTTL = parseInt(process.env.REFRESH_TTL_DAYS || "7", 10);
+        const expiresAt = new Date(Date.now() + sessionTTL * 60 * 60 * 1000);
+        const refreshExpiresAt = new Date(Date.now() + (refreshTTL * 24 * 60 * 60 * 1000));
+
+        await UserSession.create({
+            uid: session.uid,
+            login_time: new Date(),
+            logout_time: null,
+            is_active: true,
+            sessionToken: newSessionToken,
+            expiresAt: expiresAt,
+            refreshToken: newRefreshToken,
+            refreshExpiresAt: refreshExpiresAt,
+            rotated: false
+        })
+
+        res.cookie("sessionToken", newSessionToken,{
+                    httpOnly: true,
+                    secure:  process.env.NODE_ENV === "production",
+                    sameSite: "Strict",
+                    maxAge: sessionTTL * 60 * 60 * 1000,
+                    expires: expiresAt
+                });
+        
+        res.cookie("refreshToken", newRefreshToken,{
+                    httpOnly: true,
+                    secure:  process.env.NODE_ENV === "production",
+                    sameSite: "Strict",
+                    maxAge: refreshTTL * 24 * 60 * 60 * 1000,
+                    expires: refreshExpiresAt
+                });
+        
+        return res.json({message: "Session refreshed successfully"});
+
+    }catch(error){
+        console.error("Error refreshing session:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+}
