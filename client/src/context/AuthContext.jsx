@@ -125,18 +125,18 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       try {
-        if (firebaseUser) {
-            const backendUser = await verifyActiveSession();
-            setCurrentUser(backendUser);
-          } else {
-            setCurrentUser(null);
-          }
-        } catch {
+        if (!firebaseUser) {
           setCurrentUser(null);
-        } finally {
-          setLoading(false);
+        } else {
+          const backendUser = await verifyActiveSession();
+          setCurrentUser(backendUser);
         }
-      });
+      } catch {
+        setCurrentUser(null);
+      } finally {
+        setLoading(false);
+      }
+    });
 
     return unsubscribe;
   }, []);

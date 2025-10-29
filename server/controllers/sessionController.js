@@ -101,7 +101,6 @@ export const refreshSession = async(req, res) => {
             { new: true }
         );
         //update log out time for old session (for logging)
-        // await UserSession.updateOne({ _id: session._id }, { logout_time: new Date() });
         console.log("Cookies received at refresh:", req.cookies);
         console.log("Found session:", session);
 
