@@ -18,4 +18,10 @@
   --color-text-medium: #9ca3af;
   --color-border: #d1d5db;
 }
-/*  */
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* full screen height */
+}
