@@ -1,4 +1,6 @@
-/* ================= Reset ================= */
+/* =========================================================
+   =============== GLOBAL STYLES & RESET ===================
+   ========================================================= */
 *,
 *::before,
 *::after {
@@ -18,6 +20,208 @@ body {
   color: #212529;
   background: #ffffff;
 }
+/* =========================================================
+   ==================== HEADER =============================
+   ========================================================= */
+.header {
+  height: 70px;
+  background-color: #162247;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-brand-logo {
+  height: 38px;
+  width: 40px;
+  object-fit: contain;
+}
+
+.header-brand-title {
+  font-size: 22px;
+  font-weight: 700;
+  /* font-family: "Poppins", sans-serif; */
+  letter-spacing: 0.3px;
+}
+
+.header-brand-title .highlight {
+  color: #ff6c1f;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  padding-right: 10px;
+}
+
+.notification-icon {
+  font-size: 22px;
+  color: #ff6c1f;
+  cursor: pointer;
+  transition: transform 0.25s ease, color 0.25s ease;
+}
+
+.notification-icon:hover {
+  transform: scale(1.15);
+  color: #ff8345;
+}
+
+.user-profile-icon,
+.user-profile-picture {
+  font-size: 26px;
+  color: #ffffff;
+  cursor: pointer;
+  border-radius: 50%;
+  background-color: #24325f;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+}
+
+.user-profile-icon:hover,
+.user-profile-picture:hover {
+  background-color: #2f3c6e;
+  transform: scale(1.07);
+}
+
+.user-profile-picture {
+  object-fit: cover;
+}
+
+.header-user-details {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  line-height: 1.2;
+  min-width: 120px;
+}
+
+.header-user-name {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  letter-spacing: 0.3px;
+}
+
+.header-user-role {
+  font-size: 12.5px;
+  color: #ff6c1f;
+  text-transform: capitalize;
+  margin-top: 3px;
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+}
+
+/* =========================================================
+   =================== SIDE BAR ============================
+   ========================================================= */
+.sidebar {
+  width: 230px; 
+  background-color: #ffffff;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+  padding-top: 15px;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Poppins', sans-serif;
+}
+
+.sidebar-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 20px 6px;
+}
+
+.menu-title-icon {
+  font-size: 18px;
+  color: #162247;
+}
+
+.menu-title-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: #162247;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Divider line below title */
+.sidebar-divider {
+  height: 1px;
+  background-color: #e6e6e6;
+  margin: 0 20px 10px;
+}
+
+/* Ant Design overrides for clean modern look */
+.ant-menu {
+  border-inline-end: none !important;
+  background: transparent !important;
+}
+
+.ant-menu-item {
+  font-size: 14px;
+  font-weight: 500;
+  font-family: 'Poppins';
+  padding-left: 20px !important;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  border-radius: 10px;
+  margin: 4px 10px;
+  color: #162247 !important;
+  transition: all 0.2s ease;
+}
+
+/* Hover effect */
+.ant-menu-item:hover {
+  background-color: rgba(255, 108, 31, 0.08);
+  color: #ff6c1f !important;
+}
+
+/* Active (selected) item */
+.ant-menu-item-selected {
+  background-color: rgba(255, 108, 31, 0.15) !important;
+  color: #ff6c1f !important;
+  font-weight: 500 !important;
+  border-left: 4px solid #ff6c1f;
+  border-radius: 0 10px 10px 0;
+}
+
+/* Icons style */
+.ant-menu-item-icon {
+  font-size: 18px !important;
+}
+
+/* Logout item slight separation */
+.ant-menu-item:last-child {
+  margin-top: auto;
+  border-top: 1px solid #f0f0f0;
+  padding-top: 7px !important;
+  color: #ff6c1f !important;
+  margin-bottom: 5px;
+}
+
+
+/* =========================================================
+   =============== ADMIN LOGIN PAGE ========================
+   ========================================================= */
 
 /* ================= Admin Login Container ================= */
 .admin-login-container {
@@ -223,6 +427,28 @@ body {
   border: 1px solid #162247 !important;
 }
 
+/* =========================================================
+   =============== SUPER ADMIN LAYOUT ======================
+   ========================================================= */
+.super-admin-layout{
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.super-admin-layout-body{
+  display: flex;
+  flex: 1;
+}
+.main-content{
+  margin: 40px;
+  flex: 1;
+}
+
+/* =========================================================
+   =============== ANT DESIGN CUSTOM OVERRIDES =============
+   ========================================================= */
+
 /* Input Focus + Label + Error (unchanged except prefix added) */
 .ant-input:focus,
 .ant-input-focused {
@@ -247,7 +473,10 @@ body {
   color: #7c838a !important;
 }
 
-/* ================= Responsive ================= */
+/* =========================================================
+   =============== RESPONSIVE MEDIA QUERIES ================
+   ========================================================= */
+   
 @media (max-width: 1024px) {
   .admin-login-main {
     grid-template-columns: 1fr;
