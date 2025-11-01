@@ -133,13 +133,16 @@ body {
    =================== SIDE BAR ============================
    ========================================================= */
 .sidebar {
-  width: 230px; 
+  width: 250px; 
   background-color: #ffffff;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
   padding-top: 15px;
   display: flex;
   flex-direction: column;
   font-family: 'Poppins', sans-serif;
+  border-right: 1px solid #e0e0e0;
+  min-height: calc(100vh - 70px); 
+  padding-top: 20px;
 }
 
 .sidebar-title {
@@ -434,16 +437,36 @@ body {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  background-color: #f5f6fa;
 }
 
-.super-admin-layout-body{
+.super-admin-layout-body {
   display: flex;
   flex: 1;
+  background-color: #ffffff;
+  height: calc(100vh - 70px); /* full viewport minus header */
+  overflow: hidden; /* prevent double scrollbars */
 }
+
 .main-content{
-  margin: 40px;
   flex: 1;
+  margin: 0;
+  padding: 24px 32px;
+  background-color: #f5f6fa;
+  overflow-y: auto;
 }
+
+
+
+.super-admin-dashboard .ant-card {
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.dashboard-row {
+  margin-bottom: 24px;
+}
+
 
 /* =========================================================
    =============== ANT DESIGN CUSTOM OVERRIDES =============

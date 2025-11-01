@@ -1,20 +1,25 @@
-import React from 'react'
-import SideBar from '../components/SideBar';
+import React from "react";
+import SideBar from "../components/SideBar";
 import ROLES from "../constants/roles";
-import Header from '../components/Header';
+import Header from "../components/Header";
+import { Layout } from "antd";
 
-const SuperAdminLayout = ({children}) => {
+const { Content } = Layout;
+
+const SuperAdminLayout = ({ children }) => {
   return (
-    <div className='super-admin-layout'>
-        <Header/>
-        <div className='super-admin-layout-body'>
-            <SideBar role={ROLES.SUPER_ADMIN}/>
-            <div className='main-content'>
-                {children}
-            </div>
-        </div>
-    </div>
-  )
-}
+    <div className="super-admin-layout">
+      <Header />
 
-export default SuperAdminLayout
+      <div className="super-admin-layout-body">
+        <SideBar role={ROLES.SUPER_ADMIN} />
+
+        <Content className="main-content">
+          {children}
+        </Content>
+      </div>
+    </div>
+  );
+};
+
+export default SuperAdminLayout;
