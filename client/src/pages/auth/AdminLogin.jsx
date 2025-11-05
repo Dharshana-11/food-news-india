@@ -20,13 +20,14 @@ import { useAuth } from "../../context/AuthContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 
-import image from "../../assets/compliance_image.png";
-import logoDesktop from "../../assets/placeholder_logo.png";
-import logoMobile from "../../assets/placeholder_logo_dark_theme.png";
+// import image from "../../assets/compliance_image.png";
+// import logoDesktop from "../../assets/placeholder_logo.png";
+// import logoMobile from "../../assets/placeholder_logo_dark_theme.png";
 import "../../styles/global.css";
 
 import { ROUTES } from "../../routes";
 import ROLES from "../../constants/roles";
+import BRAND from "../../constants/branding";
 
 const { Text, Link } = Typography;
 
@@ -87,17 +88,18 @@ const AdminLogin = () => {
         <div className="admin-login-right-top">
           <div className="admin-login-brand-left">
             <picture>
-              <source srcSet={logoMobile} media="(max-width: 768px)" />
-              <source srcSet={logoDesktop} media="(min-width: 769px)" />
+              <source srcSet={BRAND.LOGO_DARK} media="(max-width: 768px)" />
+              <source srcSet={BRAND.LOGO_LIGHT} media="(min-width: 769px)" />
               <img
-                src={logoDesktop}
-                alt="Food News India Logo"
+                src={BRAND.LOGO_LIGHT}
+                alt={`${BRAND.NAME} Logo`}
                 className="admin-login-brand-logo"
               />
             </picture>
 
             <h1 className="admin-login-brand-title">
-              <span className="admin-login-text-orange">Food</span> News India
+              <span className="admin-login-text-orange">{BRAND.HIGHLIGHT}</span>{" "}
+              {BRAND.NAME.replace(`${BRAND.HIGHLIGHT} `, "")}
             </h1>
           </div>
 
@@ -108,14 +110,17 @@ const AdminLogin = () => {
 
         {/* Left illustration */}
         <div className="admin-login-left">
-          <Image src={image} preview={false} width={250} />
-          <h2
-            className="admin-login-slogan"
-            style={{ fontFamily: "Poppins", fontWeight: "500" }}
-          >
-            Simplify <span className="admin-login-text-orange">Compliance</span>, <br />
-            Empower Your Business
-          </h2>
+          <Image src={BRAND.IMAGE} preview={false} width={250} />
+            <h2
+              className="admin-login-slogan"
+              style={{ fontFamily: "Poppins", fontWeight: "500" }}
+            >
+              {BRAND.SLOGAN.split(",")[0]}{" "}
+              <span className="admin-login-text-orange">
+                {BRAND.SLOGAN.split(",")[1]?.trim().split(" ")[0]}
+              </span>, <br />
+              {BRAND.SLOGAN.split(",")[1]?.trim().split(" ").slice(1).join(" ")}
+            </h2>
         </div>
 
         {/* Right login form */}

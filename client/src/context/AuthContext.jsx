@@ -130,15 +130,20 @@ export const AuthProvider = ({ children }) => {
    * Ends the backend session and signs the user out from Firebase.
    * @returns {Promise<void>}
    */
-  const logout = async () => {
-    await fetch(`${import.meta.env.VITE_API_URL}/api/session/logout`, {
-      method: "POST",
-      credentials: "include",
-    });
-
-    await signOut(auth);
-    setCurrentUser(null);
+    const logout = async () => {
+    try {
+      await fetch(`${import.meta.env.VITE_API_URL}/api/session/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
+    } catch (err) {
+      console.error("Backend logout failed:", err);
+    } finally {
+      await signOut(auth);
+      setCurrentUser(null);
+    }
   };
+
 
   /**
    * useEffect → onAuthStateChanged

@@ -52,12 +52,12 @@ body {
 .header-brand-title {
   font-size: 22px;
   font-weight: 700;
-  /* font-family: "Poppins", sans-serif; */
   letter-spacing: 0.3px;
 }
 
 .header-brand-title .highlight {
   color: #ff6c1f;
+  font-weight: 700;
 }
 
 .header-right {
@@ -68,10 +68,14 @@ body {
 }
 
 .notification-icon {
-  font-size: 22px;
+  font-size: 25px !important;
   color: #ff6c1f;
   cursor: pointer;
   transition: transform 0.25s ease, color 0.25s ease;
+  position: relative;           /* Allow precise badge placement */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .notification-icon:hover {
@@ -129,53 +133,139 @@ body {
   font-weight: 500;
 }
 
+.badge-custom .ant-badge-count {
+  transform: translate(6px, -6px) !important;  /* adjust X and Y visually */
+  font-size: 12px;
+  height: 16px;
+  min-width: 16px;
+  line-height: 16px;
+}
+/* ==================== HEADER RESPONSIVE  ============================ */
+.hamburger-icon {
+  display: none;
+  font-size: 24px;
+  color: #ffffff;
+  cursor: pointer;
+  transition: transform 0.25s ease;
+}
+
+.hamburger-icon.active {
+  transform: rotate(90deg);
+}
+
+/* Mobile view adjustments */
+@media (max-width: 768px) {
+  .header {
+    padding: 0 14px;
+    height: 64px;
+  }
+
+  /* Show hamburger, hide logo on mobile */
+  .hamburger-icon {
+    display: block;
+    color: var(--color-primary-orange);
+    font-size: 20px;
+  }
+
+  .header-brand-logo {
+    display: none;
+  }
+
+  /* Center title when logo hidden */
+  .header-left {
+    flex: 1;
+    justify-content: flex-start;
+  }
+
+  .header-brand-title {
+    text-align: center;
+    font-size: 20px;
+    flex: 1;
+  }
+
+  /* Hide user details text */
+  .header-user-details {
+    display: none;
+  }
+
+  /* Tighten right spacing */
+  .header-right {
+    gap: 14px;
+    padding-right: 0;
+  }
+
+  /* Perfect badge alignment */
+  .badge-custom .ant-badge-count {
+    font-size: 10px;
+    height: 14px;
+    min-width: 14px;
+    line-height: 14px;
+    right: -4px !important;
+    top: 0px !important;
+    transform: translate(5px, -4px) !important;
+  }
+
+  /* Optional: slightly shrink icons for balance */
+  .notification-icon {
+    font-size: 18px !important;
+  }
+
+  .user-profile-icon,
+  .user-profile-picture {
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
+  }
+}
 /* =========================================================
    =================== SIDE BAR ============================
    ========================================================= */
 .sidebar {
-  width: 250px; 
+  width: 250px;
   background-color: #ffffff;
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
-  padding-top: 15px;
   display: flex;
   flex-direction: column;
   font-family: 'Poppins', sans-serif;
   border-right: 1px solid #e0e0e0;
-  min-height: calc(100vh - 70px); 
+  min-height: calc(100vh - 70px);
   padding-top: 20px;
+  transition: left 0.3s ease;
 }
 
-.sidebar-title {
+/* ===== Sidebar Title (Desktop) ===== */
+.sidebar-title-desktop {
   display: flex;
-  align-items: center;
+  align-items: center !important;
   gap: 8px;
   padding: 0 20px 6px;
 }
 
 .menu-title-icon {
   font-size: 18px;
-  color: #162247;
+  color: var(--color-primary-blue);
 }
 
 .menu-title-text {
   font-size: 13px;
   font-weight: 600;
-  color: #162247;
+  color: var(--color-primary-blue);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-/* Divider line below title */
+/* Divider below the title */
 .sidebar-divider {
   height: 1px;
   background-color: #e6e6e6;
   margin: 0 20px 10px;
 }
 
-/* Ant Design overrides for clean modern look */
+/* ===== Ant Design Menu Styling ===== */
 .ant-menu {
   border-inline-end: none !important;
   background: transparent !important;
+  flex: 1;
 }
 
 .ant-menu-item {
@@ -188,39 +278,566 @@ body {
   align-items: center;
   border-radius: 10px;
   margin: 4px 10px;
-  color: #162247 !important;
+  color: var(--color-primary-blue) !important;
   transition: all 0.2s ease;
 }
 
-/* Hover effect */
+/* Hover Effect */
 .ant-menu-item:hover {
   background-color: rgba(255, 108, 31, 0.08);
-  color: #ff6c1f !important;
+  color: var(--color-primary-orange) !important;
 }
 
-/* Active (selected) item */
+/* Active (Selected) Menu Item */
 .ant-menu-item-selected {
   background-color: rgba(255, 108, 31, 0.15) !important;
-  color: #ff6c1f !important;
+  color: var(--color-primary-orange) !important;
   font-weight: 500 !important;
-  border-left: 4px solid #ff6c1f;
+  border-left: 4px solid var(--color-primary-orange);
   border-radius: 0 10px 10px 0;
 }
 
-/* Icons style */
+/* Icon Style */
 .ant-menu-item-icon {
   font-size: 18px !important;
 }
 
-/* Logout item slight separation */
+/* Logout Item Slight Separation */
 .ant-menu-item:last-child {
   margin-top: auto;
   border-top: 1px solid #f0f0f0;
   padding-top: 7px !important;
-  color: #ff6c1f !important;
+  color: var(--color-primary-orange) !important;
   margin-bottom: 5px;
 }
 
+/* =========================================================
+   ================= MOBILE SIDEBAR ========================
+   ========================================================= */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -260px; /* hidden by default */
+    height: 100vh;
+    width: 250px;
+    background: #fff;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    padding-top: 0;
+  }
+
+  /* When sidebar is open */
+  .sidebar.open {
+    left: 0;
+  }
+
+  .sidebar-title-desktop{
+    display: none;
+  }
+
+  /* ===== Mobile Header Section ===== */
+  .sidebar-header-mobile {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 16px;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 20px;
+    border-bottom: 1px solid #eee;
+    position: relative;
+  }
+
+  .sidebar-profile {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+  }
+
+  .sidebar-profile-pic, .sidebar-profile-icon {
+    font-size: 26px;
+    color: #ffffff;
+    cursor: pointer;
+    border-radius: 50%;
+    background-color: #24325f;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.25s ease;
+  }
+
+  .sidebar-profile-info h4 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: #162247;
+  }
+
+  .sidebar-profile-info p {
+    margin: 0;
+    font-size: 12px;
+    color: #777;
+    text-transform: capitalize;
+  }
+
+  .close-btn {
+    position: absolute;
+    right: 14px;
+    top: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    color: var(--color-primary-blue);
+  }
+
+  /* ===== "Menu" Heading ===== */
+  .sidebar-menu-heading {
+    margin-top: 20px;
+    padding-left: 5px;
+    font-size: 13px;
+    font-weight: 500;
+    text-transform: uppercase;
+    color: #999;
+    letter-spacing: 0.4px;
+  }
+
+  /* Hide Desktop Title on Mobile */
+  .sidebar-title-desktop {
+    margin-top: 10px;
+  }
+
+  .ant-menu {
+    border-radius: 50% !important;
+  }
+}
+
+/* =================DESKTOP ONLY ==========================*/
+
+@media (min-width: 769px) {
+  .sidebar {
+    position: static;
+    height: auto;
+    box-shadow: none;
+    padding-top: 20px;
+  }
+
+  .sidebar-header-mobile {
+    display: none;
+  }
+}
+
+/* =========================================================
+   =================== STAT CARD ===========================
+   ========================================================= */
+
+.stat-card-container {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  background-color: #ffffff;
+  padding: 5px 5px;
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+.stat-card-container:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
+}
+
+.stat-card-left {
+  width: 56px;
+  height: 56px;
+  border-radius: 30%;
+  background-color: #ff6c1f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 26px;
+  flex-shrink: 0;
+}
+
+.stat-card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  line-height: 1.2;
+}
+
+.stat-card-title {
+  font-family: 'Poppins';
+  font-size: 14px;
+  font-weight: 500;
+  color: #162247;
+  text-transform: capitalize;
+  opacity: 0.85;
+}
+
+.stat-card-value {
+  font-family: 'Inter', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #162247;
+  margin-top: 6px;
+}
+
+.ant-card .ant-card-body{
+  padding: 10px !important;
+}
+
+/* ===============================
+   ========== CHART CARD =========
+   =============================== */
+
+.chart-card {
+  background-color: #ffffff !important;
+  border-radius: 14px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  transition: all 0.25s ease;
+  font-family: 'Poppins', 'Inter', sans-serif;
+  border: none !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  min-height: 340px;
+}
+
+.chart-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Card Header */
+.chart-card .ant-card-head {
+  border-bottom: 2px solid #f5f5f5;
+  background-color: #ffffff;
+  color: var(--color-primary-blue); 
+  font-weight: 600;
+  font-size: 16px;
+  padding: 10px 20px !important;
+  letter-spacing: 0.3px;
+}
+
+/* Recharts Tooltips + Legend */
+.recharts-default-tooltip {
+  background-color: #ffffff !important;
+  border: 1px solid #eee !important;
+  border-radius: 8px !important;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+}
+
+.recharts-legend-wrapper {
+  max-height: 60px;
+  overflow-y: auto;
+  padding-top: 4px;
+}
+
+.recharts-legend-item-text {
+  color: #162247 !important;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  /* Responsive stacking */
+  .chart-card {
+    min-height: 300px;
+  }
+
+  .recharts-legend-wrapper {
+    justify-content: center !important;
+  }
+}
+/* =========================================================
+   =============== DONUT CHART ========================
+   ========================================================= */
+.donut-container {
+  position: relative;
+  width: 100%;
+  height: 260px;
+}
+
+.donut-center-text {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  pointer-events: none;
+  font-family: "Poppins", sans-serif;
+}
+
+.donut-center-value {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #162247;
+  transition: all 0.2s ease;
+}
+
+.donut-center-label {
+  font-size: 0.8rem;
+  color: #888;
+  letter-spacing: 0.3px;
+}
+
+/* =========================================================
+   ================= CUSTOM TABLE ==========================
+   ========================================================= */
+
+/* ===================== DASHBOARD TABLE ====================== */
+.custom-table .ant-table {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  font-family: "Poppins", "Inter", sans-serif;
+  margin: 10px;
+}
+
+.custom-table .ant-table-thead > tr > th {
+  background: #162247;
+  color: #ffffff;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+.custom-table .ant-table-tbody > tr > td {
+  font-size: 14px;
+  color: #333333;
+  padding: 12px 16px;
+}
+
+.custom-table .ant-tag {
+  font-weight: 500;
+  border-radius: 6px;
+  padding: 2px 10px;
+}
+
+.ant-card-head-title {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  color: #162247;
+}
+
+.ant-card {
+  border-radius: 12px !important;
+}
+
+/* Remove any weird vertical pipes or dividers */
+.custom-table .ant-table-thead > tr > th::before {
+  display: none !important;
+  content: none !important;
+}
+
+/* =========================================================
+   ================ SERVICE SUMMARY ========================
+   ========================================================= */
+
+.service-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  font-family: 'Poppins', 'Inter', sans-serif;
+  height: 450px;
+  max-height: 450px;
+  overflow-y: scroll;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+.service-summary-item {
+  background: #f9fafc;
+  padding: 16px 16px;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  transition: all 0.2s ease;
+}
+
+.service-summary-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+
+.service-summary-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.service-summary-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  color: white;
+  font-size: 18px;
+}
+
+.service-summary-title {
+  flex: 1;
+  margin-left: 10px;
+  color: #162247;
+  font-weight: 600;
+  font-size: 14.5px;
+}
+
+.service-summary-label {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #666;
+}
+
+/* =========================================================
+   =============== TICKET SNAPSHOT ========================
+   ========================================================= */
+
+.tickets-snapshot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 16px;
+  padding: 4px;
+  max-height: 450px;
+  overflow-y: scroll;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+/* Chrome, Safari, Opera */
+.tickets-snapshot-grid::-webkit-scrollbar {
+  display: none;
+}
+
+  /* Chrome, Safari, Opera */
+.service-summary::-webkit-scrollbar {
+  display: none;
+}
+
+/* Base card styling */
+.ticket-card {
+  text-align: center;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.25s ease;
+  background-color: #ffffff;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+
+.ticket-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  border-color: #ff6c1f;
+}
+
+/* Icon section */
+.ticket-icon {
+  font-size: 22px;
+  margin-bottom: 6px;
+  transition: transform 0.2s ease;
+}
+
+.ticket-card:hover .ticket-icon {
+  transform: scale(1.1);
+}
+
+/* Count number */
+.ticket-count {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  color: #162247;
+  font-size: 16px;
+  margin-bottom: 2px;
+}
+
+/* Ticket label */
+.ticket-type {
+  font-family: "Inter", sans-serif;
+  font-size: 12px;
+  color: #888;
+  letter-spacing: 0.3px;
+}
+
+.ticket-card:active {
+  transform: scale(0.98);
+  transition: transform 0.1s ease;
+}
+
+/* =========================================================
+   ================== NOTIFICATIONS ========================
+   ========================================================= */
+
+.notifications-container {
+  height: 450px;
+  max-height: 450px;
+  overflow-y: scroll;
+  padding-right: 6px;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+
+/* Chrome, Safari, Opera */
+.notification-container::-webkit-scrollbar {
+  display: none;
+}
+
+.notification-item {
+  border-bottom: 1px solid #f0f0f0;
+  padding: 10px 5px;
+  transition: background-color 0.2s ease;
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-item:hover {
+  background-color: #fafafa;
+}
+
+.notification-icon {
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 10px;
+  margin-top: 5px;
+}
+
+.notification-title {
+  font-weight: 500;
+  color: #162247;
+  font-family: "Poppins", sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.notification-tag {
+  font-size: 10px;
+  border-radius: 6px;
+  /* margin-left: 8px; */
+  }
+
+.notification-time {
+  font-size: 12px;
+  color: #888;
+  font-family: "Inter", sans-serif;
+}
 
 /* =========================================================
    =============== ADMIN LOGIN PAGE ========================
@@ -433,7 +1050,9 @@ body {
 /* =========================================================
    =============== SUPER ADMIN LAYOUT ======================
    ========================================================= */
-.super-admin-layout{
+
+/* keep your existing desktop look */
+.super-admin-layout {
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -444,27 +1063,95 @@ body {
   display: flex;
   flex: 1;
   background-color: #ffffff;
-  height: calc(100vh - 70px); /* full viewport minus header */
-  overflow: hidden; /* prevent double scrollbars */
+  height: calc(100vh - 70px);
+  overflow: hidden;
+  position: relative;
 }
 
-.main-content{
+/* main content area scrolls vertically */
+.main-content {
   flex: 1;
   margin: 0;
-  padding: 24px 32px;
+  padding: 16px;
   background-color: #f5f6fa;
   overflow-y: auto;
 }
 
+/* ===========================
+   MOBILE BEHAVIOR
+   - Sidebar is off-canvas by default (handled by .sidebar CSS)
+   - When .sidebar-open is set, overlay visible and body scroll locked
+   =========================== */
+@media (max-width: 768px) {
+  /* ensure layout stacks: header on top, body below (your markup already has that) */
+  .super-admin-layout-body {
+    height: calc(100vh - 70px);
+    overflow: visible; /* allow overlay to cover */
+  }
 
+  /* main content should take full width (sidebar slides over it) */
+  .main-content {
+    padding: 12px;
+    width: 100%;
+  }
 
-.super-admin-dashboard .ant-card {
-  border-radius: 10px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  /* overlay that darkens the page when sidebar is open */
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0; /* top:0; right:0; bottom:0; left:0 */
+    background: rgba(0,0,0,0.35);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, visibility 0.25s;
+    z-index: 999; /* place above content but under the sidebar if sidebar z-index > 999 */
+  }
+  .sidebar-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* avoid overlay capturing pointer when sidebar is closed */
+  .sidebar-overlay[aria-hidden="true"] {
+    pointer-events: none;
+  }
+
+  /* ensure the sidebar sits above overlay (assuming .sidebar z-index around 1000) */
+  .sidebar {
+    z-index: 1001;
+  }
+
+  /* if you want the main-content to dim slightly when sidebar open (optional)
+     .super-admin-layout.sidebar-open .main-content { filter: blur(0.4px) brightness(0.95); }
+  */
 }
 
-.dashboard-row {
-  margin-bottom: 24px;
+/* ===========================
+   TABLET / DESKTOP TWEAKS
+   - ensure sidebar is visible and static on larger screens
+   =========================== */
+@media (min-width: 769px) {
+  /* ensure overlay never shows on desktop */
+  .sidebar-overlay {
+    display: none;
+  }
+
+  /* ensure sidebar is static and part of layout (your sidebar CSS should already do this) */
+  .sidebar {
+    position: static !important;
+    left: 0 !important;
+    height: auto !important;
+    box-shadow: none !important;
+    z-index: auto !important;
+  }
+
+  .super-admin-layout-body {
+    overflow: hidden;
+  }
+
+  .main-content {
+    overflow-y: auto;
+  }
 }
 
 
