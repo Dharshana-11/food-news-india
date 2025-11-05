@@ -26,6 +26,7 @@ export const AuthProvider = ({ children }) => {
    */
   const fetchUserFromBackend = async (firebaseUser) => {
     const token = await firebaseUser.getIdToken();
+    console.log(token);
 
     const res = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/verify`, {
       method: "GET",

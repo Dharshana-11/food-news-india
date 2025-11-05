@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import superAdminRoutes from "./routes/superAdminRoutes.js";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 
 dotenv.config();
 
@@ -17,7 +18,7 @@ app.use(
   }),
 );
 
-app.use(json());
+app.use(express.json());
 
 mongoose
   .connect(process.env.MONGO_URI)
@@ -29,6 +30,9 @@ app.use("/api/auth", authRoutes);
 
 //Super-Admin Routes
 app.use("/api/super-admin", superAdminRoutes);
+
+//User Routes
+app.use("/api/users", userRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
