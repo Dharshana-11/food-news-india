@@ -19,32 +19,41 @@ import { ROUTES } from "./routes";
 import ROLES from "./constants/roles";
 
 /**
- * Renders all routes in the application.
- * Displays a loading spinner until authentication state is resolved.
+ * Renders all application routes with public and role-protected access.
+ * Displays a loading spinner while authentication state is being determined.
  *
  * @component
- * @returns {JSX.Element} The complete set of application routes.
+ * @returns {JSX.Element} The complete route structure of the application.
  */
 const AppRoutes = () => {
   const { currentUser, loading } = useAuth();
 
-  // --- Display a loading spinner while authentication state is being determined ---
+  // --- Show loading indicator while authentication status initializes ---
   if (loading) {
     return (
       <div className="loading-container">
+        {/* style in global CSS */}
         <Spin size="large" />
       </div>
-
     );
   }
 
   return (
     <Routes>
-      {/* ---------------- Public Routes ---------------- */}
+      {/* =========================================================
+          PUBLIC ROUTES
+          ========================================================= */}
       <Route path={ROUTES.LOGIN} element={<Login />} />
       <Route path={ROUTES.ADMIN_LOGIN} element={<AdminLogin />} />
 
-      {/* ---------------- Super Admin Protected Routes ---------------- */}
+      {/* =========================================================
+          SUPER ADMIN PROTECTED ROUTES
+          ---------------------------------------------------------
+          Each route uses ProtectedRoute to verify:
+          - A valid authenticated user (`currentUser`)
+          - The user's role matches `ROLES.SUPER_ADMIN`
+          If not, the component redirects appropriately.
+          ========================================================= */}
       <Route
         path={ROUTES.SUPER_ADMIN_DASHBOARD}
         element={
@@ -59,6 +68,88 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
             <SuperAdminUsers />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* -------- Placeholder routes for additional modules -------- */}
+      <Route
+        path={ROUTES.SUPER_ADMIN_COMPLIANCE}
+        element={
+          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
+            <div>Compliance Page</div>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path={ROUTES.SUPER_ADMIN_SERVICES}
+        element={
+          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
+            <div>Service Management Page</div>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path={ROUTES.SUPER_ADMIN_SUPPORT}
+        element={
+          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
+            <div>Support Tickets Page</div>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path={ROUTES.SUPER_ADMIN_SETTINGS}
+        element={
+          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
+            <div>Platform Settings Page</div>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path={ROUTES.SUPER_ADMIN_CONTENT}
+        element={
+          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
+            <div>Content Management Page</div>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path={ROUTES.SUPER_ADMIN_AUDIT}
+        element={
+          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
+            <div>System Logs Page</div>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path={ROUTES.SUPER_ADMIN_PROFILE}
+        element={
+          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
+            <div>My Profile Page</div>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path={ROUTES.SUPER_ADMIN_NOTIFICATIONS}
+        element={
+          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
+            <div>Notifications</div>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path={ROUTES.SUPER_ADMIN_TICKETS}
+        element={
+          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
+            <div>Tickets</div>
           </ProtectedRoute>
         }
       />

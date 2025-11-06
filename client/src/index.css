@@ -19,6 +19,24 @@
   --color-border: #d1d5db;
 }
 
+body {
+  font-family: "Inter", sans-serif;
+  background: #f5f6fa;
+}
+
+h1,
+h2,
+h3,
+.ant-card-head-title {
+  font-family: "Poppins", sans-serif;
+  color: var(--dark-blue);
+}
+
+.ant-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
 .loading-container {
   display: flex;
   justify-content: center;

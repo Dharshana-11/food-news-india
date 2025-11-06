@@ -8,13 +8,13 @@ import UserSession from "../models/UserSession.js";
 
 /**
  * Verifies if a user's session token is valid and active.
- * 
+ *
  * @async
  * @function verifySession
  * @param {import("express").Request} req - Express request object.
  * @param {import("express").Response} res - Express response object.
  * @param {import("express").NextFunction} next - Express next middleware function.
- * 
+ *
  * @returns {Promise<void | import("express").Response>} Proceeds to the next middleware if valid; otherwise sends an error response.
  */
 export const verifySession = async (req, res, next) => {
@@ -30,12 +30,16 @@ export const verifySession = async (req, res, next) => {
     const session = await UserSession.findOne({ sessionToken, isActive: true });
 
     if (!session) {
-      return res.status(401).json({ message: "Session expired. Please refresh." });
+      return res
+        .status(401)
+        .json({ message: "Session expired. Please refresh." });
     }
 
     // Check if session has expired by time
     if (new Date() > session.expiresAt) {
-      return res.status(401).json({ message: "Session expired. Please login again." });
+      return res
+        .status(401)
+        .json({ message: "Session expired. Please login again." });
     }
 
     // Fetch associated user details

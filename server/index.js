@@ -32,8 +32,8 @@ const app = express();
 app.use(
   cors({
     origin: process.env.FRONTEND_URL, // Allow requests from frontend
-    credentials: true,                // Enable cookies / session handling
-  })
+    credentials: true, // Enable cookies / session handling
+  }),
 );
 
 app.use(json()); // Parse incoming JSON requests
@@ -52,8 +52,8 @@ mongoose
  * Route Handlers
  * ------------------------------------------------------------
  */
-app.use("/api/auth", authRoutes);           // Authentication routes
-app.use("/api/session", sessionRoutes);     // Session management routes
+app.use("/api/auth", authRoutes); // Authentication routes
+app.use("/api/session", sessionRoutes); // Session management routes
 app.use("/api/super-admin", superAdminRoutes); // Super Admin routes
 
 /**

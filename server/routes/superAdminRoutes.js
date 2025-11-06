@@ -23,15 +23,15 @@ const router = express.Router();
  */
 router.get(
   "/dashboard",
-  authenticateUser,      // Validates JWT and attaches user to request
-  authorizeSuperAdmin,   // Ensures user role === 'super_admin'
-  verifySession,         // Validates active session token
+  authenticateUser, // Validates JWT and attaches user to request
+  authorizeSuperAdmin, // Ensures user role === 'super_admin'
+  verifySession, // Validates active session token
   (req, res) => {
     return res.status(200).json({
       message: "Super Admin dashboard access granted",
       user: req.user,
     });
-  }
+  },
 );
 
 export default router;

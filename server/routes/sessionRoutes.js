@@ -2,7 +2,7 @@
  * sessionRoutes.js
  * ------------------------------------------------------------
  * Defines API routes for managing user sessions.
- * Includes routes for creating, verifying, refreshing, 
+ * Includes routes for creating, verifying, refreshing,
  * and logging out sessions.
  * ------------------------------------------------------------
  */

@@ -1,4 +1,4 @@
-import admin from "../firebase.js";       // Firebase admin SDK instance
+import admin from "../firebase.js"; // Firebase admin SDK instance
 import AdminModel from "../models/Admin.js";
 
 /**

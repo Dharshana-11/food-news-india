@@ -7,10 +7,10 @@ import mongoose from "mongoose";
 
 /**
  * UserSession Schema
- * 
+ *
  * Represents a user's active or past session, including login/logout timestamps,
  * token validity, and refresh token lifecycle.
- * 
+ *
  * @typedef {Object} UserSession
  * @property {string} uid - Unique user ID referencing the User model.
  * @property {Date} login_time - Timestamp when the user logged in.
@@ -64,7 +64,7 @@ const userSessionSchema = new mongoose.Schema(
       default: false,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 // Automatically remove expired sessions based on `expiresAt` field
