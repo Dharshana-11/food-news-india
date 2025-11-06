@@ -82,6 +82,8 @@ const SideBar = ({ role, isOpen, onClose }) => {
   }, [onClose]);
 
   return (
+    <>
+     {isOpen && <div className="sidebar-blur-overlay" onClick={onClose}></div>}
     <div className={`sidebar ${isOpen ? "open" : ""}`}>
       {/* ===== Desktop Title ===== */}
       <div className="sidebar-title-desktop">
@@ -122,6 +124,7 @@ const SideBar = ({ role, isOpen, onClose }) => {
         onClick={handleMenuClick}
       />
     </div>
+    </>
   );
 };
 

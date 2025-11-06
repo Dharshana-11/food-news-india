@@ -217,6 +217,7 @@ body {
     font-size: 18px;
   }
 }
+
 /* =========================================================
    =================== SIDE BAR ============================
    ========================================================= */
@@ -311,6 +312,18 @@ body {
   margin-bottom: 5px;
 }
 
+.sidebar-blur-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  backdrop-filter: blur(6px);
+  background-color: rgba(0, 0, 0, 0.2);
+  z-index: 90; 
+  transition: all 0.3s ease;
+}
+
 /* =========================================================
    ================= MOBILE SIDEBAR ========================
    ========================================================= */
@@ -330,6 +343,9 @@ body {
   /* When sidebar is open */
   .sidebar.open {
     left: 0;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    overflow: hidden;
   }
 
   .sidebar-title-desktop{
@@ -544,6 +560,7 @@ body {
     flex-wrap: nowrap;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
+    scrollbar-width: none;
   }
 
   .stats-row > .ant-col {
@@ -641,7 +658,7 @@ body {
 .donut-container {
   position: relative;
   width: 100%;
-  height: 320px; /* default chart height */
+  height: 340px; /* default chart height */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -665,12 +682,13 @@ body {
 /* Center text inside donut */
 .donut-center-text {
   position: absolute;
-  top: 45%;
+  top: 45% !important;
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
   pointer-events: none;
   font-family: "Poppins", sans-serif;
+  line-height: "1.3";
 }
 
 .donut-center-value {
@@ -768,6 +786,10 @@ body {
    ========================================================= */
 
 /* ===================== DASHBOARD TABLE ====================== */
+/* =========================
+   TABLE STYLES (keep everything)
+   ========================= */
+
 .custom-table .ant-table {
   background: #fff;
   border-radius: 10px;
@@ -806,16 +828,38 @@ body {
   border-radius: 12px !important;
 }
 
-/* Remove any weird vertical pipes or dividers */
+/* Remove vertical lines from headers */
 .custom-table .ant-table-thead > tr > th::before {
   display: none !important;
   content: none !important;
 }
 
-/* =========================================================
-   ================ SERVICE SUMMARY ========================
-   ========================================================= */
+/* =========================
+   SCROLLABLE WRAPPER
+   ========================= */
 
+.custom-table-wrapper {
+  width: 100%;
+  overflow-x: hidden; /* default */
+}
+
+.custom-table-scroll {
+  width: 100%;
+  scrollbar-width: none;
+  overflow-x: auto; /* horizontal scroll for small screens */
+  -webkit-overflow-scrolling: touch; /* smooth scroll */
+  padding-bottom: 4px; /* prevent scrollbar overlapping content */
+}
+
+/* Tablets & below: allow horizontal scroll */
+@media (max-width: 1024px) {
+  .custom-table-scroll .ant-table {
+    min-width: 700px; /* adjust depending on columns */
+    table-layout: auto; /* keep column widths natural */
+    scrollbar-width: none;
+  }
+}
+/* ================= SERVICE SUMMARY ================= */
 .service-summary {
   display: flex;
   flex-direction: column;
@@ -823,14 +867,18 @@ body {
   font-family: 'Poppins', 'Inter', sans-serif;
   height: 450px;
   max-height: 450px;
-  overflow-y: scroll;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.service-summary::-webkit-scrollbar {
+  display: none;
 }
 
 .service-summary-item {
   background: #f9fafc;
-  padding: 16px 16px;
+  padding: 16px;
   border-radius: 10px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.05);
   transition: all 0.2s ease;
@@ -873,32 +921,23 @@ body {
   color: #666;
 }
 
-/* =========================================================
-   =============== TICKET SNAPSHOT ========================
-   ========================================================= */
-
+/* ====================================================
+   ================= TICKETS SNAPSHOT =================
+   ==================================================== */
 .tickets-snapshot-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
   gap: 16px;
   padding: 4px;
   max-height: 450px;
-  overflow-y: scroll;
-  scrollbar-width: none; /* Firefox */
-  -ms-overflow-style: none; /* IE/Edge */
+  overflow-y: auto;
+  scrollbar-width: none;
 }
 
-/* Chrome, Safari, Opera */
 .tickets-snapshot-grid::-webkit-scrollbar {
   display: none;
 }
 
-  /* Chrome, Safari, Opera */
-.service-summary::-webkit-scrollbar {
-  display: none;
-}
-
-/* Base card styling */
 .ticket-card {
   text-align: center;
   border-radius: 12px;
@@ -915,7 +954,6 @@ body {
   border-color: #ff6c1f;
 }
 
-/* Icon section */
 .ticket-icon {
   font-size: 22px;
   margin-bottom: 6px;
@@ -926,7 +964,6 @@ body {
   transform: scale(1.1);
 }
 
-/* Count number */
 .ticket-count {
   font-family: "Poppins", sans-serif;
   font-weight: 600;
@@ -935,7 +972,6 @@ body {
   margin-bottom: 2px;
 }
 
-/* Ticket label */
 .ticket-type {
   font-family: "Inter", sans-serif;
   font-size: 12px;
@@ -949,8 +985,8 @@ body {
 }
 
 /* =========================================================
-   ================== NOTIFICATIONS ========================
-   ========================================================= */
+   ================== NOTIFICATIONS ======================== 
+   =========================================================*/
 
 .notifications-container {
   height: 450px;
@@ -962,7 +998,7 @@ body {
 }
 
 /* Chrome, Safari, Opera */
-.notification-container::-webkit-scrollbar {
+.notifications-container::-webkit-scrollbar {
   display: none;
 }
 
@@ -970,6 +1006,9 @@ body {
   border-bottom: 1px solid #f0f0f0;
   padding: 10px 5px;
   transition: background-color 0.2s ease;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
 }
 
 .notification-item:last-child {
@@ -990,19 +1029,34 @@ body {
 }
 
 .notification-title {
+  display: flex;
+  flex-direction: column; /* stack message and tag vertically */
+  align-items: flex-start; /* left align */
+  gap: 4px; /* space between message and tag */
   font-weight: 500;
   color: #162247;
   font-family: "Poppins", sans-serif;
+}
+
+.notification-message {
+  font-weight: 500;
+  color: #162247;
+  font-family: "Poppins", sans-serif;
+  word-break: break-word; /* wrap long messages nicely */
+}
+
+.notification-footer {
   display: flex;
+  justify-content: space-between; /* timestamp left, tag right */
   align-items: center;
-  justify-content: space-between;
+  margin-top: 4px; /* spacing from message */
 }
 
 .notification-tag {
   font-size: 10px;
   border-radius: 6px;
-  /* margin-left: 8px; */
-  }
+  padding: 2px 6px; /* better spacing */
+}
 
 .notification-time {
   font-size: 12px;
@@ -1010,6 +1064,76 @@ body {
   font-family: "Inter", sans-serif;
 }
 
+/* ================= RESPONSIVE FIXES ================= */
+@media (max-width: 1024px) {
+  .service-summary,
+  .tickets-snapshot-grid,
+  .notifications-container {
+    height: 350px;
+    max-height: 350px;
+  }
+
+  .notification-item {
+    padding: 8px 4px;
+  }
+
+  .ticket-count {
+    font-size: 14px;
+  }
+
+  .ticket-type {
+    font-size: 11px;
+  }
+
+  .service-summary-title {
+    font-size: 13px;
+  }
+
+  .service-summary-label {
+    font-size: 12px;
+  }
+
+  .notification-title {
+    font-size: 13px;
+  }
+
+  .notification-tag {
+    font-size: 9px;
+  }
+
+  .notification-time {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 768px) {
+  .service-summary,
+  .tickets-snapshot-grid,
+  .notifications-container {
+    height: 300px;
+    max-height: 300px;
+  }
+
+  .ticket-count {
+    font-size: 13px;
+  }
+
+  .ticket-type {
+    font-size: 10px;
+  }
+
+  .notification-title {
+    font-size: 12px;
+  }
+
+  .notification-time {
+    font-size: 10px;
+  }
+
+  .notification-tag {
+    font-size: 8px;
+  }
+}
 /* =========================================================
    =============== ADMIN LOGIN PAGE ========================
    ========================================================= */

@@ -10,6 +10,7 @@ import {
   SettingOutlined,
   CheckCircleOutlined,
   ClockCircleOutlined,
+  RightOutlined
 } from "@ant-design/icons";
 import SuperAdminLayout from "../../layouts/SuperAdminLayout";
 import StatCard from "../../components/dashboard/StatCard";
@@ -192,9 +193,9 @@ const SuperAdminDashboard = () => {
             </h3>
             <a
               onClick={() => navigate(ROUTES.SUPER_ADMIN_COMPLIANCE)}
-              style={{ color: "#ff6c1f", fontWeight: 500, cursor: "pointer" }}
+              style={{ color: "#162247", fontWeight: 500, cursor: "pointer" }}
             >
-              View All →
+              <RightOutlined/>
             </a>
           </div>
           <CustomTable columns={pendingColumns} data={allVerifications} />
@@ -203,7 +204,7 @@ const SuperAdminDashboard = () => {
         {/* ======= SERVICE SUMMARY / TICKETS / NOTIFICATIONS ======= */}
         <Row gutter={[24, 24]} style={{ marginTop: 20 }}>
           <Col xs={24} md={8}>
-            <Card title="Service Summary" extra={<a style={{color: "#ff6c1f", fontWeight:"600"}} onClick={() => navigate(ROUTES.SUPER_ADMIN_SERVICES)}>View All →</a>}>
+            <Card title="Service Summary" extra={<a style={{color: "#162247", fontWeight:"600"}} onClick={() => navigate(ROUTES.SUPER_ADMIN_SERVICES)}><RightOutlined/></a>}>
               <ServiceSummary summary={serviceSummaryData.map((item) => ({
                 ...item,
                 onClick: () => navigate(item.path),
@@ -212,7 +213,7 @@ const SuperAdminDashboard = () => {
           </Col>
 
           <Col xs={24} md={8}>
-            <Card title="Tickets Snapshot" extra={<a style={{color: "#ff6c1f", fontWeight:"600"}} onClick={() => navigate(ROUTES.SUPPORT)}>View All →</a>}>
+            <Card title="Tickets Snapshot" extra={<a style={{color: "#162247", fontWeight:"600"}} onClick={() => navigate(ROUTES.SUPER_ADMIN_SUPPORT)}><RightOutlined/></a>}>
               <div onClick={() => navigate(ROUTES.SUPER_ADMIN_SUPPORT)} style={{ cursor: "pointer" }}>
                 <TicketsSnapshot tickets={ticketsData} />
               </div>
@@ -220,7 +221,7 @@ const SuperAdminDashboard = () => {
           </Col>
 
           <Col xs={24} md={8}>
-            <Card title="Notifications" extra={<a style={{color: "#ff6c1f", fontWeight:"600"}} onClick={() => navigate(ROUTES.SUPER_ADMIN_NOTIFICATIONS)}>View All →</a>}>
+            <Card title="Notifications" extra={<a style={{color: "#162247", fontWeight:"600"}} onClick={() => navigate(ROUTES.SUPER_ADMIN_NOTIFICATIONS)}><RightOutlined/></a>}>
               <Notifications notifications={notificationsData} />
             </Card>
           </Col>

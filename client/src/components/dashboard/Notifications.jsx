@@ -25,23 +25,21 @@ const Notifications = ({ notifications }) => {
         dataSource={notifications}
         renderItem={(item) => (
           <List.Item className="notification-item">
-            <List.Item.Meta
-              avatar={<div className="notification-icon">{iconMap[item.type]}</div>}
-              title={
-                <div className="notification-title">
-                  {item.message}
-                  {item.tag && (
-                    <Tag color={item.tagColor} className="notification-tag">
-                      {item.tag}
-                    </Tag>
-                  )}
-                </div>
-              }
-              description={
+          <List.Item.Meta
+            avatar={<div className="notification-icon">{iconMap[item.type]}</div>}
+            title={<span className="notification-message">{item.message}</span>}
+            description={
+              <div className="notification-footer">
                 <div className="notification-time">{item.time}</div>
-              }
-            />
-          </List.Item>
+                {item.tag && (
+                  <Tag color={item.tagColor} className="notification-tag">
+                    {item.tag}
+                  </Tag>
+                )}
+              </div>
+            }
+          />
+        </List.Item>
         )}
       />
     </div>
