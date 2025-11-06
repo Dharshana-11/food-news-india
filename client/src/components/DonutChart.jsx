@@ -1,4 +1,11 @@
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
 import { useState } from "react";
 
 const DonutChart = ({
@@ -9,10 +16,7 @@ const DonutChart = ({
   const [activeIndex, setActiveIndex] = useState(null);
 
   return (
-    <div
-      className="donut-container"
-      
-    >
+    <div className="donut-container">
       <ResponsiveContainer width="100%" height="80%">
         <PieChart>
           <Pie

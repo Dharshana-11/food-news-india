@@ -14,7 +14,7 @@ const ChartCard = ({ title, data, color, chartType }) => {
   const renderChart = () => {
     switch (chartType) {
       case "bar":
-        return <BarChartComponent data={data} colors={COLORS}/>;
+        return <BarChartComponent data={data} colors={COLORS} />;
 
       case "line":
         return <LineChartComponent data={data} colors={COLORS} />;

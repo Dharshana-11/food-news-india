@@ -32,7 +32,8 @@ const ServiceSummary = ({ summary }) => {
               </Tooltip>
 
               <div className="service-summary-label">
-                {item.value} out of {item.total} services are {item.title.toLowerCase()}.
+                {item.value} out of {item.total} services are{" "}
+                {item.title.toLowerCase()}.
               </div>
             </div>
           </div>

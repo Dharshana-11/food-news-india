@@ -6,7 +6,8 @@ import { ROUTES } from "../routes";
 import ROLES from "../constants/roles";
 import BRAND from "../constants/branding";
 
-const Header = ({ onMenuClick }) => { // 🔹 Accept onMenuClick prop for sidebar toggle
+const Header = ({ onMenuClick }) => {
+  // 🔹 Accept onMenuClick prop for sidebar toggle
   const { currentUser } = useAuth();
   const navigate = useNavigate();
 
@@ -77,13 +78,10 @@ const Header = ({ onMenuClick }) => { // 🔹 Accept onMenuClick prop for sideba
 
         <div className="header-user-details">
           <h4 className="header-user-name">{userName}</h4>
-          <h5 className="header-user-role">
-            {userRole.replace("_", " ")}
-          </h5>
+          <h5 className="header-user-role">{userRole.replace("_", " ")}</h5>
         </div>
       </div>
     </header>
-
   );
 };
 

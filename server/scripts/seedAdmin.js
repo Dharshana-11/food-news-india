@@ -15,7 +15,9 @@ dotenv.config();
 const serviceAccountPath = path.resolve(process.env.FIREBASE_KEY_PATH);
 
 // Read and parse the JSON key
-const serviceAccountKey = JSON.parse(fs.readFileSync(serviceAccountPath, "utf8"));
+const serviceAccountKey = JSON.parse(
+  fs.readFileSync(serviceAccountPath, "utf8"),
+);
 
 // Initialize Firebase Admin SDK
 const firebaseAdmin = admin.initializeApp({

@@ -4,7 +4,7 @@
  * Renders the Super Admin login screen.
  * Handles Firebase-based authentication and backend session creation
  * through the AuthContext `login` method.
- * 
+ *
  * Features:
  * - Responsive design with left image & right login form layout.
  * - Validation for email and password.
@@ -36,7 +36,7 @@ const { Text, Link } = Typography;
  * ---------------------
  * Handles admin/super admin authentication and redirects user
  * to the appropriate dashboard based on role.
- * 
+ *
  * @component
  * @returns {JSX.Element} Admin login page UI.
  */
@@ -83,7 +83,6 @@ const AdminLogin = () => {
   return (
     <div className="admin-login-container">
       <main className="admin-login-main">
-
         {/* Top-right logo bar */}
         <div className="admin-login-right-top">
           <div className="admin-login-brand-left">
@@ -111,16 +110,17 @@ const AdminLogin = () => {
         {/* Left illustration */}
         <div className="admin-login-left">
           <Image src={BRAND.IMAGE} preview={false} width={250} />
-            <h2
-              className="admin-login-slogan"
-              style={{ fontFamily: "Poppins", fontWeight: "500" }}
-            >
-              {BRAND.SLOGAN.split(",")[0]}{" "}
-              <span className="admin-login-text-orange">
-                {BRAND.SLOGAN.split(",")[1]?.trim().split(" ")[0]}
-              </span>, <br />
-              {BRAND.SLOGAN.split(",")[1]?.trim().split(" ").slice(1).join(" ")}
-            </h2>
+          <h2
+            className="admin-login-slogan"
+            style={{ fontFamily: "Poppins", fontWeight: "500" }}
+          >
+            {BRAND.SLOGAN.split(",")[0]}{" "}
+            <span className="admin-login-text-orange">
+              {BRAND.SLOGAN.split(",")[1]?.trim().split(" ")[0]}
+            </span>
+            , <br />
+            {BRAND.SLOGAN.split(",")[1]?.trim().split(" ").slice(1).join(" ")}
+          </h2>
         </div>
 
         {/* Right login form */}
@@ -145,7 +145,9 @@ const AdminLogin = () => {
               <Form.Item
                 label="Password"
                 name="password"
-                rules={[{ required: true, message: "Please enter your password!" }]}
+                rules={[
+                  { required: true, message: "Please enter your password!" },
+                ]}
               >
                 <Input.Password
                   placeholder="Enter your password"
@@ -173,7 +175,8 @@ const AdminLogin = () => {
               <div className="admin-login-form-forgot-password">
                 <Text>Forgot Password?</Text>
                 <Link href="/" className="admin-login-link-reset-password">
-                  {" "}Reset Password
+                  {" "}
+                  Reset Password
                 </Link>
               </div>
 

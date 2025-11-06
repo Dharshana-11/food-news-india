@@ -10,7 +10,7 @@ import {
   SettingOutlined,
   CheckCircleOutlined,
   ClockCircleOutlined,
-  RightOutlined
+  RightOutlined,
 } from "@ant-design/icons";
 import SuperAdminLayout from "../../layouts/SuperAdminLayout";
 import StatCard from "../../components/dashboard/StatCard";
@@ -27,10 +27,30 @@ const SuperAdminDashboard = () => {
 
   // ======= STATS =======
   const statsData = [
-    { title: "Total Businesses", value: 123, icon: <ShopOutlined />, path: `${ROUTES.SUPER_ADMIN_USERS}?role=${ROLES.BUSINESS_OWNER}` },
-    { title: "Agents", value: 45, icon: <UserOutlined />, path: `${ROUTES.SUPER_ADMIN_USERS}?role=${ROLES.AGENT}` },
-    { title: "Service Providers", value: 67, icon: <TeamOutlined />, path: `${ROUTES.SUPER_ADMIN_USERS}?role=${ROLES.SERVICE_PROVIDER}` },
-    { title: "Open Tickets", value: 9, icon: <FileExclamationOutlined />, path: ROUTES.SUPER_ADMIN_SUPPORT },
+    {
+      title: "Total Businesses",
+      value: 123,
+      icon: <ShopOutlined />,
+      path: `${ROUTES.SUPER_ADMIN_USERS}?role=${ROLES.BUSINESS_OWNER}`,
+    },
+    {
+      title: "Agents",
+      value: 45,
+      icon: <UserOutlined />,
+      path: `${ROUTES.SUPER_ADMIN_USERS}?role=${ROLES.AGENT}`,
+    },
+    {
+      title: "Service Providers",
+      value: 67,
+      icon: <TeamOutlined />,
+      path: `${ROUTES.SUPER_ADMIN_USERS}?role=${ROLES.SERVICE_PROVIDER}`,
+    },
+    {
+      title: "Open Tickets",
+      value: 9,
+      icon: <FileExclamationOutlined />,
+      path: ROUTES.SUPER_ADMIN_SUPPORT,
+    },
   ];
 
   const complianceData = [
@@ -64,7 +84,11 @@ const SuperAdminDashboard = () => {
     { title: "Name", dataIndex: "name", key: "name" },
     { title: "Category / KYC Type", dataIndex: "category", key: "category" },
     { title: "Submitted By", dataIndex: "submittedBy", key: "submittedBy" },
-    { title: "Date Submitted", dataIndex: "dateSubmitted", key: "dateSubmitted" },
+    {
+      title: "Date Submitted",
+      dataIndex: "dateSubmitted",
+      key: "dateSubmitted",
+    },
     {
       title: "Status",
       dataIndex: "status",
@@ -116,9 +140,30 @@ const SuperAdminDashboard = () => {
   ];
 
   const serviceSummaryData = [
-    { title: "Active Services", value: 80, total: 100, icon: <CheckCircleOutlined />, color: "#ff6c1f", path: ROUTES.SUPER_ADMIN_SERVICES },
-    { title: "Under Maintenance", value: 12, total: 100, icon: <SettingOutlined />, color: "#162247", path: ROUTES.SUPER_ADMIN_SERVICES },
-    { title: "Delayed Responses", value: 8, total: 100, icon: <ClockCircleOutlined />, color: "#ffb400", path: ROUTES.SUPER_ADMIN_SERVICES },
+    {
+      title: "Active Services",
+      value: 80,
+      total: 100,
+      icon: <CheckCircleOutlined />,
+      color: "#ff6c1f",
+      path: ROUTES.SUPER_ADMIN_SERVICES,
+    },
+    {
+      title: "Under Maintenance",
+      value: 12,
+      total: 100,
+      icon: <SettingOutlined />,
+      color: "#162247",
+      path: ROUTES.SUPER_ADMIN_SERVICES,
+    },
+    {
+      title: "Delayed Responses",
+      value: 8,
+      total: 100,
+      icon: <ClockCircleOutlined />,
+      color: "#ffb400",
+      path: ROUTES.SUPER_ADMIN_SERVICES,
+    },
   ];
 
   const ticketsData = [
@@ -133,12 +178,48 @@ const SuperAdminDashboard = () => {
   ];
 
   const notificationsData = [
-    { type: "alert", message: "System maintenance scheduled tonight", time: "2 hrs ago", tag: "System", tagColor: "orange" },
-    { type: "success", message: "3 verifications approved", time: "4 hrs ago", tag: "Verification", tagColor: "green" },
-    { type: "warning", message: "2 tickets delayed", time: "1 day ago", tag: "Tickets", tagColor: "volcano" },
-    { type: "info", message: "New service provider sign-up", time: "1 day ago", tag: "Service", tagColor: "blue" },
-    { type: "pending", message: "Agent KYC review pending", time: "2 days ago", tag: "Agent", tagColor: "gold" },
-    { type: "update", message: "Platform UI enhancements deployed", time: "3 days ago", tag: "Release", tagColor: "purple" },
+    {
+      type: "alert",
+      message: "System maintenance scheduled tonight",
+      time: "2 hrs ago",
+      tag: "System",
+      tagColor: "orange",
+    },
+    {
+      type: "success",
+      message: "3 verifications approved",
+      time: "4 hrs ago",
+      tag: "Verification",
+      tagColor: "green",
+    },
+    {
+      type: "warning",
+      message: "2 tickets delayed",
+      time: "1 day ago",
+      tag: "Tickets",
+      tagColor: "volcano",
+    },
+    {
+      type: "info",
+      message: "New service provider sign-up",
+      time: "1 day ago",
+      tag: "Service",
+      tagColor: "blue",
+    },
+    {
+      type: "pending",
+      message: "Agent KYC review pending",
+      time: "2 days ago",
+      tag: "Agent",
+      tagColor: "gold",
+    },
+    {
+      type: "update",
+      message: "Platform UI enhancements deployed",
+      time: "3 days ago",
+      tag: "Release",
+      tagColor: "purple",
+    },
   ];
 
   return (
@@ -148,7 +229,10 @@ const SuperAdminDashboard = () => {
         <Row gutter={[24, 24]} className="stats-row">
           {statsData.map((item, index) => (
             <Col xs={24} sm={12} md={6} key={index}>
-              <div onClick={() => navigate(item.path)} style={{ cursor: "pointer" }}>
+              <div
+                onClick={() => navigate(item.path)}
+                style={{ cursor: "pointer" }}
+              >
                 <StatCard {...item} />
               </div>
             </Col>
@@ -166,7 +250,13 @@ const SuperAdminDashboard = () => {
             />
           </Col>
           <Col xs={24} md={16}>
-            <ChartCard title="Activity Chart" data={activityData} color="#ff6c1f" chartType="line" className="activity-chart" />
+            <ChartCard
+              title="Activity Chart"
+              data={activityData}
+              color="#ff6c1f"
+              chartType="line"
+              className="activity-chart"
+            />
           </Col>
         </Row>
 
@@ -180,7 +270,13 @@ const SuperAdminDashboard = () => {
             padding: "20px",
           }}
         >
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
             <h3
               style={{
                 fontFamily: "Poppins, sans-serif",
@@ -195,7 +291,7 @@ const SuperAdminDashboard = () => {
               onClick={() => navigate(ROUTES.SUPER_ADMIN_COMPLIANCE)}
               style={{ color: "#162247", fontWeight: 500, cursor: "pointer" }}
             >
-              <RightOutlined/>
+              <RightOutlined />
             </a>
           </div>
           <CustomTable columns={pendingColumns} data={allVerifications} />
@@ -204,24 +300,59 @@ const SuperAdminDashboard = () => {
         {/* ======= SERVICE SUMMARY / TICKETS / NOTIFICATIONS ======= */}
         <Row gutter={[24, 24]} style={{ marginTop: 20 }}>
           <Col xs={24} md={8}>
-            <Card title="Service Summary" extra={<a style={{color: "#162247", fontWeight:"600"}} onClick={() => navigate(ROUTES.SUPER_ADMIN_SERVICES)}><RightOutlined/></a>}>
-              <ServiceSummary summary={serviceSummaryData.map((item) => ({
-                ...item,
-                onClick: () => navigate(item.path),
-              }))} />
+            <Card
+              title="Service Summary"
+              extra={
+                <a
+                  style={{ color: "#162247", fontWeight: "600" }}
+                  onClick={() => navigate(ROUTES.SUPER_ADMIN_SERVICES)}
+                >
+                  <RightOutlined />
+                </a>
+              }
+            >
+              <ServiceSummary
+                summary={serviceSummaryData.map((item) => ({
+                  ...item,
+                  onClick: () => navigate(item.path),
+                }))}
+              />
             </Card>
           </Col>
 
           <Col xs={24} md={8}>
-            <Card title="Tickets Snapshot" extra={<a style={{color: "#162247", fontWeight:"600"}} onClick={() => navigate(ROUTES.SUPER_ADMIN_SUPPORT)}><RightOutlined/></a>}>
-              <div onClick={() => navigate(ROUTES.SUPER_ADMIN_SUPPORT)} style={{ cursor: "pointer" }}>
+            <Card
+              title="Tickets Snapshot"
+              extra={
+                <a
+                  style={{ color: "#162247", fontWeight: "600" }}
+                  onClick={() => navigate(ROUTES.SUPER_ADMIN_SUPPORT)}
+                >
+                  <RightOutlined />
+                </a>
+              }
+            >
+              <div
+                onClick={() => navigate(ROUTES.SUPER_ADMIN_SUPPORT)}
+                style={{ cursor: "pointer" }}
+              >
                 <TicketsSnapshot tickets={ticketsData} />
               </div>
             </Card>
           </Col>
 
           <Col xs={24} md={8}>
-            <Card title="Notifications" extra={<a style={{color: "#162247", fontWeight:"600"}} onClick={() => navigate(ROUTES.SUPER_ADMIN_NOTIFICATIONS)}><RightOutlined/></a>}>
+            <Card
+              title="Notifications"
+              extra={
+                <a
+                  style={{ color: "#162247", fontWeight: "600" }}
+                  onClick={() => navigate(ROUTES.SUPER_ADMIN_NOTIFICATIONS)}
+                >
+                  <RightOutlined />
+                </a>
+              }
+            >
               <Notifications notifications={notificationsData} />
             </Card>
           </Col>

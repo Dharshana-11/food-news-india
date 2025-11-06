@@ -34,7 +34,6 @@ const AppRoutes = () => {
       <div className="loading-container">
         <Spin size="large" />
       </div>
-
     );
   }
 

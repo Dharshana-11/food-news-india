@@ -25,7 +25,9 @@ const SuperAdminLayout = ({ children }) => {
   }, [isSidebarOpen]);
 
   return (
-    <div className={`super-admin-layout ${isSidebarOpen ? "sidebar-open" : ""}`}>
+    <div
+      className={`super-admin-layout ${isSidebarOpen ? "sidebar-open" : ""}`}
+    >
       <Header onMenuClick={toggleSidebar} />
 
       <div className="super-admin-layout-body">
@@ -42,7 +44,9 @@ const SuperAdminLayout = ({ children }) => {
           aria-hidden={!isSidebarOpen}
           onClick={closeSidebar}
           className={`sidebar-overlay ${isSidebarOpen ? "visible" : ""}`}
-          onKeyDown={(e) => { if (e.key === "Escape") closeSidebar(); }}
+          onKeyDown={(e) => {
+            if (e.key === "Escape") closeSidebar();
+          }}
         />
 
         <Content className="main-content" onClick={closeSidebar}>

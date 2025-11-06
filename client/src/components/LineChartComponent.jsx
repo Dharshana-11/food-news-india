@@ -24,7 +24,9 @@ const LineChartComponent = ({ data, colors }) => {
   }, []);
 
   // Dynamically calculate inner width for scrollable charts
-  const innerWidth = isMobile ? Math.max(data.length * pointWidth, 320) : "100%";
+  const innerWidth = isMobile
+    ? Math.max(data.length * pointWidth, 320)
+    : "100%";
 
   return (
     <div

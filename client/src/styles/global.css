@@ -71,8 +71,10 @@ body {
   font-size: 25px !important;
   color: #ff6c1f;
   cursor: pointer;
-  transition: transform 0.25s ease, color 0.25s ease;
-  position: relative;           /* Allow precise badge placement */
+  transition:
+    transform 0.25s ease,
+    color 0.25s ease;
+  position: relative; /* Allow precise badge placement */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -134,7 +136,7 @@ body {
 }
 
 .badge-custom .ant-badge-count {
-  transform: translate(6px, -6px) !important;  /* adjust X and Y visually */
+  transform: translate(6px, -6px) !important; /* adjust X and Y visually */
   font-size: 12px;
   height: 16px;
   min-width: 16px;
@@ -227,7 +229,7 @@ body {
   box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   border-right: 1px solid #e0e0e0;
   min-height: calc(100vh - 70px);
   padding-top: 20px;
@@ -272,7 +274,7 @@ body {
 .ant-menu-item {
   font-size: 14px;
   font-weight: 500;
-  font-family: 'Poppins';
+  font-family: "Poppins";
   padding-left: 20px !important;
   height: 46px;
   display: flex;
@@ -320,7 +322,7 @@ body {
   height: 100vh;
   backdrop-filter: blur(6px);
   background-color: rgba(0, 0, 0, 0.2);
-  z-index: 90; 
+  z-index: 90;
   transition: all 0.3s ease;
 }
 
@@ -348,7 +350,7 @@ body {
     overflow: hidden;
   }
 
-  .sidebar-title-desktop{
+  .sidebar-title-desktop {
     display: none;
   }
 
@@ -371,7 +373,8 @@ body {
     position: relative;
   }
 
-  .sidebar-profile-pic, .sidebar-profile-icon {
+  .sidebar-profile-pic,
+  .sidebar-profile-icon {
     font-size: 26px;
     color: #ffffff;
     cursor: pointer;
@@ -491,7 +494,7 @@ body {
 }
 
 .stat-card-title {
-  font-family: 'Poppins';
+  font-family: "Poppins";
   font-size: 14px;
   font-weight: 500;
   color: #162247;
@@ -500,7 +503,7 @@ body {
 }
 
 .stat-card-value {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-size: 28px;
   font-weight: 700;
   color: #162247;
@@ -592,7 +595,7 @@ body {
   border-radius: 14px !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
   transition: all 0.25s ease;
-  font-family: 'Poppins', 'Inter', sans-serif;
+  font-family: "Poppins", "Inter", sans-serif;
   border: none !important;
   display: flex;
   flex-direction: column;
@@ -610,7 +613,7 @@ body {
 .chart-card .ant-card-head {
   border-bottom: 2px solid #f5f5f5;
   background-color: #ffffff;
-  color: var(--color-primary-blue); 
+  color: var(--color-primary-blue);
   font-weight: 600;
   font-size: 16px;
   padding: 10px 20px !important;
@@ -624,17 +627,17 @@ body {
 .recharts-default-tooltip {
   background-color: #ffffff !important;
   border: 1px solid #eee !important;
-  border-radius: 8px ;
-  font-family: 'Inter', sans-serif;
+  border-radius: 8px;
+  font-family: "Inter", sans-serif;
   font-size: 13px;
 }
 
 .recharts-legend-wrapper {
-  display: flex ;
-  justify-content: center ;
-  flex-wrap: wrap ;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
   gap: 6px;
-  padding-top: 6px ;
+  padding-top: 6px;
   max-height: 60px;
   overflow-y: auto;
   scrollbar-width: none !important;
@@ -675,9 +678,9 @@ body {
   column-gap: 12px;
 }
 
-.recharts-default-legend{
+.recharts-default-legend {
   margin-top: 14px !important;
-  }
+}
 
 /* Center text inside donut */
 .donut-center-text {
@@ -703,7 +706,6 @@ body {
   color: #888;
   letter-spacing: 0.3px;
 }
-
 
 /* =========================================================
    ======================= LINE CHART ====================
@@ -749,10 +751,9 @@ body {
   .recharts-legend-item text {
     font-size: 12px !important;
   }
-  .recharts-default-legend{
-  margin-top: 28px !important;
+  .recharts-default-legend {
+    margin-top: 28px !important;
   }
-
 }
 
 /* Adjustments for tablets & mobile */
@@ -864,7 +865,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 18px;
-  font-family: 'Poppins', 'Inter', sans-serif;
+  font-family: "Poppins", "Inter", sans-serif;
   height: 450px;
   max-height: 450px;
   overflow-y: auto;
@@ -880,13 +881,13 @@ body {
   background: #f9fafc;
   padding: 16px;
   border-radius: 10px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   transition: all 0.2s ease;
 }
 
 .service-summary-item:hover {
   transform: translateY(-2px);
-  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
 }
 
 .service-summary-header {
@@ -1403,7 +1404,7 @@ body {
 /* =========================================================
    =============== RESPONSIVE MEDIA QUERIES ================
    ========================================================= */
-   
+
 @media (max-width: 1024px) {
   .admin-login-main {
     grid-template-columns: 1fr;

@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       enum: Object.values(ROLES),
-      required: true
+      required: true,
     },
     name: {
       type: String,
@@ -49,7 +49,7 @@ const userSchema = new mongoose.Schema(
       required: true,
     },
   },
-  { timestamps: true } // automatically adds createdAt and updatedAt
+  { timestamps: true }, // automatically adds createdAt and updatedAt
 );
 
 /**
