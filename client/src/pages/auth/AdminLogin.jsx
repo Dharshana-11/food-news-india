@@ -1,15 +1,18 @@
 /**
  * AdminLogin.jsx
- * ----------------
- * Renders the Super Admin login screen.
- * Handles Firebase-based authentication and backend session creation
- * through the AuthContext `login` method.
- * 
- * Features:
- * - Responsive design with left image & right login form layout.
- * - Validation for email and password.
- * - Role-based navigation after login.
- * - Graceful error handling and loading indicators.
+ * ------------------------------------------------------------
+ * Renders the Super Admin / Admin login screen.
+ *
+ * Responsibilities:
+ * - Handles Firebase-based authentication through `AuthContext.login()`.
+ * - Performs role-based navigation (Super Admin → Dashboard, Admin → Dashboard).
+ * - Provides real-time feedback with Ant Design form validation and messages.
+ *
+ * UI Features:
+ * - Responsive layout: left illustration + right login card.
+ * - Custom brand logo and dynamic slogan rendering.
+ * - Built-in loading states, error handling, and Google sign-in placeholder.
+ * ------------------------------------------------------------
  */
 
 import { useState } from "react";
@@ -20,24 +23,19 @@ import { useAuth } from "../../context/AuthContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 
-import image from "../../assets/compliance_image.png";
-import logoDesktop from "../../assets/placeholder_logo.png";
-import logoMobile from "../../assets/placeholder_logo_dark_theme.png";
 import "../../styles/global.css";
-
 import { ROUTES } from "../../routes";
 import ROLES from "../../constants/roles";
+import BRAND from "../../constants/branding";
 
 const { Text, Link } = Typography;
 
 /**
- * AdminLogin Component
- * ---------------------
- * Handles admin/super admin authentication and redirects user
- * to the appropriate dashboard based on role.
- * 
- * @component
- * @returns {JSX.Element} Admin login page UI.
+ * @component AdminLogin
+ * @description Handles admin/super admin login and redirects users
+ * to their respective dashboards after authentication.
+ *
+ * @returns {JSX.Element} Fully responsive login page.
  */
 const AdminLogin = () => {
   const [loadingForm, setLoadingForm] = useState(false);
@@ -45,11 +43,12 @@ const AdminLogin = () => {
   const { loading, login } = useAuth();
 
   /**
-   * Handles successful form submission.
-   * Authenticates user and navigates to the correct dashboard.
-   *
+   * @function onFinish
    * @async
-   * @param {{ identifier: string, password: string }} values - Login form data.
+   * @description Handles successful form submission by authenticating
+   * the user and navigating to the appropriate dashboard.
+   *
+   * @param {{ identifier: string, password: string }} values - Form data from user input.
    * @returns {Promise<void>}
    */
   const onFinish = async (values) => {
@@ -62,6 +61,7 @@ const AdminLogin = () => {
         return;
       }
 
+      // ✅ Role-based navigation
       if (user.role === ROLES.SUPER_ADMIN) {
         message.success(`Welcome ${user.name}!`);
         navigate(ROUTES.SUPER_ADMIN_DASHBOARD);
@@ -82,22 +82,24 @@ const AdminLogin = () => {
   return (
     <div className="admin-login-container">
       <main className="admin-login-main">
-
-        {/* Top-right logo bar */}
+        {/* =========================================================
+           Header Bar (Top-right): Logo + Home Button
+           ========================================================= */}
         <div className="admin-login-right-top">
           <div className="admin-login-brand-left">
             <picture>
-              <source srcSet={logoMobile} media="(max-width: 768px)" />
-              <source srcSet={logoDesktop} media="(min-width: 769px)" />
+              <source srcSet={BRAND.LOGO_DARK} media="(max-width: 768px)" />
+              <source srcSet={BRAND.LOGO_LIGHT} media="(min-width: 769px)" />
               <img
-                src={logoDesktop}
-                alt="Food News India Logo"
+                src={BRAND.LOGO_LIGHT}
+                alt={`${BRAND.NAME} Logo`}
                 className="admin-login-brand-logo"
               />
             </picture>
 
             <h1 className="admin-login-brand-title">
-              <span className="admin-login-text-orange">Food</span> News India
+              <span className="admin-login-text-orange">{BRAND.HIGHLIGHT}</span>{" "}
+              {BRAND.NAME.replace(`${BRAND.HIGHLIGHT} `, "")}
             </h1>
           </div>
 
@@ -106,25 +108,33 @@ const AdminLogin = () => {
           </div>
         </div>
 
-        {/* Left illustration */}
+        {/* =========================================================
+           Left Illustration Section
+           ========================================================= */}
         <div className="admin-login-left">
-          <Image src={image} preview={false} width={250} />
+          <Image src={BRAND.IMAGE} preview={false} width={250} />
           <h2
             className="admin-login-slogan"
             style={{ fontFamily: "Poppins", fontWeight: "500" }}
           >
-            Simplify <span className="admin-login-text-orange">Compliance</span>, <br />
-            Empower Your Business
+            {BRAND.SLOGAN.split(",")[0]}{" "}
+            <span className="admin-login-text-orange">
+              {BRAND.SLOGAN.split(",")[1]?.trim().split(" ")[0]}
+            </span>
+            , <br />
+            {BRAND.SLOGAN.split(",")[1]?.trim().split(" ").slice(1).join(" ")}
           </h2>
         </div>
 
-        {/* Right login form */}
+        {/* =========================================================
+           Right Login Form Section
+           ========================================================= */}
         <div className="admin-login-right">
           <div className="admin-login-form-card">
             <h3 className="admin-login-form-card__title">Admin Login</h3>
 
             <Form layout="vertical" onFinish={onFinish}>
-              {/* Email field */}
+              {/* Email Field */}
               <Form.Item
                 label="E-mail ID"
                 name="identifier"
@@ -136,11 +146,13 @@ const AdminLogin = () => {
                 <Input placeholder="Enter your email id" />
               </Form.Item>
 
-              {/* Password field */}
+              {/* Password Field */}
               <Form.Item
                 label="Password"
                 name="password"
-                rules={[{ required: true, message: "Please enter your password!" }]}
+                rules={[
+                  { required: true, message: "Please enter your password!" },
+                ]}
               >
                 <Input.Password
                   placeholder="Enter your password"
@@ -150,7 +162,7 @@ const AdminLogin = () => {
                 />
               </Form.Item>
 
-              {/* Submit button */}
+              {/* Submit Button */}
               <Form.Item>
                 <Button
                   type="primary"
@@ -164,11 +176,12 @@ const AdminLogin = () => {
                 </Button>
               </Form.Item>
 
-              {/* Forgot password */}
+              {/* Forgot Password */}
               <div className="admin-login-form-forgot-password">
                 <Text>Forgot Password?</Text>
                 <Link href="/" className="admin-login-link-reset-password">
-                  {" "}Reset Password
+                  {" "}
+                  Reset Password
                 </Link>
               </div>
 
@@ -179,7 +192,7 @@ const AdminLogin = () => {
                 <hr className="admin-login-divider-line" />
               </div>
 
-              {/* Google sign-in (placeholder) */}
+              {/* Google Sign-In (Placeholder) */}
               <Form.Item>
                 <Button type="default" block className="admin-login-btn-google">
                   <FontAwesomeIcon icon={faGoogle} /> Continue with Google

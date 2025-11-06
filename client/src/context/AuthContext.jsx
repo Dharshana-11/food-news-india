@@ -2,7 +2,7 @@
  * AuthContext.jsx
  * ----------------
  * Provides global authentication state and utilities using Firebase and backend session verification.
- * 
+ *
  * Responsibilities:
  * - Tracks authentication state (login/logout).
  * - Syncs Firebase auth with backend HttpOnly cookie sessions.
@@ -50,25 +50,34 @@ export const AuthProvider = ({ children }) => {
   const verifyActiveSession = async () => {
     try {
       // Attempt to verify existing session
-      let res = await fetch(`${import.meta.env.VITE_API_URL}/api/session/verify-session`, {
-        method: "GET",
-        credentials: "include",
-      });
+      let res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/session/verify-session`,
+        {
+          method: "GET",
+          credentials: "include",
+        },
+      );
 
       // If session expired, try refreshing
       if (res.status === 401) {
-        const refreshRes = await fetch(`${import.meta.env.VITE_API_URL}/api/session/refresh-session`, {
-          method: "POST",
-          credentials: "include",
-        });
+        const refreshRes = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/session/refresh-session`,
+          {
+            method: "POST",
+            credentials: "include",
+          },
+        );
 
         if (!refreshRes.ok) throw new Error("Failed to refresh session");
 
         // Retry verification after refresh
-        res = await fetch(`${import.meta.env.VITE_API_URL}/api/session/verify-session`, {
-          method: "GET",
-          credentials: "include",
-        });
+        res = await fetch(
+          `${import.meta.env.VITE_API_URL}/api/session/verify-session`,
+          {
+            method: "GET",
+            credentials: "include",
+          },
+        );
       }
 
       const data = await res.json();
@@ -97,7 +106,11 @@ export const AuthProvider = ({ children }) => {
 
     if (identifier.includes("@")) {
       // Email-based login (for super-admin/admin)
-      userCredential = await signInWithEmailAndPassword(auth, identifier, password);
+      userCredential = await signInWithEmailAndPassword(
+        auth,
+        identifier,
+        password,
+      );
     } else {
       // Phone-based login (custom implementation)
       userCredential = await signInWithPhoneAuth(auth, identifier, password);
@@ -131,13 +144,17 @@ export const AuthProvider = ({ children }) => {
    * @returns {Promise<void>}
    */
   const logout = async () => {
-    await fetch(`${import.meta.env.VITE_API_URL}/api/session/logout`, {
-      method: "POST",
-      credentials: "include",
-    });
-
-    await signOut(auth);
-    setCurrentUser(null);
+    try {
+      await fetch(`${import.meta.env.VITE_API_URL}/api/session/logout`, {
+        method: "POST",
+        credentials: "include",
+      });
+    } catch (err) {
+      console.error("Backend logout failed:", err);
+    } finally {
+      await signOut(auth);
+      setCurrentUser(null);
+    }
   };
 
   /**

@@ -11,19 +11,19 @@
  */
 const ROLES = {
   /** Highest-level role with full permissions across the platform. */
-  SUPER_ADMIN: 'super_admin',
+  SUPER_ADMIN: "super_admin",
 
   /** Administrative role with elevated management permissions. */
-  ADMIN: 'admin',
+  ADMIN: "admin",
 
   /** Agent-level role responsible for handling user or client requests. */
-  AGENT: 'agent',
+  AGENT: "agent",
 
   /** Role assigned to business owners managing their own data. */
-  BUSINESS_OWNER: 'business_owner',
+  BUSINESS_OWNER: "business_owner",
 
   /** Role for service providers offering or managing services. */
-  SERVICE_PROVIDER: 'service_provider',
+  SERVICE_PROVIDER: "service_provider",
 };
 
 export default ROLES;

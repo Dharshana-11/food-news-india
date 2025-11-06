@@ -34,7 +34,7 @@ export const createSession = async (req, res) => {
     // Close all other active sessions for this user
     await UserSession.updateMany(
       { uid, isActive: true, expiresAt: { $gt: now } },
-      { isActive: false, logoutTime: now }
+      { isActive: false, logoutTime: now },
     );
 
     const sessionTTL = parseInt(process.env.SESSION_TTL_HOURS || "1", 10);
@@ -155,7 +155,7 @@ export const refreshSession = async (req, res) => {
         refreshExpiresAt: { $gt: new Date() },
       },
       { $set: { rotated: true, isActive: false, logoutTime: new Date() } },
-      { new: true }
+      { new: true },
     );
 
     console.log("Cookies received at refresh:", req.cookies);
@@ -180,7 +180,7 @@ export const refreshSession = async (req, res) => {
     const refreshTTL = parseInt(process.env.REFRESH_TTL_DAYS || "7", 10);
     const expiresAt = new Date(Date.now() + sessionTTL * 60 * 60 * 1000);
     const refreshExpiresAt = new Date(
-      Date.now() + refreshTTL * 24 * 60 * 60 * 1000
+      Date.now() + refreshTTL * 24 * 60 * 60 * 1000,
     );
 
     // Create new active session

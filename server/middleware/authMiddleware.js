@@ -1,5 +1,6 @@
 import admin from "../firebase.js";       // Firebase admin SDK instance
 import Users from "../models/User.js";
+import AdminModel from "../models/Admin.js";
 
 /**
  * Middleware to authenticate requests using Firebase ID token.
