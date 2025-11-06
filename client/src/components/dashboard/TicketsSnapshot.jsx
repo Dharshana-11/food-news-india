@@ -1,3 +1,20 @@
+/**
+ * TicketsSnapshot.jsx
+ * --------------------
+ * Displays a summary of ticket statuses using Ant Design cards.
+ * Each card shows an icon, the count of tickets, and the ticket type.
+ *
+ * Props:
+ * @param {Array} tickets - List of ticket summary objects with fields:
+ *   { type: string, count: number }
+ *
+ * Example:
+ * [
+ *   { type: "Open", count: 12 },
+ *   { type: "Resolved", count: 34 }
+ * ]
+ */
+
 import { Card } from "antd";
 import {
   ExclamationCircleOutlined,
@@ -10,7 +27,8 @@ import {
   FileSearchOutlined,
 } from "@ant-design/icons";
 
-const TicketsSnapshot = ({ tickets }) => {
+const TicketsSnapshot = ({ tickets = [] }) => {
+  // 🔹 Mapping ticket types to icons with color codes
   const iconMap = {
     Open: <ExclamationCircleOutlined style={{ color: "#ff4d4f" }} />,
     "In Progress": <SyncOutlined spin style={{ color: "#1890ff" }} />,
@@ -32,8 +50,17 @@ const TicketsSnapshot = ({ tickets }) => {
           className="ticket-card"
           styles={{ body: { padding: "14px 10px" } }}
         >
-          <div className="ticket-icon">{iconMap[ticket.type]}</div>
+          {/* Icon for each ticket type */}
+          <div className="ticket-icon">
+            {iconMap[ticket.type] || (
+              <FileSearchOutlined style={{ color: "#8c8c8c" }} />
+            )}
+          </div>
+
+          {/* Ticket count */}
           <div className="ticket-count">{ticket.count}</div>
+
+          {/* Ticket type name */}
           <div className="ticket-type">{ticket.type}</div>
         </Card>
       ))}

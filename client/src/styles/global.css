@@ -587,7 +587,7 @@ body {
 }
 
 /* =========================================================
-   =================== CHART CARD BASE ===================
+   =================== CHART CARD  =========================
    ========================================================= */
 
 .chart-card {
@@ -661,7 +661,7 @@ body {
 .donut-container {
   position: relative;
   width: 100%;
-  height: 340px; /* default chart height */
+  height: 320px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -685,7 +685,7 @@ body {
 /* Center text inside donut */
 .donut-center-text {
   position: absolute;
-  top: 45% !important;
+  top: 42% !important;
   left: 50%;
   transform: translate(-50%, -50%);
   text-align: center;
@@ -780,6 +780,16 @@ body {
     align-items: center;
     gap: 4px;
   }
+
+  .dashboard-content {
+    padding-top: 24px; /* or the same as your global margin */
+    margin-top: 0;
+    overflow-x: hidden; /* remove any horizontal bleed */
+  }
+
+  .chart-card {
+    margin-top: 16px; /* ensures it doesn’t stick to header */
+  }
 }
 
 /* =========================================================
@@ -787,9 +797,6 @@ body {
    ========================================================= */
 
 /* ===================== DASHBOARD TABLE ====================== */
-/* =========================
-   TABLE STYLES (keep everything)
-   ========================= */
 
 .custom-table .ant-table {
   background: #fff;

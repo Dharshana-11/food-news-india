@@ -18,4 +18,4 @@ const CustomTooltip = ({ active, payload, label }) => {
   return null;
 };
 
-export default CustomToolTip;
+export default CustomTooltip;

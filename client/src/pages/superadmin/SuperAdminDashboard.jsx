@@ -1,3 +1,21 @@
+/**
+ * SuperAdminDashboard.jsx
+ * ------------------------------------------------------------
+ * Main dashboard screen for the Super Admin role.
+ *
+ * Displays:
+ *  - Key statistics (businesses, agents, tickets, etc.)
+ *  - Donut and line charts (compliance overview, activity)
+ *  - Pending verifications table
+ *  - Service summary, ticket snapshot, and notifications
+ *
+ * Uses:
+ *  - Ant Design for layout and components
+ *  - Recharts via ChartCard for visualization
+ *  - Custom reusable dashboard widgets
+ * ------------------------------------------------------------
+ */
+
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Row, Col, Card, Tag } from "antd";
@@ -12,6 +30,7 @@ import {
   ClockCircleOutlined,
   RightOutlined,
 } from "@ant-design/icons";
+
 import SuperAdminLayout from "../../layouts/SuperAdminLayout";
 import StatCard from "../../components/dashboard/StatCard";
 import ChartCard from "../../components/dashboard/ChartCard";
@@ -19,13 +38,17 @@ import CustomTable from "../../components/CustomTable";
 import ServiceSummary from "../../components/dashboard/ServiceSummary";
 import TicketsSnapshot from "../../components/dashboard/TicketsSnapshot";
 import Notifications from "../../components/dashboard/Notifications";
-import { ROUTES } from "../../routes"; // make sure your ROUTES constants exist
+import { ROUTES } from "../../routes";
 import ROLES from "../../constants/roles";
 
 const SuperAdminDashboard = () => {
   const navigate = useNavigate();
 
-  // ======= STATS =======
+  /* =======================================================
+     DASHBOARD DATA
+  ======================================================= */
+
+  // ---------- Top Statistic Cards ----------
   const statsData = [
     {
       title: "Total Businesses",
@@ -53,13 +76,14 @@ const SuperAdminDashboard = () => {
     },
   ];
 
+  // ---------- Compliance Donut Chart ----------
   const complianceData = [
     { name: "Compliant", value: 58 },
     { name: "Pending Review", value: 32 },
     { name: "Non-Compliant", value: 10 },
   ];
 
-  // ======= TABLE =======
+  // ---------- Table Columns ----------
   const pendingColumns = [
     {
       title: "Entity Type",
@@ -99,6 +123,7 @@ const SuperAdminDashboard = () => {
     },
   ];
 
+  // ---------- Pending Verifications ----------
   const allVerifications = [
     {
       key: 1,
@@ -129,6 +154,7 @@ const SuperAdminDashboard = () => {
     },
   ];
 
+  // ---------- Line Chart Activity ----------
   const activityData = [
     { name: "Mon", logins: 30, tickets: 20 },
     { name: "Tue", logins: 50, tickets: 35 },
@@ -139,6 +165,7 @@ const SuperAdminDashboard = () => {
     { name: "Sun", logins: 65, tickets: 55 },
   ];
 
+  // ---------- Service Summary ----------
   const serviceSummaryData = [
     {
       title: "Active Services",
@@ -166,6 +193,7 @@ const SuperAdminDashboard = () => {
     },
   ];
 
+  // ---------- Tickets Snapshot ----------
   const ticketsData = [
     { type: "Open", count: 12 },
     { type: "In Progress", count: 8 },
@@ -177,6 +205,7 @@ const SuperAdminDashboard = () => {
     { type: "Delayed", count: 4 },
   ];
 
+  // ---------- Notifications ----------
   const notificationsData = [
     {
       type: "alert",
@@ -222,10 +251,14 @@ const SuperAdminDashboard = () => {
     },
   ];
 
+  /* =======================================================
+     RENDER
+  ======================================================= */
+
   return (
     <SuperAdminLayout>
       <div className="super-admin-dashboard" style={{ padding: "24px" }}>
-        {/* ======= STATS ======= */}
+        {/* ---------- Statistic Cards ---------- */}
         <Row gutter={[24, 24]} className="stats-row">
           {statsData.map((item, index) => (
             <Col xs={24} sm={12} md={6} key={index}>
@@ -239,7 +272,7 @@ const SuperAdminDashboard = () => {
           ))}
         </Row>
 
-        {/* ======= CHARTS ======= */}
+        {/* ---------- Charts Section ---------- */}
         <Row gutter={[24, 24]} style={{ marginTop: 20 }}>
           <Col xs={24} md={8}>
             <ChartCard
@@ -260,7 +293,7 @@ const SuperAdminDashboard = () => {
           </Col>
         </Row>
 
-        {/* ======= PENDING VERIFICATIONS ======= */}
+        {/* ---------- Pending Verifications ---------- */}
         <div
           style={{
             background: "#fff",
@@ -297,7 +330,7 @@ const SuperAdminDashboard = () => {
           <CustomTable columns={pendingColumns} data={allVerifications} />
         </div>
 
-        {/* ======= SERVICE SUMMARY / TICKETS / NOTIFICATIONS ======= */}
+        {/* ---------- Summary, Tickets, Notifications ---------- */}
         <Row gutter={[24, 24]} style={{ marginTop: 20 }}>
           <Col xs={24} md={8}>
             <Card

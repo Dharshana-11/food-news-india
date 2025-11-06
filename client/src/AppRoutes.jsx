@@ -19,19 +19,20 @@ import { ROUTES } from "./routes";
 import ROLES from "./constants/roles";
 
 /**
- * Renders all routes in the application.
- * Displays a loading spinner until authentication state is resolved.
+ * Renders all application routes with public and role-protected access.
+ * Displays a loading spinner while authentication state is being determined.
  *
  * @component
- * @returns {JSX.Element} The complete set of application routes.
+ * @returns {JSX.Element} The complete route structure of the application.
  */
 const AppRoutes = () => {
   const { currentUser, loading } = useAuth();
 
-  // --- Display a loading spinner while authentication state is being determined ---
+  // --- Show loading indicator while authentication status initializes ---
   if (loading) {
     return (
       <div className="loading-container">
+        {/* style in global CSS */}
         <Spin size="large" />
       </div>
     );
@@ -39,11 +40,20 @@ const AppRoutes = () => {
 
   return (
     <Routes>
-      {/* ---------------- Public Routes ---------------- */}
+      {/* =========================================================
+          PUBLIC ROUTES
+          ========================================================= */}
       <Route path={ROUTES.LOGIN} element={<Login />} />
       <Route path={ROUTES.ADMIN_LOGIN} element={<AdminLogin />} />
 
-      {/* ---------------- Super Admin Protected Routes ---------------- */}
+      {/* =========================================================
+          SUPER ADMIN PROTECTED ROUTES
+          ---------------------------------------------------------
+          Each route uses ProtectedRoute to verify:
+          - A valid authenticated user (`currentUser`)
+          - The user's role matches `ROLES.SUPER_ADMIN`
+          If not, the component redirects appropriately.
+          ========================================================= */}
       <Route
         path={ROUTES.SUPER_ADMIN_DASHBOARD}
         element={
@@ -62,6 +72,7 @@ const AppRoutes = () => {
         }
       />
 
+      {/* -------- Placeholder routes for additional modules -------- */}
       <Route
         path={ROUTES.SUPER_ADMIN_COMPLIANCE}
         element={
@@ -70,6 +81,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+
       <Route
         path={ROUTES.SUPER_ADMIN_SERVICES}
         element={
@@ -78,6 +90,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+
       <Route
         path={ROUTES.SUPER_ADMIN_SUPPORT}
         element={
@@ -86,6 +99,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+
       <Route
         path={ROUTES.SUPER_ADMIN_SETTINGS}
         element={
@@ -94,6 +108,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+
       <Route
         path={ROUTES.SUPER_ADMIN_CONTENT}
         element={
@@ -102,6 +117,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+
       <Route
         path={ROUTES.SUPER_ADMIN_AUDIT}
         element={
@@ -110,6 +126,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+
       <Route
         path={ROUTES.SUPER_ADMIN_PROFILE}
         element={
@@ -118,14 +135,16 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       />
+
       <Route
-        path={ROUTES.SSUPER_ADMIN_NOTIFICATIONS}
+        path={ROUTES.SUPER_ADMIN_NOTIFICATIONS}
         element={
           <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
             <div>Notifications</div>
           </ProtectedRoute>
         }
       />
+
       <Route
         path={ROUTES.SUPER_ADMIN_TICKETS}
         element={

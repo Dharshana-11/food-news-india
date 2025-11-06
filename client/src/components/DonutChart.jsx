@@ -1,3 +1,18 @@
+/**
+ * DonutChart.jsx
+ * ------------------------------------------------------------
+ * A reusable donut chart component built with Recharts.
+ *
+ * Features:
+ * - Responsive design using <ResponsiveContainer>.
+ * - Custom hover animation with smooth scaling effect.
+ * - Central text displaying the total value.
+ * - Configurable color palette for flexibility.
+ *
+ * Ideal for use in dashboards or analytics panels.
+ * ------------------------------------------------------------
+ */
+
 import {
   PieChart,
   Pie,
@@ -8,6 +23,24 @@ import {
 } from "recharts";
 import { useState } from "react";
 
+/**
+ * @component DonutChart
+ * @description Renders a responsive donut chart with legend and hover effects.
+ *
+ * @param {Object[]} data - Array of data objects for the chart.
+ * @param {string} data[].name - Label for each segment.
+ * @param {number} data[].value - Numeric value for each segment.
+ * @param {string[]} [colors=["#3559E0", "#162247", "#4e5d8f", "#e6e9f2"]] - Array of hex color codes.
+ *
+ * @example
+ * const data = [
+ *   { name: "Completed", value: 40 },
+ *   { name: "Pending", value: 25 },
+ *   { name: "In Progress", value: 35 }
+ * ];
+ *
+ * <DonutChart data={data} />
+ */
 const DonutChart = ({
   data,
   colors = ["#3559E0", "#162247", "#4e5d8f", "#e6e9f2"],
@@ -17,7 +50,10 @@ const DonutChart = ({
 
   return (
     <div className="donut-container">
-      <ResponsiveContainer width="100%" height="80%">
+      {/* ============================ 
+           MAIN DONUT CHART
+         ============================ */}
+      <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
             data={data}
@@ -46,6 +82,9 @@ const DonutChart = ({
             ))}
           </Pie>
 
+          {/* ============================ 
+               TOOLTIP
+             ============================ */}
           <Tooltip
             cursor={{ fill: "transparent" }}
             contentStyle={{
@@ -60,6 +99,9 @@ const DonutChart = ({
             labelStyle={{ color: "#888", fontWeight: 600 }}
           />
 
+          {/* ============================ 
+               LEGEND
+             ============================ */}
           <Legend
             layout="horizontal"
             verticalAlign="bottom"
@@ -77,18 +119,10 @@ const DonutChart = ({
         </PieChart>
       </ResponsiveContainer>
 
-      {/* ✅ Center Text (always visible, smooth and stable) */}
-      <div
-        className="donut-center-text"
-        style={{
-          position: "absolute",
-          textAlign: "center",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          lineHeight: "1.3",
-        }}
-      >
+      {/* ============================ 
+           CENTER TEXT (TOTAL)
+         ============================ */}
+      <div className="donut-center-text">
         <div
           style={{
             fontSize: "1.6rem",

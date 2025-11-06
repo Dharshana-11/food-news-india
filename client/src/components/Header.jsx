@@ -1,47 +1,74 @@
+/**
+ * Header.jsx
+ * ------------------------------------------------------------
+ * Application header component for the Super Admin Dashboard.
+ *
+ * Features:
+ * - Displays brand logo and title.
+ * - Provides quick access to notifications and user profile.
+ * - Includes a hamburger icon to toggle the sidebar on mobile.
+ * - Role-based navigation for notifications and profiles.
+ * ------------------------------------------------------------
+ */
+
 import { Badge } from "antd";
-import { BellOutlined, UserOutlined, MenuOutlined } from "@ant-design/icons"; // 🔹 Added MenuOutlined
+import { BellOutlined, UserOutlined, MenuOutlined } from "@ant-design/icons";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../routes";
 import ROLES from "../constants/roles";
 import BRAND from "../constants/branding";
 
+/**
+ * Header component for the top navigation bar.
+ *
+ * @component
+ * @param {Object} props
+ * @param {Function} props.onMenuClick - Handler to toggle the sidebar (mobile view).
+ * @returns {JSX.Element} Header containing branding, user details, and icons.
+ */
 const Header = ({ onMenuClick }) => {
-  // 🔹 Accept onMenuClick prop for sidebar toggle
   const { currentUser } = useAuth();
   const navigate = useNavigate();
 
-  const userProfilePicture = null; // placeholder
+  // --- User info (placeholder image until backend integration) ---
+  const userProfilePicture = null;
   const userName = currentUser?.name || "User";
   const userRole = currentUser?.role || "Role";
 
+  // --- Role-based navigation maps ---
   const roleNotificationRoutes = {
     [ROLES.SUPER_ADMIN]: ROUTES.SUPER_ADMIN_NOTIFICATIONS,
   };
 
-  const roleProfileNotifications = {
+  const roleProfileRoutes = {
     [ROLES.SUPER_ADMIN]: ROUTES.SUPER_ADMIN_PROFILE,
   };
 
+  /**
+   * Navigates to the role-specific notifications page.
+   */
   const handleNotificationClick = () => {
     const notificationRoute = roleNotificationRoutes[userRole];
-    if (notificationRoute) {
-      navigate(notificationRoute);
-    }
+    if (notificationRoute) navigate(notificationRoute);
   };
 
+  /**
+   * Navigates to the role-specific profile page.
+   */
   const handleProfileClick = () => {
-    const profileRoute = roleProfileNotifications[userRole];
-    if (profileRoute) {
-      navigate(profileRoute);
-    }
+    const profileRoute = roleProfileRoutes[userRole];
+    if (profileRoute) navigate(profileRoute);
   };
 
   return (
     <header className="header">
-      {/* 🔹 Left section (hamburger + title + logo) */}
+      {/* ========================= LEFT SECTION ========================= */}
       <div className="header-left">
+        {/* Hamburger icon (visible on mobile) */}
         <MenuOutlined className="hamburger-icon" onClick={onMenuClick} />
+
+        {/* Brand logo and title */}
         <img
           src={BRAND.LOGO_DARK}
           alt={BRAND.NAME}
@@ -53,8 +80,9 @@ const Header = ({ onMenuClick }) => {
         </h2>
       </div>
 
-      {/* 🔹 Right section (notif + profile + details) */}
+      {/* ========================= RIGHT SECTION ========================= */}
       <div className="header-right">
+        {/* Notifications icon with badge */}
         <Badge count={2} offset={[-3, 3]} className="badge-custom">
           <BellOutlined
             className="notification-icon"
@@ -62,6 +90,7 @@ const Header = ({ onMenuClick }) => {
           />
         </Badge>
 
+        {/* User profile icon or image */}
         {userProfilePicture ? (
           <img
             src={userProfilePicture}
@@ -76,6 +105,7 @@ const Header = ({ onMenuClick }) => {
           />
         )}
 
+        {/* User name and role */}
         <div className="header-user-details">
           <h4 className="header-user-name">{userName}</h4>
           <h5 className="header-user-role">{userRole.replace("_", " ")}</h5>
