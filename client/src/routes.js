@@ -37,7 +37,7 @@ export const ROUTES = {
      ========================================================= */
   SUPER_ADMIN_DASHBOARD: "/super-admin/dashboard",
   SUPER_ADMIN_USERS: "/super-admin/users",
-  SUPER_ADMIN_COMPLIANCE: "/super-admin/compliance",
+  SUPER_ADMIN_COMPLIANCE: "/super-admin/compliance-docs",
   SUPER_ADMIN_SERVICES: "/super-admin/services",
   SUPER_ADMIN_SUPPORT: "/super-admin/support",
   SUPER_ADMIN_SETTINGS: "/super-admin/settings",
@@ -46,4 +46,6 @@ export const ROUTES = {
   SUPER_ADMIN_PROFILE: "/super-admin/profile",
   SUPER_ADMIN_NOTIFICATIONS: "/super-admin/notifications",
   SUPER_ADMIN_TICKETS: "/super-admin/tickets",
+
+  SUPER_ADMIN_COMPLIANCE_CATEGORIES: "/super-admin/compliance-categories",
 };

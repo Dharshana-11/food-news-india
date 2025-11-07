@@ -6,13 +6,15 @@ const complianceCategorySchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true, // ensures no duplicate category names
-      trim: true
+      trim: true,
+      index: true
     },
     code: {
       type: String,
       unique: true,       // optional human-readable key (like FSSAI, HC)
       uppercase: true,
-      trim: true
+      trim: true,
+      index: true
     },
     description: {
       type: String,

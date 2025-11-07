@@ -1488,3 +1488,101 @@ body {
     max-width: 100%;
   }
 }
+
+/* =========================================================
+   ============ COMPLIANCE SUMMARY SECTION =================
+   ========================================================= */
+
+.compliance-summary-section {
+  margin: 10px;
+  padding-top: 10px;
+}
+
+/* header above the table */
+.compliance-summary-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px;
+  padding-right: 10px;
+}
+
+.compliance-summary-title {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  color: #162247;
+}
+
+.compliance-summary-link {
+  color: #162247;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.compliance-summary-link:hover {
+  color: #0f183a;
+}
+
+/* ==========================
+   Compliance Categories Styles
+   ========================== */
+
+.compliance-categories-section {
+  padding: 16px;
+}
+
+.compliance-categories-header {
+  margin-bottom: 10px;
+}
+
+.compliance-categories-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-text-dark);
+  margin-bottom: 12px;
+}
+
+/* Toolbar */
+.compliance-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 25px 10px 18px 10px;
+}
+
+.compliance-search {
+  width: 250px !important;
+}
+
+.compliance-filter {
+  width: 180px !important;
+}
+
+.refresh-btn {
+  border-color: var(--color-border) !important;
+  color: var(--color-text-dark) !important;
+}
+
+.add-category-btn {
+  background-color: var(--color-primary-orange) !important;
+  border-color: var(--color-primary-orange) !important;
+  margin-left: auto; /* pushes Add button to right end */
+}
+
+/* Buttons */
+.edit-btn {
+  color: var(--color-primary-blue) !important;
+}
+
+/* Status text */
+.status-active {
+  color: green;
+  font-weight: 500;
+}
+
+.status-inactive {
+  color: red;
+  font-weight: 500;
+}
+

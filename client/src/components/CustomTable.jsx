@@ -25,20 +25,24 @@
 
 import { Table } from "antd";
 
-const CustomTable = ({ columns, data }) => (
-  <div className="custom-table-wrapper">
-    {/* Scrollable container for horizontal overflow handling */}
-    <div className="custom-table-scroll">
-      <Table
-        columns={columns} // Table column definitions
-        dataSource={data} // Data array
-        rowKey={(record, index) => record.id || index} // Unique key for each row
-        pagination={false} // No pagination (dashboard layout friendly)
-        bordered={false} // Clean borderless look
-        className="custom-table" // Custom CSS class for theme consistency
-      />
+const CustomTable = ({ columns, data }) => {
+  const safeData = Array.isArray(data) ? data : [];
+
+  return (
+    <div className="custom-table-wrapper">
+      <div className="custom-table-scroll">
+        <Table
+          columns={columns}
+          dataSource={safeData}
+          rowKey={(record, index) => record._id || record.id || index}
+          pagination={false}
+          bordered={false}
+          className="custom-table"
+        />
+      </div>
     </div>
-  </div>
-);
+  );
+};
+
 
 export default CustomTable;
