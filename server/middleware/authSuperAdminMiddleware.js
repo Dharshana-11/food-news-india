@@ -7,8 +7,11 @@
  * @param {import("express").NextFunction} next - Next middleware function
  * @returns {void|Response} Sends 403 response if user is not super-admin, else calls next()
  */
+
+import ROLES from "../utils/constants/roles.js";
+
 const authorizeSuperAdmin = (req, res, next) => {
-  if (!req.user || req.user.role !== "super-admin") {
+  if (!req.user || req.user.role !==ROLES.SUPER_ADMIN ) {
     return res
       .status(403)
       .json({ message: "Access denied. Super Admins only." });
