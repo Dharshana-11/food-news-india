@@ -61,18 +61,18 @@ const ComplianceSummary = () => {
   }, [currentUser]);
 
   return (
-    <div className="compliance-categories-section">
-      <div className="compliance-categories-header">
-        <h3 className="compliance-categories-title">Compliance Categories</h3>
+    <div className="compliance-summary-section">
+      <div className="compliance-summary-header">
+        <h3 className="compliance-summary-title">Compliance Categories</h3>
         <a
           onClick={() => navigate(ROUTES.SUPER_ADMIN_COMPLIANCE_CATEGORIES)}
-          className="compliance-categories-link"
+          className="compliance-summary-link"
         >
           <RightOutlined />
         </a>
       </div>
 
-      <div className="custom-table-wrapper compliance-categories-table">
+      <div className="custom-table-wrapper compliance-summary-table">
         <CustomTable columns={columns} data={categories} loading={loading} />
       </div>
     </div>

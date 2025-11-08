@@ -862,7 +862,7 @@ body {
 /* Tablets & below: allow horizontal scroll */
 @media (max-width: 1024px) {
   .custom-table-scroll .ant-table {
-    min-width: 700px; /* adjust depending on columns */
+    width: fit-content; ; /* adjust depending on columns */
     table-layout: auto; /* keep column widths natural */
     scrollbar-width: none;
   }
@@ -1541,6 +1541,7 @@ body {
   font-weight: 600;
   color: var(--color-text-dark);
   margin-bottom: 12px;
+  margin-left: 10px;
 }
 
 /* Toolbar */
@@ -1586,3 +1587,112 @@ body {
   font-weight: 500;
 }
 
+/* ==========================
+   Toolbar Responsive Fix
+   ========================== */
+
+.compliance-toolbar {
+  display: flex;
+  flex-wrap: wrap; /* allows wrapping on small screens */
+  align-items: center;
+  gap: 10px;
+  margin: 20px 10px;
+}
+
+/* Keep search input reasonable, but don't stretch buttons */
+.compliance-search {
+  width: 250px;
+  min-width: 150px; /* allows shrinking a bit on mobile */
+  flex: 0 1 auto; /* don't force grow */
+}
+
+.compliance-filter {
+  width: 180px;
+  min-width: 120px;
+  flex: 0 1 auto;
+}
+
+.refresh-btn {
+  flex: 0 0 auto; /* fixed size */
+}
+
+.add-category-btn {
+  flex: 0 0 auto; /* fixed size, stays at natural width */
+  margin-left: auto; /* push to right on large screens */
+}
+
+/* Table scroll improvements */
+.custom-table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+}
+
+.search-wrapper {
+  display: flex;
+  gap: 8px;
+}
+
+/* Search Button */
+.search-icon {
+  background-color: var(--color-primary-orange); /* main orange */
+  color: #ffffff; /* white icon */
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 10px; /* adjust size */
+  border-radius: 6px;
+  transition: all 0.2s ease-in-out;
+}
+
+.search-icon:hover {
+  background-color: #ff8c42 !important; /* slightly lighter/darker on hover */
+  color: #ffffff !important;
+}
+
+.search-icon:active {
+  background-color: #e6772d !important; /* darker on click */
+  transform: scale(0.95); /* subtle click effect */
+  color: #ffffff !important;
+}
+
+
+@media (max-width: 480px) {
+  .search-wrapper {
+    width: 100%;
+    flex-direction: row; /* could also stack vertically if needed */
+  }
+
+   .add-category-btn{
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .compliance-toolbar {
+    gap: 10px;
+    margin: 15px 5px;
+  }
+
+  /* Wrap elements nicely without stretching */
+  .compliance-search,
+  .compliance-filter,
+  .refresh-btn{
+    width: auto; /* natural width */
+  }
+
+  /* Adjust table font size/padding */
+  .custom-table .ant-table-thead > tr > th,
+  .custom-table .ant-table-tbody > tr > td {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .compliance-categories-title {
+    font-size: 16px;
+  }
+
+}

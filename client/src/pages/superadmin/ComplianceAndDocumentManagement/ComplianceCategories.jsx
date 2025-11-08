@@ -126,23 +126,24 @@ const ComplianceCategories = () => {
 
   return (
     <SuperAdminLayout>
-      <div className="compliance-summary-section">
+      <div className="compliance-categories-section">
         {/* Header */}
-        <div className="compliance-summary-header">
-          <h3 className="compliance-summary-title">Compliance Categories</h3>
+        <div className="compliance-categories-header">
+          <h3 className="compliance-categories-title">Compliance Categories</h3>
         </div>
 
         {/* Toolbar (now includes Add button) */}
         <div className="compliance-toolbar">
-          <Input
-            placeholder="Search categories..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            onPressEnter={handleSearch}
-            className="compliance-search"
-            prefix={<SearchOutlined />}
-            allowClear
-          />
+          <div className="search-wrapper">
+            <Input
+              placeholder="Search categories..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onPressEnter={handleSearch} // works for desktop/mobile keyboard
+              allowClear
+            />
+            <Button className="search-icon" icon={<SearchOutlined />} onClick={handleSearch}/>
+          </div>
 
           <Select
             placeholder="Filter by status"
@@ -168,7 +169,11 @@ const ComplianceCategories = () => {
         </div>
 
         {/* Table */}
-        <CustomTable columns={columns} data={filteredData} loading={loading} />
+        <div className="custom-table-wrapper compliance-summary-table">
+          <div className="custom-table-scroll">
+            <CustomTable columns={columns} data={filteredData} loading={loading} />
+          </div>
+        </div>
       </div>
     </SuperAdminLayout>
   );
