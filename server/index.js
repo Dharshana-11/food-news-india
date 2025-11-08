@@ -56,7 +56,7 @@ mongoose
 app.use("/api/auth", authRoutes); // Authentication routes
 app.use("/api/session", sessionRoutes); // Session management routes
 app.use("/api/super-admin", superAdminRoutes); // Super Admin routes
-app.use("/api/super-admin/compliance-categories", complianceCategoryRoutes);
+app.use("/api/super-admin/compliance/categories", complianceCategoryRoutes);
 
 /**
  * Server Startup
