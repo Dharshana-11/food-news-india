@@ -867,7 +867,178 @@ body {
     scrollbar-width: none;
   }
 }
-/* ================= SERVICE SUMMARY ================= */
+
+/* =========================================================
+   ============ CUSTOM TABLE STYLING - CATEGORY MODAL =======
+   ========================================================= */
+
+.custom-table .ant-table-thead > tr > th {
+  background-color: var(--color-primary-blue);
+  color: #fff;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-bottom: none;
+  transition: background 0.3s ease;
+}
+
+/* Prevent header bg from turning gray when sorted */
+.custom-table .ant-table-thead > tr > th.ant-table-column-sort {
+  background: var(--color-primary-blue) !important;
+  color: #fff !important;
+}
+
+/* Remove weird white translucent hover */
+.custom-table .ant-table-thead > tr > th:hover {
+  background-color: var(--color-hover-blue);
+  color: #fff;
+}
+
+/* ========== SORT ICONS (ASC/DESC) ========== */
+.custom-table .ant-table-column-sorter {
+  color: #fff !important;
+}
+
+.custom-table .ant-table-column-sorter-up.active,
+.custom-table .ant-table-column-sorter-down.active {
+  color: var(--color-primary-orange) !important;
+}
+
+.custom-table .ant-table-column-sorter-up,
+.custom-table .ant-table-column-sorter-down {
+  color: #fff !important;
+  opacity: 0.8;
+}
+
+/* ========== FILTER ICONS ========== */
+.custom-table .ant-table-filter-trigger {
+  color: #fff !important;
+  transition: color 0.3s ease;
+}
+
+.custom-table .ant-table-filter-trigger:hover {
+  color: var(--color-primary-orange) !important;
+}
+
+/* When filter is active */
+.custom-table .ant-table-filter-trigger.active {
+  color: var(--color-primary-orange) !important;
+}
+
+/* ========== FILTER DROPDOWN MENU ========== */
+.ant-dropdown .ant-dropdown-menu {
+  border-radius: 8px;
+  padding: 4px 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Each filter option item */
+.ant-dropdown .ant-dropdown-menu-item {
+  color: #fff !important;
+  background: transparent;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+/* When checkbox is checked */
+.ant-dropdown .ant-dropdown-menu-item .ant-checkbox-checked .ant-checkbox-inner {
+  background-color: var(--color-primary-orange) !important;
+  border-color: var(--color-primary-orange) !important;
+}
+
+.ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item-selected{
+  background-color: #FFF4E8;
+}
+
+.ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item:hover{
+  background-color: #FFF4E8;
+}
+
+.ant-btn-variant-solid{
+  background-color: var(--color-primary-orange);
+}
+
+.ant-btn-variant-solid:hover {
+  background-color: var(--color-primary-blue) !important;
+}
+
+.ant-btn-color-link.ant-btn-variant-link:hover {
+  color: var(--color-primary-orange) !important;
+}
+
+.ant-btn-color-link.ant-btn-variant-link{
+  color: var(--color-hover-blue);
+}
+/* Dropdown check icon (tick mark) color fix */
+.ant-dropdown .ant-dropdown-menu-item .ant-checkbox-inner::after {
+  border-color: #fff !important;
+}
+
+/* ========== TABLE BODY ========== */
+.custom-table .ant-table-tbody > tr > td {
+  background: #fff;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text-dark);
+}
+
+.custom-table .ant-table-tbody > tr:hover > td {
+  background: #f6f8ff;
+}
+
+/* ========== FIX HEADER SORT WHITE PATCH ISSUE ========== */
+.custom-table .ant-table-column-has-sorters:hover {
+  background-color: var(--color-hover-blue) !important;
+  color: #fff !important;
+}
+
+/* ===== Pagination ===== */
+.custom-table .ant-pagination {
+  padding: 12px 16px;
+  justify-content: flex-end;
+}
+
+.custom-table .ant-pagination-item {
+  border: 1px solid var(--color-border);
+  border-radius: 8px;
+  color: var(--color-text-dark);
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.custom-table .ant-pagination-item:hover {
+  border-color: var(--color-primary-blue);
+  color: var(--color-primary-blue);
+}
+
+.custom-table .ant-pagination-item-active {
+  background-color: var(--color-primary-blue);
+  border-color: var(--color-primary-blue);
+}
+
+.custom-table .ant-pagination-item-active a {
+  color: #fff !important;
+}
+
+.custom-table .ant-pagination-item a {
+  color: var(--color-text-dark);
+}
+
+.custom-table .ant-pagination-prev .ant-pagination-item-link,
+.custom-table .ant-pagination-next .ant-pagination-item-link {
+  border-radius: 8px;
+  color: var(--color-primary-blue);
+  border: 1px solid var(--color-border);
+  transition: all 0.2s ease;
+}
+
+.custom-table .ant-pagination-prev .ant-pagination-item-link:hover,
+.custom-table .ant-pagination-next .ant-pagination-item-link:hover {
+  border-color: var(--color-primary-blue);
+  background: rgba(22, 34, 71, 0.04);
+}
+
+/* ===================================================
+   ================= SERVICE SUMMARY ================= 
+   ===================================================*/
+   
 .service-summary {
   display: flex;
   flex-direction: column;
@@ -1537,11 +1708,12 @@ body {
 }
 
 .compliance-categories-title {
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 600;
   color: var(--color-text-dark);
   margin-bottom: 12px;
   margin-left: 10px;
+  text-align: center;
 }
 
 /* Toolbar */
@@ -1563,6 +1735,11 @@ body {
 .refresh-btn {
   border-color: var(--color-border) !important;
   color: var(--color-text-dark) !important;
+}
+
+.refresh-btn:hover {
+  border-color: var(--color-primary-orange) !important;
+  color: var(--color-primary-orange) !important;
 }
 
 .add-category-btn {
@@ -1612,7 +1789,7 @@ body {
   flex: 0 1 auto;
 }
 
-.refresh-btn {
+.compliance-categories-refresh-btn {
   flex: 0 0 auto; /* fixed size */
 }
 
@@ -1628,13 +1805,13 @@ body {
   width: 100%;
 }
 
-.search-wrapper {
+.compliance-categories-search-wrapper {
   display: flex;
   gap: 8px;
 }
 
 /* Search Button */
-.search-icon {
+.compliance-categories-search-icon {
   background-color: var(--color-primary-orange); /* main orange */
   color: #ffffff; /* white icon */
   border: none;
@@ -1646,12 +1823,12 @@ body {
   transition: all 0.2s ease-in-out;
 }
 
-.search-icon:hover {
+.compliance-categories-search-icon:hover {
   background-color: #ff8c42 !important; /* slightly lighter/darker on hover */
   color: #ffffff !important;
 }
 
-.search-icon:active {
+.compliance-categories-search-icon:active {
   background-color: #e6772d !important; /* darker on click */
   transform: scale(0.95); /* subtle click effect */
   color: #ffffff !important;
@@ -1659,7 +1836,7 @@ body {
 
 
 @media (max-width: 480px) {
-  .search-wrapper {
+  .compliance-categories-search-wrapper {
     width: 100%;
     flex-direction: row; /* could also stack vertically if needed */
   }
@@ -1678,7 +1855,7 @@ body {
   /* Wrap elements nicely without stretching */
   .compliance-search,
   .compliance-filter,
-  .refresh-btn{
+  .compliance-categories-refresh-btn{
     width: auto; /* natural width */
   }
 
@@ -1695,4 +1872,112 @@ body {
     font-size: 16px;
   }
 
+}
+
+/* =========================================================
+   =============== CATEGORY MODAL STYLES ===================
+   ========================================================= */
+
+.category-modal .ant-modal-content {
+  border-radius: 12px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  background-color: #fff;
+  padding: 0px;
+}
+
+.category-modal .ant-modal-footer {
+  margin-bottom: 20px;
+  margin-right: 10px;
+}
+
+.category-modal .ant-modal-close .ant-modal-close-x {
+  color: #fff;                /* or var(--color-text-dark) depending on header */
+  font-size: 16px;
+  line-height: 1;
+}
+
+.category-modal .ant-modal-header {
+  background-color: var(--color-primary-blue);
+  color: #fff;
+  padding: 16px 20px;
+  margin-bottom: 0px;
+}
+
+.category-modal .ant-modal-title {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #fff;
+}
+
+.category-modal .ant-modal-body {
+  padding: 20px 32px;
+  background-color: var(--color-bg-light);
+}
+
+/* Form fields */
+.category-modal .ant-form-item-label > label {
+  font-weight: 500;
+  color: var(--color-text-dark);
+}
+
+.category-modal .ant-input,
+.category-modal .ant-input-number,
+.category-modal .ant-input-textarea {
+  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.category-modal .ant-input:focus,
+.category-modal .ant-input-number:focus,
+.category-modal .ant-input-textarea:focus {
+  border-color: var(--color-primary-blue);
+  box-shadow: 0 0 0 2px rgba(22, 34, 71, 0.15);
+}
+
+.category-modal .ant-switch-checked {
+  background-color: var(--color-primary-orange);
+}
+
+/* Buttons */
+.category-modal .ant-btn-primary {
+  background-color: var(--color-primary-orange);
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+}
+
+.category-modal .ant-btn-primary:hover {
+  background-color: var(--color-hover-orange);
+}
+
+.category-modal .ant-btn-default {
+  border-radius: 8px;
+  border-color: var(--color-border);
+  color: var(--color-text-dark);
+}
+
+.category-modal .ant-btn-default:hover {
+  border-color: var(--color-primary-blue);
+  color: var(--color-primary-blue);
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .category-modal .ant-modal-content {
+    border-radius: 0;
+  }
+
+  .category-modal .ant-modal-body {
+    padding: 16px;
+  }
+
+  .category-modal .ant-modal-header {
+    padding: 12px 16px;
+  }
+
+  .category-modal .ant-form-item {
+    margin-bottom: 16px;
+  }
 }

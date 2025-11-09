@@ -63,7 +63,7 @@ const ComplianceSummary = () => {
   return (
     <div className="compliance-summary-section">
       <div className="compliance-summary-header">
-        <h3 className="compliance-summary-title">Compliance Categories</h3>
+        <h3 className="compliance-summary-title">Compliance Categories Summary</h3>
         <a
           onClick={() => navigate(ROUTES.SUPER_ADMIN_COMPLIANCE_CATEGORIES)}
           className="compliance-summary-link"
