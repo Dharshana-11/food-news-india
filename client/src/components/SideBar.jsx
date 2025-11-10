@@ -54,7 +54,7 @@ const SideBar = ({ role, isOpen, onClose }) => {
         label: "Compliance & Documents",
         paths: [
           ROUTES.SUPER_ADMIN_COMPLIANCE,
-          ROUTES.SUPER_ADMIN_COMPLIANCE_CATEGORIES,
+          ROUTES.SUPER_ADMIN_COMPLIANCE_ITEMS,
           ROUTES.SUPER_ADMIN_COMPLIANCE_DOCUMENTS,
           ROUTES.SUPER_ADMIN_COMPLIANCE_EXPIRY,
         ],

@@ -1,8 +1,10 @@
-// src/components/CategoryModal.js
-import { Modal, Form, Input, Switch, InputNumber } from "antd";
+// src/components/ComplianceItemModal.js
+import { Modal, Form, Input, Switch, Select } from "antd";
 import React, { useEffect } from "react";
 
-const CategoryModal = ({ visible, onCancel, onSubmit, initialValues }) => {
+const { Option } = Select;
+
+const ComplianceItemModal = ({ visible, onCancel, onSubmit, initialValues }) => {
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -24,8 +26,8 @@ const CategoryModal = ({ visible, onCancel, onSubmit, initialValues }) => {
 
   return (
     <Modal
-      className="category-modal"
-      title={initialValues ? "Edit Compliance Category" : "Add Compliance Category"}
+      className="compliance-item-modal"
+      title={initialValues ? "Edit Compliance Item" : "Add Compliance Item"}
       open={visible}
       onCancel={onCancel}
       onOk={handleOk}
@@ -35,7 +37,7 @@ const CategoryModal = ({ visible, onCancel, onSubmit, initialValues }) => {
         <Form.Item
           label="Name"
           name="name"
-          rules={[{ required: true, message: "Please enter category name" }]}
+          rules={[{ required: true, message: "Please enter item name" }]}
         >
           <Input />
         </Form.Item>
@@ -43,7 +45,7 @@ const CategoryModal = ({ visible, onCancel, onSubmit, initialValues }) => {
         <Form.Item
           label="Code"
           name="code"
-          rules={[{ required: true, message: "Please enter category code" }]}
+          rules={[{ required: true, message: "Please enter item code" }]}
         >
           <Input />
         </Form.Item>
@@ -65,23 +67,26 @@ const CategoryModal = ({ visible, onCancel, onSubmit, initialValues }) => {
         </Form.Item>
 
         <Form.Item
-          label="Status"
-          name="status"
-          valuePropName="checked"
+          label="Rule Expression"
+          name="ruleExpression"
         >
-          <Switch />
+          <Input placeholder="e.g., businessType=='Restaurant'" />
         </Form.Item>
 
         <Form.Item
-          label="Validity (days)"
-          name="defaultValidityDays"
-          rules={[{ required: true, message: "Enter validity in days" }]}
+          label="Status"
+          name="status"
+          rules={[{ required: true, message: "Please select status" }]}
         >
-          <InputNumber min={1} style={{ width: "100%" }} />
+          <Select>
+            <Option value="active">Active</Option>
+            <Option value="inactive">Inactive</Option>
+            <Option value="trash">Trash</Option>
+          </Select>
         </Form.Item>
       </Form>
     </Modal>
   );
 };
 
-export default CategoryModal;
+export default ComplianceItemModal;

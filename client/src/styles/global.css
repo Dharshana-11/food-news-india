@@ -1659,18 +1659,17 @@ body {
     max-width: 100%;
   }
 }
-
 /* =========================================================
-   ============ COMPLIANCE SUMMARY SECTION =================
+   ============ COMPLIANCE ITEM SUMMARY SECTION ===========
    ========================================================= */
 
-.compliance-summary-section {
+.compliance-item-summary-section {
   margin: 10px;
   padding-top: 10px;
 }
 
 /* header above the table */
-.compliance-summary-header {
+.compliance-item-summary-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1678,36 +1677,36 @@ body {
   padding-right: 10px;
 }
 
-.compliance-summary-title {
+.compliance-item-summary-title {
   font-family: "Poppins", sans-serif;
   font-weight: 600;
   color: #162247;
 }
 
-.compliance-summary-link {
+.compliance-item-summary-link {
   color: #162247;
   font-weight: 500;
   cursor: pointer;
   transition: color 0.2s ease;
 }
 
-.compliance-summary-link:hover {
+.compliance-item-summary-link:hover {
   color: #0f183a;
 }
 
 /* ==========================
-   Compliance Categories Styles
+   Compliance Items Styles
    ========================== */
 
-.compliance-categories-section {
+.compliance-items-section {
   padding: 16px;
 }
 
-.compliance-categories-header {
+.compliance-items-header {
   margin-bottom: 10px;
 }
 
-.compliance-categories-title {
+.compliance-items-title {
   font-size: 24px;
   font-weight: 600;
   color: var(--color-text-dark);
@@ -1742,7 +1741,7 @@ body {
   color: var(--color-primary-orange) !important;
 }
 
-.add-category-btn {
+.add-item-btn {
   background-color: var(--color-primary-orange) !important;
   border-color: var(--color-primary-orange) !important;
   margin-left: auto; /* pushes Add button to right end */
@@ -1770,17 +1769,16 @@ body {
 
 .compliance-toolbar {
   display: flex;
-  flex-wrap: wrap; /* allows wrapping on small screens */
+  flex-wrap: wrap;
   align-items: center;
   gap: 10px;
   margin: 20px 10px;
 }
 
-/* Keep search input reasonable, but don't stretch buttons */
 .compliance-search {
   width: 250px;
-  min-width: 150px; /* allows shrinking a bit on mobile */
-  flex: 0 1 auto; /* don't force grow */
+  min-width: 150px;
+  flex: 0 1 auto;
 }
 
 .compliance-filter {
@@ -1789,13 +1787,13 @@ body {
   flex: 0 1 auto;
 }
 
-.compliance-categories-refresh-btn {
-  flex: 0 0 auto; /* fixed size */
+.compliance-items-refresh-btn {
+  flex: 0 0 auto;
 }
 
-.add-category-btn {
-  flex: 0 0 auto; /* fixed size, stays at natural width */
-  margin-left: auto; /* push to right on large screens */
+.add-item-btn {
+  flex: 0 0 auto;
+  margin-left: auto;
 }
 
 /* Table scroll improvements */
@@ -1805,43 +1803,42 @@ body {
   width: 100%;
 }
 
-.compliance-categories-search-wrapper {
+.compliance-items-search-wrapper {
   display: flex;
   gap: 8px;
 }
 
 /* Search Button */
-.compliance-categories-search-icon {
-  background-color: var(--color-primary-orange); /* main orange */
-  color: #ffffff; /* white icon */
+.compliance-items-search-icon {
+  background-color: var(--color-primary-orange);
+  color: #ffffff;
   border: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 10px; /* adjust size */
+  padding: 6px 10px;
   border-radius: 6px;
   transition: all 0.2s ease-in-out;
 }
 
-.compliance-categories-search-icon:hover {
-  background-color: #ff8c42 !important; /* slightly lighter/darker on hover */
+.compliance-items-search-icon:hover {
+  background-color: #ff8c42 !important;
   color: #ffffff !important;
 }
 
-.compliance-categories-search-icon:active {
-  background-color: #e6772d !important; /* darker on click */
-  transform: scale(0.95); /* subtle click effect */
+.compliance-items-search-icon:active {
+  background-color: #e6772d !important;
+  transform: scale(0.95);
   color: #ffffff !important;
 }
-
 
 @media (max-width: 480px) {
-  .compliance-categories-search-wrapper {
+  .compliance-items-search-wrapper {
     width: 100%;
-    flex-direction: row; /* could also stack vertically if needed */
+    flex-direction: row;
   }
 
-   .add-category-btn{
+  .add-item-btn {
     width: 100%;
   }
 }
@@ -1852,14 +1849,12 @@ body {
     margin: 15px 5px;
   }
 
-  /* Wrap elements nicely without stretching */
   .compliance-search,
   .compliance-filter,
-  .compliance-categories-refresh-btn{
-    width: auto; /* natural width */
+  .compliance-items-refresh-btn {
+    width: auto;
   }
 
-  /* Adjust table font size/padding */
   .custom-table .ant-table-thead > tr > th,
   .custom-table .ant-table-tbody > tr > td {
     padding: 8px 10px;
@@ -1868,17 +1863,16 @@ body {
 }
 
 @media (max-width: 480px) {
-  .compliance-categories-title {
+  .compliance-items-title {
     font-size: 16px;
   }
-
 }
 
 /* =========================================================
-   =============== CATEGORY MODAL STYLES ===================
+   =============== COMPLIANCE ITEM MODAL STYLES ============
    ========================================================= */
 
-.category-modal .ant-modal-content {
+.compliance-item-modal .ant-modal-content {
   border-radius: 12px;
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
   overflow: hidden;
@@ -1886,98 +1880,98 @@ body {
   padding: 0px;
 }
 
-.category-modal .ant-modal-footer {
+.compliance-item-modal .ant-modal-footer {
   margin-bottom: 20px;
   margin-right: 10px;
 }
 
-.category-modal .ant-modal-close .ant-modal-close-x {
-  color: #fff;                /* or var(--color-text-dark) depending on header */
+.compliance-item-modal .ant-modal-close .ant-modal-close-x {
+  color: #fff;
   font-size: 16px;
   line-height: 1;
 }
 
-.category-modal .ant-modal-header {
+.compliance-item-modal .ant-modal-header {
   background-color: var(--color-primary-blue);
   color: #fff;
   padding: 16px 20px;
   margin-bottom: 0px;
 }
 
-.category-modal .ant-modal-title {
+.compliance-item-modal .ant-modal-title {
   font-weight: 600;
   font-size: 1.1rem;
   color: #fff;
 }
 
-.category-modal .ant-modal-body {
+.compliance-item-modal .ant-modal-body {
   padding: 20px 32px;
   background-color: var(--color-bg-light);
 }
 
 /* Form fields */
-.category-modal .ant-form-item-label > label {
+.compliance-item-modal .ant-form-item-label > label {
   font-weight: 500;
   color: var(--color-text-dark);
 }
 
-.category-modal .ant-input,
-.category-modal .ant-input-number,
-.category-modal .ant-input-textarea {
+.compliance-item-modal .ant-input,
+.compliance-item-modal .ant-input-number,
+.compliance-item-modal .ant-input-textarea {
   border-radius: 8px;
   border: 1px solid var(--color-border);
   transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.category-modal .ant-input:focus,
-.category-modal .ant-input-number:focus,
-.category-modal .ant-input-textarea:focus {
+.compliance-item-modal .ant-input:focus,
+.compliance-item-modal .ant-input-number:focus,
+.compliance-item-modal .ant-input-textarea:focus {
   border-color: var(--color-primary-blue);
   box-shadow: 0 0 0 2px rgba(22, 34, 71, 0.15);
 }
 
-.category-modal .ant-switch-checked {
+.compliance-item-modal .ant-switch-checked {
   background-color: var(--color-primary-orange);
 }
 
 /* Buttons */
-.category-modal .ant-btn-primary {
+.compliance-item-modal .ant-btn-primary {
   background-color: var(--color-primary-orange);
   border: none;
   border-radius: 8px;
   font-weight: 500;
 }
 
-.category-modal .ant-btn-primary:hover {
+.compliance-item-modal .ant-btn-primary:hover {
   background-color: var(--color-hover-orange);
 }
 
-.category-modal .ant-btn-default {
+.compliance-item-modal .ant-btn-default {
   border-radius: 8px;
   border-color: var(--color-border);
   color: var(--color-text-dark);
 }
 
-.category-modal .ant-btn-default:hover {
+.compliance-item-modal .ant-btn-default:hover {
   border-color: var(--color-primary-blue);
   color: var(--color-primary-blue);
 }
 
 /* Responsive adjustments */
 @media (max-width: 480px) {
-  .category-modal .ant-modal-content {
+  .compliance-item-modal .ant-modal-content {
     border-radius: 0;
   }
 
-  .category-modal .ant-modal-body {
+  .compliance-item-modal .ant-modal-body {
     padding: 16px;
   }
 
-  .category-modal .ant-modal-header {
+  .compliance-item-modal .ant-modal-header {
     padding: 12px 16px;
   }
 
-  .category-modal .ant-form-item {
+  .compliance-item-modal .ant-form-item {
     margin-bottom: 16px;
   }
 }

@@ -1,14 +1,14 @@
 import { useState, useEffect } from "react";
 import CustomTable from "../../../components/CustomTable";
-import { getAllCategories } from "../../../services/complianceCategoryService";
+import { getAllComplianceItems } from "../../../services/complianceItemService";
 import { useAuth } from "../../../context/AuthContext";
 import { RightOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../../../routes";
 
-const ComplianceSummary = () => {
+const ComplianceItemSummary = () => {
   const { currentUser } = useAuth();
-  const [categories, setCategories] = useState([]);
+  const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -21,7 +21,7 @@ const ComplianceSummary = () => {
       key: "description",
       width: "35%",
       render: (text) => (
-        <span className="compliance-summary-description" title={text}>
+        <span className="compliance-item-summary-description" title={text}>
           {text || "-"}
         </span>
       ),
@@ -43,40 +43,40 @@ const ComplianceSummary = () => {
   ];
 
   // ===================== FETCH DATA =====================
-  const fetchCategories = async (search = "") => {
+  const fetchItems = async (search = "") => {
     if (!currentUser) return;
     setLoading(true);
     try {
-      const data = await getAllCategories(5, search);
-      setCategories(data);
+      const data = await getAllComplianceItems(5, search);
+      setItems(data);
     } catch (err) {
-      console.error("Failed to fetch categories:", err);
+      console.error("Failed to fetch compliance items:", err);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchCategories();
+    fetchItems();
   }, [currentUser]);
 
   return (
-    <div className="compliance-summary-section">
-      <div className="compliance-summary-header">
-        <h3 className="compliance-summary-title">Compliance Categories Summary</h3>
+    <div className="compliance-item-summary-section">
+      <div className="compliance-item-summary-header">
+        <h3 className="compliance-item-summary-title">Compliance Items Summary</h3>
         <a
-          onClick={() => navigate(ROUTES.SUPER_ADMIN_COMPLIANCE_CATEGORIES)}
-          className="compliance-summary-link"
+          onClick={() => navigate(ROUTES.SUPER_ADMIN_COMPLIANCE_ITEMS)}
+          className="compliance-item-summary-link"
         >
           <RightOutlined />
         </a>
       </div>
 
-      <div className="custom-table-wrapper compliance-summary-table">
-        <CustomTable columns={columns} data={categories} loading={loading} />
+      <div className="custom-table-wrapper compliance-item-summary-table">
+        <CustomTable columns={columns} data={items} loading={loading} />
       </div>
     </div>
   );
 };
 
-export default ComplianceSummary;
+export default ComplianceItemSummary;

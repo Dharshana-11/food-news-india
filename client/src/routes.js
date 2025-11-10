@@ -47,5 +47,5 @@ export const ROUTES = {
   SUPER_ADMIN_NOTIFICATIONS: "/super-admin/notifications",
   SUPER_ADMIN_TICKETS: "/super-admin/tickets",
 
-  SUPER_ADMIN_COMPLIANCE_CATEGORIES: "/super-admin/compliance-categories",
+  SUPER_ADMIN_COMPLIANCE_ITEMS: "/super-admin/compliance-items",
 };

@@ -19,7 +19,7 @@ import cookieParser from "cookie-parser";
 import authRoutes from "./routes/authRoutes.js";
 import sessionRoutes from "./routes/sessionRoutes.js";
 import superAdminRoutes from "./routes/superAdminRoutes.js";
-import complianceCategoryRoutes from "./routes/admin/complianceCategoryRoutes.js"
+import complianceItemRoutes from "./routes/admin/complianceItemRoutes.js"
 
 // Load environment variables
 dotenv.config();
@@ -56,7 +56,7 @@ mongoose
 app.use("/api/auth", authRoutes); // Authentication routes
 app.use("/api/session", sessionRoutes); // Session management routes
 app.use("/api/super-admin", superAdminRoutes); // Super Admin routes
-app.use("/api/super-admin/compliance/categories", complianceCategoryRoutes);
+app.use("/api/compliance-items", complianceItemRoutes);
 
 /**
  * Server Startup

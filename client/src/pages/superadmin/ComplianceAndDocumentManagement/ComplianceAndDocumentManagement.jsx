@@ -1,11 +1,11 @@
 import SuperAdminLayout from "../../../layouts/SuperAdminLayout"
-import ComplianceSummary from './ComplianceSummary.jsx'
+import ComplianceItemSummary from "./ComplianceItemSummary";
 
 const ComplianceAndDocumentManagement = () => {
   return (
     <div>
       <SuperAdminLayout>
-        <ComplianceSummary/>
+        <ComplianceItemSummary/>
       </SuperAdminLayout>
     </div>
   )

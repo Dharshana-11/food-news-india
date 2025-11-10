@@ -15,21 +15,21 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 import CustomTable from "../../../components/CustomTable";
-import CategoryModal from "../../../components/CategoryModal";
+import ComplianceItemModal from "../../../components/ComplianceItemModal";
 import {
-  getAllCategories,
-  addComplianceCategory,
-  updateComplianceCategory,
-  deleteComplianceCategory,
-} from "../../../services/complianceCategoryService";
+  getAllComplianceItems,
+  addComplianceItem,
+  updateComplianceItem,
+  deleteComplianceItem,
+} from "../../../services/complianceItemService";
 import { useAuth } from "../../../context/AuthContext";
 import SuperAdminLayout from "../../../layouts/SuperAdminLayout";
 
-const ComplianceCategories = () => {
+const ComplianceItems = () => {
   const { currentUser } = useAuth();
 
   // ----------------- State -----------------
-  const [categories, setCategories] = useState([]);
+  const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -40,26 +40,26 @@ const ComplianceCategories = () => {
   const [order, setOrder] = useState(null);
 
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedItem, setSelectedItem] = useState(null);
 
-  // ----------------- Fetch categories -----------------
-  const fetchCategories = async () => {
+  // ----------------- Fetch items -----------------
+  const fetchItems = async () => {
     if (!currentUser) return;
     setLoading(true);
     try {
-      const data = await getAllCategories(0, search.trim());
-      setCategories(data);
+      const data = await getAllComplianceItems(0, search.trim());
+      setItems(data);
       setTotal(data.length);
     } catch (err) {
       console.error(err);
-      message.error("Failed to load categories");
+      message.error("Failed to load compliance items");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchCategories();
+    fetchItems();
   }, [currentUser]);
 
   // ----------------- Table change (sort/filter/paginate) -----------------
@@ -86,41 +86,41 @@ const ComplianceCategories = () => {
   // ----------------- Handlers -----------------
   const handleRefresh = () => {
     setSearch("");
-    fetchCategories();
+    fetchItems();
   };
 
   const handleAdd = () => {
-    setSelectedCategory(null);
+    setSelectedItem(null);
     setModalVisible(true);
   };
 
-  const handleEdit = (category) => {
-    setSelectedCategory(category);
+  const handleEdit = (item) => {
+    setSelectedItem(item);
     setModalVisible(true);
   };
 
   const handleDelete = async (id) => {
     try {
-      await deleteComplianceCategory(id);
-      message.success("Category deleted");
-      fetchCategories();
+      await deleteComplianceItem(id);
+      message.success("Item deleted");
+      fetchItems();
     } catch (err) {
       console.error(err);
-      message.error("Failed to delete category");
+      message.error("Failed to delete item");
     }
   };
 
   const handleModalSubmit = async (values) => {
     try {
-      if (selectedCategory) {
-        await updateComplianceCategory(selectedCategory._id, values);
-        message.success("Category updated successfully");
+      if (selectedItem) {
+        await updateComplianceItem(selectedItem._id, values);
+        message.success("Item updated successfully");
       } else {
-        await addComplianceCategory(values);
-        message.success("Category added successfully");
+        await addComplianceItem(values);
+        message.success("Item added successfully");
       }
       setModalVisible(false);
-      fetchCategories();
+      fetchItems();
     } catch (err) {
       console.error(err);
       message.error("Operation failed");
@@ -163,23 +163,16 @@ const ComplianceCategories = () => {
       dataIndex: "status",
       key: "status",
       filters: [
-        { text: "Active", value: true },
-        { text: "Inactive", value: false },
+        { text: "Active", value: "active" },
+        { text: "Inactive", value: "inactive" },
+        { text: "Trash", value: "trash" },
       ],
       onFilter: (value, record) => record.status === value,
       render: (val) => (
-        <span className={val ? "status-active" : "status-inactive"}>
-          {val ? "Active" : "Inactive"}
+        <span className={`status-${val}`}>
+          {val.charAt(0).toUpperCase() + val.slice(1)}
         </span>
       ),
-    },
-    {
-      title: "Validity",
-      dataIndex: "defaultValidityDays",
-      key: "defaultValidityDays",
-      sorter: true,
-      align: "center",
-      render: (val) => (val ? `${val} days` : "-"),
     },
     {
       title: "Actions",
@@ -194,7 +187,7 @@ const ComplianceCategories = () => {
             />
           </Tooltip>
           <Popconfirm
-            title="Delete this category?"
+            title="Delete this item?"
             onConfirm={() => handleDelete(record._id)}
           >
             <Tooltip title="Delete">
@@ -209,26 +202,26 @@ const ComplianceCategories = () => {
   // ----------------- Render -----------------
   return (
     <SuperAdminLayout>
-      <div className="compliance-categories-section">
-        <div className="compliance-categories-header">
-          <h3 className="compliance-categories-title">
-            Compliance Categories
+      <div className="compliance-items-section">
+        <div className="compliance-items-header">
+          <h3 className="compliance-items-title">
+            Compliance Items
           </h3>
         </div>
 
         <div className="compliance-toolbar">
-          <div className="compliance-categories-search-wrapper">
+          <div className="compliance-items-search-wrapper">
             <Input
-              placeholder="Search categories..."
+              placeholder="Search items..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              onPressEnter={fetchCategories}
+              onPressEnter={fetchItems}
               allowClear
             />
             <Button
-              className="compliance-categories-search-icon"
+              className="compliance-items-search-icon"
               icon={<SearchOutlined />}
-              onClick={fetchCategories}
+              onClick={fetchItems}
             />
             <Button
               className="refresh-btn"
@@ -241,18 +234,18 @@ const ComplianceCategories = () => {
             type="primary"
             icon={<PlusOutlined />}
             onClick={handleAdd}
-            className="add-category-btn"
+            className="add-item-btn"
           >
-            Add Category
+            Add Item
           </Button>
         </div>
 
         {/* Unified Table with AntD filter/sort/pagination */}
-         <div className="custom-table-wrapper compliance-summary-table">
+        <div className="custom-table-wrapper compliance-items-table">
           <div className="custom-table-scroll">
             <CustomTable
               columns={columns}
-              data={categories}
+              data={items}
               loading={loading}
               pagination={{
                 current: page,
@@ -266,15 +259,15 @@ const ComplianceCategories = () => {
         </div>
 
         {/* Modal for Add/Edit */}
-        <CategoryModal
+        <ComplianceItemModal
           visible={modalVisible}
           onCancel={() => setModalVisible(false)}
           onSubmit={handleModalSubmit}
-          initialValues={selectedCategory}
+          initialValues={selectedItem}
         />
       </div>
     </SuperAdminLayout>
   );
 };
 
-export default ComplianceCategories;
+export default ComplianceItems;

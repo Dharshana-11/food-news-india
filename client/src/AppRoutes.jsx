@@ -18,7 +18,7 @@ import { useAuth } from "./context/AuthContext";
 import { ROUTES } from "./routes";
 import ROLES from "./constants/roles";
 import ComplianceAndDocumentManagement from "./pages/superadmin/ComplianceAndDocumentManagement/ComplianceAndDocumentManagement";
-import ComplianceCategories from "./pages/superadmin/ComplianceAndDocumentManagement/ComplianceCategories";
+import ComplianceItems from "./pages/superadmin/ComplianceAndDocumentManagement/ComplianceItems"; // updated import
 
 /**
  * Renders all application routes with public and role-protected access.
@@ -85,10 +85,10 @@ const AppRoutes = () => {
       />
 
       <Route
-        path={ROUTES.SUPER_ADMIN_COMPLIANCE_CATEGORIES}
+        path={ROUTES.SUPER_ADMIN_COMPLIANCE_ITEMS} // rename constant instead of COMPLIANCE_CATEGORIES
         element={
           <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
-            <ComplianceCategories />
+            <ComplianceItems />
           </ProtectedRoute>
         }
       />
