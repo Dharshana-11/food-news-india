@@ -1,5 +1,3 @@
-// name, code, desciprtion, status, sortOrder, timestamps
-
 import mongoose from "mongoose";
 
 const businessTypeSchema = new mongoose.Schema(
