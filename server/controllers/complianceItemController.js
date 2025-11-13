@@ -42,7 +42,7 @@ export const getAllComplianceItems = async (req, res) => {
 // @route POST /api/compliance-items
 export const addComplianceItem = async (req, res) => {
   try {
-    let { name, code, description = "", required = true, ruleExpression = "", status = "active" } = req.body;
+    let { name, code, description = "", ruleExpression = "", status = "active" } = req.body;
 
     // Trim strings
     name = name?.trim();
@@ -61,7 +61,6 @@ export const addComplianceItem = async (req, res) => {
       name,
       code,
       description,
-      required,
       ruleExpression,
       status
     });

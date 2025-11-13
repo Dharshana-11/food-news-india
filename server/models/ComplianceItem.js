@@ -21,10 +21,10 @@ const complianceItemSchema = new mongoose.Schema(
       default: "",
       trim: true
     },
-    required: {
-      type: Boolean,
-      default: true // whether businesses must upload a document in this item
-    },
+    // required: {
+    //   type: Boolean,
+    //   default: true // whether businesses must upload a document in this item
+    // },
     ruleExpression: {  // Future use: e.g., businessType=='Restaurant'
        type: String, 
        default: "" 

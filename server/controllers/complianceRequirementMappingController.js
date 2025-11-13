@@ -1,20 +1,22 @@
 import ComplianceRequirementMapping from "../models/ComplianceRequirementMapping.js";
+import ComplianceItem from "../models/ComplianceItem.js";
+import mongoose from "mongoose";
 
 // Create or Update (Upsert)
 export const upsertMapping = async (req, res) => {
   try {
-    const { businessType, complianceItem, applicability } = req.body;
+    const { businessTypeId, complianceItemId , applicability } = req.body;
 
-    if (!businessType || !complianceItem || !applicability) {
+    if (!businessTypeId || !complianceItemId || !applicability) {
       return res.status(400).json({
         success: false,
-        message: "businessType, complianceItem, and applicability are required.",
+        message: "businessTypeId, complianceItemId, and applicability are required.",
       });
     }
 
     const existing = await ComplianceRequirementMapping.findOne({
-      businessType,
-      complianceItem,
+      businessTypeId,
+      complianceItemId,
       status: { $ne: "trash" },
     });
 
@@ -23,13 +25,16 @@ export const upsertMapping = async (req, res) => {
     if (existing) {
       existing.applicability = applicability;
       existing.updatedAt = new Date();
+      existing.updatedBy = req.user.name;   // <-- set updater
       result = await existing.save();
       message = "Mapping updated successfully";
     } else {
       result = await ComplianceRequirementMapping.create({
-        businessType,
-        complianceItem,
+        businessTypeId,
+        complianceItemId,
         applicability,
+        createdBy: req.user.name,           // <-- set creator
+        updatedBy: req.user.name            
       });
       message = "Mapping created successfully";
     }
@@ -74,8 +79,8 @@ export const getAllMappings = async (req, res) => {
 
     // Base query
     let query = ComplianceRequirementMapping.find(filter)
-      .populate("businessType", "name code")
-      .populate("complianceItem", "name code")
+      .populate("businessTypeId", "name code")
+      .populate("complianceItemId", "name code")
       .sort({ [sortBy]: order === "desc" ? -1 : 1 })
       .skip((pageNum - 1) * limitNum)
       .limit(limitNum);
@@ -88,10 +93,10 @@ export const getAllMappings = async (req, res) => {
       ? mappings.filter((m) => {
           const searchLower = search.toLowerCase();
           return (
-            m.businessType?.name?.toLowerCase().includes(searchLower) ||
-            m.businessType?.code?.toLowerCase().includes(searchLower) ||
-            m.complianceItem?.name?.toLowerCase().includes(searchLower) ||
-            m.complianceItem?.code?.toLowerCase().includes(searchLower)
+            m.businessTypeId?.name?.toLowerCase().includes(searchLower) ||
+            m.businessTypeId?.code?.toLowerCase().includes(searchLower) ||
+            m.complianceItemId?.name?.toLowerCase().includes(searchLower) ||
+            m.complianceItemId?.code?.toLowerCase().includes(searchLower)
           );
         })
       : mappings;
@@ -168,16 +173,18 @@ export const getComplianceGridByBusinessType = async (req, res) => {
       businessTypeId,
       status: { $ne: "trash" }
     }).lean();
+    console.log("business id:",businessTypeId);
 
     const result = complianceItems.map((item) => {
       const existing = mappings.find(
         (m) => m.complianceItemId?.toString() === item._id.toString()
       );
+      console.log("existing", existing)
       return {
         complianceItemId: item._id,
         complianceItemName: item.name,
         complianceItemCode: item.code,
-        applicability: existing ? existing.applicability : "required",
+        applicability: existing ? existing.applicability : "not_applicable",
         mappingId: existing?._id || null
       };
     });

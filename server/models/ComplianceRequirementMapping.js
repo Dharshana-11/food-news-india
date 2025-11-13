@@ -43,8 +43,6 @@ const ComplianceRequirementMappingSchema = new mongoose.Schema(
   },
   {
     timestamps: true, // adds createdAt and updatedAt
-    toJSON: { virtuals: true, versionKey: false },
-    toObject: { virtuals: true, versionKey: false },
   }
 );
 
