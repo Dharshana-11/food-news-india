@@ -22,6 +22,7 @@ import superAdminRoutes from "./routes/superAdminRoutes.js";
 import complianceItemRoutes from "./routes/admin/complianceItemRoutes.js"
 import businessTypeRoutes from "./routes/businessTypeRoutes.js"
 import complianceRequirementMappingRoutes from "./routes/complianceRequirementMappingRoutes.js";
+import kycDocumentRoutes from "./routes/kycDocumentRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -61,6 +62,7 @@ app.use("/api/super-admin", superAdminRoutes); // Super Admin routes
 app.use("/api/compliance-items", complianceItemRoutes);
 app.use("/api/business-types", businessTypeRoutes);
 app.use("/api/admin/compliance-mappings", complianceRequirementMappingRoutes);
+app.use("/api/kyc-documents", kycDocumentRoutes);
 /**
  * Server Startup
  * ------------------------------------------------------------

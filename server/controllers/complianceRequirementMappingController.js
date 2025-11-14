@@ -25,7 +25,7 @@ export const upsertMapping = async (req, res) => {
     if (existing) {
       existing.applicability = applicability;
       existing.updatedAt = new Date();
-      existing.updatedBy = req.user.name;   // <-- set updater
+      existing.updatedBy = req.user._id;   // <-- set updater
       result = await existing.save();
       message = "Mapping updated successfully";
     } else {
@@ -33,8 +33,8 @@ export const upsertMapping = async (req, res) => {
         businessTypeId,
         complianceItemId,
         applicability,
-        createdBy: req.user.name,           // <-- set creator
-        updatedBy: req.user.name            
+        createdBy: req.user._id,           // <-- set creator
+        updatedBy: req.user._id            
       });
       message = "Mapping created successfully";
     }
