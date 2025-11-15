@@ -5,30 +5,54 @@ const complianceItemSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
-      unique: true, // ensures no duplicate item names
+      unique: true,
       trim: true,
-      index: true
+      index: true,
     },
+
     code: {
       type: String,
-      unique: true,       // optional human-readable key (like FSSAI, HC)
+      unique: true,
       uppercase: true,
       trim: true,
-      index: true
+      index: true,
     },
+
     description: {
       type: String,
       default: "",
-      trim: true
+      trim: true,
     },
-    ruleExpression: {  // Future use: e.g., businessType=='Restaurant'
-       type: String, 
-       default: "" 
-    }, 
+
+    /**
+     * FUTURE RULE ENGINE
+     * Example:
+     *   businessType == 'RESTAURANT'
+     *   employeeCount > 10
+     */
+    ruleExpression: {
+      type: String,
+      default: "",
+    },
+
+    /**
+     * Validity for compliance documents (days)
+     * Example:
+     *   FSSAI = 365
+     *   GST = 365
+     *
+     * KYC Documents do NOT use this field.
+     */
+    validityDays: {
+      type: Number,
+      required: true,
+      min: 1, // at least 1 day
+    },
+
     status: {
       type: String,
       enum: ["active", "inactive", "trash"],
-      default: "active" // true = active, false = inactive (soft delete)
+      default: "active",
     },
   },
   { timestamps: true }
