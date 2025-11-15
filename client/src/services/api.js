@@ -2,5 +2,7 @@
 export const BASE_URL = `${import.meta.env.VITE_API_URL}/api` || "http://localhost:5000/api"
 
 export const SUPER_ADMIN_COMPLIANCE_ITEM_API = `${BASE_URL}/compliance-items`;
-export const BUSINESS_TYPES_API = `${BASE_URL}/business-types`;
+export const BUSINESS_TYPE_API = `${BASE_URL}/business-types`;
 export const COMPLIANCE_MAPPING_API = `${BASE_URL}/admin/compliance-mappings`;
+export const KYC_DOCUMENT_API = `${BASE_URL}/kyc-documents`;
+export const DOCUMENT_API = `${BASE_URL}/documents`;

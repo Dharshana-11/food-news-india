@@ -15,7 +15,7 @@ if (!existsSync(uploadPath)) {
 const storage = diskStorage({
   destination: (req, file, cb) => cb(null, uploadPath),
   filename: (req, file, cb) => {
-    const ext = extname(file.originalname).toLowerCase(); // always lowercase
+    const ext = extname(file.originalname).toLowerCase(); 
     const unique = `${Date.now()}_${Math.random().toString(36).slice(2)}${ext}`;
     cb(null, unique);
     }
