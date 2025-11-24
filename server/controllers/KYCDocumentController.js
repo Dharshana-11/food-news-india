@@ -49,6 +49,7 @@ export const getKycDocuments = async (req, res) => {
     if (status) {
       query.status = status;
     }
+    query.status = { $ne: "trash" };
 
     const total = await KYCDocument.countDocuments(query);
 

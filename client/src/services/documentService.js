@@ -12,7 +12,7 @@ export const getAllDocuments = async (page = 1, limit = 10, search = "", status 
 };
 
 export const getDocumentById = async (id) => {
-  const response = await api.get(`${DOCUMENT_API}${id}`);
+  const response = await api.get(`${DOCUMENT_API}/${id}`);
   return response.data;
 };
 
@@ -24,19 +24,19 @@ export const createDocument = async (formData) => {
 };
 
 export const updateDocument = async (id, formData) => {
-  const response = await api.put(`${DOCUMENT_API}${id}`, formData, {
+  const response = await api.put(`${DOCUMENT_API}/${id}`, formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
   return response.data;
 };
 
 export const reviewDocument = async (id, reviewData) => {
-  const response = await api.patch(`${DOCUMENT_API}${id}/review`, reviewData);
+  const response = await api.patch(`${DOCUMENT_API}/${id}/review`, reviewData);
   return response.data;
 };
 
 export const deleteDocument = async (id) => {
-  const response = await api.delete(`${DOCUMENT_API}${id}`);
+  const response = await api.delete(`${DOCUMENT_API}/${id}`);
   return response.data;
 };
 

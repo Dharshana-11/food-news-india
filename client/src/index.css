@@ -17,6 +17,34 @@
   --color-text-dark: #213547;
   --color-text-medium: #9ca3af;
   --color-border: #d1d5db;
+
+  /* Status Colors */
+  --color-pending: #f59e0b;
+  --color-approved: #10b981;
+  --color-rejected: #ef4444;
+  --color-expired: #6b7280;
+
+  --color-success-green: #1db954;
+  --color-error-red: #ff4d4f;
+  --color-warning-yellow: #ffc107;
+
+  /* Gradients */
+  --gradient-purple: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-orange: linear-gradient(135deg, #ff6c1f, #e65c00);
+  --gradient-green: linear-gradient(135deg, #10b981, #059669);
+
+  /* Light card backgrounds */
+  --color-bg-orange: #FFF3E6;  /* very light orange */
+  --color-bg-green:  #E6F7F1;  /* light green */
+  --color-bg-red:    #FFE6E6;  /* light red */
+  --color-bg-yellow: #FFF9E6;  /* light yellow */
+
+  /* Icon colors (darker, richer) */
+  --color-icon-orange: #FF8C42;
+  --color-icon-green:  #4BB78F;
+  --color-icon-red:    #FF5C5C;
+  --color-icon-yellow: #FFD166;
+
 }
 
 body {

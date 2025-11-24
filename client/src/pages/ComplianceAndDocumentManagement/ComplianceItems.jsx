@@ -14,16 +14,16 @@ import {
   ReloadOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
-import CustomTable from "../../../components/CustomTable";
-import ComplianceItemModal from "../../../components/ComplianceItemModal";
+import CustomTable from "../../components/CustomTable";
+import ComplianceItemModal from "../../components/ComplianceItemModal";
 import {
   getAllComplianceItems,
   addComplianceItem,
   updateComplianceItem,
   deleteComplianceItem,
-} from "../../../services/complianceItemService";
-import { useAuth } from "../../../context/AuthContext";
-import SuperAdminLayout from "../../../layouts/SuperAdminLayout";
+} from "../../services/complianceItemService";
+import { useAuth } from "../../context/AuthContext";
+import SuperAdminLayout from "../../layouts/SuperAdminLayout";
 
 const ComplianceItems = () => {
   const { currentUser } = useAuth();
@@ -238,6 +238,7 @@ const ComplianceItems = () => {
           >
             Add Item
           </Button>
+
         </div>
 
         {/* Unified Table with AntD filter/sort/pagination */}

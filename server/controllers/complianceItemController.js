@@ -42,7 +42,7 @@ export const getAllComplianceItems = async (req, res) => {
 // @route POST /api/compliance-items
 export const addComplianceItem = async (req, res) => {
   try {
-    let { name, code, description = "", ruleExpression = "", status = "active" } = req.body;
+    let { name, code, description = "", ruleExpression = "", status = "active", validityDays } = req.body;
 
     // Trim strings
     name = name?.trim();
@@ -50,6 +50,11 @@ export const addComplianceItem = async (req, res) => {
 
     // Validate status
     if (!["active", "inactive", "trash"].includes(status)) status = "active";
+
+    // Validate validityDays
+    if (!validityDays || isNaN(validityDays) || validityDays < 1) {
+      return res.status(400).json({ message: "validityDays must be a number greater than 0" });
+    }
 
     // Check if name or code already exists
     const existing = await ComplianceItem.findOne({
@@ -62,7 +67,8 @@ export const addComplianceItem = async (req, res) => {
       code,
       description,
       ruleExpression,
-      status
+      status,
+      validityDays
     });
 
     await complianceItem.save();
@@ -87,6 +93,13 @@ export const updateComplianceItem = async (req, res) => {
     // Validate status
     if (updates.status && !["active", "inactive", "trash"].includes(updates.status)) {
       updates.status = "active";
+    }
+
+    // Validate validityDays if present
+    if (updates.validityDays !== undefined) {
+      if (isNaN(updates.validityDays) || updates.validityDays < 1) {
+        return res.status(400).json({ message: "validityDays must be a number greater than 0" });
+      }
     }
 
     const complianceItem = await ComplianceItem.findByIdAndUpdate(id, updates, { new: true });

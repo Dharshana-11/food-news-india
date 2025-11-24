@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import CustomTable from "../../../components/CustomTable";
-import { getAllComplianceItems } from "../../../services/complianceItemService";
-import { useAuth } from "../../../context/AuthContext";
+import CustomTable from "../../components/CustomTable";
+import { getAllComplianceItems } from "../../services/complianceItemService";
+import { useAuth } from "../../context/AuthContext";
 import { RightOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import { ROUTES } from "../../../routes";
+import { ROUTES } from "../../routes";
 
 const ComplianceItemSummary = () => {
   const { currentUser } = useAuth();

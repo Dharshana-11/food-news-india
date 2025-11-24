@@ -1,5 +1,5 @@
 // src/components/ComplianceItemModal.js
-import { Modal, Form, Input, Switch, Select } from "antd";
+import { Modal, Form, Input, Switch, Select, InputNumber } from "antd";
 import React, { useEffect } from "react";
 
 const { Option } = Select;
@@ -56,6 +56,17 @@ const ComplianceItemModal = ({ visible, onCancel, onSubmit, initialValues }) => 
           rules={[{ required: true, message: "Please enter description" }]}
         >
           <Input.TextArea rows={3} />
+        </Form.Item>
+
+        <Form.Item
+          label="Validity (Days)"
+          name="validityDays"
+          rules={[
+            { required: true, message: "Please enter validity in days" },
+            { type: "number", min: 1, message: "Must be at least 1 day" },
+          ]}
+        >
+          <InputNumber style={{ width: "100%" }} min={1} />
         </Form.Item>
 
         <Form.Item

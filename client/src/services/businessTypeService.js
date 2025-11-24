@@ -12,7 +12,7 @@ export const getAllBusinessTypes = async (page = 1, limit = 10, search = "", sta
 };
 
 export const getBusinessTypeById = async (id) => {
-  const response = await api.get(`${BUSINESS_TYPE_API}${id}`);
+  const response = await api.get(`${BUSINESS_TYPE_API}/${id}`);
   return response.data;
 };
 
@@ -22,11 +22,11 @@ export const createBusinessType = async (data) => {
 };
 
 export const updateBusinessType = async (id, data) => {
-  const response = await api.put(`${BUSINESS_TYPE_API}${id}`, data);
+  const response = await api.put(`${BUSINESS_TYPE_API}/${id}`, data);
   return response.data;
 };
 
 export const deleteBusinessType = async (id) => {
-  const response = await api.delete(`${BUSINESS_TYPE_API}${id}`);
+  const response = await api.delete(`${BUSINESS_TYPE_API}/${id}`);
   return response.data;
 };

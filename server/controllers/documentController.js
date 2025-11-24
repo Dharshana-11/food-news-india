@@ -114,6 +114,12 @@ export const getAllDocuments = async (req, res) => {
 
     const filter = {};
 
+    if (status) {
+      filter.status = status;
+    } else {
+      filter.status = { $ne: "trash" };   // default: exclude trash
+    }
+
     if (status) filter.status = status;
     if (search) {
       filter["file.originalName"] = { $regex: search, $options: "i" };
@@ -167,11 +173,11 @@ export const getDocumentById = async (req, res) => {
 };
 
 /**
- * UPDATE Document (only meta)
+ * UPDATE Document (file + meta + status)
  */
 export const updateDocument = async (req, res) => {
   try {
-    const { validFrom } = req.body;
+    const { validFrom, status, reviewNotes } = req.body;
 
     const doc = await Document.findById(req.params.id)
       .populate("complianceItemId", "validityDays");
@@ -183,66 +189,73 @@ export const updateDocument = async (req, res) => {
       });
     }
 
-    let newFileMeta = null;
-
-    // -------------------------------
-    // CASE 1 → New file uploaded
-    // -------------------------------
+    // --------------------------------------------------
+    // CASE 1 → If new file uploaded
+    // --------------------------------------------------
     if (req.file) {
-      // Delete old file from local storage
+      // Delete old file
       try {
-        const oldPath = doc.file.filePath;
-        if (oldPath) unlinkSync(oldPath);
+        if (doc.file?.filePath) unlinkSync(doc.file.filePath);
       } catch (err) {
         console.log("Old file delete error:", err.message);
       }
 
-      newFileMeta = {
+      doc.file = {
         originalName: req.file.originalname,
         storedName: req.file.filename,
         filePath: req.file.path,
         fileSize: req.file.size,
-        fileType: req.file.mimetype.split("/")[1], // pdf, jpg, png
+        fileType: req.file.mimetype.split("/")[1],
         storageProvider: "local",
       };
-
-      doc.file = newFileMeta;
     }
 
-    // ----------------------------------------------------
-    // CASE 2 → Metadata updates (validFrom / validUntil)
-    // ----------------------------------------------------
-
+    // --------------------------------------------------
+    // CASE 2 → Update metadata (validFrom / validUntil)
+    // --------------------------------------------------
     if (doc.kycDocumentId) {
-      // KYC has no expiry
       doc.validFrom = validFrom || doc.validFrom;
       doc.validUntil = null;
     }
 
-    if (doc.complianceItemId) {
-      if (validFrom) {
-        const startDate = new Date(validFrom);
-        const days = doc.complianceItemId.validityDays;
+    if (doc.complianceItemId && validFrom) {
+      const d = new Date(validFrom);
+      const days = doc.complianceItemId.validityDays;
 
-        doc.validFrom = startDate;
-        doc.validUntil = new Date(
-          startDate.getTime() + days * 24 * 60 * 60 * 1000
-        );
-      }
+      doc.validFrom = d;
+      doc.validUntil = new Date(d.getTime() + days * 24 * 60 * 60 * 1000);
+    }
+
+    // --------------------------------------------------
+    // CASE 3 → Update status if provided
+    // --------------------------------------------------
+    if (status) {
+      doc.status = status;
+    }
+
+    // --------------------------------------------------
+    // CASE 4 → Update review notes if provided
+    // --------------------------------------------------
+    if (reviewNotes !== undefined) {
+      doc.reviewNotes = reviewNotes;
     }
 
     await doc.save();
 
     return res.status(200).json({
       success: true,
-      message: req.file
-        ? "Document updated with new file"
-        : "Document metadata updated",
+      message:
+        req.file
+          ? "Document updated with new file"
+          : "Document metadata updated",
       data: doc,
     });
 
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 

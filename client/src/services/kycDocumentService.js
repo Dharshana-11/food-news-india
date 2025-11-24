@@ -11,7 +11,7 @@ export const getAllKYCDocuments = async (page = 1, limit = 10, search = "") => {
 };
 
 export const getKYCDocumentById = async (id) => {
-  const response = await api.get(`${KYC_DOCUMENT_API}${id}`);
+  const response = await api.get(`${KYC_DOCUMENT_API}/${id}`);
   return response.data;
 };
 
@@ -21,12 +21,12 @@ export const createKYCDocument = async (data) => {
 };
 
 export const updateKYCDocument = async (id, data) => {
-  const response = await api.put(`${KYC_DOCUMENT_API}${id}`, data);
+  const response = await api.put(`${KYC_DOCUMENT_API}/${id}`, data);
   return response.data;
 };
 
 export const deleteKYCDocument = async (id) => {
-  const response = await api.delete(`${KYC_DOCUMENT_API}${id}`);
+  const response = await api.delete(`${KYC_DOCUMENT_API}/${id}`);
   return response.data;
 };
 
