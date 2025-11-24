@@ -12,15 +12,42 @@ import ROLES from "../utils/constants/roles.js";
 
 const router = express.Router();
 
-// All routes below require admin or super admin
-router.use(verifySession, authorizeRoles(ROLES.ADMIN, ROLES.SUPER_ADMIN));
+/**
+ * MIDDLEWARE:
+ * - Verify session
+ * - Restrict to ADMIN / SUPER_ADMIN
+ */
+router.use(
+  verifySession,
+  authorizeRoles(ROLES.ADMIN, ROLES.SUPER_ADMIN)
+);
 
-// CRUD-like routes
-router.post("/", upsertMapping); // Create or update mapping
-router.get("/", getAllMappings); // View all mappings (with pagination, search, etc.)
-router.delete("/:id", deleteMapping); // Soft delete
+/**
+ * @route POST /compliance-requirement-mappings
+ * @description Create or update a mapping between Compliance Requirement and Business Type
+ * @access Admin, Super Admin
+ */
+router.post("/", upsertMapping);
 
-// For admin to preview or edit the grid per business type
+/**
+ * @route GET /compliance-requirement-mappings
+ * @description Get all mappings (pagination, search, filter)
+ * @access Admin, Super Admin
+ */
+router.get("/", getAllMappings);
+
+/**
+ * @route DELETE /compliance-requirement-mappings/:id
+ * @description Soft delete a mapping entry
+ * @access Admin, Super Admin
+ */
+router.delete("/:id", deleteMapping);
+
+/**
+ * @route GET /compliance-requirement-mappings/grid/:businessTypeId
+ * @description Get compliance requirement grid structure for a specific business type
+ * @access Admin, Super Admin
+ */
 router.get("/grid/:businessTypeId", getComplianceGridByBusinessType);
 
 export default router;

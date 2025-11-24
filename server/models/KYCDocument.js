@@ -1,14 +1,29 @@
+/**
+ * KYC Document Schema
+ * --------------------
+ * Defines all KYC document requirements and their applicability
+ * across different roles in the system.
+ */
+
 import mongoose from "mongoose";
 import ROLES from "../utils/constants/roles.js";
 
 const KYCDocumentSchema = new mongoose.Schema(
   {
-    // Basic fields
+    /**
+     * Display name of the KYC Document
+     * Example: "Aadhaar Card", "PAN Card"
+     */
     name: {
       type: String,
       required: true,
       trim: true,
     },
+
+    /**
+     * Unique code for identification
+     * Example: "AADHAAR", "PAN", "GST_CERT"
+     */
     code: {
       type: String,
       required: true,
@@ -17,28 +32,40 @@ const KYCDocumentSchema = new mongoose.Schema(
       uppercase: true,
     },
 
+    /**
+     * Optional description of the KYC Document
+     */
     description: {
       type: String,
       default: "",
+      trim: true,
     },
 
-    // Which roles this KYC applies to
-    applicableRoles: [
-      {
-        type: [String],
-        enum: Object.values(ROLES),
-        required: true,
-      },
-    ],
+    /**
+     * Roles for which this KYC document is applicable
+     * Example: ["FBO", "AGENT"]
+     */
+    applicableRoles: {
+      type: [String],
+      enum: Object.values(ROLES),
+      required: true,
+    },
 
-    // Status field (active / inactive / trash)
+    /**
+     * Status:
+     *  - active   → visible and usable
+     *  - inactive → temporarily hidden
+     *  - trash    → soft deleted
+     */
     status: {
       type: String,
       enum: ["active", "inactive", "trash"],
       default: "active",
     },
 
-    // Audit fields
+    /**
+     * Audit fields
+     */
     createdBy: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -51,11 +78,13 @@ const KYCDocumentSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true, 
+    timestamps: true, // createdAt, updatedAt
   }
 );
 
-// Auto-update updatedAt before save
+/**
+ * Auto-set updatedAt before save
+ */
 KYCDocumentSchema.pre("save", function (next) {
   this.updatedAt = new Date();
   next();

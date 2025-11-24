@@ -1,11 +1,14 @@
 import KYCDocument from "../models/KYCDocument.js";
 
-// Create KYC Document
+/**
+ * Create KYC Document
+ * --------------------
+ * Body: { name, code, description, applicableRoles, status }
+ */
 export const createKycDocument = async (req, res) => {
   try {
     const { name, code, description, applicableRoles, status } = req.body;
-
-    const userId = req.user?._id; // from httponly cookie middleware
+    const userId = req.user?._id; // from auth/session middleware
 
     const newDoc = await KYCDocument.create({
       name,
@@ -17,39 +20,45 @@ export const createKycDocument = async (req, res) => {
       updatedBy: userId,
     });
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: "KYC document created successfully",
       data: newDoc,
     });
   } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
-// Get All (with pagination + search + status filter)
+/**
+ * Get All KYC Documents
+ * Includes: pagination, search, status filter (except trash)
+ * Query: ?page=1&limit=10&search=...&status=active
+ */
 export const getKycDocuments = async (req, res) => {
   try {
-    let { page = 1, limit = 10, search = "", status } = req.query;
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const search = req.query.search || "";
+    const status = req.query.status;
 
-    page = Number(page);
-    limit = Number(limit);
+    const query = { status: { $ne: "trash" } };
 
-    const query = {};
-
-    // Search by name or code
+    // Search filter
     if (search) {
       query.$or = [
-        { name: { $regex: search, $options: "i" } },
-        { code: { $regex: search, $options: "i" } },
+        { name: new RegExp(search, "i") },
+        { code: new RegExp(search, "i") },
       ];
     }
 
-    // Filter by status
-    if (status) {
+    // Status filter (active / inactive)
+    if (status && status !== "trash") {
       query.status = status;
     }
-    query.status = { $ne: "trash" };
 
     const total = await KYCDocument.countDocuments(query);
 
@@ -58,7 +67,7 @@ export const getKycDocuments = async (req, res) => {
       .skip((page - 1) * limit)
       .limit(limit);
 
-    res.json({
+    return res.json({
       success: true,
       data: documents,
       pagination: {
@@ -69,30 +78,42 @@ export const getKycDocuments = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
-// Get by ID
+/**
+ * Get KYC Document by ID
+ */
 export const getKycDocumentById = async (req, res) => {
   try {
     const doc = await KYCDocument.findById(req.params.id);
 
-    if (!doc) {
-      return res.status(404).json({ success: false, message: "Not found" });
+    if (!doc || doc.status === "trash") {
+      return res.status(404).json({
+        success: false,
+        message: "KYC document not found",
+      });
     }
 
-    res.json({ success: true, data: doc });
+    return res.json({ success: true, data: doc });
   } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
-// Update
+/**
+ * Update KYC Document
+ */
 export const updateKycDocument = async (req, res) => {
   try {
     const { name, code, description, applicableRoles, status } = req.body;
-
     const userId = req.user?._id;
 
     const updated = await KYCDocument.findByIdAndUpdate(
@@ -110,26 +131,35 @@ export const updateKycDocument = async (req, res) => {
     );
 
     if (!updated) {
-      return res.status(404).json({ success: false, message: "Not found" });
+      return res.status(404).json({
+        success: false,
+        message: "KYC document not found",
+      });
     }
 
-    res.json({
+    return res.json({
       success: true,
       message: "KYC document updated successfully",
       data: updated,
     });
   } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
-// Change status (active → inactive → trash)
+/**
+ * Update Status Only (active, inactive, trash)
+ */
 export const updateKycDocumentStatus = async (req, res) => {
   try {
     const { status } = req.body;
     const userId = req.user?._id;
 
-    if (!["active", "inactive", "trash"].includes(status)) {
+    const allowed = ["active", "inactive", "trash"];
+    if (!allowed.includes(status)) {
       return res.status(400).json({
         success: false,
         message: "Invalid status value",
@@ -138,44 +168,66 @@ export const updateKycDocumentStatus = async (req, res) => {
 
     const updated = await KYCDocument.findByIdAndUpdate(
       req.params.id,
-      { status, updatedBy: userId, updatedAt: new Date() },
+      {
+        status,
+        updatedBy: userId,
+        updatedAt: new Date(),
+      },
       { new: true }
     );
 
     if (!updated) {
-      return res.status(404).json({ success: false, message: "Not found" });
+      return res.status(404).json({
+        success: false,
+        message: "KYC document not found",
+      });
     }
 
-    res.json({
+    return res.json({
       success: true,
       message: "Status updated successfully",
       data: updated,
     });
   } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
 
-// Delete → move to trash (soft delete)
+/**
+ * Soft Delete (Move to Trash)
+ */
 export const deleteKycDocument = async (req, res) => {
   try {
     const userId = req.user?._id;
 
     const deleted = await KYCDocument.findByIdAndUpdate(
       req.params.id,
-      { status: "trash", updatedBy: userId, updatedAt: new Date() },
+      {
+        status: "trash",
+        updatedBy: userId,
+        updatedAt: new Date(),
+      },
       { new: true }
     );
 
     if (!deleted) {
-      return res.status(404).json({ success: false, message: "Not found" });
+      return res.status(404).json({
+        success: false,
+        message: "KYC document not found",
+      });
     }
 
-    res.json({
+    return res.json({
       success: true,
       message: "KYC document moved to trash",
     });
   } catch (error) {
-    res.status(400).json({ success: false, message: error.message });
+    return res.status(400).json({
+      success: false,
+      message: error.message,
+    });
   }
 };

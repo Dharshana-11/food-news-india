@@ -2,41 +2,78 @@ import mongoose from "mongoose";
 
 const { Schema } = mongoose;
 
+/**
+ * @typedef {Object} DocumentFile
+ * @property {string} originalName - Filename uploaded by the user.
+ * @property {string} storedName - Generated safe filename stored on server.
+ * @property {string} filePath - Absolute/relative path of the stored file.
+ * @property {number} fileSize - Size in bytes.
+ * @property {"pdf"|"jpg"|"jpeg"|"png"} fileType - File type/extension.
+ * @property {"local"|"firebase"|"aws_s3"} storageProvider - Storage mechanism used.
+ */
+
+/**
+ * @typedef {Object} Document
+ * @property {mongoose.Types.ObjectId} uploadedByUser - User who uploaded the document.
+ * @property {mongoose.Types.ObjectId} uploadedForUser - Target user (Business Owner).
+ * @property {mongoose.Types.ObjectId|null} kycDocumentId - Linked KYC doc (mutually exclusive).
+ * @property {mongoose.Types.ObjectId|null} complianceItemId - Linked Compliance doc (mutually exclusive).
+ * @property {DocumentFile} file - File metadata.
+ * @property {Date|null} validFrom - Start of document validity.
+ * @property {Date|null} validUntil - End of document validity.
+ * @property {"pending"|"approved"|"rejected"|"expired"|"trash"} status - Review lifecycle.
+ * @property {string} reviewNotes - Notes from admin/reviewer.
+ * @property {Date} createdAt
+ * @property {Date} updatedAt
+ */
 const DocumentSchema = new Schema(
   {
-    // Who uploaded the file
+    /**
+     * The admin or user who uploaded the document.
+     */
     uploadedByUser: {
       type: Schema.Types.ObjectId,
       ref: "Users",
       required: true,
     },
 
-    // For which user (always a Business Owner)
+    /**
+     * The Business Owner for whom this document is uploaded.
+     */
     uploadedForUser: {
       type: Schema.Types.ObjectId,
       ref: "Users",
       required: true,
     },
 
-    // Link to either KYC or Compliance — exactly one must exist
+    /**
+     * Exactly ONE of (kycDocumentId, complianceItemId) must be provided.
+     */
     kycDocumentId: {
       type: Schema.Types.ObjectId,
       ref: "KYCDocument",
       default: null,
     },
+
     complianceItemId: {
       type: Schema.Types.ObjectId,
       ref: "ComplianceItem",
       default: null,
     },
 
-    // File storage meta
+    /**
+     * Metadata about the stored file.
+     */
     file: {
-      originalName: { type: String, required: true },   // user uploaded filename
-      storedName: { type: String, required: true },     // safe generated name
-      filePath: { type: String, required: true },       // full URL / local path
-      fileSize: { type: Number, required: true },       // in bytes
-      fileType: { type: String, enum: ["pdf", "jpg", "jpeg", "png"], required: true },
+      originalName: { type: String, required: true },
+      storedName: { type: String, required: true },
+      filePath: { type: String, required: true },
+      fileSize: { type: Number, required: true },
+      fileType: {
+        type: String,
+        enum: ["pdf", "jpg", "jpeg", "png"],
+        required: true,
+      },
       storageProvider: {
         type: String,
         enum: ["local", "firebase", "aws_s3"],
@@ -44,24 +81,24 @@ const DocumentSchema = new Schema(
       },
     },
 
-    // Validity (mainly for compliance docs)
-    validFrom: {
-      type: Date,
-      default: null,
-    },
-    validUntil: {
-      type: Date,
-      default: null,
-    },
+    /**
+     * Validity dates mainly used for compliance documents.
+     */
+    validFrom: { type: Date, default: null },
+    validUntil: { type: Date, default: null },
 
-    // Document review status
+    /**
+     * Review and lifecycle status.
+     */
     status: {
       type: String,
       enum: ["pending", "approved", "rejected", "expired", "trash"],
       default: "pending",
     },
 
-    // Admin or reviewer notes
+    /**
+     * Notes added by reviewer/admin.
+     */
     reviewNotes: {
       type: String,
       default: "",
@@ -70,14 +107,21 @@ const DocumentSchema = new Schema(
   { timestamps: true }
 );
 
-// Custom validation: Only one of KYC or Compliance allowed
+/**
+ * Ensures exactly one of:
+ *  - kycDocumentId
+ *  - complianceItemId
+ * must exist. Prevents accidental dual linkage.
+ */
 DocumentSchema.pre("validate", function (next) {
   const hasKYC = !!this.kycDocumentId;
   const hasCompliance = !!this.complianceItemId;
 
   if (hasKYC === hasCompliance) {
     return next(
-      new Error("Document must be linked to exactly one: KYC Document OR Compliance Item")
+      new Error(
+        "Document must be linked to exactly one: KYC Document OR Compliance Item"
+      )
     );
   }
 

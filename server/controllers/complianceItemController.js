@@ -1,16 +1,18 @@
 import ComplianceItem from "../models/ComplianceItem.js";
 
-// @desc Get all compliance items
-// @route GET /api/compliance-items
+/**
+ * @desc    Get all compliance items (with search, pagination, and status filter)
+ * @route   GET /api/compliance-items
+ * @access  Admin / Super Admin
+ */
 export const getAllComplianceItems = async (req, res) => {
   try {
     const { search = "", page = 1, limit = 0, status } = req.query;
-    const query = {};
 
-    // Filter by status if provided, otherwise exclude trash
-    query.status = status ? status : { $ne: "trash" };
+    const query = {
+      status: status || { $ne: "trash" },
+    };
 
-    // Add search filter
     if (search) {
       query.name = { $regex: search, $options: "i" };
     }
@@ -22,45 +24,69 @@ export const getAllComplianceItems = async (req, res) => {
       ComplianceItem.find(query)
         .sort({ createdAt: -1 })
         .skip(skip)
-        .limit(parseInt(limit))
+        .limit(parseInt(limit)),
     ]);
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       total: totalCount,
       page: parseInt(page),
       limit: parseInt(limit),
-      data: complianceItems
+      data: complianceItems,
     });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error while fetching compliance items" });
+    return res.status(500).json({
+      message: "Server error while fetching compliance items",
+    });
   }
 };
 
-// @desc Add new compliance item
-// @route POST /api/compliance-items
+/**
+ * @desc    Add a new compliance item
+ * @route   POST /api/compliance-items
+ * @access  Admin / Super Admin
+ */
 export const addComplianceItem = async (req, res) => {
   try {
-    let { name, code, description = "", ruleExpression = "", status = "active", validityDays } = req.body;
+    let {
+      name,
+      code,
+      description = "",
+      ruleExpression = "",
+      status = "active",
+      validityDays,
+    } = req.body;
 
-    // Trim strings
     name = name?.trim();
     code = code?.trim()?.toUpperCase();
 
-    // Validate status
-    if (!["active", "inactive", "trash"].includes(status)) status = "active";
-
-    // Validate validityDays
-    if (!validityDays || isNaN(validityDays) || validityDays < 1) {
-      return res.status(400).json({ message: "validityDays must be a number greater than 0" });
+    if (!name || !code) {
+      return res
+        .status(400)
+        .json({ message: "Name and code are required" });
     }
 
-    // Check if name or code already exists
+    if (!["active", "inactive", "trash"].includes(status)) {
+      status = "active";
+    }
+
+    if (!validityDays || isNaN(validityDays) || validityDays < 1) {
+      return res.status(400).json({
+        message: "validityDays must be a number greater than 0",
+      });
+    }
+
     const existing = await ComplianceItem.findOne({
-      $or: [{ name }, { code }]
+      $or: [{ name }, { code }],
     });
-    if (existing) return res.status(400).json({ message: "Compliance item with this name or code already exists" });
+
+    if (existing) {
+      return res.status(400).json({
+        message:
+          "Compliance item with this name or code already exists",
+      });
+    }
 
     const complianceItem = new ComplianceItem({
       name,
@@ -68,53 +94,82 @@ export const addComplianceItem = async (req, res) => {
       description,
       ruleExpression,
       status,
-      validityDays
+      validityDays,
     });
 
     await complianceItem.save();
-    res.status(201).json({ message: "Compliance item added successfully", complianceItem });
+
+    return res.status(201).json({
+      success: true,
+      message: "Compliance item added successfully",
+      data: complianceItem,
+    });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error while adding compliance item" });
+    return res.status(500).json({
+      message: "Server error while adding compliance item",
+    });
   }
 };
 
-// @desc Update existing compliance item
-// @route PUT /api/compliance-items/:id
+/**
+ * @desc    Update an existing compliance item
+ * @route   PUT /api/compliance-items/:id
+ * @access  Admin / Super Admin
+ */
 export const updateComplianceItem = async (req, res) => {
   try {
     const { id } = req.params;
     const updates = { ...req.body };
 
-    // Trim strings if present
     if (updates.name) updates.name = updates.name.trim();
     if (updates.code) updates.code = updates.code.trim().toUpperCase();
 
-    // Validate status
-    if (updates.status && !["active", "inactive", "trash"].includes(updates.status)) {
+    if (
+      updates.status &&
+      !["active", "inactive", "trash"].includes(updates.status)
+    ) {
       updates.status = "active";
     }
 
-    // Validate validityDays if present
     if (updates.validityDays !== undefined) {
       if (isNaN(updates.validityDays) || updates.validityDays < 1) {
-        return res.status(400).json({ message: "validityDays must be a number greater than 0" });
+        return res.status(400).json({
+          message: "validityDays must be a number greater than 0",
+        });
       }
     }
 
-    const complianceItem = await ComplianceItem.findByIdAndUpdate(id, updates, { new: true });
+    const complianceItem = await ComplianceItem.findByIdAndUpdate(
+      id,
+      updates,
+      { new: true }
+    );
 
-    if (!complianceItem) return res.status(404).json({ message: "Compliance item not found" });
+    if (!complianceItem) {
+      return res
+        .status(404)
+        .json({ message: "Compliance item not found" });
+    }
 
-    res.status(200).json({ message: "Compliance item updated successfully", complianceItem });
+    return res.status(200).json({
+      success: true,
+      message: "Compliance item updated successfully",
+      data: complianceItem,
+    });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error while updating compliance item" });
+    return res.status(500).json({
+      message: "Server error while updating compliance item",
+    });
   }
 };
 
-// @desc Delete compliance item (soft delete: set status=trash)
-// @route DELETE /api/compliance-items/:id
+/**
+ * @desc    Soft delete a compliance item (sets status="trash")
+ * @route   DELETE /api/compliance-items/:id
+ * @access  Admin / Super Admin
+ */
 export const deleteComplianceItem = async (req, res) => {
   try {
     const { id } = req.params;
@@ -125,11 +180,21 @@ export const deleteComplianceItem = async (req, res) => {
       { new: true }
     );
 
-    if (!complianceItem) return res.status(404).json({ message: "Compliance item not found" });
+    if (!complianceItem) {
+      return res
+        .status(404)
+        .json({ message: "Compliance item not found" });
+    }
 
-    res.status(200).json({ message: "Compliance item deleted (status set to trash)", complianceItem });
+    return res.status(200).json({
+      success: true,
+      message: "Compliance item deleted (status set to trash)",
+      data: complianceItem,
+    });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error while deleting compliance item" });
+    return res.status(500).json({
+      message: "Server error while deleting compliance item",
+    });
   }
 };

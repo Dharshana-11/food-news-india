@@ -1,11 +1,13 @@
 import ComplianceRequirementMapping from "../models/ComplianceRequirementMapping.js";
 import ComplianceItem from "../models/ComplianceItem.js";
-import mongoose from "mongoose";
 
-// Create or Update (Upsert)
+/**
+ * Create or update a compliance requirement mapping (Upsert).
+ * @route POST /api/mappings
+ */
 export const upsertMapping = async (req, res) => {
   try {
-    const { businessTypeId, complianceItemId , applicability } = req.body;
+    const { businessTypeId, complianceItemId, applicability } = req.body;
 
     if (!businessTypeId || !complianceItemId || !applicability) {
       return res.status(400).json({
@@ -20,12 +22,14 @@ export const upsertMapping = async (req, res) => {
       status: { $ne: "trash" },
     });
 
-    let result, message;
+    let result;
+    let message;
 
     if (existing) {
       existing.applicability = applicability;
+      existing.updatedBy = req.user._id;
       existing.updatedAt = new Date();
-      existing.updatedBy = req.user._id;   // <-- set updater
+
       result = await existing.save();
       message = "Mapping updated successfully";
     } else {
@@ -33,9 +37,10 @@ export const upsertMapping = async (req, res) => {
         businessTypeId,
         complianceItemId,
         applicability,
-        createdBy: req.user._id,           // <-- set creator
-        updatedBy: req.user._id            
+        createdBy: req.user._id,
+        updatedBy: req.user._id,
       });
+
       message = "Mapping created successfully";
     }
 
@@ -54,7 +59,11 @@ export const upsertMapping = async (req, res) => {
     });
   }
 };
-// Get all mappings (excluding deleted) with pagination, sorting, filtering, and search
+
+/**
+ * Get all requirement mappings with pagination + filtering + search.
+ * @route GET /api/mappings
+ */
 export const getAllMappings = async (req, res) => {
   try {
     const {
@@ -63,45 +72,41 @@ export const getAllMappings = async (req, res) => {
       sortBy = "updatedAt",
       order = "desc",
       applicability,
-      businessType,
-      complianceItem,
-      search = ""
+      businessTypeId,
+      complianceItemId,
+      search = "",
     } = req.query;
 
     const filter = { status: { $ne: "trash" } };
 
     if (applicability) filter.applicability = applicability;
-    if (businessType) filter.businessType = businessType;
-    if (complianceItem) filter.complianceItem = complianceItem;
+    if (businessTypeId) filter.businessTypeId = businessTypeId;
+    if (complianceItemId) filter.complianceItemId = complianceItemId;
 
-    const pageNum = parseInt(page);
-    const limitNum = parseInt(limit);
+    const pageNum = Number(page);
+    const limitNum = Number(limit);
 
-    // Base query
-    let query = ComplianceRequirementMapping.find(filter)
+    const mappings = await ComplianceRequirementMapping.find(filter)
       .populate("businessTypeId", "name code")
       .populate("complianceItemId", "name code")
       .sort({ [sortBy]: order === "desc" ? -1 : 1 })
       .skip((pageNum - 1) * limitNum)
-      .limit(limitNum);
+      .limit(limitNum)
+      .lean();
 
-    // Fetch mappings
-    const mappings = await query.lean();
+    const filteredResults =
+      search.trim() !== ""
+        ? mappings.filter((m) => {
+            const s = search.toLowerCase();
+            return (
+              m.businessTypeId?.name?.toLowerCase().includes(s) ||
+              m.businessTypeId?.code?.toLowerCase().includes(s) ||
+              m.complianceItemId?.name?.toLowerCase().includes(s) ||
+              m.complianceItemId?.code?.toLowerCase().includes(s)
+            );
+          })
+        : mappings;
 
-    // 🔍 Search filter (on populated fields)
-    const filteredResults = search
-      ? mappings.filter((m) => {
-          const searchLower = search.toLowerCase();
-          return (
-            m.businessTypeId?.name?.toLowerCase().includes(searchLower) ||
-            m.businessTypeId?.code?.toLowerCase().includes(searchLower) ||
-            m.complianceItemId?.name?.toLowerCase().includes(searchLower) ||
-            m.complianceItemId?.code?.toLowerCase().includes(searchLower)
-          );
-        })
-      : mappings;
-
-    // Count (based on DB, not post-filter)
     const total = await ComplianceRequirementMapping.countDocuments(filter);
 
     return res.status(200).json({
@@ -124,11 +129,14 @@ export const getAllMappings = async (req, res) => {
   }
 };
 
-
-// Soft delete (mark status = "trash")
+/**
+ * Soft delete (move mapping to trash)
+ * @route DELETE /api/mappings/:id
+ */
 export const deleteMapping = async (req, res) => {
   try {
     const { id } = req.params;
+
     const mapping = await ComplianceRequirementMapping.findById(id);
 
     if (!mapping) {
@@ -140,13 +148,14 @@ export const deleteMapping = async (req, res) => {
 
     mapping.status = "trash";
     mapping.updatedAt = new Date();
+    mapping.updatedBy = req.user._id;
+
     await mapping.save();
 
     return res.status(200).json({
       success: true,
       message: "Mapping moved to trash successfully",
     });
-
   } catch (error) {
     return res.status(500).json({
       success: false,
@@ -156,7 +165,10 @@ export const deleteMapping = async (req, res) => {
   }
 };
 
-// Get compliance grid for frontend
+/**
+ * Generate a grid of compliance items + applicability for a BusinessType
+ * @route GET /api/mappings/grid/:businessTypeId
+ */
 export const getComplianceGridByBusinessType = async (req, res) => {
   try {
     const { businessTypeId } = req.params;
@@ -164,28 +176,30 @@ export const getComplianceGridByBusinessType = async (req, res) => {
     if (!businessTypeId) {
       return res.status(400).json({
         success: false,
-        message: "businessTypeId is required"
+        message: "businessTypeId is required",
       });
     }
 
-    const complianceItems = await ComplianceItem.find({ status: { $ne: "trash" } }).lean();
+    const complianceItems = await ComplianceItem.find({
+      status: { $ne: "trash" },
+    }).lean();
+
     const mappings = await ComplianceRequirementMapping.find({
       businessTypeId,
-      status: { $ne: "trash" }
+      status: { $ne: "trash" },
     }).lean();
-    console.log("business id:",businessTypeId);
 
-    const result = complianceItems.map((item) => {
-      const existing = mappings.find(
+    const grid = complianceItems.map((item) => {
+      const found = mappings.find(
         (m) => m.complianceItemId?.toString() === item._id.toString()
       );
-      console.log("existing", existing)
+
       return {
         complianceItemId: item._id,
         complianceItemName: item.name,
         complianceItemCode: item.code,
-        applicability: existing ? existing.applicability : "not_applicable",
-        mappingId: existing?._id || null
+        applicability: found ? found.applicability : "not_applicable",
+        mappingId: found?._id || null,
       };
     });
 
@@ -194,15 +208,15 @@ export const getComplianceGridByBusinessType = async (req, res) => {
       message: "Compliance grid generated successfully",
       data: {
         businessTypeId,
-        rules: result
-      }
+        rules: grid,
+      },
     });
   } catch (error) {
     console.error("Grid generation error:", error);
     return res.status(500).json({
       success: false,
       message: "Failed to generate compliance grid",
-      error: error.message
+      error: error.message,
     });
   }
 };

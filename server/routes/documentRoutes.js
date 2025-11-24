@@ -16,65 +16,55 @@ import ROLES from "../utils/constants/roles.js";
 const router = express.Router();
 
 /**
- * CREATE Document (KYC or Compliance)
+ * MIDDLEWARE:  
+ * - Verify session  
+ * - Allow only ADMIN / SUPER_ADMIN  
  */
-router.post(
-  "/",
+router.use(
   verifySession,
-  authorizeRoles(ROLES.ADMIN, ROLES.SUPER_ADMIN),
-  upload.single("file"),
-  createDocument
+  authorizeRoles(ROLES.ADMIN, ROLES.SUPER_ADMIN)
 );
 
 /**
- * LIST ALL Documents (pagination + filters)
+ * @route POST /documents
+ * @description Create a new Document (KYC/Compliance). File upload supported.
+ * @access Admin, Super Admin
  */
-router.get(
-  "/",
-  verifySession,
-  authorizeRoles(ROLES.ADMIN, ROLES.SUPER_ADMIN),
-  getAllDocuments
-);
+router.post("/", upload.single("file"), createDocument);
 
 /**
- * GET Single Document
+ * @route GET /documents
+ * @description Get all documents (pagination, filters: status, user, type, etc.)
+ * @access Admin, Super Admin
  */
-router.get(
-  "/:id",
-  verifySession,
-  authorizeRoles(ROLES.ADMIN, ROLES.SUPER_ADMIN),
-  getDocumentById
-);
+router.get("/", getAllDocuments);
 
 /**
- * UPDATE Document Metadata (validFrom, validUntil)
+ * @route GET /documents/:id
+ * @description Get a single document by its ID
+ * @access Admin, Super Admin
  */
-router.put(
-  "/:id",
-  verifySession,
-  authorizeRoles(ROLES.ADMIN, ROLES.SUPER_ADMIN),
-  upload.single("file"),
-  updateDocument
-);
+router.get("/:id", getDocumentById);
 
 /**
- * REVIEW Document (approve / reject / expire)
+ * @route PUT /documents/:id
+ * @description Update document metadata (dates, user, file upload)
+ * @access Admin, Super Admin
  */
-router.patch(
-  "/:id/review",
-  verifySession,
-  authorizeRoles(ROLES.ADMIN, ROLES.SUPER_ADMIN),
-  reviewDocument
-);
+router.put("/:id", upload.single("file"), updateDocument);
 
 /**
- * SOFT DELETE → move to trash
+ * @route PATCH /documents/:id/review
+ * @description Review document (approve / reject / expire)
+ * @access Admin, Super Admin
  */
-router.delete(
-  "/:id",
-  verifySession,
-  authorizeRoles(ROLES.ADMIN, ROLES.SUPER_ADMIN),
-  deleteDocument
-);
+router.patch("/:id/review", reviewDocument);
+
+/**
+ * @route DELETE /documents/:id
+ * @description Soft delete → move document to trash
+ * @access Admin, Super Admin
+ */
+router.delete("/:id", deleteDocument);
 
 export default router;

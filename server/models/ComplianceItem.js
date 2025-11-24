@@ -1,5 +1,17 @@
 import mongoose from "mongoose";
 
+/**
+ * @typedef {Object} ComplianceItem
+ * @property {string} name - Name of the compliance item (e.g., "FSSAI License").
+ * @property {string} code - Unique short code for the compliance item (e.g., "FSSAI").
+ * @property {string} description - Detailed description of the compliance requirement.
+ * @property {string} ruleExpression - (Future Use) Rule expression for dynamic compliance logic.
+ * @property {number} validityDays - Validity duration (in days) of the compliance document.
+ * @property {"active"|"inactive"|"trash"} status - Status of the compliance item.
+ * @property {Date} createdAt - Timestamp when the record was created.
+ * @property {Date} updatedAt - Timestamp when the record was last updated.
+ */
+
 const complianceItemSchema = new mongoose.Schema(
   {
     name: {
@@ -25,9 +37,9 @@ const complianceItemSchema = new mongoose.Schema(
     },
 
     /**
-     * FUTURE RULE ENGINE
+     * FUTURE: RULE ENGINE SUPPORT
      * Example:
-     *   businessType == 'RESTAURANT'
+     *   businessType == "RESTAURANT"
      *   employeeCount > 10
      */
     ruleExpression: {
@@ -36,17 +48,18 @@ const complianceItemSchema = new mongoose.Schema(
     },
 
     /**
-     * Validity for compliance documents (days)
+     * Validity period for compliance documents (in days).
      * Example:
      *   FSSAI = 365
      *   GST = 365
      *
-     * KYC Documents do NOT use this field.
+     * NOTE:
+     *   Some KYC documents do NOT use validity.
      */
     validityDays: {
       type: Number,
       required: true,
-      min: 1, // at least 1 day
+      min: 1,
     },
 
     status: {

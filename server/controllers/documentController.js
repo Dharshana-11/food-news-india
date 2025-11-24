@@ -5,7 +5,10 @@ import { unlinkSync } from "fs";
 import { join } from "path";
 
 /**
- * Helper: validate referenced model exists
+ * Validate referenced model exists
+ * @param {Model} model
+ * @param {string} id
+ * @param {string} label
  */
 const validateReferenceExists = async (model, id, label) => {
   const exists = await model.findById(id);
@@ -13,31 +16,36 @@ const validateReferenceExists = async (model, id, label) => {
 };
 
 /**
- * CREATE Document
+ * CREATE: Upload a new document
+ * @route POST /api/documents
  */
 export const createDocument = async (req, res) => {
   try {
-    const {
-      uploadedForUser,
-      kycDocumentId,
-      complianceItemId,
-      validFrom,
-    } = req.body;
+    const { uploadedForUser, kycDocumentId, complianceItemId, validFrom } = req.body;
 
-    // Ensure EXACTLY one reference
-    if (!!kycDocumentId === !!complianceItemId) {
+    // Mandatory field: uploadedForUser
+    if (!uploadedForUser) {
       return res.status(400).json({
         success: false,
-        message: "Document must link to exactly ONE: KYC or Compliance",
+        message: "uploadedForUser is required",
       });
     }
 
-    // Validate referenced object exists
+    // Ensure exactly 1 document type
+    if (!!kycDocumentId === !!complianceItemId) {
+      return res.status(400).json({
+        success: false,
+        message: "Document must be linked to exactly ONE: KYC or Compliance",
+      });
+    }
+
+    // Validate references
     if (kycDocumentId) {
       await validateReferenceExists(KYCDocument, kycDocumentId, "KYC Document");
     }
 
-    let computedValidUntil = null; // default for KYC
+    // Compliance item: compute expiry
+    let computedValidUntil = null;
 
     if (complianceItemId) {
       const complianceItem = await ComplianceItem.findById(complianceItemId);
@@ -48,7 +56,6 @@ export const createDocument = async (req, res) => {
         });
       }
 
-      // Ensure validFrom exists for compliance
       if (!validFrom) {
         return res.status(400).json({
           success: false,
@@ -56,76 +63,66 @@ export const createDocument = async (req, res) => {
         });
       }
 
-      // Auto compute expiry
       const startDate = new Date(validFrom);
       computedValidUntil = new Date(
-        startDate.getTime() +
-          complianceItem.validityDays * 24 * 60 * 60 * 1000
+        startDate.getTime() + complianceItem.validityDays * 24 * 60 * 60 * 1000
       );
     }
 
-    // File data (from upload middleware)
-    // File uploaded by multer
+    // File required
     if (!req.file) {
-    return res.status(400).json({
+      return res.status(400).json({
         success: false,
         message: "File is required",
-    });
+      });
     }
 
     const fileMeta = {
-    originalName: req.file.originalname,
-    storedName: req.file.filename,
-    filePath: `/uploads/documents/${req.file.filename}`,
-    fileSize: req.file.size,
-    fileType: req.file.mimetype.split("/")[1], // pdf, jpeg, png
-    storageProvider: "local",
+      originalName: req.file.originalname,
+      storedName: req.file.filename,
+      filePath: `/uploads/documents/${req.file.filename}`,
+      fileSize: req.file.size,
+      fileType: req.file.mimetype.split("/")[1],
+      storageProvider: "local",
     };
 
-    const doc = await Document.create({
+    const document = await Document.create({
       uploadedByUser: req.user._id,
       uploadedForUser,
       kycDocumentId,
       complianceItemId,
       validFrom: validFrom ? new Date(validFrom) : null,
-      validUntil: computedValidUntil, // FINAL VALUE — based on rules
+      validUntil: computedValidUntil,
       file: fileMeta,
     });
 
     return res.status(201).json({
       success: true,
       message: "Document uploaded successfully",
-      data: doc,
+      data: document,
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 
 /**
- * GET ALL Documents (Admin/SuperAdmin)
+ * GET ALL: Paginated documents for admins
+ * @route GET /api/documents
  */
 export const getAllDocuments = async (req, res) => {
   try {
     const { page = 1, limit = 10, status, search } = req.query;
 
-    const filter = {};
+    const filter = {
+      status: status || { $ne: "trash" },
+    };
 
-    if (status) {
-      filter.status = status;
-    } else {
-      filter.status = { $ne: "trash" };   // default: exclude trash
-    }
-
-    if (status) filter.status = status;
     if (search) {
       filter["file.originalName"] = { $regex: search, $options: "i" };
     }
 
-    const docs = await Document.find(filter)
+    const documents = await Document.find(filter)
       .populate("uploadedByUser", "name email role")
       .populate("uploadedForUser", "name email role")
       .populate("kycDocumentId", "name code")
@@ -141,7 +138,7 @@ export const getAllDocuments = async (req, res) => {
       total,
       page: Number(page),
       pages: Math.ceil(total / limit),
-      data: docs,
+      data: documents,
     });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
@@ -150,117 +147,95 @@ export const getAllDocuments = async (req, res) => {
 
 /**
  * GET Single Document
+ * @route GET /api/documents/:id
  */
 export const getDocumentById = async (req, res) => {
   try {
-    const doc = await Document.findById(req.params.id)
+    const document = await Document.findById(req.params.id)
       .populate("uploadedByUser", "name email role")
       .populate("uploadedForUser", "name email role")
       .populate("kycDocumentId", "name code")
       .populate("complianceItemId", "name code validityDays");
 
-    if (!doc) {
-      return res.status(404).json({
-        success: false,
-        message: "Document not found",
-      });
+    if (!document) {
+      return res.status(404).json({ success: false, message: "Document not found" });
     }
 
-    return res.status(200).json({ success: true, data: doc });
+    return res.status(200).json({ success: true, data: document });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
 
 /**
- * UPDATE Document (file + meta + status)
+ * UPDATE: File or metadata
+ * @route PUT /api/documents/:id
  */
 export const updateDocument = async (req, res) => {
   try {
     const { validFrom, status, reviewNotes } = req.body;
 
-    const doc = await Document.findById(req.params.id)
-      .populate("complianceItemId", "validityDays");
+    const doc = await Document.findById(req.params.id).populate(
+      "complianceItemId",
+      "validityDays"
+    );
 
     if (!doc) {
-      return res.status(404).json({
-        success: false,
-        message: "Document not found",
-      });
+      return res.status(404).json({ success: false, message: "Document not found" });
     }
 
-    // --------------------------------------------------
-    // CASE 1 → If new file uploaded
-    // --------------------------------------------------
+    // File upload
     if (req.file) {
-      // Delete old file
       try {
-        if (doc.file?.filePath) unlinkSync(doc.file.filePath);
+        if (doc.file?.filePath) {
+          const absolutePath = join(process.cwd(), doc.file.filePath);
+          unlinkSync(absolutePath);
+        }
       } catch (err) {
-        console.log("Old file delete error:", err.message);
+        console.log("Error deleting old file:", err.message);
       }
 
       doc.file = {
         originalName: req.file.originalname,
         storedName: req.file.filename,
-        filePath: req.file.path,
+        filePath: `/uploads/documents/${req.file.filename}`,
         fileSize: req.file.size,
         fileType: req.file.mimetype.split("/")[1],
         storageProvider: "local",
       };
     }
 
-    // --------------------------------------------------
-    // CASE 2 → Update metadata (validFrom / validUntil)
-    // --------------------------------------------------
+    // Metadata update
     if (doc.kycDocumentId) {
-      doc.validFrom = validFrom || doc.validFrom;
+      if (validFrom) doc.validFrom = new Date(validFrom);
       doc.validUntil = null;
     }
 
     if (doc.complianceItemId && validFrom) {
-      const d = new Date(validFrom);
+      const start = new Date(validFrom);
       const days = doc.complianceItemId.validityDays;
-
-      doc.validFrom = d;
-      doc.validUntil = new Date(d.getTime() + days * 24 * 60 * 60 * 1000);
+      doc.validFrom = start;
+      doc.validUntil = new Date(start.getTime() + days * 24 * 60 * 60 * 1000);
     }
 
-    // --------------------------------------------------
-    // CASE 3 → Update status if provided
-    // --------------------------------------------------
-    if (status) {
-      doc.status = status;
-    }
-
-    // --------------------------------------------------
-    // CASE 4 → Update review notes if provided
-    // --------------------------------------------------
-    if (reviewNotes !== undefined) {
-      doc.reviewNotes = reviewNotes;
-    }
+    if (status) doc.status = status;
+    if (reviewNotes !== undefined) doc.reviewNotes = reviewNotes;
 
     await doc.save();
 
     return res.status(200).json({
       success: true,
-      message:
-        req.file
-          ? "Document updated with new file"
-          : "Document metadata updated",
+      message: req.file ? "Document updated with new file" : "Document updated",
       data: doc,
     });
-
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 
 /**
- * SOFT DELETE → moves to trash
+ * SOFT DELETE (Move to trash)
+ * @route DELETE /api/documents/:id
  */
 export const deleteDocument = async (req, res) => {
   try {
@@ -271,10 +246,7 @@ export const deleteDocument = async (req, res) => {
     );
 
     if (!doc) {
-      return res.status(404).json({
-        success: false,
-        message: "Document not found",
-      });
+      return res.status(404).json({ success: false, message: "Document not found" });
     }
 
     return res.status(200).json({
@@ -287,7 +259,8 @@ export const deleteDocument = async (req, res) => {
 };
 
 /**
- * REVIEW Document (approve / reject / expire)
+ * REVIEW (approve/reject/expire)
+ * @route PATCH /api/documents/:id/review
  */
 export const reviewDocument = async (req, res) => {
   try {
@@ -302,18 +275,12 @@ export const reviewDocument = async (req, res) => {
 
     const doc = await Document.findByIdAndUpdate(
       req.params.id,
-      {
-        status,
-        reviewNotes: notes || "",
-      },
+      { status, reviewNotes: notes || "" },
       { new: true }
     );
 
     if (!doc) {
-      return res.status(404).json({
-        success: false,
-        message: "Document not found",
-      });
+      return res.status(404).json({ success: false, message: "Document not found" });
     }
 
     return res.status(200).json({
@@ -325,4 +292,3 @@ export const reviewDocument = async (req, res) => {
     return res.status(500).json({ success: false, message: error.message });
   }
 };
-

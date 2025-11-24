@@ -1,13 +1,17 @@
 import BusinessType from "../models/BusinessType.js";
 
-// @desc Get all business types
-// @route GET /api/business-types
+/**
+ * @desc    Get all business types (with search, pagination, and status filter)
+ * @route   GET /api/business-types
+ * @access  Admin / Super Admin
+ */
 export const getAllBusinessTypes = async (req, res) => {
   try {
     const { search = "", page = 1, limit = 0, status } = req.query;
-    const query = {};
 
-    query.status = status ? status : { $ne: "trash" };
+    const query = {
+      status: status || { $ne: "trash" },
+    };
 
     if (search) {
       query.name = { $regex: search, $options: "i" };
@@ -38,15 +42,18 @@ export const getAllBusinessTypes = async (req, res) => {
   }
 };
 
-// @desc Add new business type
-// @route POST /api/business-types
+/**
+ * @desc    Create a new business type
+ * @route   POST /api/business-types
+ * @access  Admin / Super Admin
+ */
 export const createBusinessType = async (req, res) => {
   try {
     let { name, code, description = "", status = "active", sortOrder = 0 } =
       req.body;
 
     name = name?.trim();
-    code = code?.trim().toUpperCase();
+    code = code?.trim()?.toUpperCase();
 
     if (!name || !code) {
       return res.status(400).json({ message: "Name and code are required" });
@@ -61,9 +68,9 @@ export const createBusinessType = async (req, res) => {
     });
 
     if (existing) {
-      return res
-        .status(400)
-        .json({ message: "Business type with this name or code already exists" });
+      return res.status(400).json({
+        message: "Business type with this name or code already exists",
+      });
     }
 
     const businessType = new BusinessType({
@@ -89,11 +96,14 @@ export const createBusinessType = async (req, res) => {
   }
 };
 
-// @desc Update existing business type
-// @route PUT /api/business-types/:id
+/**
+ * @desc    Update a business type by ID
+ * @route   PUT /api/business-types/:id
+ * @access  Admin / Super Admin
+ */
 export const updateBusinessType = async (req, res) => {
   try {
-    const { id } = req.params; // ✅ FIXED (was req.parameters)
+    const { id } = req.params;
     const updates = { ...req.body };
 
     if (updates.name) updates.name = updates.name.trim();
@@ -110,8 +120,9 @@ export const updateBusinessType = async (req, res) => {
       new: true,
     });
 
-    if (!businessType)
+    if (!businessType) {
       return res.status(404).json({ message: "Business type not found" });
+    }
 
     return res.status(200).json({
       success: true,
@@ -126,8 +137,11 @@ export const updateBusinessType = async (req, res) => {
   }
 };
 
-// @desc Delete business type (soft delete: set status=trash)
-// @route DELETE /api/business-types/:id
+/**
+ * @desc    Soft delete a business type (sets status="trash")
+ * @route   DELETE /api/business-types/:id
+ * @access  Admin / Super Admin
+ */
 export const deleteBusinessType = async (req, res) => {
   try {
     const { id } = req.params;
@@ -138,8 +152,9 @@ export const deleteBusinessType = async (req, res) => {
       { new: true }
     );
 
-    if (!businessType)
+    if (!businessType) {
       return res.status(404).json({ message: "Business type not found" });
+    }
 
     return res.status(200).json({
       success: true,
