@@ -29,9 +29,9 @@ const StatCard = ({
   title,
   value,
   icon,
-  bgColor = "var(--color-primary-orange)",      // default
-  textColor = "#162247",                         // default
-  iconBg = "rgba(255, 108, 31, 0.12)",           // default
+  bgColor = "var(--color-primary-orange)", // default
+  textColor = "#162247", // default
+  iconBg = "rgba(255, 108, 31, 0.12)", // default
 }) => {
   return (
     <div>

@@ -45,7 +45,7 @@ const businessTypeSchema = new mongoose.Schema(
       default: 0,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.model("BusinessType", businessTypeSchema);

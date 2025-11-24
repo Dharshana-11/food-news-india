@@ -68,7 +68,7 @@ const complianceItemSchema = new mongoose.Schema(
       default: "active",
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.model("ComplianceItem", complianceItemSchema);

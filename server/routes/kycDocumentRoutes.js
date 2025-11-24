@@ -15,10 +15,7 @@ import ROLES from "../utils/constants/roles.js";
 const router = express.Router();
 
 // Apply session + role check once for all routes
-router.use(
-  verifySession,
-  authorizeRoles(ROLES.ADMIN, ROLES.SUPER_ADMIN)
-);
+router.use(verifySession, authorizeRoles(ROLES.ADMIN, ROLES.SUPER_ADMIN));
 
 /**
  * @route POST /api/kyc-documents

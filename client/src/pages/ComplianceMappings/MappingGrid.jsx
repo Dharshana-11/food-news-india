@@ -1,24 +1,26 @@
 // pages/ComplianceMappings/MappingGrid.jsx
 import { useState, useEffect } from "react";
 import { Table, Select, message, Spin } from "antd";
-import { getComplianceMappingGrid, createOrUpdateMapping } from "../../services/complianceMappingService";
+import {
+  getComplianceMappingGrid,
+  createOrUpdateMapping,
+} from "../../services/complianceMappingService";
 
 const MappingGrid = ({ businessTypeId, onUpdate }) => {
-  const [loading, setLoading] = useState(false);
-  const [gridData, setGridData] = useState([]);
-  const [updating, setUpdating] = useState({});
+  const [loading, setLoading] = useState(false); // Overall grid loading
+  const [gridData, setGridData] = useState([]); // Grid rows
+  const [updating, setUpdating] = useState({}); // Track per-item update loading
 
+  // -------------------- Fetch Grid Data --------------------
   useEffect(() => {
-    if (businessTypeId) {
-      fetchGridData();
-    }
+    if (businessTypeId) fetchGridData();
   }, [businessTypeId]);
 
   const fetchGridData = async () => {
     setLoading(true);
     try {
       const response = await getComplianceMappingGrid(businessTypeId);
-      setGridData(response.data.rules);
+      setGridData(response.data.rules || []);
     } catch (error) {
       message.error("Failed to load grid data");
       console.error(error);
@@ -27,9 +29,12 @@ const MappingGrid = ({ businessTypeId, onUpdate }) => {
     }
   };
 
-  const handleApplicabilityChange = async (complianceItemId, newApplicability) => {
+  // -------------------- Handle Applicability Change --------------------
+  const handleApplicabilityChange = async (
+    complianceItemId,
+    newApplicability,
+  ) => {
     setUpdating({ ...updating, [complianceItemId]: true });
-    
     try {
       await createOrUpdateMapping({
         businessTypeId,
@@ -40,7 +45,6 @@ const MappingGrid = ({ businessTypeId, onUpdate }) => {
         createdBy: "Super Admin",
         updatedBy: "Super Admin",
       });
-      
       message.success("Mapping updated successfully");
       fetchGridData();
       onUpdate();
@@ -52,6 +56,7 @@ const MappingGrid = ({ businessTypeId, onUpdate }) => {
     }
   };
 
+  // -------------------- Table Columns --------------------
   const columns = [
     {
       title: "Compliance Item",
@@ -61,7 +66,9 @@ const MappingGrid = ({ businessTypeId, onUpdate }) => {
       render: (text, record) => (
         <div>
           <div style={{ fontWeight: 500 }}>{text}</div>
-          <div style={{ fontSize: 12, color: "#6b7280" }}>{record.complianceItemCode}</div>
+          <div style={{ fontSize: 12, color: "#6b7280" }}>
+            {record.complianceItemCode}
+          </div>
         </div>
       ),
     },
@@ -73,7 +80,9 @@ const MappingGrid = ({ businessTypeId, onUpdate }) => {
       render: (applicability, record) => (
         <Select
           value={applicability}
-          onChange={(value) => handleApplicabilityChange(record.complianceItemId, value)}
+          onChange={(value) =>
+            handleApplicabilityChange(record.complianceItemId, value)
+          }
           style={{ width: "100%" }}
           loading={updating[record.complianceItemId]}
         >
@@ -93,15 +102,17 @@ const MappingGrid = ({ businessTypeId, onUpdate }) => {
       title: "Status",
       key: "status",
       width: "20%",
-      render: (_, record) => {
-        if (record.mappingId) {
-          return <span className="status-badge status-active">Mapped</span>;
-        }
-        return <span className="status-badge status-inactive">Not Mapped</span>;
-      },
+      render: (_, record) => (
+        <span
+          className={`status-badge status-${record.mappingId ? "active" : "inactive"}`}
+        >
+          {record.mappingId ? "Mapped" : "Not Mapped"}
+        </span>
+      ),
     },
   ];
 
+  // -------------------- Loading State --------------------
   if (loading) {
     return (
       <div style={{ textAlign: "center", padding: "50px" }}>
@@ -110,6 +121,7 @@ const MappingGrid = ({ businessTypeId, onUpdate }) => {
     );
   }
 
+  // -------------------- Render Table --------------------
   return (
     <div className="mapping-grid">
       <Table

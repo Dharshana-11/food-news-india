@@ -1,17 +1,42 @@
 // pages/Documents/DocumentReviewModal.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Modal, Button, Input, message, Radio, Space, Divider } from "antd";
-import { CheckCircleOutlined, CloseCircleOutlined, ClockCircleOutlined } from "@ant-design/icons";
+import {
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  ClockCircleOutlined,
+} from "@ant-design/icons";
 import { reviewDocument } from "../../services/documentService";
 import { formatDate } from "../../utils/dateFormatter";
 
 const { TextArea } = Input;
 
+/**
+ * Modal for reviewing a document (approve, reject, or mark as expired)
+ *
+ * @param {Object} props
+ * @param {boolean} props.visible - Whether the modal is visible
+ * @param {Object} props.document - Document object to review
+ * @param {Function} props.onSuccess - Callback after successful review
+ * @param {Function} props.onCancel - Callback to close the modal
+ * @returns {JSX.Element|null}
+ */
 const DocumentReviewModal = ({ visible, document, onSuccess, onCancel }) => {
   const [reviewStatus, setReviewStatus] = useState("approved");
   const [notes, setNotes] = useState("");
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    // Reset state whenever a new document is opened
+    if (document) {
+      setReviewStatus("approved");
+      setNotes("");
+    }
+  }, [document]);
+
+  /**
+   * Submit the review
+   */
   const handleReview = async () => {
     if (!document) return;
 
@@ -19,12 +44,10 @@ const DocumentReviewModal = ({ visible, document, onSuccess, onCancel }) => {
     try {
       await reviewDocument(document._id, {
         status: reviewStatus,
-        notes: notes,
+        notes,
       });
-      
+
       message.success(`Document ${reviewStatus} successfully`);
-      setReviewStatus("approved");
-      setNotes("");
       onSuccess();
     } catch (error) {
       message.error(error.response?.data?.message || "Review failed");
@@ -34,6 +57,9 @@ const DocumentReviewModal = ({ visible, document, onSuccess, onCancel }) => {
     }
   };
 
+  /**
+   * Reset and close modal
+   */
   const handleModalCancel = () => {
     setReviewStatus("approved");
     setNotes("");
@@ -41,6 +67,10 @@ const DocumentReviewModal = ({ visible, document, onSuccess, onCancel }) => {
   };
 
   if (!document) return null;
+
+  const fileUrl = document.file
+    ? `http://localhost:5000${document.file.filePath}`
+    : "#";
 
   return (
     <Modal
@@ -57,7 +87,13 @@ const DocumentReviewModal = ({ visible, document, onSuccess, onCancel }) => {
           type="primary"
           loading={loading}
           onClick={handleReview}
-          icon={reviewStatus === "approved" ? <CheckCircleOutlined /> : <CloseCircleOutlined />}
+          icon={
+            reviewStatus === "approved" ? (
+              <CheckCircleOutlined />
+            ) : (
+              <CloseCircleOutlined />
+            )
+          }
           danger={reviewStatus === "rejected"}
         >
           {reviewStatus === "approved" ? "Approve" : "Reject"}
@@ -71,30 +107,38 @@ const DocumentReviewModal = ({ visible, document, onSuccess, onCancel }) => {
           <h4>Document Details</h4>
           <div className="detail-row">
             <span className="detail-label">File Name:</span>
-            <span className="detail-value">{document.file?.originalName}</span>
+            <span className="detail-value">
+              {document.file?.originalName || "N/A"}
+            </span>
           </div>
           <div className="detail-row">
             <span className="detail-label">Document Type:</span>
             <span className="detail-value">
               {document.kycDocumentId
                 ? `KYC: ${document.kycDocumentId?.name}`
-                : `Compliance: ${document.complianceItemId?.name}`}
+                : `Compliance: ${document.complianceItemId?.name || "N/A"}`}
             </span>
           </div>
           <div className="detail-row">
             <span className="detail-label">Uploaded By:</span>
-            <span className="detail-value">{document.uploadedByUser?.name}</span>
+            <span className="detail-value">
+              {document.uploadedByUser?.name || "N/A"}
+            </span>
           </div>
           {document.validFrom && (
             <>
               <div className="detail-row">
                 <span className="detail-label">Valid From:</span>
-                <span className="detail-value">{formatDate(document.validFrom)}</span>
+                <span className="detail-value">
+                  {formatDate(document.validFrom)}
+                </span>
               </div>
               <div className="detail-row">
                 <span className="detail-label">Valid Until:</span>
                 <span className="detail-value">
-                  {document.validUntil ? formatDate(document.validUntil) : "No Expiry"}
+                  {document.validUntil
+                    ? formatDate(document.validUntil)
+                    : "No Expiry"}
                 </span>
               </div>
             </>
@@ -105,17 +149,15 @@ const DocumentReviewModal = ({ visible, document, onSuccess, onCancel }) => {
               {(document.file?.fileSize / 1024).toFixed(2)} KB
             </span>
           </div>
-          
-          <Button
-            type="link"
-            onClick={() => {
-              const fileUrl = `http://localhost:5000${document.file?.filePath}`;
-              window.open(fileUrl, "_blank");
-            }}
-            style={{ padding: 0, marginTop: 8 }}
-          >
-            View Document →
-          </Button>
+          {document.file && (
+            <Button
+              type="link"
+              onClick={() => window.open(fileUrl, "_blank")}
+              style={{ padding: 0, marginTop: 8 }}
+            >
+              View Document →
+            </Button>
+          )}
         </div>
 
         <Divider />

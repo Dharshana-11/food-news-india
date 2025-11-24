@@ -104,7 +104,7 @@ const DocumentSchema = new Schema(
       default: "",
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 /**
@@ -120,8 +120,8 @@ DocumentSchema.pre("validate", function (next) {
   if (hasKYC === hasCompliance) {
     return next(
       new Error(
-        "Document must be linked to exactly one: KYC Document OR Compliance Item"
-      )
+        "Document must be linked to exactly one: KYC Document OR Compliance Item",
+      ),
     );
   }
 

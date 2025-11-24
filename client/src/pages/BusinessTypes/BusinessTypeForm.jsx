@@ -1,11 +1,28 @@
 // pages/BusinessTypes/BusinessTypeForm.jsx
 import { useEffect } from "react";
 import { Form, Input, InputNumber, Switch, Button, message } from "antd";
-import { createBusinessType, updateBusinessType } from "../../services/businessTypeService";
+import {
+  createBusinessType,
+  updateBusinessType,
+} from "../../services/businessTypeService";
 
+/**
+ * BusinessTypeForm Component
+ *
+ * Form to create or update a business type.
+ * Handles both creation and editing based on the presence of `editingRecord`.
+ *
+ * @param {Object} props
+ * @param {Object|null} props.editingRecord - The record being edited, if any
+ * @param {Function} props.onSuccess - Callback fired after successful create/update
+ * @param {Function} props.onCancel - Callback fired on form cancel
+ */
 const BusinessTypeForm = ({ editingRecord, onSuccess, onCancel }) => {
   const [form] = Form.useForm();
 
+  /**
+   * Populate form fields if editing an existing record
+   */
   useEffect(() => {
     if (editingRecord) {
       form.setFieldsValue({
@@ -20,6 +37,10 @@ const BusinessTypeForm = ({ editingRecord, onSuccess, onCancel }) => {
     }
   }, [editingRecord, form]);
 
+  /**
+   * Handle form submission
+   * @param {Object} values - Form values
+   */
   const handleSubmit = async (values) => {
     try {
       const payload = {
@@ -37,7 +58,7 @@ const BusinessTypeForm = ({ editingRecord, onSuccess, onCancel }) => {
         await createBusinessType(payload);
         message.success("Business type created successfully");
       }
-      
+
       form.resetFields();
       onSuccess();
     } catch (error) {
@@ -67,7 +88,10 @@ const BusinessTypeForm = ({ editingRecord, onSuccess, onCancel }) => {
         name="code"
         rules={[
           { required: true, message: "Please enter code" },
-          { pattern: /^[A-Z0-9_]+$/, message: "Code must be uppercase alphanumeric with underscores" },
+          {
+            pattern: /^[A-Z0-9_]+$/,
+            message: "Code must be uppercase alphanumeric with underscores",
+          },
         ]}
       >
         <Input placeholder="e.g., REST" disabled={!!editingRecord} />

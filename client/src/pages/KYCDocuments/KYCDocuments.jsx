@@ -1,23 +1,28 @@
 // pages/KYCDocuments/index.jsx
 import { useState, useEffect } from "react";
-import { Input, Button, Modal, message, Card, Tag, Empty, Avatar } from "antd";
+import { Input, Button, Modal, message, Empty } from "antd";
 import {
-  SearchOutlined,
   PlusOutlined,
-  EditOutlined,
-  DeleteOutlined,
   IdcardOutlined,
+  ShopOutlined,
   UserOutlined,
   TeamOutlined,
-  ShopOutlined,
 } from "@ant-design/icons";
+
 import SuperAdminLayout from "../../layouts/SuperAdminLayout";
 import KYCDocumentForm from "./KYCDocumentForm";
-import { getAllKYCDocuments, deleteKYCDocument } from "../../services/kycDocumentService";
+import KYCDocumentCard from "./KYCDocumentCard";
+import KYCDocumentInfoCard from "./KYCDocumentsInfoCards";
+
+import {
+  getAllKYCDocuments,
+  deleteKYCDocument,
+} from "../../services/kycDocumentService";
 
 const { Search } = Input;
 const { confirm } = Modal;
 
+/** Configuration for role badges */
 const roleConfig = {
   business_owner: {
     label: "Business Owner",
@@ -39,6 +44,10 @@ const roleConfig = {
   },
 };
 
+/**
+ * Page component for managing KYC documents
+ * @component
+ */
 const KYCDocuments = () => {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
@@ -48,6 +57,7 @@ const KYCDocuments = () => {
   const [searchText, setSearchText] = useState("");
 
   // ===================== FETCH DATA =====================
+  /** Fetch all KYC documents from the server */
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -66,13 +76,13 @@ const KYCDocuments = () => {
     fetchData();
   }, []);
 
-  // ===================== SEARCH =====================
+  // ===================== SEARCH FILTER =====================
   useEffect(() => {
     if (searchText) {
       const filtered = data.filter(
         (item) =>
           item.name.toLowerCase().includes(searchText.toLowerCase()) ||
-          item.code.toLowerCase().includes(searchText.toLowerCase())
+          item.code.toLowerCase().includes(searchText.toLowerCase()),
       );
       setFilteredData(filtered);
     } else {
@@ -81,16 +91,19 @@ const KYCDocuments = () => {
   }, [searchText, data]);
 
   // ===================== HANDLERS =====================
+  /** Open modal to add a new KYC document */
   const handleAdd = () => {
     setEditingRecord(null);
     setIsModalOpen(true);
   };
 
+  /** Open modal to edit an existing KYC document */
   const handleEdit = (record) => {
     setEditingRecord(record);
     setIsModalOpen(true);
   };
 
+  /** Confirm and delete a KYC document */
   const handleDelete = (record) => {
     confirm({
       title: "Delete KYC Document?",
@@ -110,12 +123,41 @@ const KYCDocuments = () => {
     });
   };
 
+  /** Called when the form submission succeeds */
   const handleFormSuccess = () => {
     setIsModalOpen(false);
     setEditingRecord(null);
     fetchData();
   };
 
+  // ===================== INFO CARD DATA =====================
+  const infoCardsData = [
+    {
+      title: "Business Owners",
+      count: data.filter((doc) =>
+        doc.applicableRoles.flat().includes("business_owner"),
+      ).length,
+      icon: <ShopOutlined className="info-card-icon" />,
+      className: "card-blue",
+    },
+    {
+      title: "Agents",
+      count: data.filter((doc) => doc.applicableRoles.flat().includes("agent"))
+        .length,
+      icon: <UserOutlined className="info-card-icon" />,
+      className: "card-green",
+    },
+    {
+      title: "Service Providers",
+      count: data.filter((doc) =>
+        doc.applicableRoles.flat().includes("service_provider"),
+      ).length,
+      icon: <TeamOutlined className="info-card-icon" />,
+      className: "card-orange",
+    },
+  ];
+
+  // ===================== RENDER =====================
   return (
     <SuperAdminLayout>
       <div className="kyc-documents-page">
@@ -123,9 +165,6 @@ const KYCDocuments = () => {
         <div className="kyc-header-section">
           <div className="kyc-header-content">
             <div className="kyc-header-left">
-              {/* <div className="kyc-title-icon">
-                <IdcardOutlined />
-              </div> */}
               <div className="kyc-header-text">
                 <h1 className="kyc-main-title">KYC Documents</h1>
                 <p className="kyc-subtitle">
@@ -148,54 +187,9 @@ const KYCDocuments = () => {
         {/* Info Cards */}
         <div className="kyc-info-section">
           <div className="kyc-info-cards">
-            <Card className="kyc-info-card card-blue">
-              <div className="info-card-content">
-                <ShopOutlined className="info-card-icon" />
-                <div className="info-card-text">
-                  <h4>Business Owners</h4>
-                  <p>
-                    {
-                      data.filter((doc) =>
-                        doc.applicableRoles.flat().includes("business_owner")
-                      ).length
-                    }{" "}
-                    documents
-                  </p>
-                </div>
-              </div>
-            </Card>
-            <Card className="kyc-info-card card-green">
-              <div className="info-card-content">
-                <UserOutlined className="info-card-icon" />
-                <div className="info-card-text">
-                  <h4>Agents</h4>
-                  <p>
-                    {
-                      data.filter((doc) =>
-                        doc.applicableRoles.flat().includes("agent")
-                      ).length
-                    }{" "}
-                    documents
-                  </p>
-                </div>
-              </div>
-            </Card>
-            <Card className="kyc-info-card card-orange">
-              <div className="info-card-content">
-                <TeamOutlined className="info-card-icon" />
-                <div className="info-card-text">
-                  <h4>Service Providers</h4>
-                  <p>
-                    {
-                      data.filter((doc) =>
-                        doc.applicableRoles.flat().includes("service_provider")
-                      ).length
-                    }{" "}
-                    documents
-                  </p>
-                </div>
-              </div>
-            </Card>
+            {infoCardsData.map((card, index) => (
+              <KYCDocumentInfoCard key={index} {...card} />
+            ))}
           </div>
         </div>
 
@@ -221,72 +215,15 @@ const KYCDocuments = () => {
               <Empty description="No KYC documents found" />
             </div>
           ) : (
-            filteredData.map((doc) => {
-              const flatRoles = doc.applicableRoles.flat();
-              return (
-                <Card key={doc._id} className="kyc-document-card" hoverable>
-                  <div className="kyc-card-layout">
-                    <div className="kyc-card-left">
-                      <Avatar
-                        size={64}
-                        icon={<IdcardOutlined />}
-                        className="kyc-card-avatar"
-                      />
-                      <div className="kyc-card-info">
-                        <h3 className="kyc-card-title">{doc.name}</h3>
-                        <div className="kyc-card-code">{doc.code}</div>
-                        <p className="kyc-card-description">{doc.description}</p>
-                      </div>
-                    </div>
-
-                    <div className="kyc-card-right">
-                      <div className="kyc-card-roles">
-                        <div className="roles-label">Applicable For:</div>
-                        <div className="roles-tags">
-                          {flatRoles.map((role, index) => {
-                            const config = roleConfig[role];
-                            return (
-                              <Tag
-                                key={index}
-                                className="role-tag"
-                                style={{
-                                  color: config.color,
-                                  borderColor: config.color,
-                                  backgroundColor: config.bg,
-                                }}
-                                icon={config.icon}
-                              >
-                                {config.label}
-                              </Tag>
-                            );
-                          })}
-                        </div>
-                      </div>
-
-                      <div className="kyc-card-actions">
-                        <Button
-                          type="text"
-                          icon={<EditOutlined />}
-                          onClick={() => handleEdit(doc)}
-                          className="kyc-action-btn kyc-edit-btn"
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          type="text"
-                          icon={<DeleteOutlined />}
-                          onClick={() => handleDelete(doc)}
-                          className="kyc-action-btn kyc-delete-btn"
-                          danger
-                        >
-                          Delete
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-              );
-            })
+            filteredData.map((doc) => (
+              <KYCDocumentCard
+                key={doc._id}
+                doc={doc}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                roleConfig={roleConfig}
+              />
+            ))
           )}
         </div>
 

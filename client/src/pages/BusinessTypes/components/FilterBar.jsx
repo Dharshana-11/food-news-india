@@ -3,7 +3,29 @@ import { SearchOutlined } from "@ant-design/icons";
 
 const { Search } = Input;
 
-const FilterBar = ({ searchText, setSearchText, statusFilter, setStatusFilter }) => {
+/**
+ * FilterBar Component
+ *
+ * Provides a search input and status filter buttons for business types.
+ *
+ * @param {Object} props
+ * @param {string} props.searchText - Current search text
+ * @param {function} props.setSearchText - Setter function for search text
+ * @param {string} props.statusFilter - Current status filter ("all" | "active" | "inactive")
+ * @param {function} props.setStatusFilter - Setter function for status filter
+ */
+const FilterBar = ({
+  searchText,
+  setSearchText,
+  statusFilter,
+  setStatusFilter,
+}) => {
+  const statusButtons = [
+    { label: "All", value: "all" },
+    { label: "Active", value: "active" },
+    { label: "Inactive", value: "inactive" },
+  ];
+
   return (
     <div className="filter-bar">
       <Search
@@ -11,34 +33,22 @@ const FilterBar = ({ searchText, setSearchText, statusFilter, setStatusFilter })
         allowClear
         size="large"
         prefix={<SearchOutlined />}
+        value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
         className="search-bar"
       />
 
       <div className="filter-buttons">
-        <Button
-          type={statusFilter === "all" ? "primary" : "default"}
-          onClick={() => setStatusFilter("all")}
-          className="filter-btn"
-        >
-          All
-        </Button>
-
-        <Button
-          type={statusFilter === "active" ? "primary" : "default"}
-          onClick={() => setStatusFilter("active")}
-          className="filter-btn"
-        >
-          Active
-        </Button>
-
-        <Button
-          type={statusFilter === "inactive" ? "primary" : "default"}
-          onClick={() => setStatusFilter("inactive")}
-          className="filter-btn"
-        >
-          Inactive
-        </Button>
+        {statusButtons.map((btn) => (
+          <Button
+            key={btn.value}
+            type={statusFilter === btn.value ? "primary" : "default"}
+            onClick={() => setStatusFilter(btn.value)}
+            className="filter-btn"
+          >
+            {btn.label}
+          </Button>
+        ))}
       </div>
     </div>
   );

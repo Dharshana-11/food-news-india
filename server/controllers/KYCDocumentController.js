@@ -127,7 +127,7 @@ export const updateKycDocument = async (req, res) => {
         updatedBy: userId,
         updatedAt: new Date(),
       },
-      { new: true }
+      { new: true },
     );
 
     if (!updated) {
@@ -173,7 +173,7 @@ export const updateKycDocumentStatus = async (req, res) => {
         updatedBy: userId,
         updatedAt: new Date(),
       },
-      { new: true }
+      { new: true },
     );
 
     if (!updated) {
@@ -210,7 +210,7 @@ export const deleteKycDocument = async (req, res) => {
         updatedBy: userId,
         updatedAt: new Date(),
       },
-      { new: true }
+      { new: true },
     );
 
     if (!deleted) {

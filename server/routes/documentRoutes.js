@@ -16,14 +16,11 @@ import ROLES from "../utils/constants/roles.js";
 const router = express.Router();
 
 /**
- * MIDDLEWARE:  
- * - Verify session  
- * - Allow only ADMIN / SUPER_ADMIN  
+ * MIDDLEWARE:
+ * - Verify session
+ * - Allow only ADMIN / SUPER_ADMIN
  */
-router.use(
-  verifySession,
-  authorizeRoles(ROLES.ADMIN, ROLES.SUPER_ADMIN)
-);
+router.use(verifySession, authorizeRoles(ROLES.ADMIN, ROLES.SUPER_ADMIN));
 
 /**
  * @route POST /documents

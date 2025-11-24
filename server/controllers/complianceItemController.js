@@ -62,9 +62,7 @@ export const addComplianceItem = async (req, res) => {
     code = code?.trim()?.toUpperCase();
 
     if (!name || !code) {
-      return res
-        .status(400)
-        .json({ message: "Name and code are required" });
+      return res.status(400).json({ message: "Name and code are required" });
     }
 
     if (!["active", "inactive", "trash"].includes(status)) {
@@ -83,8 +81,7 @@ export const addComplianceItem = async (req, res) => {
 
     if (existing) {
       return res.status(400).json({
-        message:
-          "Compliance item with this name or code already exists",
+        message: "Compliance item with this name or code already exists",
       });
     }
 
@@ -140,16 +137,12 @@ export const updateComplianceItem = async (req, res) => {
       }
     }
 
-    const complianceItem = await ComplianceItem.findByIdAndUpdate(
-      id,
-      updates,
-      { new: true }
-    );
+    const complianceItem = await ComplianceItem.findByIdAndUpdate(id, updates, {
+      new: true,
+    });
 
     if (!complianceItem) {
-      return res
-        .status(404)
-        .json({ message: "Compliance item not found" });
+      return res.status(404).json({ message: "Compliance item not found" });
     }
 
     return res.status(200).json({
@@ -177,13 +170,11 @@ export const deleteComplianceItem = async (req, res) => {
     const complianceItem = await ComplianceItem.findByIdAndUpdate(
       id,
       { status: "trash" },
-      { new: true }
+      { new: true },
     );
 
     if (!complianceItem) {
-      return res
-        .status(404)
-        .json({ message: "Compliance item not found" });
+      return res.status(404).json({ message: "Compliance item not found" });
     }
 
     return res.status(200).json({

@@ -24,11 +24,11 @@ const __dirname = path.dirname(__filename);
 import authRoutes from "./routes/authRoutes.js";
 import sessionRoutes from "./routes/sessionRoutes.js";
 import superAdminRoutes from "./routes/superAdminRoutes.js";
-import complianceItemRoutes from "./routes/admin/complianceItemRoutes.js"
-import businessTypeRoutes from "./routes/businessTypeRoutes.js"
+import complianceItemRoutes from "./routes/admin/complianceItemRoutes.js";
+import businessTypeRoutes from "./routes/businessTypeRoutes.js";
 import complianceRequirementMappingRoutes from "./routes/complianceRequirementMappingRoutes.js";
 import kycDocumentRoutes from "./routes/kycDocumentRoutes.js";
-import documentRoutes from "./routes/documentRoutes.js"
+import documentRoutes from "./routes/documentRoutes.js";
 
 // Load environment variables
 dotenv.config();

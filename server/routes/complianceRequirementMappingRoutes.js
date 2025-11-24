@@ -17,10 +17,7 @@ const router = express.Router();
  * - Verify session
  * - Restrict to ADMIN / SUPER_ADMIN
  */
-router.use(
-  verifySession,
-  authorizeRoles(ROLES.ADMIN, ROLES.SUPER_ADMIN)
-);
+router.use(verifySession, authorizeRoles(ROLES.ADMIN, ROLES.SUPER_ADMIN));
 
 /**
  * @route POST /compliance-requirement-mappings

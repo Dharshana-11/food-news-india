@@ -1,12 +1,27 @@
 // src/components/ComplianceItemModal.js
-import { Modal, Form, Input, Switch, Select, InputNumber } from "antd";
 import React, { useEffect } from "react";
+import { Modal, Form, Input, Switch, Select, InputNumber } from "antd";
 
 const { Option } = Select;
 
-const ComplianceItemModal = ({ visible, onCancel, onSubmit, initialValues }) => {
+/**
+ * Modal form for adding or editing a Compliance Item
+ * @component
+ * @param {Object} props
+ * @param {boolean} props.visible - Controls modal visibility
+ * @param {Function} props.onCancel - Called when modal is cancelled
+ * @param {Function} props.onSubmit - Called with form values on submit
+ * @param {Object} [props.initialValues] - Initial values for editing
+ */
+const ComplianceItemModal = ({
+  visible,
+  onCancel,
+  onSubmit,
+  initialValues,
+}) => {
   const [form] = Form.useForm();
 
+  // Populate or reset form when initialValues change
   useEffect(() => {
     if (initialValues) {
       form.setFieldsValue(initialValues);
@@ -15,13 +30,16 @@ const ComplianceItemModal = ({ visible, onCancel, onSubmit, initialValues }) => 
     }
   }, [initialValues, form]);
 
-  const handleOk = () => {
-    form
-      .validateFields()
-      .then((values) => {
-        onSubmit(values);
-      })
-      .catch((info) => console.log("Validation Failed:", info));
+  /**
+   * Handle modal OK button click
+   */
+  const handleOk = async () => {
+    try {
+      const values = await form.validateFields();
+      onSubmit(values);
+    } catch (info) {
+      console.error("Validation Failed:", info);
+    }
   };
 
   return (
@@ -32,8 +50,9 @@ const ComplianceItemModal = ({ visible, onCancel, onSubmit, initialValues }) => 
       onCancel={onCancel}
       onOk={handleOk}
       okText={initialValues ? "Update" : "Add"}
+      destroyOnClose
     >
-      <Form form={form} layout="vertical">
+      <Form form={form} layout="vertical" preserve={false}>
         <Form.Item
           label="Name"
           name="name"
@@ -69,18 +88,11 @@ const ComplianceItemModal = ({ visible, onCancel, onSubmit, initialValues }) => 
           <InputNumber style={{ width: "100%" }} min={1} />
         </Form.Item>
 
-        <Form.Item
-          label="Required"
-          name="required"
-          valuePropName="checked"
-        >
+        <Form.Item label="Required" name="required" valuePropName="checked">
           <Switch />
         </Form.Item>
 
-        <Form.Item
-          label="Rule Expression"
-          name="ruleExpression"
-        >
+        <Form.Item label="Rule Expression" name="ruleExpression">
           <Input placeholder="e.g., businessType=='Restaurant'" />
         </Form.Item>
 
@@ -92,7 +104,6 @@ const ComplianceItemModal = ({ visible, onCancel, onSubmit, initialValues }) => 
           <Select>
             <Option value="active">Active</Option>
             <Option value="inactive">Inactive</Option>
-            <Option value="trash">Trash</Option>
           </Select>
         </Form.Item>
       </Form>

@@ -1,23 +1,23 @@
 /**
  * routes.js
  * ------------------------------------------------------------
- * Centralized route path definitions for the entire application.
+ * Centralized route path definitions for the application.
  *
- * Using constants ensures:
- * - No hardcoded paths scattered across components.
- * - Easier maintenance when URLs change.
- * - Better readability and consistency for navigation and redirects.
+ * Benefits:
+ * - Prevents hardcoded URLs across components.
+ * - Simplifies maintenance when route paths change.
+ * - Enhances readability and consistency for navigation and redirects.
  * ------------------------------------------------------------
  */
 
 /**
  * @constant {Object} ROUTES
- * @description Defines all public and protected route paths used in the app.
+ * @description All route paths used in the app.
  *
- * Grouped by user roles:
- * - Public routes are accessible without authentication.
- * - Super Admin routes are protected and require the SUPER_ADMIN role.
- * - Admin routes (future expansion) are protected and require the ADMIN role.
+ * Grouped by role / access level:
+ * - PUBLIC: Accessible without authentication.
+ * - ADMIN: Protected (future expansion, requires ADMIN role).
+ * - SUPER_ADMIN: Protected (requires SUPER_ADMIN role).
  */
 export const ROUTES = {
   /* =========================================================
@@ -28,12 +28,12 @@ export const ROUTES = {
   ADMIN_LOGIN: "/admin/login",
 
   /* =========================================================
-     ADMIN ROUTES (Reserved for future use)
+     ADMIN ROUTES (reserved for future expansion)
      ========================================================= */
   ADMIN_DASHBOARD: "/admin/dashboard",
 
   /* =========================================================
-     SUPER ADMIN PROTECTED ROUTES
+     SUPER ADMIN ROUTES (protected)
      ========================================================= */
   SUPER_ADMIN_DASHBOARD: "/super-admin/dashboard",
   SUPER_ADMIN_USERS: "/super-admin/users",
@@ -47,6 +47,9 @@ export const ROUTES = {
   SUPER_ADMIN_NOTIFICATIONS: "/super-admin/notifications",
   SUPER_ADMIN_TICKETS: "/super-admin/tickets",
 
+  /* =========================================================
+     SUPER ADMIN COMPLIANCE & DOCUMENT MANAGEMENT
+     ========================================================= */
   SUPER_ADMIN_COMPLIANCE_ITEMS: "/super-admin/compliance-items",
   SUPER_ADMIN_BUSINESS_TYPES: "/super-admin/business-types",
   SUPER_ADMIN_COMPLIANCE_MAPPINGS: "/super-admin/compliance-mappings",

@@ -25,7 +25,13 @@
 
 import { Table } from "antd";
 
-const CustomTable = ({ columns, data, loading, pagination = false, onChange }) => (
+const CustomTable = ({
+  columns,
+  data,
+  loading,
+  pagination = false,
+  onChange,
+}) => (
   <div className="custom-table-wrapper">
     <div className="custom-table-scroll">
       <Table
@@ -40,6 +46,5 @@ const CustomTable = ({ columns, data, loading, pagination = false, onChange }) =
     </div>
   </div>
 );
-
 
 export default CustomTable;

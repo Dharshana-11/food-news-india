@@ -21,7 +21,8 @@ const validateReferenceExists = async (model, id, label) => {
  */
 export const createDocument = async (req, res) => {
   try {
-    const { uploadedForUser, kycDocumentId, complianceItemId, validFrom } = req.body;
+    const { uploadedForUser, kycDocumentId, complianceItemId, validFrom } =
+      req.body;
 
     // Mandatory field: uploadedForUser
     if (!uploadedForUser) {
@@ -65,7 +66,7 @@ export const createDocument = async (req, res) => {
 
       const startDate = new Date(validFrom);
       computedValidUntil = new Date(
-        startDate.getTime() + complianceItem.validityDays * 24 * 60 * 60 * 1000
+        startDate.getTime() + complianceItem.validityDays * 24 * 60 * 60 * 1000,
       );
     }
 
@@ -158,7 +159,9 @@ export const getDocumentById = async (req, res) => {
       .populate("complianceItemId", "name code validityDays");
 
     if (!document) {
-      return res.status(404).json({ success: false, message: "Document not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Document not found" });
     }
 
     return res.status(200).json({ success: true, data: document });
@@ -177,11 +180,13 @@ export const updateDocument = async (req, res) => {
 
     const doc = await Document.findById(req.params.id).populate(
       "complianceItemId",
-      "validityDays"
+      "validityDays",
     );
 
     if (!doc) {
-      return res.status(404).json({ success: false, message: "Document not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Document not found" });
     }
 
     // File upload
@@ -242,11 +247,13 @@ export const deleteDocument = async (req, res) => {
     const doc = await Document.findByIdAndUpdate(
       req.params.id,
       { status: "trash" },
-      { new: true }
+      { new: true },
     );
 
     if (!doc) {
-      return res.status(404).json({ success: false, message: "Document not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Document not found" });
     }
 
     return res.status(200).json({
@@ -276,11 +283,13 @@ export const reviewDocument = async (req, res) => {
     const doc = await Document.findByIdAndUpdate(
       req.params.id,
       { status, reviewNotes: notes || "" },
-      { new: true }
+      { new: true },
     );
 
     if (!doc) {
-      return res.status(404).json({ success: false, message: "Document not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Document not found" });
     }
 
     return res.status(200).json({

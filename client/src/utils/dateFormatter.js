@@ -10,19 +10,19 @@ export const formatDate = (date, format = "short") => {
   if (!date) return "-";
 
   const d = new Date(date);
-  
+
   if (isNaN(d.getTime())) return "-";
 
   const options = {
     short: { year: "numeric", month: "short", day: "numeric" },
     long: { year: "numeric", month: "long", day: "numeric" },
-    full: { 
-      year: "numeric", 
-      month: "long", 
+    full: {
+      year: "numeric",
+      month: "long",
       day: "numeric",
       hour: "2-digit",
-      minute: "2-digit"
-    }
+      minute: "2-digit",
+    },
   };
 
   return d.toLocaleDateString("en-US", options[format] || options.short);

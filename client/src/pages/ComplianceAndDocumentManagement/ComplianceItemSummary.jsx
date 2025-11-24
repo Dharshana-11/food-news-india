@@ -1,3 +1,12 @@
+/**
+ * ComplianceItemSummary Component
+ * ---------------------------------------------------------
+ * Shows a small summary table of compliance items
+ * on the Super Admin dashboard.
+ *
+ * Fetches first 5 items and links to full list page.
+ */
+
 import { useState, useEffect } from "react";
 import CustomTable from "../../components/CustomTable";
 import { getAllComplianceItems } from "../../services/complianceItemService";
@@ -10,11 +19,16 @@ const ComplianceItemSummary = () => {
   const { currentUser } = useAuth();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
-  // ===================== TABLE COLUMNS =====================
+  /** Max rows shown in summary table */
+  const LIMIT = 5;
+
+  /** ===================== TABLE COLUMNS ===================== */
   const columns = [
     { title: "Name", dataIndex: "name", key: "name", width: "20%" },
+
     {
       title: "Description",
       dataIndex: "description",
@@ -26,6 +40,7 @@ const ComplianceItemSummary = () => {
         </span>
       ),
     },
+
     {
       title: "Required",
       dataIndex: "required",
@@ -33,6 +48,7 @@ const ComplianceItemSummary = () => {
       width: "10%",
       render: (val) => (val ? "Yes" : "No"),
     },
+
     {
       title: "Status",
       dataIndex: "status",
@@ -42,13 +58,14 @@ const ComplianceItemSummary = () => {
     },
   ];
 
-  // ===================== FETCH DATA =====================
+  /** ===================== FETCH DATA ===================== */
   const fetchItems = async (search = "") => {
     if (!currentUser) return;
+
     setLoading(true);
     try {
-      const data = await getAllComplianceItems(5, search);
-      setItems(data);
+      const data = await getAllComplianceItems(LIMIT, search);
+      setItems(data || []);
     } catch (err) {
       console.error("Failed to fetch compliance items:", err);
     } finally {
@@ -56,15 +73,21 @@ const ComplianceItemSummary = () => {
     }
   };
 
+  /** Fetch items when user is available */
   useEffect(() => {
-    fetchItems();
+    if (currentUser) fetchItems();
   }, [currentUser]);
 
+  /** ===================== RENDER ===================== */
   return (
     <div className="compliance-item-summary-section">
       <div className="compliance-item-summary-header">
-        <h3 className="compliance-item-summary-title">Compliance Items Summary</h3>
+        <h3 className="compliance-item-summary-title">
+          Compliance Items Summary
+        </h3>
+
         <a
+          role="button"
           onClick={() => navigate(ROUTES.SUPER_ADMIN_COMPLIANCE_ITEMS)}
           className="compliance-item-summary-link"
         >

@@ -79,7 +79,7 @@ const KYCDocumentSchema = new mongoose.Schema(
   },
   {
     timestamps: true, // createdAt, updatedAt
-  }
+  },
 );
 
 /**

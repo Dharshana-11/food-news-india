@@ -76,7 +76,7 @@ const ComplianceRequirementMappingSchema = new mongoose.Schema(
   },
   {
     timestamps: true, // adds `createdAt` and `updatedAt`
-  }
+  },
 );
 
 /**
@@ -85,7 +85,7 @@ const ComplianceRequirementMappingSchema = new mongoose.Schema(
  */
 ComplianceRequirementMappingSchema.index(
   { businessTypeId: 1, complianceItemId: 1 },
-  { unique: true, partialFilterExpression: { status: { $ne: "trash" } } }
+  { unique: true, partialFilterExpression: { status: { $ne: "trash" } } },
 );
 
 /**
@@ -98,5 +98,5 @@ ComplianceRequirementMappingSchema.query.notTrash = function () {
 
 export default mongoose.model(
   "ComplianceRequirementMapping",
-  ComplianceRequirementMappingSchema
+  ComplianceRequirementMappingSchema,
 );

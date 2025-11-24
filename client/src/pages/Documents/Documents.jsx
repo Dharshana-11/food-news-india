@@ -1,26 +1,26 @@
-// pages/Documents/index.jsx
+// pages/Documents/Documents.jsx
 import { useState, useEffect } from "react";
-import { Input, Button, Modal, message, Card, Tag, Empty, Tabs, Badge } from "antd";
+import { Input, Button, Tabs, Modal, Empty, message, Badge } from "antd";
 import {
-  SearchOutlined,
   PlusOutlined,
-  EyeOutlined,
-  EditOutlined,
-  DeleteOutlined,
-  FileOutlined,
+  AppstoreOutlined,
+  UnorderedListOutlined,
   ClockCircleOutlined,
   CheckCircleOutlined,
   CloseCircleOutlined,
   StopOutlined,
-  AppstoreOutlined,
-  UnorderedListOutlined,
 } from "@ant-design/icons";
+
 import SuperAdminLayout from "../../layouts/SuperAdminLayout";
 import DocumentForm from "./DocumentForm";
 import DocumentReviewModal from "./DocumentReviewModal";
-import { getAllDocuments, deleteDocument } from "../../services/documentService";
-import { formatDate } from "../../utils/dateFormatter";
+import {
+  getAllDocuments,
+  deleteDocument,
+} from "../../services/documentService";
 import StatCard from "../../components/dashboard/StatCard";
+import KanbanColumn from "./KanbanColumn";
+import DocumentCard from "./DocumentCard";
 
 const { Search } = Input;
 const { confirm } = Modal;
@@ -86,7 +86,7 @@ const Documents = () => {
   useEffect(() => {
     if (searchText) {
       const filtered = allDocuments.filter((doc) =>
-        doc.file?.originalName.toLowerCase().includes(searchText.toLowerCase())
+        doc.file?.originalName.toLowerCase().includes(searchText.toLowerCase()),
       );
       setFilteredDocuments(filtered);
     } else {
@@ -158,90 +158,6 @@ const Documents = () => {
     expired: filteredDocuments.filter((doc) => doc.status === "expired"),
   };
 
-  // ===================== RENDER DOCUMENT CARD =====================
-  const renderDocumentCard = (doc) => (
-    <Card key={doc._id} className="doc-card" hoverable>
-      <div className="doc-card-header">
-        <div className="doc-icon-wrapper">
-          <FileOutlined />
-        </div>
-        <div className="doc-type-badge">
-          {doc.kycDocumentId ? (
-            <Tag color="blue">KYC</Tag>
-          ) : (
-            <Tag color="purple">Compliance</Tag>
-          )}
-        </div>
-      </div>
-
-      <div className="doc-card-body">
-        <h4 className="doc-filename" title={doc.file?.originalName}>
-          {doc.file?.originalName}
-        </h4>
-        <div className="doc-meta">
-          <span className="doc-type">
-            {doc.file?.fileType?.toUpperCase()}
-          </span>
-          <span className="doc-size">
-            {(doc.file?.fileSize / 1024).toFixed(1)} KB
-          </span>
-        </div>
-        {doc.uploadedByUser && (
-          <p className="doc-uploader">
-            By: <strong>{doc.uploadedByUser.name}</strong>
-          </p>
-        )}
-        {doc.validUntil && (
-          <p className="doc-validity">
-            Valid until: {formatDate(doc.validUntil)}
-          </p>
-        )}
-      </div>
-
-      <div className="doc-card-actions">
-        <Button
-          type="text"
-          size="small"
-          icon={<EyeOutlined />}
-          onClick={() => handleViewFile(doc)}
-          className="doc-action-btn"
-        >
-          View
-        </Button>
-        {doc.status === "pending" && (
-          <Button
-            type="text"
-            size="small"
-            icon={<CheckCircleOutlined />}
-            onClick={() => handleReview(doc)}
-            className="doc-action-btn review-action"
-          >
-            Review
-          </Button>
-        )}
-        <Button
-          type="text"
-          size="small"
-          icon={<EditOutlined />}
-          onClick={() => handleEdit(doc)}
-          className="doc-action-btn"
-        >
-          Edit
-        </Button>
-        <Button
-          type="text"
-          size="small"
-          icon={<DeleteOutlined />}
-          onClick={() => handleDelete(doc)}
-          className="doc-action-btn delete-action"
-          danger
-        >
-          Delete
-        </Button>
-      </div>
-    </Card>
-  );
-
   return (
     <SuperAdminLayout>
       <div className="documents-page-new">
@@ -249,7 +165,6 @@ const Documents = () => {
         <div className="docs-header">
           <div className="docs-header-content">
             <div className="docs-title-section">
-              {/* <FileOutlined className="docs-title-icon" /> */}
               <div>
                 <h1 className="docs-title">Document Management</h1>
                 <p className="docs-subtitle">
@@ -268,42 +183,46 @@ const Documents = () => {
             </Button>
           </div>
         </div>
-        
+
         {/* STAT CARDS */}
-       <div className="stats-cards">
- <StatCard
-  title="Pending"
-  value={groupedDocuments.pending.length}
-  icon={<ClockCircleOutlined style={{ color: 'var(--color-icon-orange)' }} />}
-  bgColor="var(--color-bg-orange)"
-/>
-
-<StatCard
-  title="Approved"
-  value={groupedDocuments.approved.length}
-  icon={<CheckCircleOutlined style={{ color: 'var(--color-icon-green)' }} />}
-  bgColor="var(--color-bg-green)"
-/>
-
-<StatCard
-  title="Rejected"
-  value={groupedDocuments.rejected.length}
-  icon={<CloseCircleOutlined style={{ color: 'var(--color-icon-red)' }} />}
-  bgColor="var(--color-bg-red)"
-/>
-
-<StatCard
-  title="Expired"
-  value={groupedDocuments.expired.length}
-  icon={<StopOutlined style={{ color: 'var(--color-icon-yellow)' }} />}
-  bgColor="var(--color-bg-yellow)"
-/>
-
-</div>
-
-
-
-
+        <div className="stats-cards">
+          <StatCard
+            title="Pending"
+            value={groupedDocuments.pending.length}
+            icon={
+              <ClockCircleOutlined
+                style={{ color: "var(--color-icon-orange)" }}
+              />
+            }
+            bgColor="var(--color-bg-orange)"
+          />
+          <StatCard
+            title="Approved"
+            value={groupedDocuments.approved.length}
+            icon={
+              <CheckCircleOutlined
+                style={{ color: "var(--color-icon-green)" }}
+              />
+            }
+            bgColor="var(--color-bg-green)"
+          />
+          <StatCard
+            title="Rejected"
+            value={groupedDocuments.rejected.length}
+            icon={
+              <CloseCircleOutlined style={{ color: "var(--color-icon-red)" }} />
+            }
+            bgColor="var(--color-bg-red)"
+          />
+          <StatCard
+            title="Expired"
+            value={groupedDocuments.expired.length}
+            icon={
+              <StopOutlined style={{ color: "var(--color-icon-yellow)" }} />
+            }
+            bgColor="var(--color-bg-yellow)"
+          />
+        </div>
 
         {/* Controls */}
         <div className="docs-controls">
@@ -311,7 +230,6 @@ const Documents = () => {
             placeholder="Search documents..."
             allowClear
             size="large"
-            // prefix={<SearchOutlined />}
             onChange={(e) => setSearchText(e.target.value)}
             className="docs-search"
           />
@@ -348,32 +266,16 @@ const Documents = () => {
         ) : viewMode === "kanban" ? (
           <div className="kanban-board">
             {Object.entries(statusConfig).map(([status, config]) => (
-              <div key={status} className="kanban-column">
-                <div
-                  className="kanban-header"
-                  style={{ backgroundColor: config.bgColor }}
-                >
-                  <div className="kanban-title">
-                    {config.icon}
-                    <span>{config.label}</span>
-                  </div>
-                  <Badge
-                    count={groupedDocuments[status].length}
-                    style={{ backgroundColor: config.color }}
-                  />
-                </div>
-                <div className="kanban-body">
-                  {groupedDocuments[status].length === 0 ? (
-                    <Empty
-                      image={Empty.PRESENTED_IMAGE_SIMPLE}
-                      description="No documents"
-                      className="kanban-empty"
-                    />
-                  ) : (
-                    groupedDocuments[status].map(renderDocumentCard)
-                  )}
-                </div>
-              </div>
+              <KanbanColumn
+                key={status}
+                status={status}
+                config={config}
+                documents={groupedDocuments[status]}
+                onView={handleViewFile}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                onReview={handleReview}
+              />
             ))}
           </div>
         ) : (
@@ -382,7 +284,16 @@ const Documents = () => {
               <Empty description="No documents found" />
             ) : (
               <div className="docs-list-grid">
-                {filteredDocuments.map(renderDocumentCard)}
+                {filteredDocuments.map((doc) => (
+                  <DocumentCard
+                    key={doc._id}
+                    doc={doc}
+                    onView={handleViewFile}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                    onReview={handleReview}
+                  />
+                ))}
               </div>
             )}
           </div>

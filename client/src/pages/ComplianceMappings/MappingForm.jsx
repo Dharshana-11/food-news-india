@@ -13,24 +13,25 @@ const MappingForm = ({ onSuccess, onCancel }) => {
   const [businessTypes, setBusinessTypes] = useState([]);
   const [complianceItems, setComplianceItems] = useState([]);
 
+  // -------------------- Fetch Dropdown Data --------------------
   useEffect(() => {
+    const fetchDropdownData = async () => {
+      try {
+        const [types, items] = await Promise.all([
+          getBusinessTypesForDropdown(),
+          getComplianceItemsForDropdown(),
+        ]);
+        setBusinessTypes(types || []);
+        setComplianceItems(items || []);
+      } catch (error) {
+        message.error("Failed to load form data");
+      }
+    };
+
     fetchDropdownData();
   }, []);
 
-  const fetchDropdownData = async () => {
-    try {
-      const [types, items] = await Promise.all([
-        getBusinessTypesForDropdown(),
-        getComplianceItemsForDropdown(),
-      ]);
-
-      setBusinessTypes(types || []);
-      setComplianceItems(items || []);
-    } catch (error) {
-      message.error("Failed to load form data");
-    }
-  };
-
+  // -------------------- Submit Handler --------------------
   const handleSubmit = async (values) => {
     setLoading(true);
     try {
@@ -64,6 +65,7 @@ const MappingForm = ({ onSuccess, onCancel }) => {
       initialValues={{ applicability: "required", status: true, sortOrder: 0 }}
       className="mapping-form"
     >
+      {/* -------------------- Business Type -------------------- */}
       <Form.Item
         label="Business Type"
         name="businessTypeId"
@@ -82,6 +84,7 @@ const MappingForm = ({ onSuccess, onCancel }) => {
         </Select>
       </Form.Item>
 
+      {/* -------------------- Compliance Item -------------------- */}
       <Form.Item
         label="Compliance Item"
         name="complianceItemId"
@@ -100,6 +103,7 @@ const MappingForm = ({ onSuccess, onCancel }) => {
         </Select>
       </Form.Item>
 
+      {/* -------------------- Applicability -------------------- */}
       <Form.Item
         label="Applicability"
         name="applicability"
@@ -112,14 +116,17 @@ const MappingForm = ({ onSuccess, onCancel }) => {
         </Select>
       </Form.Item>
 
+      {/* -------------------- Sort Order -------------------- */}
       <Form.Item label="Sort Order" name="sortOrder">
         <InputNumber min={0} placeholder="0" style={{ width: "100%" }} />
       </Form.Item>
 
+      {/* -------------------- Status -------------------- */}
       <Form.Item label="Status" name="status" valuePropName="checked">
         <Switch checkedChildren="Active" unCheckedChildren="Inactive" />
       </Form.Item>
 
+      {/* -------------------- Form Actions -------------------- */}
       <Form.Item className="form-actions">
         <Button onClick={onCancel} style={{ marginRight: 8 }}>
           Cancel

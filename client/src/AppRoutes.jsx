@@ -18,7 +18,7 @@ import { useAuth } from "./context/AuthContext";
 import { ROUTES } from "./routes";
 import ROLES from "./constants/roles";
 import ComplianceAndDocumentManagement from "./pages/ComplianceAndDocumentManagement/ComplianceAndDocumentManagement";
-import ComplianceItems from "./pages/ComplianceAndDocumentManagement/ComplianceItems"; 
+import ComplianceItems from "./pages/ComplianceAndDocumentManagement/ComplianceItems";
 import BusinessTypes from "./pages/BusinessTypes/BusinessTypes";
 import ComplianceMappings from "./pages/ComplianceMappings/ComplianceMappings";
 import KYCDocuments from "./pages/KYCDocuments/KYCDocuments";
@@ -97,38 +97,37 @@ const AppRoutes = () => {
         }
       />
 
-      <Route 
-        path={ROUTES.SUPER_ADMIN_BUSINESS_TYPES} 
+      <Route
+        path={ROUTES.SUPER_ADMIN_BUSINESS_TYPES}
         element={
           <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
             <BusinessTypes />
           </ProtectedRoute>
-        } 
+        }
       />
-      <Route 
-        path={ROUTES.SUPER_ADMIN_COMPLIANCE_MAPPINGS} 
+      <Route
+        path={ROUTES.SUPER_ADMIN_COMPLIANCE_MAPPINGS}
         element={
           <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
             <ComplianceMappings />
           </ProtectedRoute>
-        } 
-        
+        }
       />
-      <Route 
+      <Route
         path={ROUTES.SUPER_ADMIN_KYC_DOCUMENTS}
         element={
-        <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
+          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
             <KYCDocuments />
-        </ProtectedRoute>
-        } 
+          </ProtectedRoute>
+        }
       />
-      <Route 
-        path={ROUTES.SUPER_ADMIN_DOCUMENTS} 
+      <Route
+        path={ROUTES.SUPER_ADMIN_DOCUMENTS}
         element={
-        <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
+          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
             <Documents />
-        </ProtectedRoute>
-        } 
+          </ProtectedRoute>
+        }
       />
 
       <Route

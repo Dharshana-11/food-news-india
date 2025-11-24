@@ -10,30 +10,45 @@ import StatsSection from "./components/StatsSection";
 import FilterBar from "./components/FilterBar";
 import BusinessTypeCard from "./components/BusinessTypeCard";
 
-import { getAllBusinessTypes, deleteBusinessType } from "../../services/businessTypeService";
+import {
+  getAllBusinessTypes,
+  deleteBusinessType,
+} from "../../services/businessTypeService";
 
 const { confirm } = Modal;
 
+/**
+ * BusinessTypes Component
+ *
+ * Main page for managing all business types.
+ * Includes:
+ * - Stats section
+ * - Search & status filters
+ * - Business types grid/cards
+ * - Add/Edit modal
+ */
 const BusinessTypes = () => {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingRecord, setEditingRecord] = useState(null);
-
   const [searchText, setSearchText] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
   // ===================== FETCH DATA =====================
+  /**
+   * Fetch all business types from API
+   */
   const fetchData = async () => {
     setLoading(true);
     try {
       const res = await getAllBusinessTypes(1, 100);
-      setData(res.data);
-      setFilteredData(res.data);
+      setData(res.data || []);
+      setFilteredData(res.data || []);
     } catch (err) {
       message.error("Failed to load business types");
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -51,7 +66,7 @@ const BusinessTypes = () => {
       list = list.filter(
         (item) =>
           item.name.toLowerCase().includes(searchText.toLowerCase()) ||
-          item.code.toLowerCase().includes(searchText.toLowerCase())
+          item.code.toLowerCase().includes(searchText.toLowerCase()),
       );
     }
 
@@ -73,6 +88,9 @@ const BusinessTypes = () => {
     setIsModalOpen(true);
   };
 
+  /**
+   * Delete a business type after confirmation
+   */
   const handleDelete = (record) => {
     confirm({
       title: "Delete Business Type?",
@@ -87,6 +105,7 @@ const BusinessTypes = () => {
           fetchData();
         } catch (error) {
           message.error("Deletion failed");
+          console.error(error);
         }
       },
     });
@@ -107,7 +126,9 @@ const BusinessTypes = () => {
           <div className="header-content">
             <div className="header-text">
               <h1 className="page-main-title">Business Types</h1>
-              <p className="page-subtitle">Manage and organize different food business categories</p>
+              <p className="page-subtitle">
+                Manage and organize different food business categories
+              </p>
             </div>
 
             <Button
@@ -136,7 +157,9 @@ const BusinessTypes = () => {
         {/* Business Types Grid */}
         <div className="business-types-grid">
           {loading ? (
-            <div className="loading-container"><div className="spinner"></div></div>
+            <div className="loading-container">
+              <div className="spinner"></div>
+            </div>
           ) : filteredData.length === 0 ? (
             <div className="empty-state">
               <Empty
@@ -163,7 +186,9 @@ const BusinessTypes = () => {
         <Modal
           title={
             <div className="modal-title">
-              <ShopOutlined style={{ marginRight: 8, color: "var(--color-primary-orange)" }} />
+              <ShopOutlined
+                style={{ marginRight: 8, color: "var(--color-primary-orange)" }}
+              />
               {editingRecord ? "Edit Business Type" : "Add Business Type"}
             </div>
           }

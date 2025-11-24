@@ -3,7 +3,7 @@ import {
   getAllBusinessTypes,
   createBusinessType,
   updateBusinessType,
-  deleteBusinessType
+  deleteBusinessType,
 } from "../controllers/businessTypeController.js";
 import ROLES from "../utils/constants/roles.js";
 import { authorizeRoles } from "../middleware/authorizeRolesMiddleware.js";
@@ -20,7 +20,7 @@ router.get(
   "/",
   verifySession,
   authorizeRoles(ROLES.SUPER_ADMIN),
-  getAllBusinessTypes
+  getAllBusinessTypes,
 );
 
 /**
@@ -32,7 +32,7 @@ router.post(
   "/",
   verifySession,
   authorizeRoles(ROLES.SUPER_ADMIN),
-  createBusinessType
+  createBusinessType,
 );
 
 /**
@@ -44,7 +44,7 @@ router.put(
   "/:id",
   verifySession,
   authorizeRoles(ROLES.SUPER_ADMIN),
-  updateBusinessType
+  updateBusinessType,
 );
 
 /**
@@ -56,7 +56,7 @@ router.delete(
   "/:id",
   verifySession,
   authorizeRoles(ROLES.SUPER_ADMIN),
-  deleteBusinessType
+  deleteBusinessType,
 );
 
 export default router;

@@ -1,16 +1,26 @@
-// pages/KYCDocuments/KYCDocumentForm.jsx
 import { useEffect } from "react";
 import { Form, Input, Select, Button, message } from "antd";
-import { createKYCDocument, updateKYCDocument } from "../../services/kycDocumentService";
+import {
+  createKYCDocument,
+  updateKYCDocument,
+} from "../../services/kycDocumentService";
 import { useAuth } from "../../context/AuthContext";
 
+/**
+ * Form component for creating or editing a KYC Document.
+ *
+ * @param {Object} props
+ * @param {Object|null} props.editingRecord - The document being edited, or null for creating new.
+ * @param {Function} props.onSuccess - Callback after successful create/update.
+ * @param {Function} props.onCancel - Callback when the form is cancelled.
+ */
 const KYCDocumentForm = ({ editingRecord, onSuccess, onCancel }) => {
   const [form] = Form.useForm();
   const { currentUser } = useAuth();
 
+  // Prefill form when editing a record
   useEffect(() => {
     if (editingRecord) {
-      // Flatten nested arrays if needed
       const flatRoles = editingRecord.applicableRoles.flat();
       form.setFieldsValue({
         name: editingRecord.name,
@@ -23,6 +33,10 @@ const KYCDocumentForm = ({ editingRecord, onSuccess, onCancel }) => {
     }
   }, [editingRecord, form]);
 
+  /**
+   * Handles form submission for creating or updating a KYC document.
+   * @param {Object} values - Form values
+   */
   const handleSubmit = async (values) => {
     try {
       const payload = {
@@ -41,7 +55,7 @@ const KYCDocumentForm = ({ editingRecord, onSuccess, onCancel }) => {
         await createKYCDocument(payload);
         message.success("KYC document created successfully");
       }
-      
+
       form.resetFields();
       onSuccess();
     } catch (error) {
@@ -70,7 +84,10 @@ const KYCDocumentForm = ({ editingRecord, onSuccess, onCancel }) => {
         name="code"
         rules={[
           { required: true, message: "Please enter code" },
-          { pattern: /^[A-Z0-9_]+$/, message: "Code must be uppercase alphanumeric with underscores" },
+          {
+            pattern: /^[A-Z0-9_]+$/,
+            message: "Code must be uppercase alphanumeric with underscores",
+          },
         ]}
       >
         <Input placeholder="e.g., AADHAAR" disabled={!!editingRecord} />

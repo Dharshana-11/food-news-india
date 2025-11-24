@@ -46,8 +46,16 @@ const SideBar = ({ role, isOpen, onClose }) => {
   let items = [];
   if (role === ROLES.SUPER_ADMIN) {
     items = [
-      { key: ROUTES.SUPER_ADMIN_DASHBOARD, icon: <DashboardOutlined />, label: "Dashboard" },
-      { key: ROUTES.SUPER_ADMIN_USERS, icon: <UserOutlined />, label: "User Management" },
+      {
+        key: ROUTES.SUPER_ADMIN_DASHBOARD,
+        icon: <DashboardOutlined />,
+        label: "Dashboard",
+      },
+      {
+        key: ROUTES.SUPER_ADMIN_USERS,
+        icon: <UserOutlined />,
+        label: "User Management",
+      },
       {
         key: ROUTES.SUPER_ADMIN_COMPLIANCE,
         icon: <FileSearchOutlined />,
@@ -61,11 +69,31 @@ const SideBar = ({ role, isOpen, onClose }) => {
           ROUTES.SUPER_ADMIN_DOCUMENTS,
         ],
       },
-      { key: ROUTES.SUPER_ADMIN_SUPPORT, icon: <CustomerServiceOutlined />, label: "Support Tickets" },
-      { key: ROUTES.SUPER_ADMIN_SETTINGS, icon: <ControlOutlined />, label: "Platform Settings" },
-      { key: ROUTES.SUPER_ADMIN_CONTENT, icon: <FileTextOutlined />, label: "Content Management" },
-      { key: ROUTES.SUPER_ADMIN_AUDIT, icon: <HistoryOutlined />, label: "System Logs" },
-      { key: ROUTES.SUPER_ADMIN_PROFILE, icon: <UserOutlined />, label: "My Profile" },
+      {
+        key: ROUTES.SUPER_ADMIN_SUPPORT,
+        icon: <CustomerServiceOutlined />,
+        label: "Support Tickets",
+      },
+      {
+        key: ROUTES.SUPER_ADMIN_SETTINGS,
+        icon: <ControlOutlined />,
+        label: "Platform Settings",
+      },
+      {
+        key: ROUTES.SUPER_ADMIN_CONTENT,
+        icon: <FileTextOutlined />,
+        label: "Content Management",
+      },
+      {
+        key: ROUTES.SUPER_ADMIN_AUDIT,
+        icon: <HistoryOutlined />,
+        label: "System Logs",
+      },
+      {
+        key: ROUTES.SUPER_ADMIN_PROFILE,
+        icon: <UserOutlined />,
+        label: "My Profile",
+      },
       { key: "logout", icon: <LogoutOutlined />, label: "Log Out" },
     ];
   }
@@ -107,7 +135,7 @@ const SideBar = ({ role, isOpen, onClose }) => {
     items.find(
       (item) =>
         location.pathname.startsWith(item.key) || // match top-level route
-        item.paths?.some((p) => location.pathname.startsWith(p)) // match nested routes
+        item.paths?.some((p) => location.pathname.startsWith(p)), // match nested routes
     )?.key || ROUTES.SUPER_ADMIN_DASHBOARD; // fallback to Dashboard
 
   // ---------------- AUTO CLOSE SIDEBAR ON RESIZE ----------------
@@ -140,9 +168,16 @@ const SideBar = ({ role, isOpen, onClose }) => {
           <CloseOutlined className="close-btn" onClick={onClose} />
           <div className="sidebar-profile">
             {userProfilePicture ? (
-              <img src={userProfilePicture} alt="Profile" className="sidebar-profile-pic" />
+              <img
+                src={userProfilePicture}
+                alt="Profile"
+                className="sidebar-profile-pic"
+              />
             ) : (
-              <UserOutlined className="sidebar-profile-icon" onClick={handleProfileClick} />
+              <UserOutlined
+                className="sidebar-profile-icon"
+                onClick={handleProfileClick}
+              />
             )}
             <div className="sidebar-profile-info">
               <h4>{userName}</h4>

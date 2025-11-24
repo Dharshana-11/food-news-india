@@ -12,7 +12,8 @@ export const upsertMapping = async (req, res) => {
     if (!businessTypeId || !complianceItemId || !applicability) {
       return res.status(400).json({
         success: false,
-        message: "businessTypeId, complianceItemId, and applicability are required.",
+        message:
+          "businessTypeId, complianceItemId, and applicability are required.",
       });
     }
 
@@ -49,7 +50,6 @@ export const upsertMapping = async (req, res) => {
       message,
       data: result,
     });
-
   } catch (error) {
     console.error("Error in upsertMapping:", error);
     return res.status(500).json({
@@ -191,7 +191,7 @@ export const getComplianceGridByBusinessType = async (req, res) => {
 
     const grid = complianceItems.map((item) => {
       const found = mappings.find(
-        (m) => m.complianceItemId?.toString() === item._id.toString()
+        (m) => m.complianceItemId?.toString() === item._id.toString(),
       );
 
       return {

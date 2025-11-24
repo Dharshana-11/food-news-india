@@ -1,39 +1,52 @@
-// pages/ComplianceMappings/index.jsx
+// pages/ComplianceMapping/ComplianceMapping.jsx
 import { useState, useEffect } from "react";
 import { Input, Button, Modal, message, Select, Tabs } from "antd";
-import { SearchOutlined, PlusOutlined, DeleteOutlined, AppstoreOutlined, TableOutlined } from "@ant-design/icons";
+import {
+  SearchOutlined,
+  PlusOutlined,
+  DeleteOutlined,
+  AppstoreOutlined,
+  TableOutlined,
+} from "@ant-design/icons";
+
 import SuperAdminLayout from "../../layouts/SuperAdminLayout";
 import CustomTable from "../../components/CustomTable";
 import MappingForm from "./MappingForm";
 import MappingGrid from "./MappingGrid";
-import { getAllComplianceMappings, deleteMapping, getBusinessTypesForDropdown } from "../../services/complianceMappingService";
+
+import {
+  getAllComplianceMappings,
+  deleteMapping,
+  getBusinessTypesForDropdown,
+} from "../../services/complianceMappingService";
 
 const { Search } = Input;
 const { confirm } = Modal;
 
 const ComplianceMappings = () => {
+  // -------------------- State --------------------
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [activeTab, setActiveTab] = useState("list");
+
   const [businessTypes, setBusinessTypes] = useState([]);
   const [selectedBusinessType, setSelectedBusinessType] = useState(null);
+
   const [pagination, setPagination] = useState({
     current: 1,
     pageSize: 10,
     total: 0,
   });
 
-  // ===================== FETCH BUSINESS TYPES =====================
+  // -------------------- Fetch Business Types --------------------
   const fetchBusinessTypes = async () => {
     try {
       const types = await getBusinessTypesForDropdown();
       setBusinessTypes(types);
-      if (types.length > 0) {
-        setSelectedBusinessType(types[0]._id);
-      }
-    } catch (error) {
+      if (types.length) setSelectedBusinessType(types[0]._id);
+    } catch (err) {
       message.error("Failed to load business types");
     }
   };
@@ -42,50 +55,44 @@ const ComplianceMappings = () => {
     fetchBusinessTypes();
   }, []);
 
-  // ===================== FETCH DATA =====================
-  const fetchData = async (page = 1, limit = 10, search = "") => {
+  // -------------------- Fetch Mappings --------------------
+  const fetchData = async (page = 1, pageSize = 10, search = "") => {
     setLoading(true);
     try {
-      const response = await getAllComplianceMappings(page, limit, search);
-      setData(response.data.results);
+      const res = await getAllComplianceMappings(page, pageSize, search);
+      setData(res.data.results);
       setPagination({
-        current: response.data.page,
-        pageSize: response.data.limit,
-        total: response.data.total,
+        current: res.data.page,
+        pageSize: res.data.limit,
+        total: res.data.total,
       });
-    } catch (error) {
+    } catch (err) {
+      console.error(err);
       message.error("Failed to load mappings");
-      console.error(error);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (activeTab === "list") {
+    if (activeTab === "list")
       fetchData(pagination.current, pagination.pageSize, searchText);
-    }
   }, [activeTab]);
 
-  // ===================== SEARCH =====================
+  // -------------------- Handlers --------------------
   const handleSearch = (value) => {
     setSearchText(value);
-    setPagination({ ...pagination, current: 1 });
+    setPagination((prev) => ({ ...prev, current: 1 }));
     fetchData(1, pagination.pageSize, value);
   };
 
-  // ===================== TABLE CHANGE =====================
   const handleTableChange = (newPagination) => {
     setPagination(newPagination);
     fetchData(newPagination.current, newPagination.pageSize, searchText);
   };
 
-  // ===================== ADD NEW =====================
-  const handleAdd = () => {
-    setIsModalOpen(true);
-  };
+  const handleAdd = () => setIsModalOpen(true);
 
-  // ===================== DELETE =====================
   const handleDelete = (record) => {
     confirm({
       title: "Are you sure you want to delete this mapping?",
@@ -98,21 +105,20 @@ const ComplianceMappings = () => {
           await deleteMapping(record._id);
           message.success("Mapping deleted successfully");
           fetchData(pagination.current, pagination.pageSize, searchText);
-        } catch (error) {
+        } catch (err) {
+          console.error(err);
           message.error("Failed to delete mapping");
-          console.error(error);
         }
       },
     });
   };
 
-  // ===================== FORM SUCCESS =====================
   const handleFormSuccess = () => {
     setIsModalOpen(false);
     fetchData(pagination.current, pagination.pageSize, searchText);
   };
 
-  // ===================== TABLE COLUMNS =====================
+  // -------------------- Table Columns --------------------
   const columns = [
     {
       title: "Business Type",
@@ -140,9 +146,9 @@ const ComplianceMappings = () => {
       dataIndex: "applicability",
       key: "applicability",
       width: "15%",
-      render: (applicability) => (
-        <span className={`applicability-badge applicability-${applicability}`}>
-          {applicability?.replace(/_/g, " ")}
+      render: (val) => (
+        <span className={`applicability-badge applicability-${val}`}>
+          {val?.replace(/_/g, " ")}
         </span>
       ),
     },
@@ -151,9 +157,9 @@ const ComplianceMappings = () => {
       dataIndex: "status",
       key: "status",
       width: "10%",
-      render: (status) => (
-        <span className={`status-badge status-${status}`}>
-          {status === "active" ? "Active" : "Inactive"}
+      render: (val) => (
+        <span className={`status-badge status-${val}`}>
+          {val === "active" ? "Active" : "Inactive"}
         </span>
       ),
     },
@@ -174,18 +180,14 @@ const ComplianceMappings = () => {
     },
   ];
 
+  // -------------------- Render --------------------
   return (
     <SuperAdminLayout>
       <div className="compliance-mappings-page">
         <div className="page-header-section">
           <div className="header-content">
             <h2 className="page-main-title">Compliance Requirement Mappings</h2>
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={handleAdd}
-              className="add-button"
-            >
+            <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
               Add Mapping
             </Button>
           </div>
@@ -210,7 +212,6 @@ const ComplianceMappings = () => {
                       allowClear
                       enterButton={<SearchOutlined />}
                       onSearch={handleSearch}
-                      className="search-input"
                       style={{ width: 400 }}
                     />
                   </div>
@@ -239,7 +240,6 @@ const ComplianceMappings = () => {
                       placeholder="Select Business Type"
                       value={selectedBusinessType}
                       onChange={setSelectedBusinessType}
-                      className="business-type-selector"
                       style={{ width: 300 }}
                     >
                       {businessTypes.map((type) => (
@@ -253,7 +253,13 @@ const ComplianceMappings = () => {
                   {selectedBusinessType && (
                     <MappingGrid
                       businessTypeId={selectedBusinessType}
-                      onUpdate={() => fetchData(pagination.current, pagination.pageSize, searchText)}
+                      onUpdate={() =>
+                        fetchData(
+                          pagination.current,
+                          pagination.pageSize,
+                          searchText,
+                        )
+                      }
                     />
                   )}
                 </>
@@ -268,7 +274,6 @@ const ComplianceMappings = () => {
           onCancel={() => setIsModalOpen(false)}
           footer={null}
           width={600}
-          className="mapping-modal"
         >
           <MappingForm
             onSuccess={handleFormSuccess}

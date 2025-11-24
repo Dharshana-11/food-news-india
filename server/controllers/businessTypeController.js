@@ -49,8 +49,13 @@ export const getAllBusinessTypes = async (req, res) => {
  */
 export const createBusinessType = async (req, res) => {
   try {
-    let { name, code, description = "", status = "active", sortOrder = 0 } =
-      req.body;
+    let {
+      name,
+      code,
+      description = "",
+      status = "active",
+      sortOrder = 0,
+    } = req.body;
 
     name = name?.trim();
     code = code?.trim()?.toUpperCase();
@@ -149,7 +154,7 @@ export const deleteBusinessType = async (req, res) => {
     const businessType = await BusinessType.findByIdAndUpdate(
       id,
       { status: "trash" },
-      { new: true }
+      { new: true },
     );
 
     if (!businessType) {

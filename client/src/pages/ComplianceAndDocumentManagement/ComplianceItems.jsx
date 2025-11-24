@@ -1,12 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  Input,
-  Button,
-  Popconfirm,
-  Space,
-  Tooltip,
-  message,
-} from "antd";
+import { Input, Button, Popconfirm, Space, Tooltip, message } from "antd";
 import {
   PlusOutlined,
   EditOutlined,
@@ -47,6 +40,7 @@ const ComplianceItems = () => {
     if (!currentUser) return;
     setLoading(true);
     try {
+      // TODO: extend getAllComplianceItems to accept page, limit, filters, sortBy, order
       const data = await getAllComplianceItems(0, search.trim());
       setItems(data);
       setTotal(data.length);
@@ -203,12 +197,12 @@ const ComplianceItems = () => {
   return (
     <SuperAdminLayout>
       <div className="compliance-items-section">
+        {/* Header */}
         <div className="compliance-items-header">
-          <h3 className="compliance-items-title">
-            Compliance Items
-          </h3>
+          <h3 className="compliance-items-title">Compliance Items</h3>
         </div>
 
+        {/* Toolbar */}
         <div className="compliance-toolbar">
           <div className="compliance-items-search-wrapper">
             <Input
@@ -238,10 +232,9 @@ const ComplianceItems = () => {
           >
             Add Item
           </Button>
-
         </div>
 
-        {/* Unified Table with AntD filter/sort/pagination */}
+        {/* Table */}
         <div className="custom-table-wrapper compliance-items-table">
           <div className="custom-table-scroll">
             <CustomTable
@@ -259,7 +252,7 @@ const ComplianceItems = () => {
           </div>
         </div>
 
-        {/* Modal for Add/Edit */}
+        {/* Add/Edit Modal */}
         <ComplianceItemModal
           visible={modalVisible}
           onCancel={() => setModalVisible(false)}

@@ -862,7 +862,7 @@ body {
 /* Tablets & below: allow horizontal scroll */
 @media (max-width: 1024px) {
   .custom-table-scroll .ant-table {
-    width: fit-content; ; /* adjust depending on columns */
+    width: fit-content; /* adjust depending on columns */
     table-layout: auto; /* keep column widths natural */
     scrollbar-width: none;
   }
@@ -935,24 +935,29 @@ body {
 .ant-dropdown .ant-dropdown-menu-item {
   color: #fff !important;
   background: transparent;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease;
 }
 
 /* When checkbox is checked */
-.ant-dropdown .ant-dropdown-menu-item .ant-checkbox-checked .ant-checkbox-inner {
+.ant-dropdown
+  .ant-dropdown-menu-item
+  .ant-checkbox-checked
+  .ant-checkbox-inner {
   background-color: var(--color-primary-orange) !important;
   border-color: var(--color-primary-orange) !important;
 }
 
-.ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item-selected{
-  background-color: #FFF4E8;
+.ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item-selected {
+  background-color: #fff4e8;
 }
 
-.ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item:hover{
-  background-color: #FFF4E8;
+.ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item:hover {
+  background-color: #fff4e8;
 }
 
-.ant-btn-variant-solid{
+.ant-btn-variant-solid {
   background-color: var(--color-primary-orange);
 }
 
@@ -964,7 +969,7 @@ body {
   color: var(--color-primary-orange) !important;
 }
 
-.ant-btn-color-link.ant-btn-variant-link{
+.ant-btn-color-link.ant-btn-variant-link {
   color: var(--color-hover-blue);
 }
 /* Dropdown check icon (tick mark) color fix */
@@ -1038,7 +1043,7 @@ body {
 /* ===================================================
    ================= SERVICE SUMMARY ================= 
    ===================================================*/
-   
+
 .service-summary {
   display: flex;
   flex-direction: column;
@@ -1829,7 +1834,6 @@ body {
     height: 32px;
     font-size: 14px;
   }
-  
 }
 /* =========================================================
    ============ COMPLIANCE ITEM SUMMARY SECTION ===========
@@ -2092,7 +2096,9 @@ body {
 .compliance-item-modal .ant-input-textarea {
   border-radius: 8px;
   border: 1px solid var(--color-border);
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
 }
 
 .compliance-item-modal .ant-input:focus,
@@ -2148,14 +2154,13 @@ body {
   }
 }
 
-
 /* =========================================================
    ====================== DOCUMENTS ========================
    ========================================================= */
 /* PAGE HEADER (match global header style) */
 .docs-header {
   background: transparent; /* remove blue gradient */
-  padding: 0;              /* same as your global version */
+  padding: 0; /* same as your global version */
   border-bottom: 1px solid #e8ecf1;
   margin-bottom: 32px;
 }
@@ -2442,7 +2447,11 @@ body {
 .doc-icon-wrapper {
   width: 48px;
   height: 48px;
-  background: linear-gradient(135deg, var(--color-primary-orange) 0%, var(--color-hover-orange) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-orange) 0%,
+    var(--color-hover-orange) 100%
+  );
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -2771,7 +2780,11 @@ body {
 
 /* Add button same as your .add-button style */
 .kyc-add-button {
-  background: linear-gradient(135deg, var(--color-primary-orange), var(--color-hover-orange));
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-orange),
+    var(--color-hover-orange)
+  );
   border: none;
   height: 48px;
   padding: 0 32px;
@@ -2786,7 +2799,11 @@ body {
 .kyc-add-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(255, 108, 31, 0.4) !important;
-  background: linear-gradient(135deg, var(--color-hover-orange), #d94d00) !important;
+  background: linear-gradient(
+    135deg,
+    var(--color-hover-orange),
+    #d94d00
+  ) !important;
   color: white !important;
 }
 
@@ -2951,7 +2968,11 @@ body {
 }
 
 .kyc-card-avatar {
-  background: linear-gradient(135deg, var(--color-primary-orange) 0%, var(--color-hover-orange) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-orange) 0%,
+    var(--color-hover-orange) 100%
+  );
   font-size: 28px;
   flex-shrink: 0;
 }
@@ -3191,7 +3212,7 @@ body {
    ========================================================= */
 
 /* pages/BusinessTypes/BusinessTypes.css */
-.business-types-page .page-header-section{
+.business-types-page .page-header-section {
   padding: 16px 20px;
 }
 .business-types-page {
@@ -3234,7 +3255,11 @@ body {
 }
 
 .add-button {
-  background: linear-gradient(135deg, var(--color-primary-orange), var(--color-hover-orange));
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-orange),
+    var(--color-hover-orange)
+  );
   border: none;
   height: 48px;
   padding: 0 32px;
@@ -3248,7 +3273,11 @@ body {
 .add-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(255, 108, 31, 0.4) !important;
-  background: linear-gradient(135deg, var(--color-hover-orange), #d94d00) !important;
+  background: linear-gradient(
+    135deg,
+    var(--color-hover-orange),
+    #d94d00
+  ) !important;
 }
 
 /* Stats Cards */
@@ -3349,7 +3378,7 @@ body {
   box-shadow: 0 0 0 3px rgba(255, 108, 31, 0.1);
 }
 
-.filter-section{
+.filter-section {
   margin-bottom: 20px;
   margin-top: 10px;
 }
@@ -3410,7 +3439,11 @@ body {
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, var(--color-primary-orange), var(--color-hover-orange));
+  background: linear-gradient(
+    90deg,
+    var(--color-primary-orange),
+    var(--color-hover-orange)
+  );
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -3444,7 +3477,11 @@ body {
 .card-icon {
   width: 56px;
   height: 56px;
-  background: linear-gradient(135deg, var(--color-primary-orange), var(--color-hover-orange));
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-orange),
+    var(--color-hover-orange)
+  );
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -3568,7 +3605,9 @@ body {
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .empty-state {
@@ -3644,7 +3683,6 @@ body {
     padding: 0 20px 40px;
   }
 }
-
 
 /* =========================================================
    ============ COMPLIANCE MAPPINGS ========================
