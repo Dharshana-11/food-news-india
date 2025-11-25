@@ -6,6 +6,7 @@ const { Option } = Select;
 
 /**
  * Modal form for adding or editing a Compliance Item
+ *
  * @component
  * @param {Object} props
  * @param {boolean} props.visible - Controls modal visibility
@@ -13,32 +14,32 @@ const { Option } = Select;
  * @param {Function} props.onSubmit - Called with form values on submit
  * @param {Object} [props.initialValues] - Initial values for editing
  */
-const ComplianceItemModal = ({
-  visible,
-  onCancel,
-  onSubmit,
-  initialValues,
-}) => {
+const ComplianceItemModal = ({ visible, onCancel, onSubmit, initialValues }) => {
   const [form] = Form.useForm();
 
-  // Populate or reset form when initialValues change
+  /**
+   * Prefill or reset the form when initialValues or visibility changes
+   */
   useEffect(() => {
-    if (initialValues) {
-      form.setFieldsValue(initialValues);
-    } else {
-      form.resetFields();
+    if (visible) {
+      if (initialValues) {
+        form.setFieldsValue(initialValues);
+      } else {
+        form.resetFields();
+      }
     }
-  }, [initialValues, form]);
+  }, [initialValues, form, visible]);
 
   /**
-   * Handle modal OK button click
+   * Handle OK button click
+   * Validates form fields and passes values to onSubmit
    */
   const handleOk = async () => {
     try {
       const values = await form.validateFields();
       onSubmit(values);
-    } catch (info) {
-      console.error("Validation Failed:", info);
+    } catch (err) {
+      console.error("Validation Failed:", err);
     }
   };
 
@@ -50,15 +51,14 @@ const ComplianceItemModal = ({
       onCancel={onCancel}
       onOk={handleOk}
       okText={initialValues ? "Update" : "Add"}
-      destroyOnClose
     >
-      <Form form={form} layout="vertical" preserve={false}>
+      <Form form={form} layout="vertical">
         <Form.Item
           label="Name"
           name="name"
           rules={[{ required: true, message: "Please enter item name" }]}
         >
-          <Input />
+          <Input placeholder="Enter item name" />
         </Form.Item>
 
         <Form.Item
@@ -66,7 +66,7 @@ const ComplianceItemModal = ({
           name="code"
           rules={[{ required: true, message: "Please enter item code" }]}
         >
-          <Input />
+          <Input placeholder="Enter item code" />
         </Form.Item>
 
         <Form.Item
@@ -74,7 +74,7 @@ const ComplianceItemModal = ({
           name="description"
           rules={[{ required: true, message: "Please enter description" }]}
         >
-          <Input.TextArea rows={3} />
+          <Input.TextArea rows={3} placeholder="Enter description" />
         </Form.Item>
 
         <Form.Item
@@ -85,7 +85,7 @@ const ComplianceItemModal = ({
             { type: "number", min: 1, message: "Must be at least 1 day" },
           ]}
         >
-          <InputNumber style={{ width: "100%" }} min={1} />
+          <InputNumber style={{ width: "100%" }} min={1} placeholder="Number of days" />
         </Form.Item>
 
         <Form.Item label="Required" name="required" valuePropName="checked">
@@ -101,7 +101,7 @@ const ComplianceItemModal = ({
           name="status"
           rules={[{ required: true, message: "Please select status" }]}
         >
-          <Select>
+          <Select placeholder="Select status">
             <Option value="active">Active</Option>
             <Option value="inactive">Inactive</Option>
           </Select>
