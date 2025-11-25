@@ -1,4 +1,4 @@
-// pages/BusinessTypes/index.jsx
+// pages/BusinessTypes.jsx
 import { useState, useEffect } from "react";
 import { Button, Modal, message, Empty } from "antd";
 import { PlusOutlined, ShopOutlined } from "@ant-design/icons";
