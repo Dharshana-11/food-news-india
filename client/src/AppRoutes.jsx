@@ -17,6 +17,12 @@ import Login from "./pages/auth/Login";
 import { useAuth } from "./context/AuthContext";
 import { ROUTES } from "./routes";
 import ROLES from "./constants/roles";
+import ComplianceAndDocumentManagement from "./pages/ComplianceAndDocumentManagement/ComplianceAndDocumentManagement";
+import ComplianceItems from "./pages/ComplianceAndDocumentManagement/ComplianceItems";
+import BusinessTypes from "./pages/BusinessTypes/BusinessTypes";
+import ComplianceMappings from "./pages/ComplianceMappings/ComplianceMappings";
+import KYCDocuments from "./pages/KYCDocuments/KYCDocuments";
+import Documents from "./pages/Documents/Documents";
 
 /**
  * Renders all application routes with public and role-protected access.
@@ -77,7 +83,49 @@ const AppRoutes = () => {
         path={ROUTES.SUPER_ADMIN_COMPLIANCE}
         element={
           <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
-            <div>Compliance Page</div>
+            <ComplianceAndDocumentManagement />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path={ROUTES.SUPER_ADMIN_COMPLIANCE_ITEMS} // rename constant instead of COMPLIANCE_CATEGORIES
+        element={
+          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
+            <ComplianceItems />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path={ROUTES.SUPER_ADMIN_BUSINESS_TYPES}
+        element={
+          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
+            <BusinessTypes />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={ROUTES.SUPER_ADMIN_COMPLIANCE_MAPPINGS}
+        element={
+          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
+            <ComplianceMappings />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={ROUTES.SUPER_ADMIN_KYC_DOCUMENTS}
+        element={
+          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
+            <KYCDocuments />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={ROUTES.SUPER_ADMIN_DOCUMENTS}
+        element={
+          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
+            <Documents />
           </ProtectedRoute>
         }
       />

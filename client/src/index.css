@@ -7,8 +7,9 @@
 /* 1. Base / Utility Styles */
 /* ---------------------------------------------------- */
 
+/* Root Variables for Colors, Status, Gradients, and Icons */
 :root {
-  /* Color Variables */
+  /* Primary Colors */
   --color-primary-blue: #162247;
   --color-primary-orange: #ff6c1f;
   --color-hover-blue: #1f2b58;
@@ -17,29 +18,85 @@
   --color-text-dark: #213547;
   --color-text-medium: #9ca3af;
   --color-border: #d1d5db;
+
+  /* Status Colors */
+  --color-pending: #f59e0b;
+  --color-approved: #10b981;
+  --color-rejected: #ef4444;
+  --color-expired: #6b7280;
+
+  /* Alerts */
+  --color-success-green: #1db954;
+  --color-error-red: #ff4d4f;
+  --color-warning-yellow: #ffc107;
+
+  /* Gradients */
+  --gradient-purple: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --gradient-orange: linear-gradient(135deg, #ff6c1f, #e65c00);
+  --gradient-green: linear-gradient(135deg, #10b981, #059669);
+
+  /* Light Card Backgrounds */
+  --color-bg-orange: #fff3e6; /* very light orange */
+  --color-bg-green: #e6f7f1; /* light green */
+  --color-bg-red: #ffe6e6; /* light red */
+  --color-bg-yellow: #fff9e6; /* light yellow */
+
+  /* Icon Colors */
+  --color-icon-orange: #ff8c42;
+  --color-icon-green: #4bb78f;
+  --color-icon-red: #ff5c5c;
+  --color-icon-yellow: #ffd166;
 }
 
+/* ---------------------------------------------------- */
+/* Base Body / Typography */
+/* ---------------------------------------------------- */
 body {
   font-family: "Inter", sans-serif;
   background: #f5f6fa;
+  margin: 0;
+  color: var(--color-text-dark);
 }
 
+/* Headings */
 h1,
 h2,
 h3,
 .ant-card-head-title {
   font-family: "Poppins", sans-serif;
-  color: var(--dark-blue);
+  color: var(--color-primary-blue);
+  margin: 0;
 }
 
+/* ---------------------------------------------------- */
+/* Ant Design Card Overrides */
+/* ---------------------------------------------------- */
 .ant-card {
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  background-color: #fff;
 }
 
+/* ---------------------------------------------------- */
+/* Loading Container */
+/* ---------------------------------------------------- */
 .loading-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh; /* full screen height */
 }
+
+/* ---------------------------------------------------- */
+/* Utility / Reset Styles */
+/* ---------------------------------------------------- */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* Add more utility classes as needed */

@@ -25,17 +25,23 @@
 
 import { Table } from "antd";
 
-const CustomTable = ({ columns, data }) => (
+const CustomTable = ({
+  columns,
+  data,
+  loading,
+  pagination = false,
+  onChange,
+}) => (
   <div className="custom-table-wrapper">
-    {/* Scrollable container for horizontal overflow handling */}
     <div className="custom-table-scroll">
       <Table
-        columns={columns} // Table column definitions
-        dataSource={data} // Data array
-        rowKey={(record, index) => record.id || index} // Unique key for each row
-        pagination={false} // No pagination (dashboard layout friendly)
-        bordered={false} // Clean borderless look
-        className="custom-table" // Custom CSS class for theme consistency
+        columns={columns}
+        dataSource={data}
+        rowKey={(record, index) => record.id || index}
+        loading={loading}
+        pagination={pagination} // false disables, object enables
+        onChange={onChange}
+        className="custom-table"
       />
     </div>
   </div>

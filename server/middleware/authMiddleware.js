@@ -1,5 +1,5 @@
 import admin from "../firebase.js"; // Firebase admin SDK instance
-import AdminModel from "../models/Admin.js";
+import Users from "../models/Users.js";
 
 /**
  * Middleware to authenticate requests using Firebase ID token.
@@ -22,7 +22,7 @@ const authenticateUser = async (req, res, next) => {
     const { uid } = decodedToken;
 
     // Find admin user in database
-    const user = await AdminModel.findOne({ uid });
+    const user = await Users.findOne({ uid });
     if (!user) {
       return res.status(403).json({ message: "Not authorized as admin" });
     }

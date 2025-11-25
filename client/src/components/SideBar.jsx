@@ -1,14 +1,13 @@
 /**
  * SideBar.jsx
  * ------------------------------------------------------------
- * Reusable sidebar component with responsive behavior.
- * Renders a dynamic Ant Design menu with role-based navigation,
- * profile section, and logout handling.
- *
- * Supports:
- * - Super Admin routes (currently implemented)
- * - Auto-close on mobile screens
- * - Automatic active route highlighting
+ * Sidebar component for Super Admin navigation.
+ * Handles:
+ * - Role-based menu items
+ * - Nested route highlighting
+ * - Responsive behavior (mobile vs desktop)
+ * - Logout handling
+ * - Profile navigation
  * ------------------------------------------------------------
  */
 
@@ -32,29 +31,19 @@ import ROLES from "../constants/roles";
 import { ROUTES } from "../routes";
 import { useEffect } from "react";
 
-/**
- * Sidebar component for navigation and user actions.
- *
- * @component
- * @param {Object} props
- * @param {string} props.role - Current user's role (e.g., SUPER_ADMIN)
- * @param {boolean} props.isOpen - Sidebar open state for mobile view
- * @param {Function} props.onClose - Callback to close sidebar (mobile only)
- * @returns {JSX.Element} The sidebar menu with user profile and routes
- */
 const SideBar = ({ role, isOpen, onClose }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { logout, currentUser } = useAuth();
 
-  // --- User info (placeholder profile picture for now) ---
-  const userProfilePicture = null;
+  // ---------------- USER INFO ----------------
+  const userProfilePicture = null; // Placeholder for profile picture
   const userName = currentUser?.name || "User";
   const userRole = currentUser?.role || "Role";
 
-  // --- Role-based menu configuration ---
+  // ---------------- MENU ITEMS ----------------
+  // Each item can have a `paths` array for nested routes
   let items = [];
-
   if (role === ROLES.SUPER_ADMIN) {
     items = [
       {
@@ -71,11 +60,14 @@ const SideBar = ({ role, isOpen, onClose }) => {
         key: ROUTES.SUPER_ADMIN_COMPLIANCE,
         icon: <FileSearchOutlined />,
         label: "Compliance & Documents",
-      },
-      {
-        key: ROUTES.SUPER_ADMIN_SERVICES,
-        icon: <AppstoreOutlined />,
-        label: "Service Management",
+        paths: [
+          ROUTES.SUPER_ADMIN_COMPLIANCE,
+          ROUTES.SUPER_ADMIN_COMPLIANCE_ITEMS,
+          ROUTES.SUPER_ADMIN_BUSINESS_TYPES,
+          ROUTES.SUPER_ADMIN_COMPLIANCE_MAPPINGS,
+          ROUTES.SUPER_ADMIN_KYC_DOCUMENTS,
+          ROUTES.SUPER_ADMIN_DOCUMENTS,
+        ],
       },
       {
         key: ROUTES.SUPER_ADMIN_SUPPORT,
@@ -102,39 +94,25 @@ const SideBar = ({ role, isOpen, onClose }) => {
         icon: <UserOutlined />,
         label: "My Profile",
       },
-      {
-        key: "logout",
-        icon: <LogoutOutlined />,
-        label: "Log Out",
-      },
+      { key: "logout", icon: <LogoutOutlined />, label: "Log Out" },
     ];
   }
 
-  // --- Mapping role to profile routes (future extensibility) ---
+  // ---------------- PROFILE CLICK ----------------
+  // Navigate to profile page when clicking on profile icon
   const roleProfileNotifications = {
     [ROLES.SUPER_ADMIN]: ROUTES.SUPER_ADMIN_PROFILE,
   };
 
-  /**
-   * Handles click on the profile icon (mobile view).
-   * Navigates to the corresponding profile page for the user role.
-   */
   const handleProfileClick = () => {
     const profileRoute = roleProfileNotifications[userRole];
     if (profileRoute) navigate(profileRoute);
   };
 
-  /**
-   * Handles menu item clicks.
-   * - Navigates to the clicked route.
-   * - Handles logout asynchronously.
-   * - Closes the sidebar automatically on mobile screens.
-   *
-   * @param {Object} param0
-   * @param {string} param0.key - The key (path) of the clicked menu item.
-   */
+  // ---------------- MENU ITEM CLICK ----------------
   const handleMenuClick = async ({ key }) => {
     if (key === "logout") {
+      // Handle logout
       try {
         await logout();
         navigate(ROUTES.LOGIN);
@@ -144,20 +122,24 @@ const SideBar = ({ role, isOpen, onClose }) => {
       return;
     }
 
+    // Navigate to the clicked route
     navigate(key);
-    // Auto-close on mobile devices
+
+    // Auto-close sidebar on mobile
     if (window.innerWidth <= 768 && onClose) onClose();
   };
 
-  // --- Determine which menu item is currently active ---
+  // ---------------- SELECTED MENU ITEM ----------------
+  // Highlight the correct menu item including nested routes
   const selectedKey =
-    items.find((item) => location.pathname.startsWith(item.key))?.key ||
-    ROUTES.SUPER_ADMIN_DASHBOARD;
+    items.find(
+      (item) =>
+        location.pathname.startsWith(item.key) || // match top-level route
+        item.paths?.some((p) => location.pathname.startsWith(p)), // match nested routes
+    )?.key || ROUTES.SUPER_ADMIN_DASHBOARD; // fallback to Dashboard
 
-  /**
-   * Automatically close the sidebar when resizing above mobile width.
-   * Ensures no overlay or mobile sidebar remains open on desktop.
-   */
+  // ---------------- AUTO CLOSE SIDEBAR ON RESIZE ----------------
+  // Ensure mobile sidebar overlay closes when resizing to desktop
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth > 768 && onClose) onClose();
@@ -168,11 +150,12 @@ const SideBar = ({ role, isOpen, onClose }) => {
 
   return (
     <>
-      {/* --- Overlay for mobile view --- */}
+      {/* Mobile overlay */}
       {isOpen && <div className="sidebar-blur-overlay" onClick={onClose} />}
 
+      {/* Sidebar container */}
       <div className={`sidebar ${isOpen ? "open" : ""}`}>
-        {/* =============================== DESKTOP HEADER =============================== */}
+        {/* Desktop header */}
         <div className="sidebar-title-desktop">
           <MenuOutlined className="menu-title-icon" />
           <span className="menu-title-text">Menu</span>
@@ -180,7 +163,7 @@ const SideBar = ({ role, isOpen, onClose }) => {
 
         <div className="sidebar-divider"></div>
 
-        {/* =============================== MOBILE HEADER =============================== */}
+        {/* Mobile header */}
         <div className="sidebar-header-mobile">
           <CloseOutlined className="close-btn" onClick={onClose} />
           <div className="sidebar-profile">
@@ -203,7 +186,7 @@ const SideBar = ({ role, isOpen, onClose }) => {
           </div>
         </div>
 
-        {/* =============================== MENU ITEMS =============================== */}
+        {/* Menu */}
         <Menu
           mode="inline"
           selectedKeys={[selectedKey]}
