@@ -68,6 +68,6 @@ const userSessionSchema = new mongoose.Schema(
 );
 
 // Automatically remove expired sessions based on `expiresAt` field
-userSessionSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+// userSessionSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 export default mongoose.model("UserSession", userSessionSchema);

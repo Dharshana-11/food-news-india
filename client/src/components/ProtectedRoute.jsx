@@ -1,28 +1,53 @@
 import { Navigate } from "react-router-dom";
+import { Spin } from "antd";
 import { ROUTES } from "../routes";
+import { useAuth } from "../context/AuthContext";
 
 /**
- * ProtectedRoute component
- * ------------------------
- * Guards routes based on user authentication and role.
+ * A route wrapper that protects authenticated pages.
  *
- * @param {Object} user - Logged-in user object (contains uid, role, etc.)
- * @param {string} requiredRole - Role required to access the route (optional)
- * @param {ReactNode} children - The component(s) to render if access is allowed
+ * Handles:
+ * - Initial auth loading state
+ * - Session refresh loading state
+ * - Redirecting unauthenticated users to login
+ * - Optional role-based authorization
+ *
+ * @param {Object} props
+ * @param {string} [props.requiredRole] - Optional role required to access the route
+ * @param {JSX.Element} props.children - Component to render after authentication
+ * @returns {JSX.Element}
  */
+const ProtectedRoute = ({ requiredRole, children }) => {
+  const { currentUser, loading, isRefreshingSession } = useAuth();
 
-const ProtectedRoute = ({ user, requiredRole, children }) => {
-  // If no user is logged in, redirect to login page
-  if (!user) {
+  const isLoading = loading || isRefreshingSession;
+
+  // Show loader during initial authentication or session refresh
+  if (isLoading) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+        }}
+      >
+        <Spin size="large" tip="Loading..." />
+      </div>
+    );
+  }
+
+  // If not authenticated → redirect to login
+  if (!currentUser) {
     return <Navigate to={ROUTES.LOGIN} replace />;
   }
 
-  // If a specific role is required and user doesn't match it
-  if (requiredRole && user.role !== requiredRole) {
+  // Role-based protection (optional)
+  if (requiredRole && currentUser.role !== requiredRole) {
     return <Navigate to="/unauthorized" replace />;
   }
 
-  // If authenticated (and role matches, if required), render the protected content
   return children;
 };
 

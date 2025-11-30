@@ -49,4 +49,15 @@ router.post("/refresh-session", refreshSession);
  */
 router.post("/logout", logoutSession);
 
+// Temporary debug route
+router.get("/debug-cookies", (req, res) => {
+  res.json({
+    cookies: req.cookies,
+    headers: req.headers.cookie,
+    path: req.path,
+    baseUrl: req.baseUrl,
+    originalUrl: req.originalUrl,
+  });
+});
+
 export default router;
