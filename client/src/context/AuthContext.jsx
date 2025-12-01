@@ -1,6 +1,12 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { auth } from "../../firebase";
-import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
+import { 
+  signInWithEmailAndPassword, 
+  signInWithPhoneNumber,
+  RecaptchaVerifier,
+  onAuthStateChanged, 
+  signOut 
+} from "firebase/auth";
 import api from "../api/axios";
 import { ENDPOINTS } from "../api/endpoints";
 
@@ -12,39 +18,147 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const [isPerformingLogin, setIsPerformingLogin] = useState(false);
   const [isRefreshingSession, setIsRefreshingSession] = useState(false);
+  const [confirmationResult, setConfirmationResult] = useState(null);
 
+  /**
+   * Verify active session with backend
+   */
   const verifyActiveSession = async () => {
     const res = await api.get(ENDPOINTS.VERIFY_SESSION);
     if (!res.data?.user) throw new Error("Invalid user data");
     return res.data.user;
   };
 
-const login = async (identifier, password) => {
-  setIsPerformingLogin(true);
-  try {
-    let userCredential;
-    if (identifier.includes("@")) {
-      userCredential = await signInWithEmailAndPassword(auth, identifier, password);
-    } else {
-      userCredential = await signInWithPhoneAuth(auth, identifier, password);
+  /**
+   * Setup invisible reCAPTCHA for phone authentication
+   * Only creates one instance globally
+   */
+  const setupRecaptcha = () => {
+    if (!window.recaptchaVerifier) {
+      window.recaptchaVerifier = new RecaptchaVerifier(
+        auth,
+        'recaptcha-container',
+        {
+          size: 'invisible',
+          callback: () => {
+            console.log("reCAPTCHA verified");
+          },
+          'expired-callback': () => {
+            console.log("reCAPTCHA expired");
+            window.recaptchaVerifier = null;
+          }
+        }
+      );
     }
+    return window.recaptchaVerifier;
+  };
 
-    const idToken = await userCredential.user.getIdToken();
+  /**
+   * Admin/Super Admin login with email + password
+   * @param {string} email - Admin email
+   * @param {string} password - Admin password
+   * @returns {Promise<Object>} Authenticated user
+   */
+  const loginWithEmail = async (email, password) => {
+    setIsPerformingLogin(true);
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const idToken = await userCredential.user.getIdToken();
 
-    // Create backend session
-    const response = await api.post(ENDPOINTS.CREATE_SESSION, {}, {
-      headers: { Authorization: `Bearer ${idToken}` },
-    });
+      // Create backend session
+      const response = await api.post(ENDPOINTS.CREATE_SESSION, {}, {
+        headers: { Authorization: `Bearer ${idToken}` },
+      });
 
-    // 🔥 FIX: Get user from CREATE_SESSION response, don't call verify again
-    const backendUser = response.data.user;
-    setCurrentUser(backendUser);
-    return backendUser;
-  } finally {
-    setIsPerformingLogin(false);
-  }
-};
+      const backendUser = response.data.user;
+      setCurrentUser(backendUser);
+      return backendUser;
+    } finally {
+      setIsPerformingLogin(false);
+    }
+  };
 
+  /**
+   * User login with phone number (sends OTP)
+   * @param {string} phoneNumber - E.164 format (+91XXXXXXXXXX)
+   * @returns {Promise<void>}
+   */
+  const loginWithPhone = async (phoneNumber) => {
+    try {
+      const appVerifier = setupRecaptcha();
+      const confirmResult = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
+      
+      setConfirmationResult(confirmResult);
+      console.log("OTP sent successfully");
+    } catch (error) {
+      console.error("Error sending OTP:", error);
+      
+      // Reset reCAPTCHA on error
+      if (window.recaptchaVerifier) {
+        window.recaptchaVerifier.clear();
+        window.recaptchaVerifier = null;
+      }
+      
+      throw error;
+    }
+  };
+
+  /**
+   * Verify OTP code and create backend session
+   * @param {string} code - 6-digit OTP
+   * @returns {Promise<Object>} Authenticated user
+   */
+  const verifyOTP = async (code) => {
+    setIsPerformingLogin(true);
+    try {
+      if (!confirmationResult) {
+        throw new Error("No OTP session found. Please request OTP again.");
+      }
+
+      // Verify OTP with Firebase
+      const userCredential = await confirmationResult.confirm(code);
+      const idToken = await userCredential.user.getIdToken();
+
+      // Create backend session
+      const response = await api.post(ENDPOINTS.CREATE_SESSION, {}, {
+        headers: { Authorization: `Bearer ${idToken}` },
+      });
+
+      const backendUser = response.data.user;
+      setCurrentUser(backendUser);
+      setConfirmationResult(null); // Clear confirmation result
+      
+      return backendUser;
+    } catch (error) {
+      console.error("OTP verification error:", error);
+      throw error;
+    } finally {
+      setIsPerformingLogin(false);
+    }
+  };
+
+  /**
+   * Generic login function - detects email vs phone
+   * @param {string} identifier - Email or phone number
+   * @param {string} password - Password (only for email)
+   * @returns {Promise<Object>} Authenticated user
+   */
+  const login = async (identifier, password) => {
+    if (identifier.includes("@")) {
+      return await loginWithEmail(identifier, password);
+    } else if (identifier.startsWith("+91")) {
+      // For phone, this just sends OTP
+      // Actual login happens in verifyOTP
+      await loginWithPhone(identifier);
+      return null; // User must verify OTP next
+    } else {
+      throw new Error("Invalid identifier format");
+    }
+  };
+
+  /**
+   * Logout user from both Firebase and backend
+   */
   const logout = async () => {
     try { 
       await api.post(ENDPOINTS.LOGOUT); 
@@ -59,8 +173,16 @@ const login = async (identifier, password) => {
     }
     
     setCurrentUser(null);
+    setConfirmationResult(null);
+    
+    // Clear reCAPTCHA
+    if (window.recaptchaVerifier) {
+      window.recaptchaVerifier.clear();
+      window.recaptchaVerifier = null;
+    }
   };
 
+  // Monitor Firebase auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       // Don't interfere with login flow
@@ -77,7 +199,6 @@ const login = async (identifier, password) => {
         setCurrentUser(backendUser);
       } catch (err) {
         console.log("Session verification failed:", err.message);
-        // Don't call logout here - let onSessionExpired handle it
         setCurrentUser(null);
       } finally {
         setLoading(false);
@@ -107,7 +228,6 @@ const login = async (identifier, password) => {
     };
 
     return () => {
-      // Cleanup
       api.onSessionExpired = null;
       api.onRefreshStart = null;
       api.onRefreshEnd = null;
@@ -115,7 +235,20 @@ const login = async (identifier, password) => {
   }, [isRefreshingSession]);
 
   return (
-    <AuthContext.Provider value={{ currentUser, loading, login, logout, isRefreshingSession }}>
+    <AuthContext.Provider 
+      value={{ 
+        currentUser, 
+        loading, 
+        login,
+        loginWithEmail,
+        loginWithPhone,
+        verifyOTP,
+        logout, 
+        isRefreshingSession
+      }}
+    >
+      {/* Hidden reCAPTCHA container */}
+      <div id="recaptcha-container"></div>
       {children}
     </AuthContext.Provider>
   );

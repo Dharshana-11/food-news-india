@@ -277,7 +277,7 @@
 .login-btn-primary:hover {
   /* background: linear-gradient(135deg, #ff6c1f 0%, #ff8c47 100%) !important; */
   background: var(--color-primary-orange);
-  box-shadow: 0 6px 16px rgba(255, 108, 31, 0.3) !important;
+  /* box-shadow: 0 6px 16px rgba(255, 108, 31, 0.3) !important; */
   transform: translateY(-2px) !important;
 }
 
@@ -285,7 +285,7 @@
   transform: translateY(0) !important;
 }
 
-.login-btn-google {
+/* .login-btn-google {
   border: 2px solid #e5e7eb !important;
   border-radius: 12px !important;
   font-weight: 600 !important;
@@ -303,10 +303,10 @@
   border-color: #162247 !important;
   color: #162247 !important;
   background: #f9fafb !important;
-}
+} */
 
 /* ================= Divider ================= */
-.login-divider {
+/* .login-divider {
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -323,7 +323,7 @@
   color: #9ca3af;
   font-size: 0.85rem;
   font-weight: 500;
-}
+} */
 
 /* ================= Footer Links ================= */
 .login-footer-links {

@@ -303,13 +303,11 @@ const Login = () => {
                     },
                   ]}
                 >
-                  <Input
-                    prefix={<SafetyOutlined className="input-icon" />}
-                    placeholder="Enter 6-digit OTP"
-                    maxLength={6}
-                    autoFocus
+                  <Input.OTP
+                    length={6}
                     size="large"
-                    className="login-input login-otp-input"
+                    autoFocus
+                    className="otp-box"
                   />
                 </Form.Item>
 
