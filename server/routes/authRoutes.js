@@ -19,5 +19,4 @@ const router = express.Router();
  */
 router.get("/verify", authenticateUser, verifyUser);
 
-
 export default router;

@@ -59,8 +59,9 @@ body {
 }
 
 /* Headings */
-h1, h2, h3
-.ant-card-head-title {
+h1,
+h2,
+h3 .ant-card-head-title {
   font-family: "Poppins", sans-serif;
   /* color: var(--color-primary-blue); */
   margin: 0;

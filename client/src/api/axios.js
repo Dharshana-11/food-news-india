@@ -72,7 +72,7 @@ api.interceptors.response.use(
     ];
 
     const isNoRetry = noRetryEndpoints.some((ep) =>
-      originalRequest.url?.includes(ep)
+      originalRequest.url?.includes(ep),
     );
 
     if (isNoRetry) {
@@ -142,7 +142,7 @@ api.interceptors.response.use(
     /* -------------------------- Default error return -------------------------- */
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;

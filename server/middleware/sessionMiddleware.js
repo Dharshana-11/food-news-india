@@ -22,12 +22,14 @@ export const verifySession = async (req, res, next) => {
     console.log("=== VERIFY SESSION CALLED ===");
     console.log("URL:", req.url);
     console.log("Cookies:", req.cookies);
-    
+
     const sessionToken = req.cookies.sessionToken;
 
     if (!sessionToken) {
       console.log("No session token found");
-      return res.status(401).json({ message: "Session token missing or required!" });
+      return res
+        .status(401)
+        .json({ message: "Session token missing or required!" });
     }
 
     // Check if session is active
@@ -35,13 +37,17 @@ export const verifySession = async (req, res, next) => {
 
     if (!session) {
       console.log("Session not found or inactive");
-      return res.status(401).json({ message: "Session expired. Please refresh." });
+      return res
+        .status(401)
+        .json({ message: "Session expired. Please refresh." });
     }
 
     // Check if session has expired by time
     if (new Date() > session.expiresAt) {
       console.log("Session expired by time");
-      return res.status(401).json({ message: "Session expired. Please login again." });
+      return res
+        .status(401)
+        .json({ message: "Session expired. Please login again." });
     }
 
     const user = await Users.findOne({ uid: session.uid });
@@ -52,7 +58,7 @@ export const verifySession = async (req, res, next) => {
     }
 
     console.log("Session verified successfully for:", user.email);
-    
+
     req.user = user;
     next();
   } catch (error) {

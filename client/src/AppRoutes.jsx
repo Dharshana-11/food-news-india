@@ -23,7 +23,7 @@ import BusinessTypes from "./pages/BusinessTypes/BusinessTypes";
 import ComplianceMappings from "./pages/ComplianceMappings/ComplianceMappings";
 import KYCDocuments from "./pages/KYCDocuments/KYCDocuments";
 import Documents from "./pages/Documents/Documents";
-import  BusinessOwnerDashboard from "./pages/businessowner/BusinessOwnerDashboard"
+import BusinessOwnerDashboard from "./pages/businessowner/BusinessOwnerDashboard";
 /**
  * Renders all application routes with public and role-protected access.
  * Displays a loading spinner while authentication state is being determined.
@@ -202,12 +202,14 @@ const AppRoutes = () => {
         }
       />
 
-
-      <Route path={ROUTES.BUSINESS_OWNER_DASHBOARD} element={
-        <ProtectedRoute allowedRoles={[ROLES.BUSINESS_OWNER]}>
-          <BusinessOwnerDashboard />
-        </ProtectedRoute>
-      } />
+      <Route
+        path={ROUTES.BUSINESS_OWNER_DASHBOARD}
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.BUSINESS_OWNER]}>
+            <BusinessOwnerDashboard />
+          </ProtectedRoute>
+        }
+      />
     </Routes>
   );
 };

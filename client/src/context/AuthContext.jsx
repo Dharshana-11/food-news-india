@@ -1,11 +1,27 @@
+/**
+ * AuthContext.jsx
+ * ============================================================================
+ * Centralized authentication context for FoodPoint.
+ * Supports:
+ * - Admin login (email + password)
+ * - User login (phone number + OTP via Firebase)
+ * - Backend session creation & verification
+ * - Automatic session refresh & logout handling
+ *
+ * Handles:
+ * - Firebase Auth state
+ * - Invisible reCAPTCHA setup for OTP
+ * - Axios session expiration hooks
+ */
+
 import { createContext, useContext, useState, useEffect } from "react";
 import { auth } from "../../firebase";
-import { 
-  signInWithEmailAndPassword, 
+import {
+  signInWithEmailAndPassword,
   signInWithPhoneNumber,
   RecaptchaVerifier,
-  onAuthStateChanged, 
-  signOut 
+  onAuthStateChanged,
+  signOut,
 } from "firebase/auth";
 import api from "../api/axios";
 import { ENDPOINTS } from "../api/endpoints";
@@ -16,12 +32,20 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
   const [isPerformingLogin, setIsPerformingLogin] = useState(false);
   const [isRefreshingSession, setIsRefreshingSession] = useState(false);
+
+  // Holds Firebase confirmation result for OTP verification
   const [confirmationResult, setConfirmationResult] = useState(null);
 
+  // ---------------------------------------------------------------------------
+  // Backend Session Verification
+  // ---------------------------------------------------------------------------
+
   /**
-   * Verify active session with backend
+   * Verify active backend session.
+   * @returns {Promise<Object>} backend user object
    */
   const verifyActiveSession = async () => {
     const res = await api.get(ENDPOINTS.VERIFY_SESSION);
@@ -29,35 +53,38 @@ export const AuthProvider = ({ children }) => {
     return res.data.user;
   };
 
+  // ---------------------------------------------------------------------------
+  // reCAPTCHA Setup
+  // ---------------------------------------------------------------------------
+
   /**
-   * Setup invisible reCAPTCHA for phone authentication
-   * Only creates one instance globally
+   * Setup invisible reCAPTCHA verifier for Firebase phone login.
+   * Ensures a single global instance.
    */
   const setupRecaptcha = () => {
     if (!window.recaptchaVerifier) {
-      window.recaptchaVerifier = new RecaptchaVerifier(
-        auth,
-        'recaptcha-container',
-        {
-          size: 'invisible',
-          callback: () => {
-            console.log("reCAPTCHA verified");
-          },
-          'expired-callback': () => {
-            console.log("reCAPTCHA expired");
-            window.recaptchaVerifier = null;
-          }
-        }
-      );
+      window.recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
+        size: "invisible",
+        callback: () => console.log("reCAPTCHA verified"),
+        "expired-callback": () => {
+          console.log("reCAPTCHA expired");
+          window.recaptchaVerifier = null;
+        },
+      });
     }
     return window.recaptchaVerifier;
   };
 
+  // ---------------------------------------------------------------------------
+  // Admin Login (Email + Password)
+  // ---------------------------------------------------------------------------
+
   /**
-   * Admin/Super Admin login with email + password
-   * @param {string} email - Admin email
-   * @param {string} password - Admin password
-   * @returns {Promise<Object>} Authenticated user
+   * Admin/Super Admin login using email + password.
+   * Creates backend session using Firebase ID token.
+   * @param {string} email
+   * @param {string} password
+   * @returns {Promise<Object>} backend user
    */
   const loginWithEmail = async (email, password) => {
     setIsPerformingLogin(true);
@@ -65,10 +92,11 @@ export const AuthProvider = ({ children }) => {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const idToken = await userCredential.user.getIdToken();
 
-      // Create backend session
-      const response = await api.post(ENDPOINTS.CREATE_SESSION, {}, {
-        headers: { Authorization: `Bearer ${idToken}` },
-      });
+      const response = await api.post(
+        ENDPOINTS.CREATE_SESSION,
+        {},
+        { headers: { Authorization: `Bearer ${idToken}` } }
+      );
 
       const backendUser = response.data.user;
       setCurrentUser(backendUser);
@@ -78,56 +106,62 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // ---------------------------------------------------------------------------
+  // OTP Login (Phone Number)
+  // ---------------------------------------------------------------------------
+
   /**
-   * User login with phone number (sends OTP)
-   * @param {string} phoneNumber - E.164 format (+91XXXXXXXXXX)
-   * @returns {Promise<void>}
+   * Send OTP to user phone number using Firebase.
+   * @param {string} phoneNumber - Full E.164 format (+91XXXXXXXXXX)
    */
   const loginWithPhone = async (phoneNumber) => {
     try {
       const appVerifier = setupRecaptcha();
-      const confirmResult = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
-      
-      setConfirmationResult(confirmResult);
+      const result = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
+
+      setConfirmationResult(result);
       console.log("OTP sent successfully");
     } catch (error) {
       console.error("Error sending OTP:", error);
-      
-      // Reset reCAPTCHA on error
+
+      // Reset reCAPTCHA on failure
       if (window.recaptchaVerifier) {
         window.recaptchaVerifier.clear();
         window.recaptchaVerifier = null;
       }
-      
+
       throw error;
     }
   };
 
   /**
-   * Verify OTP code and create backend session
+   * Verify OTP and create backend session.
    * @param {string} code - 6-digit OTP
-   * @returns {Promise<Object>} Authenticated user
+   * @returns {Promise<Object>} backend user
    */
   const verifyOTP = async (code) => {
     setIsPerformingLogin(true);
+
     try {
       if (!confirmationResult) {
         throw new Error("No OTP session found. Please request OTP again.");
       }
 
-      // Verify OTP with Firebase
+      // Firebase verification
       const userCredential = await confirmationResult.confirm(code);
       const idToken = await userCredential.user.getIdToken();
 
       // Create backend session
-      const response = await api.post(ENDPOINTS.CREATE_SESSION, {}, {
-        headers: { Authorization: `Bearer ${idToken}` },
-      });
+      const response = await api.post(
+        ENDPOINTS.CREATE_SESSION,
+        {},
+        { headers: { Authorization: `Bearer ${idToken}` } }
+      );
 
       const backendUser = response.data.user;
       setCurrentUser(backendUser);
-      setConfirmationResult(null); // Clear confirmation result
-      
+      setConfirmationResult(null);
+
       return backendUser;
     } catch (error) {
       console.error("OTP verification error:", error);
@@ -137,55 +171,65 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // ---------------------------------------------------------------------------
+  // Generic Login Selector
+  // ---------------------------------------------------------------------------
+
   /**
-   * Generic login function - detects email vs phone
-   * @param {string} identifier - Email or phone number
-   * @param {string} password - Password (only for email)
-   * @returns {Promise<Object>} Authenticated user
+   * Auto-detect login method (email or phone).
+   * @param {string} identifier - email OR +91 phone number
+   * @param {string} password  - required only for email login
    */
   const login = async (identifier, password) => {
     if (identifier.includes("@")) {
-      return await loginWithEmail(identifier, password);
-    } else if (identifier.startsWith("+91")) {
-      // For phone, this just sends OTP
-      // Actual login happens in verifyOTP
-      await loginWithPhone(identifier);
-      return null; // User must verify OTP next
-    } else {
-      throw new Error("Invalid identifier format");
+      return loginWithEmail(identifier, password);
     }
+
+    if (identifier.startsWith("+91")) {
+      await loginWithPhone(identifier);
+      return null; // Move to OTP screen next
+    }
+
+    throw new Error("Invalid identifier format");
   };
 
+  // ---------------------------------------------------------------------------
+  // Logout
+  // ---------------------------------------------------------------------------
+
   /**
-   * Logout user from both Firebase and backend
+   * Logout user from both backend session and Firebase auth.
    */
   const logout = async () => {
-    try { 
-      await api.post(ENDPOINTS.LOGOUT); 
+    try {
+      await api.post(ENDPOINTS.LOGOUT);
     } catch (err) {
-      console.log("Logout API error (expected if session expired):", err.message);
+      console.log("Logout API error (likely session expired):", err.message);
     }
-    
+
     try {
       await signOut(auth);
     } catch (err) {
-      console.log("Firebase signout error:", err.message);
+      console.log("Firebase sign-out error:", err.message);
     }
-    
+
     setCurrentUser(null);
     setConfirmationResult(null);
-    
-    // Clear reCAPTCHA
+
+    // Clear reCAPTCHA instance
     if (window.recaptchaVerifier) {
       window.recaptchaVerifier.clear();
       window.recaptchaVerifier = null;
     }
   };
 
-  // Monitor Firebase auth state changes
+  // ---------------------------------------------------------------------------
+  // Firebase Auth State Listener
+  // ---------------------------------------------------------------------------
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      // Don't interfere with login flow
+      // Skip interference during login
       if (isPerformingLogin) return;
 
       if (!firebaseUser) {
@@ -208,22 +252,21 @@ export const AuthProvider = ({ children }) => {
     return unsubscribe;
   }, [isPerformingLogin]);
 
-  // Handle global session expired from Axios
+  // ---------------------------------------------------------------------------
+  // Axios Session Expiry Hooks
+  // ---------------------------------------------------------------------------
+
   useEffect(() => {
     api.onSessionExpired = async () => {
-      console.log("Session expired - logging out");
-      if (!isRefreshingSession) {
-        await logout();
-      }
+      console.log("Session expired — logging out");
+      if (!isRefreshingSession) await logout();
     };
-    
+
     api.onRefreshStart = () => {
-      console.log("Session refresh started");
       setIsRefreshingSession(true);
     };
-    
+
     api.onRefreshEnd = () => {
-      console.log("Session refresh ended");
       setIsRefreshingSession(false);
     };
 
@@ -234,21 +277,28 @@ export const AuthProvider = ({ children }) => {
     };
   }, [isRefreshingSession]);
 
+  // ---------------------------------------------------------------------------
+  // Provider
+  // ---------------------------------------------------------------------------
+
   return (
-    <AuthContext.Provider 
-      value={{ 
-        currentUser, 
-        loading, 
+    <AuthContext.Provider
+      value={{
+        currentUser,
+        loading,
+
         login,
         loginWithEmail,
         loginWithPhone,
         verifyOTP,
-        logout, 
-        isRefreshingSession
+
+        logout,
+        isRefreshingSession,
       }}
     >
-      {/* Hidden reCAPTCHA container */}
-      <div id="recaptcha-container"></div>
+      {/* Invisible reCAPTCHA container */}
+      <div id="recaptcha-container" />
+
       {children}
     </AuthContext.Provider>
   );
