@@ -55,4 +55,8 @@ export const ROUTES = {
   SUPER_ADMIN_COMPLIANCE_MAPPINGS: "/super-admin/compliance-mappings",
   SUPER_ADMIN_KYC_DOCUMENTS: "/super-admin/kyc-documents",
   SUPER_ADMIN_DOCUMENTS: "/super-admin/documents",
+
+  BUSINESS_OWNER_DASHBOARD: "/business-owner/dashboard",
+  AGENT_DASHBOARD: "/agent/dashboard",
+  SERVICE_PROVIDER_DASHBOARD: "/service-provider/dashboard",
 };
