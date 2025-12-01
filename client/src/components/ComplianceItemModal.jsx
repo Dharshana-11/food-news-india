@@ -14,7 +14,12 @@ const { Option } = Select;
  * @param {Function} props.onSubmit - Called with form values on submit
  * @param {Object} [props.initialValues] - Initial values for editing
  */
-const ComplianceItemModal = ({ visible, onCancel, onSubmit, initialValues }) => {
+const ComplianceItemModal = ({
+  visible,
+  onCancel,
+  onSubmit,
+  initialValues,
+}) => {
   const [form] = Form.useForm();
 
   /**
@@ -85,7 +90,11 @@ const ComplianceItemModal = ({ visible, onCancel, onSubmit, initialValues }) => 
             { type: "number", min: 1, message: "Must be at least 1 day" },
           ]}
         >
-          <InputNumber style={{ width: "100%" }} min={1} placeholder="Number of days" />
+          <InputNumber
+            style={{ width: "100%" }}
+            min={1}
+            placeholder="Number of days"
+          />
         </Form.Item>
 
         <Form.Item label="Required" name="required" valuePropName="checked">

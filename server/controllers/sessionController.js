@@ -25,7 +25,7 @@ export const createSession = async (req, res) => {
     // Close all other valid active sessions
     await UserSession.updateMany(
       { uid, isActive: true, expiresAt: { $gt: now } },
-      { isActive: false, logoutTime: now }
+      { isActive: false, logoutTime: now },
     );
 
     const sessionTTL = Number(process.env.SESSION_TTL_HOURS ?? 1);
