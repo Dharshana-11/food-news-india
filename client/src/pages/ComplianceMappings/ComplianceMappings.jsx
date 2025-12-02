@@ -9,7 +9,6 @@ import {
   TableOutlined,
 } from "@ant-design/icons";
 
-import SuperAdminLayout from "../../layouts/SuperAdminLayout";
 import CustomTable from "../../components/CustomTable";
 import MappingForm from "./MappingForm";
 import MappingGrid from "./MappingGrid";
@@ -19,6 +18,8 @@ import {
   deleteMapping,
   getBusinessTypesForDropdown,
 } from "../../services/complianceMappingService";
+import AppLayout from "../../layouts/AppLayout";
+import ROLES from "../../constants/roles";
 
 const { Search } = Input;
 const { confirm } = Modal;
@@ -182,7 +183,7 @@ const ComplianceMappings = () => {
 
   // -------------------- Render --------------------
   return (
-    <SuperAdminLayout>
+    <AppLayout role={ROLES.SUPER_ADMIN}>
       <div className="compliance-mappings-page">
         <div className="page-header-section">
           <div className="header-content">
@@ -281,7 +282,7 @@ const ComplianceMappings = () => {
           />
         </Modal>
       </div>
-    </SuperAdminLayout>
+    </AppLayout>
   );
 };
 

@@ -31,7 +31,6 @@ import {
   RightOutlined,
 } from "@ant-design/icons";
 
-import SuperAdminLayout from "../../layouts/SuperAdminLayout";
 import StatCard from "../../components/dashboard/StatCard";
 import ChartCard from "../../components/dashboard/ChartCard";
 import CustomTable from "../../components/CustomTable";
@@ -40,6 +39,7 @@ import TicketsSnapshot from "../../components/dashboard/TicketsSnapshot";
 import Notifications from "../../components/dashboard/Notifications";
 import { ROUTES } from "../../routes";
 import ROLES from "../../constants/roles";
+import AppLayout from "../../layouts/AppLayout";
 
 const SuperAdminDashboard = () => {
   const navigate = useNavigate();
@@ -256,7 +256,7 @@ const SuperAdminDashboard = () => {
   ======================================================= */
 
   return (
-    <SuperAdminLayout>
+    <AppLayout role={ROLES.SUPER_ADMIN}>
       <div className="super-admin-dashboard" style={{ padding: "24px" }}>
         {/* ---------- Statistic Cards ---------- */}
         <Row gutter={[24, 24]} className="stats-row">
@@ -391,7 +391,7 @@ const SuperAdminDashboard = () => {
           </Col>
         </Row>
       </div>
-    </SuperAdminLayout>
+    </AppLayout>
   );
 };
 

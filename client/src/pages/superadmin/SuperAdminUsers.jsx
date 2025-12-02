@@ -1,10 +1,12 @@
-import React from "react";
-import SuperAdminLayout from "../../layouts/SuperAdminLayout";
+import AppLayout from "../../layouts/AppLayout";
+import ROLES from "../../constants/roles";
 
 const SuperAdminUsers = () => {
   return (
     <div>
-      <SuperAdminLayout></SuperAdminLayout>
+      <AppLayout role={ROLES.SUPER_ADMIN}>
+
+      </AppLayout>
     </div>
   );
 };
