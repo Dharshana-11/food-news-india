@@ -25,7 +25,7 @@ import {
   LogoutOutlined,
   CloseOutlined,
   MessageOutlined,
-  BellOutlined
+  BellOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -159,7 +159,6 @@ const SideBar = ({ role, isOpen, onClose }) => {
       },
     ];
   }
-
 
   // ---------------- PROFILE CLICK ----------------
   // Navigate to profile page when clicking on profile icon

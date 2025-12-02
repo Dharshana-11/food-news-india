@@ -63,14 +63,18 @@ export const AuthProvider = ({ children }) => {
    */
   const setupRecaptcha = () => {
     if (!window.recaptchaVerifier) {
-      window.recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
-        size: "invisible",
-        callback: () => console.log("reCAPTCHA verified"),
-        "expired-callback": () => {
-          console.log("reCAPTCHA expired");
-          window.recaptchaVerifier = null;
+      window.recaptchaVerifier = new RecaptchaVerifier(
+        auth,
+        "recaptcha-container",
+        {
+          size: "invisible",
+          callback: () => console.log("reCAPTCHA verified"),
+          "expired-callback": () => {
+            console.log("reCAPTCHA expired");
+            window.recaptchaVerifier = null;
+          },
         },
-      });
+      );
     }
     return window.recaptchaVerifier;
   };
@@ -89,13 +93,17 @@ export const AuthProvider = ({ children }) => {
   const loginWithEmail = async (email, password) => {
     setIsPerformingLogin(true);
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password,
+      );
       const idToken = await userCredential.user.getIdToken();
 
       const response = await api.post(
         ENDPOINTS.CREATE_SESSION,
         {},
-        { headers: { Authorization: `Bearer ${idToken}` } }
+        { headers: { Authorization: `Bearer ${idToken}` } },
       );
 
       const backendUser = response.data.user;
@@ -117,7 +125,11 @@ export const AuthProvider = ({ children }) => {
   const loginWithPhone = async (phoneNumber) => {
     try {
       const appVerifier = setupRecaptcha();
-      const result = await signInWithPhoneNumber(auth, phoneNumber, appVerifier);
+      const result = await signInWithPhoneNumber(
+        auth,
+        phoneNumber,
+        appVerifier,
+      );
 
       setConfirmationResult(result);
       console.log("OTP sent successfully");
@@ -155,7 +167,7 @@ export const AuthProvider = ({ children }) => {
       const response = await api.post(
         ENDPOINTS.CREATE_SESSION,
         {},
-        { headers: { Authorization: `Bearer ${idToken}` } }
+        { headers: { Authorization: `Bearer ${idToken}` } },
       );
 
       const backendUser = response.data.user;

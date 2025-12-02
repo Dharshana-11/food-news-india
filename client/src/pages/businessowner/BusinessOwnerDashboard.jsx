@@ -3,11 +3,9 @@ import ROLES from "../../constants/roles";
 
 const BusinessOwnerDashboard = () => {
   return (
-        <AppLayout role={ROLES.BUSINESS_OWNER}>
-          <div>
-            businessowner dashboard 
-          </div>       
-        </AppLayout>
+    <AppLayout role={ROLES.BUSINESS_OWNER}>
+      <div>businessowner dashboard</div>
+    </AppLayout>
   );
 };
 

@@ -4,9 +4,7 @@ import ROLES from "../../constants/roles";
 const SuperAdminUsers = () => {
   return (
     <div>
-      <AppLayout role={ROLES.SUPER_ADMIN}>
-
-      </AppLayout>
+      <AppLayout role={ROLES.SUPER_ADMIN}></AppLayout>
     </div>
   );
 };
