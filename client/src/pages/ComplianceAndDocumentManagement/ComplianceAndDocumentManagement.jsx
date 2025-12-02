@@ -1,10 +1,11 @@
 // src/pages/ComplianceAndDocumentManagement/ComplianceAndDocumentManagement.jsx
-import SuperAdminLayout from "../../layouts/SuperAdminLayout";
 import ComplianceItemSummary from "./ComplianceItemSummary";
 import BusinessTypeSummary from "./BusinessTypeSummary";
 import ComplianceMappingSummary from "./ComplianceMappingSummary";
 import KYCDocumentSummary from "./KYCDocumentSummary";
 import DocumentSummary from "./DocumentSummary";
+import AppLayout from "../../layouts/AppLayout";
+import ROLES from "../../constants/roles";
 
 /**
  * ComplianceAndDocumentManagement Page
@@ -14,7 +15,7 @@ import DocumentSummary from "./DocumentSummary";
  */
 const ComplianceAndDocumentManagement = () => {
   return (
-    <SuperAdminLayout>
+    <AppLayout role={ROLES.SUPER_ADMIN}>
       <div className="compliance-docs-page">
         {/* Page Header */}
         <div className="page-header">
@@ -30,7 +31,7 @@ const ComplianceAndDocumentManagement = () => {
           <DocumentSummary />
         </div>
       </div>
-    </SuperAdminLayout>
+    </AppLayout>
   );
 };
 

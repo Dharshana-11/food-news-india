@@ -9,10 +9,11 @@ import {
   TeamOutlined,
 } from "@ant-design/icons";
 
-import SuperAdminLayout from "../../layouts/SuperAdminLayout";
+import AppLayout from "../../layouts/AppLayout";
 import KYCDocumentForm from "./KYCDocumentForm";
 import KYCDocumentCard from "./KYCDocumentCard";
 import KYCDocumentInfoCard from "./KYCDocumentsInfoCards";
+import ROLES from "../../constants/roles";
 
 import {
   getAllKYCDocuments,
@@ -159,7 +160,7 @@ const KYCDocuments = () => {
 
   // ===================== RENDER =====================
   return (
-    <SuperAdminLayout>
+    <AppLayout role={ROLES.SUPER_ADMIN}>
       <div className="kyc-documents-page">
         {/* Header */}
         <div className="kyc-header-section">
@@ -254,7 +255,7 @@ const KYCDocuments = () => {
           />
         </Modal>
       </div>
-    </SuperAdminLayout>
+    </AppLayout>
   );
 };
 

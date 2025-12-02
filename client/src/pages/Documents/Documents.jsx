@@ -11,7 +11,8 @@ import {
   StopOutlined,
 } from "@ant-design/icons";
 
-import SuperAdminLayout from "../../layouts/SuperAdminLayout";
+import AppLayout from "../../layouts/AppLayout";
+import ROLES from "../../constants/roles";
 import DocumentForm from "./DocumentForm";
 import DocumentReviewModal from "./DocumentReviewModal";
 import {
@@ -159,7 +160,7 @@ const Documents = () => {
   };
 
   return (
-    <SuperAdminLayout>
+    <AppLayout role={ROLES.SUPER_ADMIN}>
       <div className="documents-page-new">
         {/* Header */}
         <div className="docs-header">
@@ -330,7 +331,7 @@ const Documents = () => {
           }}
         />
       </div>
-    </SuperAdminLayout>
+    </AppLayout>
   );
 };
 

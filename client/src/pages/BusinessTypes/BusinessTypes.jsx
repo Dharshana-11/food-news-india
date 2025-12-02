@@ -3,7 +3,8 @@ import { useState, useEffect } from "react";
 import { Button, Modal, message, Empty } from "antd";
 import { PlusOutlined, ShopOutlined } from "@ant-design/icons";
 
-import SuperAdminLayout from "../../layouts/SuperAdminLayout";
+import AppLayout from "../../layouts/AppLayout";
+import ROLES from "../../constants/roles";
 import BusinessTypeForm from "./BusinessTypeForm";
 
 import StatsSection from "./components/StatsSection";
@@ -119,7 +120,7 @@ const BusinessTypes = () => {
 
   // ===================== RENDER =====================
   return (
-    <SuperAdminLayout>
+    <AppLayout role={ROLES.SUPER_ADMIN}>
       <div className="business-types-page">
         {/* Header */}
         <div className="page-header-section">
@@ -211,7 +212,7 @@ const BusinessTypes = () => {
           />
         </Modal>
       </div>
-    </SuperAdminLayout>
+    </AppLayout>
   );
 };
 

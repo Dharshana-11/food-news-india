@@ -24,6 +24,8 @@ import {
   ControlOutlined,
   LogoutOutlined,
   CloseOutlined,
+  MessageOutlined,
+  BellOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -95,6 +97,66 @@ const SideBar = ({ role, isOpen, onClose }) => {
         label: "My Profile",
       },
       { key: "logout", icon: <LogoutOutlined />, label: "Log Out" },
+    ];
+  }
+
+  if (role === ROLES.BUSINESS_OWNER) {
+    items = [
+      {
+        key: ROUTES.BUSINESS_OWNER_DASHBOARD,
+        icon: <DashboardOutlined />,
+        label: "Dashboard",
+      },
+      {
+        key: ROUTES.BUSINESS_OWNER_MY_SERVICES,
+        icon: <AppstoreOutlined />,
+        label: "My Services",
+      },
+      {
+        key: ROUTES.BUSINESS_OWNER_MY_AGENTS,
+        icon: <UserOutlined />,
+        label: "My Agents",
+      },
+      {
+        key: ROUTES.BUSINESS_OWNER_DOCUMENT_VAULT,
+        icon: <FileTextOutlined />,
+        label: "Document Vault",
+      },
+      {
+        key: ROUTES.BUSINESS_OWNER_COMPLIANCE_CALENDAR,
+        icon: <HistoryOutlined />,
+        label: "Compliance Calendar",
+      },
+      {
+        key: ROUTES.BUSINESS_OWNER_TRAINING,
+        icon: <CustomerServiceOutlined />,
+        label: "Training",
+      },
+      {
+        key: ROUTES.BUSINESS_OWNER_CHECKLIST,
+        icon: <FileSearchOutlined />,
+        label: "Compliance Checklist",
+      },
+      {
+        key: ROUTES.BUSINESS_OWNER_MESSAGES,
+        icon: <MessageOutlined />,
+        label: "Messages / Chat",
+      },
+      {
+        key: ROUTES.BUSINESS_OWNER_NOTIFICATIONS,
+        icon: <BellOutlined />,
+        label: "Notifications",
+      },
+      {
+        key: ROUTES.BUSINESS_OWNER_HELP_SUPPORT,
+        icon: <CustomerServiceOutlined />,
+        label: "Help & Support",
+      },
+      {
+        key: "logout",
+        icon: <LogoutOutlined />,
+        label: "Log Out",
+      },
     ];
   }
 

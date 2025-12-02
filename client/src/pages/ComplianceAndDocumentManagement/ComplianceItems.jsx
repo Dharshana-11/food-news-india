@@ -16,7 +16,8 @@ import {
   deleteComplianceItem,
 } from "../../services/complianceItemService";
 import { useAuth } from "../../context/AuthContext";
-import SuperAdminLayout from "../../layouts/SuperAdminLayout";
+import AppLayout from "../../layouts/AppLayout";
+import ROLES from "../../constants/roles";
 
 const ComplianceItems = () => {
   const { currentUser } = useAuth();
@@ -195,7 +196,7 @@ const ComplianceItems = () => {
 
   // ----------------- Render -----------------
   return (
-    <SuperAdminLayout>
+    <AppLayout role={ROLES.SUPER_ADMIN}>
       <div className="compliance-items-section">
         {/* Header */}
         <div className="compliance-items-header">
@@ -260,7 +261,7 @@ const ComplianceItems = () => {
           initialValues={selectedItem}
         />
       </div>
-    </SuperAdminLayout>
+    </AppLayout>
   );
 };
 
