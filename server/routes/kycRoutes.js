@@ -6,13 +6,13 @@ import {
   updateBusinessProfile,
   submitKYCForReview,
 } from "../controllers/kycController.js";
-import upload from "../middleware/upload.js";
-import { verifyToken } from "../middleware/auth.js"; // Your existing auth middleware
+import upload from "../middleware/uploadMiddleware.js";
+import { verifySession } from "../middleware/sessionMiddleware.js"; // Your existing auth middleware
 
 const router = express.Router();
 
 // All routes require authentication
-router.use(verifyToken);
+router.use(verifySession);
 
 /**
  * GET /api/kyc/requirements

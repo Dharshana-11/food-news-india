@@ -1,7 +1,7 @@
 import Document from "../models/Document.js";
 import BusinessProfile from "../models/BusinessProfile.js";
 import KYCDocument from "../models/KYCDocument.js";
-import User from "../models/User.js";
+import User from "../models/Users.js";
 import path from "path";
 
 /**
