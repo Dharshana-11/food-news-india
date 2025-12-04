@@ -7,7 +7,7 @@ import {
   submitKYCForReview,
 } from "../controllers/kycController.js";
 import upload from "../middleware/uploadMiddleware.js";
-import { verifySession } from "../middleware/sessionMiddleware.js"; // Your existing auth middleware
+import { verifySession } from "../middleware/sessionMiddleware.js"; 
 
 const router = express.Router();
 

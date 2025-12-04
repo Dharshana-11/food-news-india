@@ -1,162 +1,243 @@
-/* ========================================
-   KYC VERIFICATION - MOBILE FIRST
-   ======================================== */
-
+/* ===== KYC WIZARD LAYOUT ===== */
 .kyc-container {
-  max-width: 100%;
-  padding: 1rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 32px 24px;
   min-height: 100vh;
-  background: #f5f5f5;
+  background: linear-gradient(135deg, #f5f7fa 0%, #f0f3f8 100%);
+  color: #1f2d3d;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
 /* Header */
 .kyc-header {
+  margin-bottom: 24px;
   text-align: center;
-  margin-bottom: 1.5rem;
 }
 
-.kyc-header h1 {
-  font-size: 1.5rem;
+.kyc-header h2 {
+  margin-bottom: 8px !important;
+  color: #1f2d3d;
   font-weight: 700;
-  color: #1a1a1a;
-  margin-bottom: 0.5rem;
 }
 
-.kyc-header p {
-  font-size: 0.9rem;
-  color: #666;
-}
-
-/* Progress Bar */
-.kyc-progress-container {
+/* Card basics */
+.kyc-card {
+  border-radius: 16px;
   background: #fff;
-  border-radius: 12px;
-  padding: 1rem;
-  margin-bottom: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+  border: none !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.kyc-progress-header {
+.kyc-card:hover {
+  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.12);
+}
+
+/* Loading state */
+.kyc-loading {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  margin-bottom: 0.75rem;
+  min-height: 400px;
+}
+.kyc-card kyc-document-card{
+  padding: 0px;
+}
+/* ---------- STEP (HORIZONTAL) ---------- */
+.kyc-stepper-card {
+  padding: 24px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fd 100%);
 }
 
-.kyc-progress-label {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #333;
+.kyc-steps-horizontal {
+  --antd-wave-shadow-color: transparent;
 }
 
-.kyc-progress-value {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #ff6b35;
-}
-
-.kyc-progress-bar {
-  width: 100%;
-  height: 8px;
-  background: #e0e0e0;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.kyc-progress-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #ff6b35 0%, #ff8c42 100%);
-  transition: width 0.3s ease;
-  border-radius: 10px;
-}
-
-/* Step Indicator */
-.kyc-steps {
-  display: flex;
-  overflow-x: auto;
-  gap: 0.5rem;
-  padding: 1rem 0;
-  margin-bottom: 1.5rem;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.kyc-steps::-webkit-scrollbar {
-  display: none;
-}
-
-.kyc-step {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 80px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.kyc-step-number {
-  width: 40px;
-  height: 40px;
+/* Enhanced step icons */
+.ant-steps-item-icon {
+  width: 40px !important;
+  height: 40px !important;
   border-radius: 50%;
-  background: #e0e0e0;
-  color: #666;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 4px 16px rgba(17, 24, 39, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 3px solid transparent !important;
+}
+
+.ant-steps-item:hover .ant-steps-item-icon {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 20px rgba(17, 24, 39, 0.15);
+}
+
+.ant-steps-item-process .ant-steps-item-icon,
+.ant-steps-item-finish .ant-steps-item-icon {
+  background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%) !important;
+  color: #fff !important;
+  border-color: #fff !important;
+}
+
+.ant-steps-item-finish .ant-steps-item-icon {
+  background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%) !important;
+  color: #fff !important;
+}
+.ant-steps-item-icon .anticon svg{
+  color: white ;
+}
+
+.ant-steps-item-error .ant-steps-item-icon {
+  background: linear-gradient(135deg, #ff4d4f 0%, #ff7875 100%) !important;
+  color: #fff !important;
+}
+
+.ant-steps-item-wait .ant-steps-item-icon {
+  background: #f0f5ff !important;
+  border-color: #d9e3f6 !important;
+}
+
+/* Step title */
+.ant-steps-item-title {
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  color: #1f2d3d !important;
+  line-height: 1.4 !important;
+}
+
+.ant-steps-item-process .ant-steps-item-title {
+  color: #ff6b35 !important;
+}
+
+.ant-steps-item-finish .ant-steps-item-title {
+  color: #52c41a !important;
+}
+
+/* Connector style */
+.ant-steps-item-tail {
+  padding: 4px 0 !important;
+}
+
+.ant-steps-item-tail::after {
+  height: 3px !important;
+  background: linear-gradient(90deg, #d9e3f6 0%, #f0f5ff 100%) !important;
+}
+
+.ant-steps-item-finish .ant-steps-item-tail::after {
+  background: linear-gradient(90deg, #52c41a 0%, #95de64 100%) !important;
+}
+
+/* Responsive steps */
+@media (max-width: 768px) {
+  .ant-steps {
+    display: flex !important;
+    flex-direction: column;
+  }
+
+  .ant-steps-item {
+    flex: 1 1 100%;
+  }
+}
+
+/* ---------- PROGRESS BAR ---------- */
+.kyc-progress-card {
+  padding: 20px 24px;
+  background: linear-gradient(135deg, #fff 0%, #f8f9fd 100%);
+}
+
+.kyc-progress-wrap {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  width: 100%;
+}
+
+.kyc-progress-left {
+  min-width: 140px;
+}
+
+.kyc-progress-label {
   font-weight: 700;
-  font-size: 1rem;
-  margin-bottom: 0.5rem;
+  font-size: 16px;
+  color: #1f2d3d;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.kyc-progress-sublabel {
+  font-size: 13px;
+  color: #8b95a5;
+}
+
+.kyc-progress-right {
+  flex: 1;
+}
+
+.ant-progress-inner {
+  border-radius: 10px !important;
+}
+
+.ant-progress-bg {
+  border-radius: 10px !important;
+}
+
+/* ---------- DOCUMENT CARD ---------- */
+.kyc-document-card {
+  padding: 28px;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.doc-head {
+  margin-bottom: 16px;
+}
+
+.doc-head .kyc-doc-title {
+  margin-bottom: 12px !important;
+  color: #1f2d3d;
+  font-weight: 700;
+}
+
+.doc-head .kyc-doc-sub {
+  display: block;
+  margin-bottom: 0;
+  line-height: 1.6;
+  color: #64748b;
+}
+
+/* Upload status block */
+.kyc-upload-status {
+  padding: 20px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0;
   transition: all 0.3s ease;
 }
 
-.kyc-step.active .kyc-step-number {
-  background: #ff6b35;
-  color: #fff;
-  transform: scale(1.1);
+.status-approved .kyc-upload-status {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border-color: #86efac;
 }
 
-.kyc-step.completed .kyc-step-number {
-  background: #4caf50;
-  color: #fff;
+.status-pending .kyc-upload-status {
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border-color: #93c5fd;
 }
 
-.kyc-step-label {
-  font-size: 0.75rem;
-  color: #666;
-  text-align: center;
-  line-height: 1.2;
+.status-rejected .kyc-upload-status,
+.status-expired .kyc-upload-status {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border-color: #fca5a5;
 }
 
-.kyc-step.active .kyc-step-label {
-  color: #ff6b35;
-  font-weight: 600;
+.review-notes-card {
+  background: #fafafa !important;
+  border: 1px solid #e8e8e8 !important;
 }
 
-/* Content Area */
-.kyc-content {
-  background: #fff;
-  border-radius: 12px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-/* Document Upload */
-.kyc-document-upload h2 {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin-bottom: 0.75rem;
-}
-
-.kyc-description {
-  font-size: 0.9rem;
-  color: #666;
-  margin-bottom: 1.5rem;
-  line-height: 1.5;
-}
-
+/* File input */
 .kyc-file-input-wrapper {
-  margin-bottom: 1rem;
+  margin: 0;
 }
 
 .kyc-file-input {
@@ -164,334 +245,230 @@
 }
 
 .kyc-file-label {
-  display: block;
-  padding: 1rem;
-  background: #f5f5f5;
-  border: 2px dashed #ccc;
-  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 160px;
+  padding: 32px;
+  border-radius: 12px;
+  border: 2px dashed #d0daf0;
+  background: linear-gradient(135deg, #fafbff 0%, #f5f7fb 100%);
   text-align: center;
   cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 0.9rem;
-  color: #666;
+  color: #475569;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.kyc-file-label::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(24, 144, 255, 0.05) 0%, rgba(255, 107, 53, 0.05) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .kyc-file-label:hover {
-  border-color: #ff6b35;
-  background: #fff5f2;
-  color: #ff6b35;
+  transform: translateY(-4px);
+  background: linear-gradient(135deg, #fff 0%, #f0f7ff 100%);
+  box-shadow: 0 8px 24px rgba(24, 144, 255, 0.15);
 }
 
-.kyc-upload-btn {
-  width: 100%;
-  padding: 1rem;
-  background: #ff6b35;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
+.kyc-file-label:hover::before {
+  opacity: 1;
 }
 
-.kyc-upload-btn:hover:not(:disabled) {
-  background: #ff8c42;
+.kyc-file-label:active {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
 }
 
-.kyc-upload-btn:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-}
-
-/* Upload Status */
-.kyc-upload-status {
-  padding: 1.5rem;
-  border-radius: 8px;
-  margin-bottom: 1rem;
-}
-
-.kyc-upload-status.status-pending {
-  background: #fff8e1;
-  border: 2px solid #ffc107;
-}
-
-.kyc-upload-status.status-approved {
-  background: #e8f5e9;
-  border: 2px solid #4caf50;
-}
-
-.kyc-upload-status.status-rejected {
-  background: #ffebee;
-  border: 2px solid #f44336;
-}
-
-.status-icon {
-  font-size: 2rem;
-  margin-bottom: 0.5rem;
-}
-
-.status-title {
-  font-size: 1rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-}
-
-.status-filename {
-  font-size: 0.9rem;
-  color: #666;
-  margin-bottom: 0.5rem;
-}
-
-.status-notes {
-  font-size: 0.85rem;
-  color: #666;
-  margin-top: 0.5rem;
-  padding: 0.75rem;
-  background: rgba(0, 0, 0, 0.05);
-  border-radius: 6px;
-}
-
-/* Re-upload */
+/* Reupload section */
 .kyc-reupload {
-  margin-top: 1rem;
-  padding: 1rem;
-  background: #f5f5f5;
-  border-radius: 8px;
+  margin-top: 24px;
 }
 
-.kyc-reupload p {
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
-  color: #666;
+.kyc-reupload-card {
+  margin-bottom: 20px !important;
+  border-radius: 10px !important;
 }
 
-/* Navigation */
-.kyc-navigation {
-  display: flex;
-  justify-content: space-between;
-  gap: 1rem;
-  margin-top: 2rem;
-}
-
-.kyc-nav-btn {
-  flex: 1;
-  padding: 1rem;
-  border: 2px solid #ff6b35;
-  background: #fff;
-  color: #ff6b35;
-  border-radius: 8px;
-  font-size: 1rem;
+/* Upload button */
+.kyc-upload-btn {
+  border-radius: 10px;
+  padding: 8px 24px;
+  height: 48px;
   font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  font-size: 15px;
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.kyc-nav-btn:hover:not(:disabled) {
-  background: #ff6b35;
-  color: #fff;
+.kyc-upload-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+  box-shadow: 0 6px 20px rgba(24, 144, 255, 0.3);
 }
 
-.kyc-nav-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.kyc-nav-btn.next {
-  background: #ff6b35;
-  color: #fff;
-}
-
-.kyc-nav-btn.next:hover:not(:disabled) {
-  background: #ff8c42;
-}
-
-/* Completion Screen */
+/* Completion screens */
 .kyc-completion {
   text-align: center;
-  padding: 3rem 1rem;
+  padding: 40px 24px;
 }
 
-.completion-icon {
-  font-size: 4rem;
-  margin-bottom: 1rem;
+.kyc-completion .ant-result-title {
+  font-weight: 700 !important;
+  font-size: 28px !important;
 }
 
-.kyc-completion h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  color: #1a1a1a;
+.kyc-completion .ant-result-subtitle {
+  font-size: 16px !important;
+  color: #64748b !important;
 }
 
-.kyc-completion p {
-  font-size: 1rem;
-  color: #666;
-  margin-bottom: 2rem;
-  line-height: 1.5;
+.kyc-completion .ant-result-icon {
+  margin-bottom: 32px !important;
+}
+
+/* Footer actions */
+.kyc-footer-actions {
+  padding: 20px 24px;
+  background: linear-gradient(135deg, #fff 0%, #f8f9fd 100%);
+}
+
+/* Secondary button style */
+.kyc-secondary-btn {
+  border-radius: 10px;
+  height: 40px;
+  font-weight: 600;
+  border: 2px solid #e2e8f0;
+  color: #475569;
+  transition: all 0.3s ease;
+}
+
+.kyc-secondary-btn:hover {
+  background: #f0f7ff;
+  transform: translateY(-2px);
 }
 
 .kyc-submit-btn {
-  padding: 1rem 2rem;
-  background: #4caf50;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  height: 48px !important;
+  font-size: 16px !important;
+  border-radius: 10px !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 16px rgba(24, 144, 255, 0.25) !important;
 }
 
-.kyc-submit-btn:hover:not(:disabled) {
-  background: #45a049;
+.kyc-submit-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+  box-shadow: 0 6px 24px rgba(24, 144, 255, 0.35) !important;
 }
 
-.kyc-submit-btn:disabled {
-  background: #ccc;
-  cursor: not-allowed;
+/* Tags */
+.ant-tag {
+  border-radius: 6px;
+  padding: 4px 12px;
+  font-weight: 600;
+  font-size: 13px;
+  border: none;
 }
 
-.kyc-completion.verified {
-  color: #4caf50;
+/* Divider */
+.ant-divider {
+  margin: 20px 0 !important;
+  border-color: #f0f0f0 !important;
 }
 
-.kyc-completion.in-review {
-  color: #ffc107;
+/* Result component enhancements */
+.ant-result-icon > .anticon {
+  font-size: 80px !important;
 }
 
-/* Loading */
-.kyc-loading {
-  text-align: center;
-  padding: 4rem 1rem;
-  font-size: 1.1rem;
-  color: #666;
-}
-
-/* ========================================
-   TABLET (768px and up)
-   ======================================== */
-@media (min-width: 768px) {
+/* Responsive tweaks */
+@media (max-width: 768px) {
   .kyc-container {
-    padding: 2rem;
+    padding: 20px 16px;
   }
 
-  .kyc-header h1 {
-    font-size: 2rem;
+  .kyc-progress-wrap {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
   }
 
-  .kyc-header p {
-    font-size: 1rem;
+  .kyc-progress-left {
+    min-width: 100%;
   }
 
-  .kyc-steps {
-    justify-content: center;
-    gap: 1rem;
-  }
-
-  .kyc-step {
-    min-width: 100px;
-  }
-
-  .kyc-step-number {
-    width: 50px;
-    height: 50px;
-    font-size: 1.25rem;
-  }
-
-  .kyc-step-label {
-    font-size: 0.85rem;
-  }
-
-  .kyc-content {
-    padding: 2rem;
-  }
-
-  .kyc-document-upload h2 {
-    font-size: 1.5rem;
-  }
-
-  .kyc-navigation {
-    max-width: 400px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-}
-
-/* ========================================
-   DESKTOP (1024px and up)
-   ======================================== */
-@media (min-width: 1024px) {
-  .kyc-container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 3rem 2rem;
-  }
-
-  .kyc-header h1 {
-    font-size: 2.25rem;
-  }
-
-  .kyc-steps {
-    gap: 1.5rem;
-  }
-
-  .kyc-step {
-    min-width: 120px;
-  }
-
-  .kyc-step-number {
-    width: 60px;
-    height: 60px;
-    font-size: 1.5rem;
-  }
-
-  .kyc-step-label {
-    font-size: 0.9rem;
-  }
-
-  .kyc-content {
-    padding: 3rem;
-  }
-
-  .kyc-document-upload h2 {
-    font-size: 1.75rem;
+  .kyc-progress-right {
+    width: 100%;
   }
 
   .kyc-file-label {
-    font-size: 1rem;
+    min-height: 140px;
+    padding: 24px;
+    font-size: 14px;
   }
 
-  .kyc-upload-btn,
-  .kyc-nav-btn,
-  .kyc-submit-btn {
-    font-size: 1.05rem;
+  .kyc-document-card {
+    padding: 20px;
   }
 
-  .completion-icon {
-    font-size: 5rem;
+  .kyc-completion {
+    padding: 32px 16px;
   }
 
-  .kyc-completion h2 {
-    font-size: 2rem;
+  .kyc-completion .ant-result-title {
+    font-size: 22px !important;
   }
 
-  .kyc-completion p {
-    font-size: 1.1rem;
+  .kyc-footer-actions .ant-space {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .kyc-footer-actions .ant-space > div {
+    width: 100%;
+  }
+
+  .kyc-footer-actions button {
+    width: 100%;
   }
 }
 
-/* ========================================
-   LARGE DESKTOP (1440px and up)
-   ======================================== */
-@media (min-width: 1440px) {
-  .kyc-container {
-    max-width: 1000px;
+@media (max-width: 480px) {
+  .kyc-header h2 {
+    font-size: 22px !important;
   }
+
+  .ant-steps-item-icon {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  .ant-steps-item-title {
+    font-size: 12px !important;
+  }
+}
+
+/* Animation for cards */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.kyc-card {
+  animation: slideInUp 0.4s ease-out;
 }

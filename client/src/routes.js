@@ -56,7 +56,30 @@ export const ROUTES = {
   SUPER_ADMIN_KYC_DOCUMENTS: "/super-admin/kyc-documents",
   SUPER_ADMIN_DOCUMENTS: "/super-admin/documents",
 
+  /* =========================================================
+     BUSINESS OWNER ROUTES
+     ========================================================= */
   BUSINESS_OWNER_DASHBOARD: "/business-owner/dashboard",
+  BUSINESS_OWNER_KYC: "/business-owner/kyc-verification",
+  BUSINESS_OWNER_MY_SERVICES: "/business-owner/services",
+  BUSINESS_OWNER_MY_AGENTS: "/business-owner/agents",
+  BUSINESS_OWNER_DOCUMENT_VAULT: "/business-owner/documents",
+  BUSINESS_OWNER_COMPLIANCE_CALENDAR: "/business-owner/calendar",
+  BUSINESS_OWNER_TRAINING: "/business-owner/training",
+  BUSINESS_OWNER_CHECKLIST: "/business-owner/checklist",
+  BUSINESS_OWNER_MESSAGES: "/business-owner/messages",
+  BUSINESS_OWNER_MY_NOTIFICATIONS: "/business-owner/notifications",
+  BUSINESS_OWNER_HELP_SUPPORT: "/business-owner/support",
+
+  /* =========================================================
+     AGENT ROUTES
+     ========================================================= */
   AGENT_DASHBOARD: "/agent/dashboard",
+  AGENT_KYC: "/agent/kyc-verification",
+
+  /* =========================================================
+     SERVICE PROVIDER ROUTES
+     ========================================================= */
   SERVICE_PROVIDER_DASHBOARD: "/service-provider/dashboard",
+  SERVICE_PROVIDER_KYC: "/service-provider/kyc-verification",
 };

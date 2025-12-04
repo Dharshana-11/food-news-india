@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import { getKYCProfile } from "../../api/kyc";
-import { ROUTES } from "../../constants/routes";
-import ROLES from "../../constants/roles";
+import { getKYCProfile } from "../../services/kyc.js";
+import { ROUTES } from "../../routes.js";
+import ROLES from "../../constants/roles.js";
 
 /**
  * KYCGuard Component
@@ -119,15 +119,15 @@ const styles = {
 };
 
 // Add keyframe animation for spinner
-const styleSheet = document.styleSheets[0];
-styleSheet.insertRule(
-  `
-  @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-  }
-`,
-  styleSheet.cssRules.length
-);
+// const styleSheet = document.styleSheets[0];
+// styleSheet.insertRule(
+//   `
+//   @keyframes spin {
+//     0% { transform: rotate(0deg); }
+//     100% { transform: rotate(360deg); }
+//   }
+// `,
+//   styleSheet.cssRules.length
+// );
 
 export default KYCGuard;

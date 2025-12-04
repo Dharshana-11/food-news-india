@@ -155,7 +155,7 @@ export const uploadKYCDocument = async (req, res) => {
       file: {
         originalName: req.file.originalname,
         storedName: req.file.filename,
-        filePath: req.file.path,
+        filePath: `/uploads/documents/${req.file.filename}`,
         fileSize: req.file.size,
         fileType: path.extname(req.file.originalname).substring(1).toLowerCase(),
         storageProvider: "local",
@@ -293,6 +293,9 @@ export const submitKYCForReview = async (req, res) => {
 /**
  * Helper: Calculate and update KYC progress
  */
+/**
+ * Helper: Calculate and update KYC progress
+ */
 async function updateKYCProgress(userId) {
   try {
     const user = await User.findById(userId);
@@ -308,20 +311,30 @@ async function updateKYCProgress(userId) {
       return;
     }
 
-    // Get uploaded docs
+    // Get uploaded docs (excluding trash and expired)
     const uploadedDocs = await Document.find({
       uploadedForUser: userId,
       kycDocumentId: { $ne: null },
-      status: { $ne: "trash" },
-    }).distinct("kycDocumentId");
+      status: { $nin: ["trash", "expired"] }, // ✅ EXCLUDE EXPIRED
+    });
 
-    const progress = Math.round((uploadedDocs.length / requiredDocs.length) * 100);
+    // ✅ FIX: Count unique KYC document types
+    const uniqueKycDocIds = new Set();
+    uploadedDocs.forEach(doc => {
+      if (doc.kycDocumentId) {
+        uniqueKycDocIds.add(doc.kycDocumentId.toString());
+      }
+    });
+
+    const progress = Math.round((uniqueKycDocIds.size / requiredDocs.length) * 100);
 
     await BusinessProfile.findOneAndUpdate(
       { userId },
       { kycProgress: progress },
       { upsert: true }
     );
+
+    console.log(`✅ KYC Progress updated: ${progress}% for user ${userId}`);
   } catch (error) {
     console.error("Error updating KYC progress:", error);
   }

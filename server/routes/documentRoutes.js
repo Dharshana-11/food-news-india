@@ -27,7 +27,7 @@ router.use(verifySession, authorizeRoles(ROLES.ADMIN, ROLES.SUPER_ADMIN));
  * @description Create a new Document (KYC/Compliance). File upload supported.
  * @access Admin, Super Admin
  */
-router.post("/", upload.single("file"), createDocument);
+router.post("/", createDocument);
 
 /**
  * @route GET /documents

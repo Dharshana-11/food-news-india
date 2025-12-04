@@ -1,6 +1,8 @@
 import Document from "../models/Document.js";
 import KYCDocument from "../models/KYCDocument.js";
 import ComplianceItem from "../models/ComplianceItem.js";
+import BusinessProfile from "../models/BusinessProfile.js"; 
+import Users from "../models/Users.js";
 import { unlinkSync } from "fs";
 import { join } from "path";
 
@@ -269,35 +271,100 @@ export const deleteDocument = async (req, res) => {
  * REVIEW (approve/reject/expire)
  * @route PATCH /api/documents/:id/review
  */
+/**
+ * Review a document (Admin only)
+ * PATCH /api/documents/:id/review
+ */
 export const reviewDocument = async (req, res) => {
   try {
+    const { id } = req.params;
     const { status, notes } = req.body;
 
-    if (!["approved", "rejected", "expired"].includes(status)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid review status",
+    // Validate status
+    const validStatuses = ["approved", "rejected", "expired"];
+    if (!validStatuses.includes(status)) {
+      return res.status(400).json({ 
+        error: `Invalid status. Must be one of: ${validStatuses.join(", ")}` 
       });
     }
 
-    const doc = await Document.findByIdAndUpdate(
-      req.params.id,
-      { status, reviewNotes: notes || "" },
-      { new: true },
-    );
+    // Find and update document
+    const document = await Document.findByIdAndUpdate(
+      id,
+      {
+        status,
+        reviewNotes: notes || "",
+      },
+      { new: true }
+    ).populate("uploadedForUser", "role");
 
-    if (!doc) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Document not found" });
+    if (!document) {
+      return res.status(404).json({ error: "Document not found" });
     }
 
-    return res.status(200).json({
-      success: true,
-      message: `Document ${status}`,
-      data: doc,
+    // Check if all KYC documents for this user are now approved
+    await checkAndUpdateUserVerification(document.uploadedForUser._id, document.uploadedForUser.role);
+
+    res.json({
+      message: `Document ${status} successfully`,
+      document,
     });
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message });
+    console.error("Error reviewing document:", error);
+    res.status(500).json({ error: "Failed to review document" });
   }
 };
+
+/**
+ * Helper: Check if all user's KYC docs are approved, then verify user
+ */
+async function checkAndUpdateUserVerification(userId, userRole) {
+  try {
+    // Get all required KYC documents for user's role
+    const requiredKycDocs = await KYCDocument.find({
+      applicableRoles: userRole,
+      status: "active",
+    });
+
+    if (requiredKycDocs.length === 0) return;
+
+    // Get all user's uploaded documents
+    const uploadedDocs = await Document.find({
+      uploadedForUser: userId,
+      kycDocumentId: { $ne: null },
+      status: { $nin: ["trash"] },
+    });
+
+    // Check if each required KYC doc has at least one approved document
+    const allApproved = requiredKycDocs.every((requiredDoc) => {
+      return uploadedDocs.some(
+        (uploadedDoc) =>
+          uploadedDoc.kycDocumentId.toString() === requiredDoc._id.toString() &&
+          uploadedDoc.status === "approved"
+      );
+    });
+
+    if (allApproved) {
+      // Update BusinessProfile to verified
+      await BusinessProfile.findOneAndUpdate(
+        { userId },
+        {
+          kycStatus: "verified",
+          verifiedAt: new Date(),
+          kycProgress: 100,
+        }
+      );
+
+      // Update User model to verified
+      await Users.findByIdAndUpdate(userId, {
+        isVerified: true,
+      });
+
+      console.log(`✅ User ${userId} fully verified!`);
+    } else {
+      console.log(`⏳ User ${userId} still has pending/rejected documents`);
+    }
+  } catch (error) {
+    console.error("Error checking user verification:", error);
+  }
+}

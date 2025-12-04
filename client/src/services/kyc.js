@@ -1,12 +1,11 @@
-import axios from "axios";
-
-const API_BASE_URL = process.env.REACT_APP_API_URL;
+import api from "../api/axios";
+import { KYC_API } from "./api";
 
 /**
  * Get KYC requirements for current user
  */
 export const getKYCRequirements = async () => {
-  const response = await axios.get(`${API_BASE_URL}/kyc/requirements`);
+  const response = await api.get(`${KYC_API}/requirements`);
   return response.data;
 };
 
@@ -14,8 +13,8 @@ export const getKYCRequirements = async () => {
  * Get user's business profile
  */
 export const getKYCProfile = async () => {
-  const response = await axios.get(`${API_BASE_URL}/kyc/profile`);
-  return response.data;
+    const response = await api.get(`${KYC_API}/profile`);
+    return response.data;
 };
 
 /**
@@ -38,12 +37,12 @@ export const uploadKYCDocument = async (file, kycDocumentCode, validFrom = null,
     formData.append("validUntil", validUntil);
   }
 
-  const response = await axios.post(`${API_BASE_URL}/kyc/upload`, formData, {
+  const response = await api.post(`${KYC_API}/upload`, formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
   });
-  
+
   return response.data;
 };
 
@@ -52,7 +51,7 @@ export const uploadKYCDocument = async (file, kycDocumentCode, validFrom = null,
  * @param {Object} profileData - Profile fields to update
  */
 export const updateBusinessProfile = async (profileData) => {
-  const response = await axios.put(`${API_BASE_URL}/kyc/profile`, profileData);
+  const response = await api.put(`${KYC_API}/profile`, profileData);
   return response.data;
 };
 
@@ -60,6 +59,6 @@ export const updateBusinessProfile = async (profileData) => {
  * Submit KYC for review
  */
 export const submitKYCForReview = async () => {
-  const response = await axios.post(`${API_BASE_URL}/kyc/submit`);
+  const response = await api.post(`${KYC_API}/submit`);
   return response.data;
 };

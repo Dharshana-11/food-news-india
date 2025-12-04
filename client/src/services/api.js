@@ -25,3 +25,5 @@ export const KYC_DOCUMENT_API = `${BASE_URL}/kyc-documents`;
 
 // Uploaded Documents CRUD
 export const DOCUMENT_API = `${BASE_URL}/documents`;
+
+export const KYC_API = `${BASE_URL}/kyc`;
