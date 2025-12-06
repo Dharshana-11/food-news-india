@@ -9,6 +9,10 @@
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
+.no-result-padding .ant-result {
+  padding: 0 !important;
+}
+
 /* Header */
 .kyc-header {
   margin-bottom: 24px;
@@ -142,6 +146,7 @@
 /* ---------- PROGRESS BAR ---------- */
 .kyc-progress-card {
   padding: 20px 24px;
+  margin-top: 10px;
   background: linear-gradient(135deg, #fff 0%, #f8f9fd 100%);
 }
 
@@ -471,4 +476,12 @@
 
 .kyc-card {
   animation: slideInUp 0.4s ease-out;
+}
+
+@media (max-width: 480px) {
+  .doc-head .ant-space {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 4px !important;
+  }
 }

@@ -14,24 +14,22 @@ import {
 } from "antd";
 import dayjs from "dayjs";
 import { getKYCProfile, updateBusinessProfile } from "../../services/kyc";
+import "./BusinessProfileForm.css"; 
 
 const { Title, Text } = Typography;
 
 const BusinessProfileForm = ({ onUpdate }) => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [profile, setProfile] = useState(null);
   const [form] = Form.useForm();
 
   useEffect(() => {
-    fetchProfile();
+    loadProfile();
   }, []);
 
-  const fetchProfile = async () => {
+  const loadProfile = async () => {
     try {
-      setLoading(true);
       const { profile } = await getKYCProfile();
-      setProfile(profile);
 
       if (profile) {
         form.setFieldsValue({
@@ -49,8 +47,7 @@ const BusinessProfileForm = ({ onUpdate }) => {
           dateOfBirth: profile.dateOfBirth ? dayjs(profile.dateOfBirth) : null,
         });
       }
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
       message.error("Failed to load profile");
     } finally {
       setLoading(false);
@@ -63,25 +60,16 @@ const BusinessProfileForm = ({ onUpdate }) => {
 
       const payload = {
         ...values,
-        fssaiValidityPeriod: values.fssaiValidityPeriod
-          ? values.fssaiValidityPeriod.toISOString()
-          : undefined,
-        dateOfBirth: values.dateOfBirth
-          ? values.dateOfBirth.toISOString()
-          : undefined,
+        fssaiValidityPeriod: values.fssaiValidityPeriod?.toISOString(),
+        dateOfBirth: values.dateOfBirth?.toISOString(),
       };
 
-      Object.keys(payload).forEach((key) => {
-        if (!payload[key]) delete payload[key];
-      });
-
       await updateBusinessProfile(payload);
-      message.success("Business profile updated successfully!");
+      message.success("Profile updated!");
 
-      if (onUpdate) onUpdate();
-    } catch (error) {
-      console.error(error);
-      message.error("Failed to update profile");
+      onUpdate?.();
+    } catch (e) {
+      message.error("Update failed");
     } finally {
       setSaving(false);
     }
@@ -91,7 +79,7 @@ const BusinessProfileForm = ({ onUpdate }) => {
     return (
       <div style={{ padding: "3rem", textAlign: "center" }}>
         <Spin size="large" />
-        <div style={{ marginTop: 16, fontSize: 16 }}>Loading profile...</div>
+        <div style={{ marginTop: 12 }}>Loading...</div>
       </div>
     );
   }
@@ -105,17 +93,15 @@ const BusinessProfileForm = ({ onUpdate }) => {
         boxShadow: "0 8px 24px rgba(0,0,0,0.06)",
       }}
     >
-      <Title level={3} style={{ marginBottom: 4 }}>
-        Business Information
-      </Title>
+      <Title level={3}>Business Information</Title>
       <Text type="secondary">
-        Provide your business details to help us verify your account faster.
+        Provide your business details to verify your account faster.
       </Text>
 
       <Form
         form={form}
         layout="vertical"
-        style={{ marginTop: 32 }}
+        style={{ marginTop: 28 }}
         onFinish={handleSubmit}
       >
         {/* Business Name */}
@@ -124,7 +110,7 @@ const BusinessProfileForm = ({ onUpdate }) => {
           name="businessName"
           rules={[{ required: true, message: "Business name is required" }]}
         >
-          <Input placeholder="Enter business name" size="large" />
+          <Input size="large" placeholder="Enter business name" />
         </Form.Item>
 
         {/* Address */}
@@ -133,35 +119,27 @@ const BusinessProfileForm = ({ onUpdate }) => {
           name="registeredAddress"
           rules={[{ required: true, message: "Address is required" }]}
         >
-          <Input.TextArea
-            rows={3}
-            placeholder="Enter full business address"
-            size="large"
-          />
+          <Input.TextArea rows={3} size="large" placeholder="Enter full address" />
         </Form.Item>
 
         {/* FSSAI */}
         <Row gutter={16}>
-          <Col span={12}>
+          <Col xs={24} sm={24} md={12}>
             <Form.Item label="FSSAI License Number" name="fssaiLicenseNumber">
-              <Input
-                placeholder="14-digit FSSAI license"
-                maxLength={14}
-                size="large"
-              />
+              <Input maxLength={14} size="large" placeholder="14-digit license" />
             </Form.Item>
           </Col>
 
-          <Col span={12}>
+          <Col xs={24} sm={24} md={12}>
             <Form.Item label="FSSAI Valid Till" name="fssaiValidityPeriod">
-              <DatePicker style={{ width: "100%" }} size="large" />
+              <DatePicker size="large" style={{ width: "100%" }} />
             </Form.Item>
           </Col>
         </Row>
 
         {/* Category */}
         <Form.Item label="FSSAI Category" name="fssaiCategory">
-          <Select placeholder="Select category" allowClear size="large">
+          <Select size="large" allowClear placeholder="Select category">
             <Select.Option value="manufacturer">Manufacturer</Select.Option>
             <Select.Option value="distributor">Distributor</Select.Option>
             <Select.Option value="retailer">Retailer</Select.Option>
@@ -173,59 +151,41 @@ const BusinessProfileForm = ({ onUpdate }) => {
 
         {/* GST + PAN */}
         <Row gutter={16}>
-          <Col span={12}>
+          <Col xs={24} sm={24} md={12}>
             <Form.Item label="GST Number" name="gstNumber">
-              <Input
-                placeholder="15-digit GST no."
-                maxLength={15}
-                size="large"
-                style={{ textTransform: "uppercase" }}
-              />
+              <Input size="large" maxLength={15} placeholder="15-char GST" />
             </Form.Item>
           </Col>
 
-          <Col span={12}>
+          <Col xs={24} sm={24} md={12}>
             <Form.Item label="PAN Number" name="panNumber">
-              <Input
-                placeholder="10-character PAN"
-                maxLength={10}
-                size="large"
-                style={{ textTransform: "uppercase" }}
-              />
+              <Input size="large" maxLength={10} placeholder="10-char PAN" />
             </Form.Item>
           </Col>
         </Row>
 
         {/* Aadhaar + DOB */}
         <Row gutter={16}>
-          <Col span={12}>
+          <Col xs={24} sm={24} md={12}>
             <Form.Item label="Aadhaar Number" name="aadhaarNumber">
-              <Input placeholder="12-digit Aadhaar" maxLength={12} size="large" />
+              <Input size="large" maxLength={12} placeholder="12-digit Aadhaar" />
             </Form.Item>
-            <Text type="secondary" style={{ fontSize: 12 }}>
-              Stored securely & encrypted
-            </Text>
           </Col>
 
-          <Col span={12}>
+          <Col xs={24} sm={24} md={12}>
             <Form.Item label="Date of Birth" name="dateOfBirth">
-              <DatePicker style={{ width: "100%" }} size="large" />
+              <DatePicker size="large" style={{ width: "100%" }} />
             </Form.Item>
           </Col>
         </Row>
 
         <Button
           type="primary"
-          size="large"
           htmlType="submit"
+          size="large"
           loading={saving}
           block
-          style={{
-            marginTop: 32,
-            height: 48,
-            borderRadius: 10,
-            fontWeight: 600,
-          }}
+          className="business-form-submit-btn"
         >
           {saving ? "Saving..." : "Save Business Profile"}
         </Button>
