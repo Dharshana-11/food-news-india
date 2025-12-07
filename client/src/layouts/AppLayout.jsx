@@ -2,7 +2,7 @@
  * AppLayout Component
  * ============================================================================
  * Generic layout wrapper for all authenticated user dashboards.
- * Used by: Super Admin, Business Owner, Agent, Service Provider, Admin.
+ * Supports: Super Admin, Business Owner, Agent, Service Provider, Admin.
  *
  * Responsibilities:
  * - Responsive sidebar (open/close for mobile)
@@ -12,7 +12,7 @@
  * - Escape key accessibility
  *
  * @component
- * @param {Object} props - Component props
+ * @param {Object} props
  * @param {React.ReactNode} props.children - Page content rendered inside layout
  * @param {string} props.role - User role to load correct sidebar menu items
  *
@@ -23,22 +23,22 @@
  */
 
 import React, { useState, useEffect } from "react";
+import { Layout } from "antd";
 import SideBar from "../components/SideBar";
 import Header from "../components/Header";
-import { Layout } from "antd";
 
 const { Content } = Layout;
 
 const AppLayout = ({ children, role }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  /** Toggle sidebar for mobile */
+  /** Toggle sidebar (mobile) */
   const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
 
   /** Close sidebar */
   const closeSidebar = () => setIsSidebarOpen(false);
 
-  /** Lock page scroll when sidebar is open (mobile overlay) */
+  /** Lock page scroll when sidebar is open */
   useEffect(() => {
     document.body.style.overflow = isSidebarOpen ? "hidden" : "";
     return () => {
@@ -48,14 +48,14 @@ const AppLayout = ({ children, role }) => {
 
   return (
     <div className={`app-layout ${isSidebarOpen ? "sidebar-open" : ""}`}>
-      {/* Header */}
+      {/* Header with hamburger menu */}
       <Header onMenuClick={toggleSidebar} />
 
       <div className="app-layout-body">
         {/* Sidebar */}
         <SideBar role={role} isOpen={isSidebarOpen} onClose={closeSidebar} />
 
-        {/* Overlay behind sidebar (only shows on mobile) */}
+        {/* Mobile overlay behind sidebar */}
         <div
           role="button"
           tabIndex={isSidebarOpen ? 0 : -1}
@@ -67,7 +67,7 @@ const AppLayout = ({ children, role }) => {
           }}
         />
 
-        {/* Page content */}
+        {/* Main page content */}
         <Content className="main-content" onClick={closeSidebar}>
           {children}
         </Content>

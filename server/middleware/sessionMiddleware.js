@@ -57,7 +57,7 @@ export const verifySession = async (req, res, next) => {
       return res.status(404).json({ message: "User not found." });
     }
 
-    console.log("Session verified successfully for:", user.email);
+    console.log("Session verified successfully for:", user.email || user.phone);
 
     req.user = user;
     next();

@@ -29,6 +29,7 @@ import businessTypeRoutes from "./routes/businessTypeRoutes.js";
 import complianceRequirementMappingRoutes from "./routes/complianceRequirementMappingRoutes.js";
 import kycDocumentRoutes from "./routes/kycDocumentRoutes.js";
 import documentRoutes from "./routes/documentRoutes.js";
+import kycRoutes from "./routes/kycRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -71,6 +72,7 @@ app.use("/api/admin/compliance-mappings", complianceRequirementMappingRoutes);
 app.use("/api/kyc-documents", kycDocumentRoutes);
 app.use("/api/documents", documentRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/api/kyc", kycRoutes); // Register KYC routes
 /**
  * Server Startup
  * ------------------------------------------------------------

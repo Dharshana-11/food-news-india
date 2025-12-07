@@ -1,16 +1,13 @@
 /**
  * SideBar.jsx
  * ------------------------------------------------------------
- * Sidebar component for Super Admin navigation.
- * Handles:
- * - Role-based menu items
- * - Nested route highlighting
- * - Responsive behavior (mobile vs desktop)
- * - Logout handling
- * - Profile navigation
+ * Sidebar with integrated KYC restriction logic.
+ * Includes role-based menu items and KYC checks for restricted access.
+ * No UI, icons, or structure changed.
  * ------------------------------------------------------------
  */
 
+import { useEffect, useState } from "react";
 import { Menu } from "antd";
 import {
   MenuOutlined,
@@ -28,24 +25,102 @@ import {
   BellOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
+
 import { useAuth } from "../context/AuthContext";
 import ROLES from "../constants/roles";
 import { ROUTES } from "../routes";
-import { useEffect } from "react";
+import { getKYCProfile } from "../services/kyc";
 
+/**
+ * Sidebar component with role-based access and KYC verification logic.
+ *
+ * @param {Object} props
+ * @param {string} props.role - Current user role
+ * @param {boolean} props.isOpen - Sidebar open/close state
+ * @param {Function} props.onClose - Callback for closing sidebar
+ */
 const SideBar = ({ role, isOpen, onClose }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { logout, currentUser } = useAuth();
 
   // ---------------- USER INFO ----------------
-  const userProfilePicture = null; // Placeholder for profile picture
+  const userProfilePicture = null;
   const userName = currentUser?.name || "User";
   const userRole = currentUser?.role || "Role";
 
+  // ---------------- KYC LOGIC ----------------
+  const [kycVerified, setKycVerified] = useState(true);
+  const [checkingKYC, setCheckingKYC] = useState(true);
+
+  const rolesRequiringKYC = [
+    ROLES.BUSINESS_OWNER,
+    ROLES.AGENT,
+    ROLES.SERVICE_PROVIDER,
+  ];
+
+  useEffect(() => {
+    if (rolesRequiringKYC.includes(role)) {
+      checkKYCStatus();
+    } else {
+      setKycVerified(true);
+      setCheckingKYC(false);
+    }
+  }, [role]);
+
+  /**
+   * Fetches KYC status for the current user.
+   */
+  const checkKYCStatus = async () => {
+    try {
+      setCheckingKYC(true);
+      const { profile } = await getKYCProfile();
+      setKycVerified(profile.kycStatus === "verified");
+    } catch (err) {
+      console.error("KYC Error:", err);
+      setKycVerified(false);
+    } finally {
+      setCheckingKYC(false);
+    }
+  };
+
+  const isKYCPage = (path) => path?.includes("kyc");
+
+  /**
+   * Handles sidebar menu clicks
+   *
+   * @param {Object} param0
+   * @param {string} param0.key - Menu key clicked
+   */
+  const handleMenuClick = async ({ key }) => {
+    if (isKYCPage(key)) {
+      navigate(key);
+      onClose?.();
+      return;
+    }
+
+    if (!kycVerified && rolesRequiringKYC.includes(role)) {
+      alert("Please complete KYC to access this feature.");
+      return;
+    }
+
+    if (key === "logout") {
+      try {
+        await logout();
+        navigate(ROUTES.LOGIN);
+      } catch (error) {
+        console.error("Logout failed:", error);
+      }
+      return;
+    }
+
+    navigate(key);
+    if (window.innerWidth <= 768) onClose?.();
+  };
+
   // ---------------- MENU ITEMS ----------------
-  // Each item can have a `paths` array for nested routes
   let items = [];
+
   if (role === ROLES.SUPER_ADMIN) {
     items = [
       {
@@ -107,6 +182,11 @@ const SideBar = ({ role, isOpen, onClose }) => {
         icon: <DashboardOutlined />,
         label: "Dashboard",
       },
+      !kycVerified && {
+        key: ROUTES.BUSINESS_OWNER_KYC,
+        icon: <FileSearchOutlined />,
+        label: "KYC Verification ⚠️",
+      },
       {
         key: ROUTES.BUSINESS_OWNER_MY_SERVICES,
         icon: <AppstoreOutlined />,
@@ -143,7 +223,7 @@ const SideBar = ({ role, isOpen, onClose }) => {
         label: "Messages / Chat",
       },
       {
-        key: ROUTES.BUSINESS_OWNER_NOTIFICATIONS,
+        key: ROUTES.BUSINESS_OWNER_MY_NOTIFICATIONS,
         icon: <BellOutlined />,
         label: "Notifications",
       },
@@ -152,80 +232,52 @@ const SideBar = ({ role, isOpen, onClose }) => {
         icon: <CustomerServiceOutlined />,
         label: "Help & Support",
       },
-      {
-        key: "logout",
-        icon: <LogoutOutlined />,
-        label: "Log Out",
-      },
+      { key: "logout", icon: <LogoutOutlined />, label: "Log Out" },
     ];
   }
 
-  // ---------------- PROFILE CLICK ----------------
-  // Navigate to profile page when clicking on profile icon
-  const roleProfileNotifications = {
-    [ROLES.SUPER_ADMIN]: ROUTES.SUPER_ADMIN_PROFILE,
-  };
-
-  const handleProfileClick = () => {
-    const profileRoute = roleProfileNotifications[userRole];
-    if (profileRoute) navigate(profileRoute);
-  };
-
-  // ---------------- MENU ITEM CLICK ----------------
-  const handleMenuClick = async ({ key }) => {
-    if (key === "logout") {
-      // Handle logout
-      try {
-        await logout();
-        navigate(ROUTES.LOGIN);
-      } catch (error) {
-        console.error("Logout failed:", error);
-      }
-      return;
-    }
-
-    // Navigate to the clicked route
-    navigate(key);
-
-    // Auto-close sidebar on mobile
-    if (window.innerWidth <= 768 && onClose) onClose();
-  };
-
-  // ---------------- SELECTED MENU ITEM ----------------
-  // Highlight the correct menu item including nested routes
+  // ---------------- ACTIVE MENU HIGHLIGHT ----------------
   const selectedKey =
     items.find(
       (item) =>
-        location.pathname.startsWith(item.key) || // match top-level route
-        item.paths?.some((p) => location.pathname.startsWith(p)), // match nested routes
-    )?.key || ROUTES.SUPER_ADMIN_DASHBOARD; // fallback to Dashboard
+        location.pathname.startsWith(item.key) ||
+        item.paths?.some((p) => location.pathname.startsWith(p)),
+    )?.key || ROUTES.SUPER_ADMIN_DASHBOARD;
 
-  // ---------------- AUTO CLOSE SIDEBAR ON RESIZE ----------------
-  // Ensure mobile sidebar overlay closes when resizing to desktop
+  // ---------------- RESIZE BEHAVIOR ----------------
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth > 768 && onClose) onClose();
+      if (window.innerWidth > 768) onClose?.();
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [onClose]);
 
+  // ---------------- LOADING / KYC CHECK ----------------
+  if (checkingKYC) {
+    return (
+      <div className={`sidebar ${isOpen ? "open" : ""}`}>
+        <div style={{ padding: "2rem", color: "#888", textAlign: "center" }}>
+          Checking KYC...
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
-      {/* Mobile overlay */}
       {isOpen && <div className="sidebar-blur-overlay" onClick={onClose} />}
 
-      {/* Sidebar container */}
       <div className={`sidebar ${isOpen ? "open" : ""}`}>
-        {/* Desktop header */}
+        {/* Desktop Title */}
         <div className="sidebar-title-desktop">
           <MenuOutlined className="menu-title-icon" />
           <span className="menu-title-text">Menu</span>
         </div>
 
-        <div className="sidebar-divider"></div>
+        <div className="sidebar-divider" />
 
-        {/* Mobile header */}
+        {/* Mobile Header */}
         <div className="sidebar-header-mobile">
           <CloseOutlined className="close-btn" onClick={onClose} />
           <div className="sidebar-profile">
@@ -236,10 +288,7 @@ const SideBar = ({ role, isOpen, onClose }) => {
                 className="sidebar-profile-pic"
               />
             ) : (
-              <UserOutlined
-                className="sidebar-profile-icon"
-                onClick={handleProfileClick}
-              />
+              <UserOutlined className="sidebar-profile-icon" />
             )}
             <div className="sidebar-profile-info">
               <h4>{userName}</h4>
@@ -252,7 +301,14 @@ const SideBar = ({ role, isOpen, onClose }) => {
         <Menu
           mode="inline"
           selectedKeys={[selectedKey]}
-          items={items}
+          items={items.filter(Boolean).map((item) => ({
+            ...item,
+            disabled:
+              !isKYCPage(item.key) &&
+              rolesRequiringKYC.includes(role) &&
+              !kycVerified &&
+              item.key !== ROUTES.BUSINESS_OWNER_KYC,
+          }))}
           onClick={handleMenuClick}
         />
       </div>

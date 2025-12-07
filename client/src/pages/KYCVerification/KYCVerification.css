@@ -1,0 +1,487 @@
+/* ===== KYC WIZARD LAYOUT ===== */
+.kyc-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 32px 24px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #f0f3f8 100%);
+  color: #1f2d3d;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.no-result-padding .ant-result {
+  padding: 0 !important;
+}
+
+/* Header */
+.kyc-header {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.kyc-header h2 {
+  margin-bottom: 8px !important;
+  color: #1f2d3d;
+  font-weight: 700;
+}
+
+/* Card basics */
+.kyc-card {
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+  border: none !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.kyc-card:hover {
+  box-shadow: 0 8px 32px rgba(15, 23, 42, 0.12);
+}
+
+/* Loading state */
+.kyc-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+.kyc-card kyc-document-card{
+  padding: 0px;
+}
+/* ---------- STEP (HORIZONTAL) ---------- */
+.kyc-stepper-card {
+  padding: 24px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fd 100%);
+}
+
+.kyc-steps-horizontal {
+  --antd-wave-shadow-color: transparent;
+}
+
+/* Enhanced step icons */
+.ant-steps-item-icon {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(17, 24, 39, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 3px solid transparent !important;
+}
+
+.ant-steps-item:hover .ant-steps-item-icon {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 20px rgba(17, 24, 39, 0.15);
+}
+
+.ant-steps-item-process .ant-steps-item-icon,
+.ant-steps-item-finish .ant-steps-item-icon {
+  background: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%) !important;
+  color: #fff !important;
+  border-color: #fff !important;
+}
+
+.ant-steps-item-finish .ant-steps-item-icon {
+  background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%) !important;
+  color: #fff !important;
+}
+.ant-steps-item-icon .anticon svg{
+  color: white ;
+}
+
+.ant-steps-item-error .ant-steps-item-icon {
+  background: linear-gradient(135deg, #ff4d4f 0%, #ff7875 100%) !important;
+  color: #fff !important;
+}
+
+.ant-steps-item-wait .ant-steps-item-icon {
+  background: #f0f5ff !important;
+  border-color: #d9e3f6 !important;
+}
+
+/* Step title */
+.ant-steps-item-title {
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  color: #1f2d3d !important;
+  line-height: 1.4 !important;
+}
+
+.ant-steps-item-process .ant-steps-item-title {
+  color: #ff6b35 !important;
+}
+
+.ant-steps-item-finish .ant-steps-item-title {
+  color: #52c41a !important;
+}
+
+/* Connector style */
+.ant-steps-item-tail {
+  padding: 4px 0 !important;
+}
+
+.ant-steps-item-tail::after {
+  height: 3px !important;
+  background: linear-gradient(90deg, #d9e3f6 0%, #f0f5ff 100%) !important;
+}
+
+.ant-steps-item-finish .ant-steps-item-tail::after {
+  background: linear-gradient(90deg, #52c41a 0%, #95de64 100%) !important;
+}
+
+/* Responsive steps */
+@media (max-width: 768px) {
+  .ant-steps {
+    display: flex !important;
+    flex-direction: column;
+  }
+
+  .ant-steps-item {
+    flex: 1 1 100%;
+  }
+}
+
+/* ---------- PROGRESS BAR ---------- */
+.kyc-progress-card {
+  padding: 20px 24px;
+  margin-top: 10px;
+  background: linear-gradient(135deg, #fff 0%, #f8f9fd 100%);
+}
+
+.kyc-progress-wrap {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  width: 100%;
+}
+
+.kyc-progress-left {
+  min-width: 140px;
+}
+
+.kyc-progress-label {
+  font-weight: 700;
+  font-size: 16px;
+  color: #1f2d3d;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.kyc-progress-sublabel {
+  font-size: 13px;
+  color: #8b95a5;
+}
+
+.kyc-progress-right {
+  flex: 1;
+}
+
+.ant-progress-inner {
+  border-radius: 10px !important;
+}
+
+.ant-progress-bg {
+  border-radius: 10px !important;
+}
+
+/* ---------- DOCUMENT CARD ---------- */
+.kyc-document-card {
+  padding: 28px;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.doc-head {
+  margin-bottom: 16px;
+}
+
+.doc-head .kyc-doc-title {
+  margin-bottom: 12px !important;
+  color: #1f2d3d;
+  font-weight: 700;
+}
+
+.doc-head .kyc-doc-sub {
+  display: block;
+  margin-bottom: 0;
+  line-height: 1.6;
+  color: #64748b;
+}
+
+/* Upload status block */
+.kyc-upload-status {
+  padding: 20px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border: 2px solid #e2e8f0;
+  transition: all 0.3s ease;
+}
+
+.status-approved .kyc-upload-status {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border-color: #86efac;
+}
+
+.status-pending .kyc-upload-status {
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border-color: #93c5fd;
+}
+
+.status-rejected .kyc-upload-status,
+.status-expired .kyc-upload-status {
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border-color: #fca5a5;
+}
+
+.review-notes-card {
+  background: #fafafa !important;
+  border: 1px solid #e8e8e8 !important;
+}
+
+/* File input */
+.kyc-file-input-wrapper {
+  margin: 0;
+}
+
+.kyc-file-input {
+  display: none;
+}
+
+.kyc-file-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 160px;
+  padding: 32px;
+  border-radius: 12px;
+  border: 2px dashed #d0daf0;
+  background: linear-gradient(135deg, #fafbff 0%, #f5f7fb 100%);
+  text-align: center;
+  cursor: pointer;
+  color: #475569;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.kyc-file-label::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(24, 144, 255, 0.05) 0%, rgba(255, 107, 53, 0.05) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.kyc-file-label:hover {
+  transform: translateY(-4px);
+  background: linear-gradient(135deg, #fff 0%, #f0f7ff 100%);
+  box-shadow: 0 8px 24px rgba(24, 144, 255, 0.15);
+}
+
+.kyc-file-label:hover::before {
+  opacity: 1;
+}
+
+.kyc-file-label:active {
+  transform: translateY(-2px);
+}
+
+/* Reupload section */
+.kyc-reupload {
+  margin-top: 24px;
+}
+
+.kyc-reupload-card {
+  margin-bottom: 20px !important;
+  border-radius: 10px !important;
+}
+
+/* Upload button */
+.kyc-upload-btn {
+  border-radius: 10px;
+  padding: 8px 24px;
+  height: 48px;
+  font-weight: 600;
+  font-size: 15px;
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.kyc-upload-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(24, 144, 255, 0.3);
+}
+
+/* Completion screens */
+.kyc-completion {
+  text-align: center;
+  padding: 40px 24px;
+}
+
+.kyc-completion .ant-result-title {
+  font-weight: 700 !important;
+  font-size: 28px !important;
+}
+
+.kyc-completion .ant-result-subtitle {
+  font-size: 16px !important;
+  color: #64748b !important;
+}
+
+.kyc-completion .ant-result-icon {
+  margin-bottom: 32px !important;
+}
+
+/* Footer actions */
+.kyc-footer-actions {
+  padding: 20px 24px;
+  background: linear-gradient(135deg, #fff 0%, #f8f9fd 100%);
+}
+
+/* Secondary button style */
+.kyc-secondary-btn {
+  border-radius: 10px;
+  height: 40px;
+  font-weight: 600;
+  border: 2px solid #e2e8f0;
+  color: #475569;
+  transition: all 0.3s ease;
+}
+
+.kyc-secondary-btn:hover {
+  background: #f0f7ff;
+  transform: translateY(-2px);
+}
+
+.kyc-submit-btn {
+  height: 48px !important;
+  font-size: 16px !important;
+  border-radius: 10px !important;
+  font-weight: 700 !important;
+  box-shadow: 0 4px 16px rgba(24, 144, 255, 0.25) !important;
+}
+
+.kyc-submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(24, 144, 255, 0.35) !important;
+}
+
+/* Tags */
+.ant-tag {
+  border-radius: 6px;
+  padding: 4px 12px;
+  font-weight: 600;
+  font-size: 13px;
+  border: none;
+}
+
+/* Divider */
+.ant-divider {
+  margin: 20px 0 !important;
+  border-color: #f0f0f0 !important;
+}
+
+/* Result component enhancements */
+.ant-result-icon > .anticon {
+  font-size: 80px !important;
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .kyc-container {
+    padding: 20px 16px;
+  }
+
+  .kyc-progress-wrap {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .kyc-progress-left {
+    min-width: 100%;
+  }
+
+  .kyc-progress-right {
+    width: 100%;
+  }
+
+  .kyc-file-label {
+    min-height: 140px;
+    padding: 24px;
+    font-size: 14px;
+  }
+
+  .kyc-document-card {
+    padding: 20px;
+  }
+
+  .kyc-completion {
+    padding: 32px 16px;
+  }
+
+  .kyc-completion .ant-result-title {
+    font-size: 22px !important;
+  }
+
+  .kyc-footer-actions .ant-space {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .kyc-footer-actions .ant-space > div {
+    width: 100%;
+  }
+
+  .kyc-footer-actions button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .kyc-header h2 {
+    font-size: 22px !important;
+  }
+
+  .ant-steps-item-icon {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  .ant-steps-item-title {
+    font-size: 12px !important;
+  }
+}
+
+/* Animation for cards */
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.kyc-card {
+  animation: slideInUp 0.4s ease-out;
+}
+
+@media (max-width: 480px) {
+  .doc-head .ant-space {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 4px !important;
+  }
+}
