@@ -1,6 +1,6 @@
 import React from "react";
-import AppLayout from "../../layouts/AppLayout";
-import ROLES from "../../constants/roles";
+import AppLayout from "../../layouts/AppLayout.jsx";
+import ROLES from "../../constants/roles.js";
 import KYCGuard from "../../components/KYCGuard/KYCGuard.jsx";
 
 const BusinessOwnerDashboard = () => {

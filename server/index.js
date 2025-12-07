@@ -30,6 +30,7 @@ import complianceRequirementMappingRoutes from "./routes/complianceRequirementMa
 import kycDocumentRoutes from "./routes/kycDocumentRoutes.js";
 import documentRoutes from "./routes/documentRoutes.js";
 import kycRoutes from "./routes/kycRoutes.js";
+import documentVaultRoutes from "./routes/documentVaultRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -44,7 +45,7 @@ app.use(
   cors({
     origin: process.env.FRONTEND_URL, // Allow requests from frontend
     credentials: true, // Enable cookies / session handling
-  }),
+  })
 );
 
 app.use(json()); // Parse incoming JSON requests
@@ -73,6 +74,7 @@ app.use("/api/kyc-documents", kycDocumentRoutes);
 app.use("/api/documents", documentRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/kyc", kycRoutes); // Register KYC routes
+app.use("/api/business-owner/documents", documentVaultRoutes);
 /**
  * Server Startup
  * ------------------------------------------------------------
