@@ -1,4 +1,11 @@
 // pages/BusinessOwner/DocumentVault/index.jsx
+
+/**
+ * Document Vault page for Business Owner role.
+ * Allows users to upload, view, filter, download and manage documents.
+ * Includes KYC and compliance filtering, search, stats and more.
+ */
+
 import { useState, useEffect } from "react";
 import { Input, Button, Empty, Spin, message, Modal, Select } from "antd";
 import {
@@ -10,51 +17,65 @@ import {
 import AppLayout from "../../../layouts/AppLayout.jsx";
 import ROLES from "../../../constants/roles.js";
 import KYCGuard from "../../../components/KYCGuard/KYCGuard.jsx";
-import DocumentCard from "./DocumentCard";
-import UploadDocumentModal from "./UploadDocumentModal";
-import FilterDrawer from "./FilterDrawer";
-import StatsCards from "./StatsCards";
+import DocumentCard from "./DocumentCard.jsx";
+import UploadDocumentModal from "./UploadDocumentModal.jsx";
+import FilterDrawer from "./FilterDrawer.jsx";
+import StatsCards from "./StatsCards.jsx";
+
 import {
   getMyDocuments,
   getDocumentStats,
   deleteMyDocument,
   getDocumentUrl,
   renameDocument,
-} from "../../../services/documentVaultService";
+} from "../../../services/documentVaultService.js";
+
 import "./DocumentVault.css";
 
 const { Search } = Input;
 
 const DocumentVault = () => {
+  // ===================== STATES =====================
   const [documents, setDocuments] = useState([]);
   const [filteredDocuments, setFilteredDocuments] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState("");
+
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
+
   const [filters, setFilters] = useState({
     category: null,
     status: null,
     expiry: null,
   });
-  const [viewMode, setViewMode] = useState("all"); // all, kyc, compliance
 
-  // ===================== FETCH DATA =====================
+  const [viewMode, setViewMode] = useState("all"); // all | kyc | compliance
+
+  // ===================== FETCH DOCUMENTS =====================
+
+  /**
+   * Fetches all documents and statistics for the user.
+   * Applies filters on backend request.
+   */
   const fetchDocuments = async () => {
     setLoading(true);
+
     try {
-      const [docsResponse, statsResponse] = await Promise.all([
+      const [docsRes, statsRes] = await Promise.all([
         getMyDocuments(filters),
         getDocumentStats(),
       ]);
 
-      setDocuments(docsResponse.data.all);
-      setFilteredDocuments(docsResponse.data.all);
-      setStats(statsResponse.data);
+      const allDocs = docsRes?.data?.all || [];
+
+      setDocuments(allDocs);
+      setFilteredDocuments(allDocs);
+      setStats(statsRes?.data || null);
     } catch (error) {
+      console.error("Error fetching documents:", error);
       message.error("Failed to load documents");
-      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -64,11 +85,16 @@ const DocumentVault = () => {
     fetchDocuments();
   }, [filters]);
 
-  // ===================== SEARCH =====================
+  // ===================== SEARCH HANDLER =====================
+
+  /**
+   * Filters documents based on search text.
+   */
   useEffect(() => {
-    if (searchText) {
+    if (searchText.trim().length > 0) {
+      const query = searchText.toLowerCase();
       const filtered = documents.filter((doc) =>
-        doc.file.originalName.toLowerCase().includes(searchText.toLowerCase())
+        doc?.file?.originalName?.toLowerCase().includes(query)
       );
       setFilteredDocuments(filtered);
     } else {
@@ -77,16 +103,26 @@ const DocumentVault = () => {
   }, [searchText, documents]);
 
   // ===================== VIEW MODE FILTER =====================
+
+  /**
+   * Returns documents based on active view mode.
+   * @returns {Array}
+   */
   const getDisplayDocuments = () => {
-    if (viewMode === "kyc") {
-      return filteredDocuments.filter((doc) => doc.kycDocumentId);
-    } else if (viewMode === "compliance") {
-      return filteredDocuments.filter((doc) => doc.complianceItemId);
-    }
+    if (viewMode === "kyc")
+      return filteredDocuments.filter((d) => d.kycDocumentId);
+    if (viewMode === "compliance")
+      return filteredDocuments.filter((d) => d.complianceItemId);
+
     return filteredDocuments;
   };
 
-  // ===================== HANDLERS =====================
+  // ===================== ACTION HANDLERS =====================
+
+  /**
+   * Deletes a document after user confirmation.
+   * @param {string} docId
+   */
   const handleDelete = (docId) => {
     Modal.confirm({
       title: "Delete Document?",
@@ -94,65 +130,81 @@ const DocumentVault = () => {
       okText: "Yes, Delete",
       okType: "danger",
       cancelText: "Cancel",
-      onOk: async () => {
+      async onOk() {
         try {
           await deleteMyDocument(docId);
           message.success("Document deleted successfully");
           fetchDocuments();
         } catch (error) {
+          console.error("Delete error:", error);
           message.error("Failed to delete document");
         }
       },
     });
   };
 
+  /**
+   * Opens document in a new tab.
+   * @param {object} doc
+   */
   const handleView = (doc) => {
-    const url = getDocumentUrl(doc.file.filePath);
-    window.open(url, "_blank");
+    const url = getDocumentUrl(doc?.file?.filePath);
+    if (!url) return message.error("Unable to load the file");
+
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
-  const handleDownload = (doc) => {
-    const url = getDocumentUrl(doc.file.filePath);
-
-    // Create a temporary anchor element
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = doc.file.originalName;
-    link.target = "_blank"; // Fallback for some browsers
-    link.rel = "noopener noreferrer";
-
-    // Append to body, click, and remove
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    // Alternative method using fetch for better cross-browser support
-    fetch(url)
-      .then((response) => response.blob())
-      .then((blob) => {
-        const blobUrl = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = blobUrl;
-        a.download = doc.file.originalName;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(blobUrl);
-      })
-      .catch((error) => {
-        console.error("Download error:", error);
-        message.error("Failed to download document");
-      });
-  };
-
-  const handleRename = async (docId, newFileName) => {
+  /**
+   * Downloads a document with fallback method.
+   * @param {object} doc
+   */
+  const handleDownload = async (doc) => {
     try {
-      await renameDocument(docId, newFileName);
+      const url = getDocumentUrl(doc?.file?.filePath);
+      if (!url) return message.error("Unable to download the file");
+
+      // Primary fast download
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = doc.file.originalName;
+      link.rel = "noopener noreferrer";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Fallback: fetch
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = doc.file.originalName;
+
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error("Download error:", error);
+      message.error("Failed to download document");
+    }
+  };
+
+  /**
+   * Rename a document
+   * @param {string} docId
+   * @param {string} newName
+   */
+  const handleRename = async (docId, newName) => {
+    try {
+      await renameDocument(docId, newName);
       message.success("Document renamed successfully");
       fetchDocuments();
     } catch (error) {
+      console.error("Rename error:", error);
       message.error("Failed to rename document");
-      console.error(error);
     }
   };
 
@@ -168,6 +220,7 @@ const DocumentVault = () => {
 
   const displayDocuments = getDisplayDocuments();
 
+  // ===================== RENDER =====================
   return (
     <AppLayout role={ROLES.BUSINESS_OWNER}>
       <KYCGuard userRole={ROLES.BUSINESS_OWNER}>
@@ -184,19 +237,20 @@ const DocumentVault = () => {
                   </p>
                 </div>
               </div>
+
               <Button
                 type="primary"
+                size="large"
                 icon={<PlusOutlined />}
                 onClick={() => setIsUploadModalOpen(true)}
                 className="document-vault-upload-btn"
-                size="large"
               >
                 Upload Document
               </Button>
             </div>
           </div>
 
-          {/* Stats Cards */}
+          {/* Stats */}
           {stats && <StatsCards stats={stats} />}
 
           {/* Controls */}
@@ -212,10 +266,10 @@ const DocumentVault = () => {
 
             <div className="control-buttons">
               <Select
+                size="large"
                 value={viewMode}
                 onChange={setViewMode}
                 className="view-mode-select"
-                size="large"
               >
                 <Select.Option value="all">All Documents</Select.Option>
                 <Select.Option value="kyc">KYC Documents</Select.Option>
@@ -225,17 +279,17 @@ const DocumentVault = () => {
               </Select>
 
               <Button
-                icon={<FilterOutlined />}
-                onClick={() => setIsFilterDrawerOpen(true)}
                 size="large"
+                icon={<FilterOutlined />}
                 className="filter-btn"
+                onClick={() => setIsFilterDrawerOpen(true)}
               >
                 Filter
               </Button>
             </div>
           </div>
 
-          {/* Documents Grid */}
+          {/* Documents Section */}
           <div className="documents-section">
             {loading ? (
               <div className="vault-loading">
@@ -278,7 +332,7 @@ const DocumentVault = () => {
             )}
           </div>
 
-          {/* Modals & Drawers */}
+          {/* Modals */}
           <UploadDocumentModal
             visible={isUploadModalOpen}
             onCancel={() => setIsUploadModalOpen(false)}

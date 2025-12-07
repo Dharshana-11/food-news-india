@@ -25,7 +25,7 @@ import KYCDocuments from "./pages/KYCDocuments/KYCDocuments";
 import Documents from "./pages/Documents/Documents";
 import BusinessOwnerDashboard from "./pages/businessowner/BusinessOwnerDashboard";
 import KYCVerification from "./pages/KYCVerification/KYCVerification";
-import DocumentVault from "./pages/BusinessOwner/DocumentVault";
+import DocumentVault from "./pages/BusinessOwner/DocumentVault/DocumentVault";
 
 /**
  * Renders all application routes with public and role-protected access.

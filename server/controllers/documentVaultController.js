@@ -4,30 +4,35 @@ import KYCDocument from "../models/KYCDocument.js";
 import ComplianceItem from "../models/ComplianceItem.js";
 
 /**
- * GET: All documents for logged-in business owner
- * GET /api/business-owner/documents
+ * @desc Get all documents for the logged-in business owner
+ * @route GET /api/business-owner/documents
+ * @access Private (Business Owner)
  */
 export const getMyDocuments = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user?._id;
     const { category, status, search, expiry } = req.query;
 
-    // Build filter
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+
     const filter = {
       uploadedForUser: userId,
       status: { $ne: "trash" },
     };
 
+    // Optional filters
     if (status) filter.status = status;
+
     if (search) {
-      filter["file.originalName"] = { $regex: search, $options: "i" };
+      filter["file.originalName"] = { $regex: search.trim(), $options: "i" };
     }
 
-    // Expiry filter
+    // Expiry-based filtering
     if (expiry === "expiring_soon") {
-      const thirtyDaysFromNow = new Date();
-      thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
-      filter.validUntil = { $lte: thirtyDaysFromNow, $gte: new Date() };
+      const next30Days = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+      filter.validUntil = { $lte: next30Days, $gte: new Date() };
     } else if (expiry === "expired") {
       filter.validUntil = { $lt: new Date() };
     }
@@ -37,12 +42,8 @@ export const getMyDocuments = async (req, res) => {
       .populate("complianceItemId", "name code validityDays")
       .sort({ createdAt: -1 });
 
-    // Group by category
-    const grouped = {
-      kyc: [],
-      compliance: [],
-    };
-
+    // Group documents
+    const grouped = { kyc: [], compliance: [] };
     documents.forEach((doc) => {
       if (doc.kycDocumentId) grouped.kyc.push(doc);
       else if (doc.complianceItemId) grouped.compliance.push(doc);
@@ -50,30 +51,33 @@ export const getMyDocuments = async (req, res) => {
 
     return res.json({
       success: true,
-      data: {
-        all: documents,
-        grouped,
-      },
+      data: { all: documents, grouped },
     });
   } catch (error) {
     console.error("Error fetching documents:", error);
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Failed to fetch documents",
+      error: error.message,
     });
   }
 };
 
 /**
- * POST: Upload new document
- * POST /api/business-owner/documents
+ * @desc Upload a new document
+ * @route POST /api/business-owner/documents
+ * @access Private (Business Owner)
  */
 export const uploadMyDocument = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user?._id;
     const { kycDocumentId, complianceItemId, validFrom } = req.body;
 
-    // Validate: exactly one document type
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+
+    // Validate exactly one type
     if (!!kycDocumentId === !!complianceItemId) {
       return res.status(400).json({
         success: false,
@@ -81,7 +85,6 @@ export const uploadMyDocument = async (req, res) => {
       });
     }
 
-    // File required
     if (!req.file) {
       return res.status(400).json({
         success: false,
@@ -89,21 +92,22 @@ export const uploadMyDocument = async (req, res) => {
       });
     }
 
-    // Compute expiry for compliance docs
     let computedValidUntil = null;
+
+    // Compliance: compute expiry
     if (complianceItemId) {
       const complianceItem = await ComplianceItem.findById(complianceItemId);
       if (!complianceItem) {
         return res.status(404).json({
           success: false,
-          message: "Compliance Item not found",
+          message: "Compliance item not found",
         });
       }
 
       if (!validFrom) {
         return res.status(400).json({
           success: false,
-          message: "validFrom is required for Compliance documents",
+          message: "validFrom is required for compliance items",
         });
       }
 
@@ -118,13 +122,13 @@ export const uploadMyDocument = async (req, res) => {
       storedName: req.file.filename,
       filePath: `/uploads/documents/${req.file.filename}`,
       fileSize: req.file.size,
-      fileType: req.file.mimetype.split("/")[1],
+      fileType: req.file.mimetype?.split("/")[1] ?? "unknown",
       storageProvider: "local",
     };
 
     const document = await Document.create({
       uploadedByUser: userId,
-      uploadedForUser: userId, // Business owner uploads for themselves
+      uploadedForUser: userId,
       kycDocumentId,
       complianceItemId,
       validFrom: validFrom ? new Date(validFrom) : null,
@@ -141,19 +145,25 @@ export const uploadMyDocument = async (req, res) => {
     console.error("Error uploading document:", error);
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Failed to upload document",
+      error: error.message,
     });
   }
 };
 
 /**
- * DELETE: Soft delete document
- * DELETE /api/business-owner/documents/:id
+ * @desc Soft delete a document
+ * @route DELETE /api/business-owner/documents/:id
+ * @access Private (Business Owner)
  */
 export const deleteMyDocument = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user?._id;
     const { id } = req.params;
+
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
 
     const document = await Document.findOne({
       _id: id,
@@ -178,18 +188,24 @@ export const deleteMyDocument = async (req, res) => {
     console.error("Error deleting document:", error);
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Failed to delete document",
+      error: error.message,
     });
   }
 };
 
 /**
- * GET: Document statistics
- * GET /api/business-owner/documents/stats
+ * @desc Get document statistics
+ * @route GET /api/business-owner/documents/stats
+ * @access Private (Business Owner)
  */
 export const getMyDocumentStats = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user?._id;
+
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
 
     const total = await Document.countDocuments({
       uploadedForUser: userId,
@@ -222,26 +238,22 @@ export const getMyDocumentStats = async (req, res) => {
 
     return res.json({
       success: true,
-      data: {
-        total,
-        approved,
-        pending,
-        expiringSoon,
-        expired,
-      },
+      data: { total, approved, pending, expiringSoon, expired },
     });
   } catch (error) {
     console.error("Error fetching stats:", error);
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Failed to fetch stats",
+      error: error.message,
     });
   }
 };
 
 /**
- * GET: Available categories
- * GET /api/business-owner/documents/categories
+ * @desc Get all active KYC + Compliance categories
+ * @route GET /api/business-owner/documents/categories
+ * @access Private
  */
 export const getDocumentCategories = async (req, res) => {
   try {
@@ -256,31 +268,34 @@ export const getDocumentCategories = async (req, res) => {
 
     return res.json({
       success: true,
-      data: {
-        kyc: kycDocs,
-        compliance: complianceDocs,
-      },
+      data: { kyc: kycDocs, compliance: complianceDocs },
     });
   } catch (error) {
     console.error("Error fetching categories:", error);
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Failed to fetch categories",
+      error: error.message,
     });
   }
 };
 
 /**
- * PATCH: Rename document
- * PATCH /api/business-owner/documents/:id/rename
+ * @desc Rename a document
+ * @route PATCH /api/business-owner/documents/:id/rename
+ * @access Private (Business Owner)
  */
 export const renameMyDocument = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user?._id;
     const { id } = req.params;
     const { newFileName } = req.body;
 
-    if (!newFileName || !newFileName.trim()) {
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+
+    if (!newFileName?.trim()) {
       return res.status(400).json({
         success: false,
         message: "New file name is required",
@@ -299,7 +314,6 @@ export const renameMyDocument = async (req, res) => {
       });
     }
 
-    // Update the original name
     document.file.originalName = newFileName.trim();
     await document.save();
 
@@ -312,7 +326,8 @@ export const renameMyDocument = async (req, res) => {
     console.error("Error renaming document:", error);
     return res.status(500).json({
       success: false,
-      message: error.message,
+      message: "Failed to rename document",
+      error: error.message,
     });
   }
 };

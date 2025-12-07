@@ -1,4 +1,5 @@
 // pages/BusinessOwner/DocumentVault/StatsCards.jsx
+
 import { Card } from "antd";
 import {
   FileOutlined,
@@ -7,33 +8,51 @@ import {
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 
-const StatsCards = ({ stats }) => {
+/**
+ * Display document statistics as stat cards
+ *
+ * @param {Object} props
+ * @param {Object} props.stats - Stats object containing count values
+ * @param {number} props.stats.total
+ * @param {number} props.stats.approved
+ * @param {number} props.stats.pending
+ * @param {number} props.stats.expiringSoon
+ */
+const StatsCards = ({ stats = {} }) => {
+  // Fallback values to avoid undefined UI issues
+  const safeStats = {
+    total: stats.total ?? 0,
+    approved: stats.approved ?? 0,
+    pending: stats.pending ?? 0,
+    expiringSoon: stats.expiringSoon ?? 0,
+  };
+
   const statsData = [
     {
       key: "total",
       label: "Total Documents",
-      value: stats.total,
+      value: safeStats.total,
       icon: <FileOutlined />,
       color: "#667eea",
     },
     {
       key: "approved",
       label: "Approved",
-      value: stats.approved,
+      value: safeStats.approved,
       icon: <CheckCircleOutlined />,
       color: "#10b981",
     },
     {
       key: "pending",
       label: "Pending Review",
-      value: stats.pending,
+      value: safeStats.pending,
       icon: <ClockCircleOutlined />,
       color: "#f59e0b",
     },
     {
       key: "expiringSoon",
       label: "Expiring Soon",
-      value: stats.expiringSoon,
+      value: safeStats.expiringSoon,
       icon: <ExclamationCircleOutlined />,
       color: "#ef4444",
     },
@@ -54,6 +73,7 @@ const StatsCards = ({ stats }) => {
               >
                 {stat.icon}
               </div>
+
               <div className="vault-stat-info">
                 <div className="vault-stat-value">{stat.value}</div>
                 <div className="vault-stat-label">{stat.label}</div>

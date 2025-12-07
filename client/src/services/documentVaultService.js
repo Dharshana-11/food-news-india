@@ -4,21 +4,41 @@ import api from "../api/axios";
 const DOCUMENT_VAULT_API = "/business-owner/documents";
 
 /**
+ * Internal helper to safely handle API calls.
+ * Ensures consistent error messages and avoids repeated try/catch.
+ *
+ * @template T
+ * @param {() => Promise<{ data: T }>} fn
+ * @returns {Promise<T>}
+ */
+const safeApiCall = async (fn) => {
+  try {
+    const res = await fn();
+    return res.data;
+  } catch (error) {
+    console.error("DocumentVaultService Error:", error);
+    throw error?.response?.data || error;
+  }
+};
+
+/**
  * Get all documents for the current business owner
- * @param {Object} filters - Filter options
+ * @param {Object} filters
+ * @param {string} [filters.category]
+ * @param {string} [filters.status]
+ * @param {string} [filters.search]
+ * @param {string} [filters.expiry]
  * @returns {Promise<Object>}
  */
 export const getMyDocuments = async (filters = {}) => {
-  const { category, status, search, expiry } = filters;
   const params = {};
 
-  if (category) params.category = category;
-  if (status) params.status = status;
-  if (search) params.search = search;
-  if (expiry) params.expiry = expiry;
+  if (filters.category) params.category = filters.category;
+  if (filters.status) params.status = filters.status;
+  if (filters.search) params.search = filters.search;
+  if (filters.expiry) params.expiry = filters.expiry;
 
-  const response = await api.get(DOCUMENT_VAULT_API, { params });
-  return response.data;
+  return safeApiCall(() => api.get(DOCUMENT_VAULT_API, { params }));
 };
 
 /**
@@ -27,10 +47,11 @@ export const getMyDocuments = async (filters = {}) => {
  * @returns {Promise<Object>}
  */
 export const uploadDocument = async (formData) => {
-  const response = await api.post(DOCUMENT_VAULT_API, formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
-  return response.data;
+  return safeApiCall(() =>
+    api.post(DOCUMENT_VAULT_API, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    })
+  );
 };
 
 /**
@@ -40,49 +61,46 @@ export const uploadDocument = async (formData) => {
  * @returns {Promise<Object>}
  */
 export const renameDocument = async (documentId, newFileName) => {
-  const response = await api.patch(
-    `${DOCUMENT_VAULT_API}/${documentId}/rename`,
-    {
+  return safeApiCall(() =>
+    api.patch(`${DOCUMENT_VAULT_API}/${documentId}/rename`, {
       newFileName,
-    }
+    })
   );
-  return response.data;
 };
 
 /**
- * Delete a document
+ * Delete a document (soft delete)
  * @param {string} documentId
  * @returns {Promise<Object>}
  */
 export const deleteMyDocument = async (documentId) => {
-  const response = await api.delete(`${DOCUMENT_VAULT_API}/${documentId}`);
-  return response.data;
+  return safeApiCall(() => api.delete(`${DOCUMENT_VAULT_API}/${documentId}`));
 };
 
 /**
- * Download/View document
+ * Get direct URL to a stored document
  * @param {string} filePath
- * @returns {string} Full URL to document
+ * @returns {string}
  */
 export const getDocumentUrl = (filePath) => {
-  const baseURL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const baseURL =
+    import.meta.env.VITE_API_URL?.replace(/\/$/, "") || "http://localhost:5000";
+
   return `${baseURL}${filePath}`;
 };
 
 /**
- * Get document statistics
+ * Get statistics for all documents
  * @returns {Promise<Object>}
  */
 export const getDocumentStats = async () => {
-  const response = await api.get(`${DOCUMENT_VAULT_API}/stats`);
-  return response.data;
+  return safeApiCall(() => api.get(`${DOCUMENT_VAULT_API}/stats`));
 };
 
 /**
- * Get available document categories
- * @returns {Promise<Array>}
+ * Get available KYC & Compliance categories
+ * @returns {Promise<Object>}
  */
 export const getDocumentCategories = async () => {
-  const response = await api.get(`${DOCUMENT_VAULT_API}/categories`);
-  return response.data;
+  return safeApiCall(() => api.get(`${DOCUMENT_VAULT_API}/categories`));
 };

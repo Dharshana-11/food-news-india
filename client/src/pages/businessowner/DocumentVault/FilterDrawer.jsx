@@ -1,26 +1,44 @@
 // pages/BusinessOwner/DocumentVault/FilterDrawer.jsx
-import { useState, useEffect } from "react";
+
+import { useEffect } from "react";
 import { Drawer, Form, Select, Button, Divider } from "antd";
 import { FilterOutlined } from "@ant-design/icons";
 
-const FilterDrawer = ({ visible, onClose, onApply, currentFilters }) => {
+/**
+ * Filter drawer for document vault
+ *
+ * @param {Object} props
+ * @param {boolean} props.visible - Whether the drawer is open
+ * @param {function} props.onClose - Callback when drawer is closed
+ * @param {function} props.onApply - Callback when filters should be applied
+ * @param {Object} props.currentFilters - Current filter values
+ * @param {string|null} props.currentFilters.status
+ * @param {string|null} props.currentFilters.expiry
+ */
+const FilterDrawer = ({ visible, onClose, onApply, currentFilters = {} }) => {
   const [form] = Form.useForm();
 
+  // Sync form values when drawer opens
   useEffect(() => {
     if (visible) {
-      form.setFieldsValue(currentFilters);
+      form.setFieldsValue(currentFilters || {});
     }
   }, [visible, currentFilters, form]);
 
+  /** Apply filters */
   const handleApply = () => {
-    const values = form.getFieldsValue();
-    onApply(values);
+    try {
+      const values = form.getFieldsValue();
+      onApply(values);
+    } catch (err) {
+      console.error("Failed to apply filters:", err);
+    }
   };
 
+  /** Reset filters */
   const handleReset = () => {
     form.resetFields();
     onApply({
-      category: null,
       status: null,
       expiry: null,
     });
@@ -50,6 +68,7 @@ const FilterDrawer = ({ visible, onClose, onApply, currentFilters }) => {
       }
     >
       <Form form={form} layout="vertical">
+        {/* Status Filter */}
         <Form.Item label="Status" name="status">
           <Select placeholder="All statuses" allowClear>
             <Select.Option value="pending">Pending Review</Select.Option>
@@ -60,6 +79,7 @@ const FilterDrawer = ({ visible, onClose, onApply, currentFilters }) => {
 
         <Divider />
 
+        {/* Expiry Filter */}
         <Form.Item label="Expiry Status" name="expiry">
           <Select placeholder="All documents" allowClear>
             <Select.Option value="expiring_soon">

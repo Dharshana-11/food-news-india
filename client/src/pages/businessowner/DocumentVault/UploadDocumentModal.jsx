@@ -1,4 +1,5 @@
 // pages/BusinessOwner/DocumentVault/UploadDocumentModal.jsx
+
 import { useState, useEffect } from "react";
 import {
   Modal,
@@ -18,6 +19,14 @@ import {
 
 const { Dragger } = Upload;
 
+/**
+ * Upload document modal for Business Owner
+ *
+ * @param {Object} props
+ * @param {boolean} props.visible - Controls modal visibility
+ * @param {Function} props.onCancel - Called when modal is closed
+ * @param {Function} props.onSuccess - Called after successful upload
+ */
 const UploadDocumentModal = ({ visible, onCancel, onSuccess }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -29,22 +38,30 @@ const UploadDocumentModal = ({ visible, onCancel, onSuccess }) => {
     if (visible) fetchCategories();
   }, [visible]);
 
+  /**
+   * Fetch available KYC and compliance categories
+   */
   const fetchCategories = async () => {
     try {
       const response = await getDocumentCategories();
-      setCategories(response.data);
+      setCategories(response.data || { kyc: [], compliance: [] });
     } catch (error) {
+      console.error("Category fetch failed:", error);
       message.error("Failed to load document categories");
     }
   };
 
+  /**
+   * Handle form submit and upload document
+   * @param {Object} values
+   */
   const handleSubmit = async (values) => {
     if (!fileList.length) {
       message.error("Please select a file to upload");
       return;
     }
 
-    const fileObj = fileList[0]?.originFileObj || fileList[0];
+    const fileObj = fileList[0]?.originFileObj;
     if (!fileObj) {
       message.error("No valid file selected");
       return;
@@ -59,42 +76,47 @@ const UploadDocumentModal = ({ visible, onCancel, onSuccess }) => {
         formData.append("kycDocumentId", values.documentId);
       } else {
         formData.append("complianceItemId", values.documentId);
+
         if (values.validFrom) {
           formData.append("validFrom", values.validFrom.toISOString());
         }
       }
 
-      console.log("Sending FormData...");
-      for (let pair of formData.entries()) {
-        console.log(pair[0], pair[1]);
-      }
-
       await uploadDocument(formData);
+
       message.success("Document uploaded successfully");
-      form.resetFields();
-      setFileList([]);
-      setDocumentType("kyc");
+      resetForm();
       onSuccess();
     } catch (error) {
+      console.error("Upload failed:", error);
       message.error(
-        error.response?.data?.message || "Failed to upload document"
+        error?.response?.data?.message || "Failed to upload document"
       );
     } finally {
       setLoading(false);
     }
   };
 
+  /**
+   * Reset form and modal state
+   */
+  const resetForm = () => {
+    form.resetFields();
+    setFileList([]);
+    setDocumentType("kyc");
+  };
+
+  /**
+   * Upload component configuration
+   */
   const uploadProps = {
     beforeUpload: (file) => {
-      const isValidType = [
-        "application/pdf",
-        "image/jpeg",
-        "image/png",
-      ].includes(file.type);
-      if (!isValidType) {
+      const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
+      if (!allowedTypes.includes(file.type)) {
         message.error("Only PDF, JPG, and PNG files are allowed!");
         return Upload.LIST_IGNORE;
       }
+
       const isLt10M = file.size / 1024 / 1024 < 10;
       if (!isLt10M) {
         message.error("File must be smaller than 10MB!");
@@ -109,6 +131,7 @@ const UploadDocumentModal = ({ visible, onCancel, onSuccess }) => {
           originFileObj: file,
         },
       ]);
+
       return false; // prevent auto-upload
     },
     onRemove: () => setFileList([]),
@@ -116,12 +139,16 @@ const UploadDocumentModal = ({ visible, onCancel, onSuccess }) => {
     maxCount: 1,
   };
 
+  /**
+   * Handle modal close
+   */
   const handleModalCancel = () => {
-    form.resetFields();
-    setFileList([]);
-    setDocumentType("kyc");
+    resetForm();
     onCancel();
   };
+
+  const currentCategoryList =
+    documentType === "kyc" ? categories.kyc : categories.compliance;
 
   return (
     <Modal
@@ -166,22 +193,12 @@ const UploadDocumentModal = ({ visible, onCancel, onSuccess }) => {
             { required: true, message: "Please select document category" },
           ]}
         >
-          <Select
-            placeholder="Select document category"
-            showSearch
-            optionFilterProp="children"
-          >
-            {documentType === "kyc"
-              ? categories.kyc.map((doc) => (
-                  <Select.Option key={doc._id} value={doc._id}>
-                    {doc.name} ({doc.code})
-                  </Select.Option>
-                ))
-              : categories.compliance.map((doc) => (
-                  <Select.Option key={doc._id} value={doc._id}>
-                    {doc.name} ({doc.code})
-                  </Select.Option>
-                ))}
+          <Select placeholder="Select document category" showSearch>
+            {currentCategoryList.map((doc) => (
+              <Select.Option key={doc._id} value={doc._id}>
+                {doc.name} ({doc.code})
+              </Select.Option>
+            ))}
           </Select>
         </Form.Item>
 

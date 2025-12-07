@@ -1,4 +1,9 @@
-// pages/BusinessOwner/DocumentVault/DocumentCard.jsx
+/**
+ * DocumentCard Component
+ * Displays a single document card with actions (view, download, rename, delete),
+ * document metadata, status, expiry indicators, and category tags.
+ */
+
 import {
   Card,
   Tag,
@@ -29,13 +34,26 @@ import {
   isExpiringSoon,
 } from "../../../utils/dateHelpers";
 
+/**
+ * @component DocumentCard
+ * @param {Object} props
+ * @param {Object} props.document - Document object
+ * @param {Function} props.onView - Handler for viewing document
+ * @param {Function} props.onDownload - Handler for downloading document
+ * @param {Function} props.onDelete - Handler for deleting document
+ * @param {Function} props.onRename - Handler for renaming document
+ */
 const DocumentCard = ({ document, onView, onDownload, onDelete, onRename }) => {
   const { file, status, validUntil, kycDocumentId, complianceItemId } =
     document;
+
   const [isRenameModalVisible, setIsRenameModalVisible] = useState(false);
   const [newFileName, setNewFileName] = useState("");
 
-  // File icon based on type
+  /**
+   * Returns the correct file icon
+   * @returns {JSX.Element}
+   */
   const getFileIcon = () => {
     if (file.fileType === "pdf") {
       return <FilePdfOutlined className="file-icon pdf-icon" />;
@@ -43,7 +61,7 @@ const DocumentCard = ({ document, onView, onDownload, onDelete, onRename }) => {
     return <FileImageOutlined className="file-icon image-icon" />;
   };
 
-  // Status config
+  /** Document status config */
   const statusConfig = {
     pending: {
       color: "orange",
@@ -69,12 +87,14 @@ const DocumentCard = ({ document, onView, onDownload, onDelete, onRename }) => {
 
   const currentStatus = statusConfig[status] || statusConfig.pending;
 
-  // Expiry badge
+  /**
+   * Renders the expiry badge if needed
+   * @returns {JSX.Element|null}
+   */
   const renderExpiryBadge = () => {
     if (!validUntil) return null;
 
     const daysLeft = getDaysUntilExpiry(validUntil);
-    const expiring = isExpiringSoon(validUntil);
 
     if (daysLeft < 0) {
       return (
@@ -82,61 +102,67 @@ const DocumentCard = ({ document, onView, onDownload, onDelete, onRename }) => {
           <ExclamationCircleOutlined /> Expired
         </div>
       );
-    } else if (expiring) {
+    }
+
+    if (isExpiringSoon(validUntil)) {
       return (
         <div className="expiry-badge expiring">
           <ClockCircleOutlined /> Expires in {daysLeft} days
         </div>
       );
     }
+
     return null;
   };
 
-  // Handle rename
+  /** Open rename modal */
   const handleRename = () => {
     setNewFileName(file.originalName);
     setIsRenameModalVisible(true);
   };
 
+  /** Submit rename */
   const handleRenameSubmit = () => {
     if (!newFileName.trim()) {
-      message.error("File name cannot be empty");
-      return;
+      return message.error("File name cannot be empty");
     }
-    onRename && onRename(document._id, newFileName.trim());
+
+    if (onRename) {
+      onRename(document._id, newFileName.trim());
+    }
+
     setIsRenameModalVisible(false);
   };
 
-  // Dropdown menu items
+  /** Dropdown menu options */
   const menuItems = [
-    { key: "rename", label: "Rename", icon: <EditOutlined /> },
+    {
+      key: "rename",
+      label: "Rename",
+      icon: <EditOutlined />,
+    },
     { type: "divider" },
-    { key: "delete", label: "Delete", icon: <DeleteOutlined />, danger: true },
+    {
+      key: "delete",
+      label: "Delete",
+      icon: <DeleteOutlined />,
+      danger: true,
+    },
   ];
 
   return (
     <>
       <Card className="document-card" hoverable>
-        {/* Card Header */}
+        {/* -------- Header -------- */}
         <div className="card-header">
           <div className="card-icon-wrapper">{getFileIcon()}</div>
-          {/* <Dropdown
-            menu={{ items: menuItems }}
-            trigger={["click"]}
-            placement="bottomRight"
-          >
-            <Button
-              type="text"
-              icon={<MoreOutlined />}
-              className="card-menu-btn"
-            />
-          </Dropdown> */}
+
           <Dropdown
             menu={{
               items: menuItems,
               onClick: ({ key }) => {
                 if (key === "rename") handleRename();
-                if (key === "delete") onDelete && onDelete();
+                if (key === "delete" && onDelete) onDelete();
               },
             }}
             trigger={["click"]}
@@ -150,7 +176,7 @@ const DocumentCard = ({ document, onView, onDownload, onDelete, onRename }) => {
           </Dropdown>
         </div>
 
-        {/* Card Body */}
+        {/* -------- Body -------- */}
         <div className="card-body">
           <Tooltip title={file.originalName}>
             <h3 className="card-title">{file.originalName}</h3>
@@ -167,7 +193,7 @@ const DocumentCard = ({ document, onView, onDownload, onDelete, onRename }) => {
             )}
           </div>
 
-          {/* Metadata */}
+          {/* File Metadata */}
           <div className="card-meta">
             <span className="meta-item">
               {file.fileType.toUpperCase()} •{" "}
@@ -175,7 +201,7 @@ const DocumentCard = ({ document, onView, onDownload, onDelete, onRename }) => {
             </span>
           </div>
 
-          {/* Valid Until */}
+          {/* Validity */}
           {validUntil && (
             <div className="card-validity">
               Valid until: {formatDate(validUntil)}
@@ -193,7 +219,7 @@ const DocumentCard = ({ document, onView, onDownload, onDelete, onRename }) => {
           </div>
         </div>
 
-        {/* Card Actions */}
+        {/* -------- Actions -------- */}
         <div className="card-actions">
           <Button
             type="text"
@@ -203,6 +229,7 @@ const DocumentCard = ({ document, onView, onDownload, onDelete, onRename }) => {
           >
             View
           </Button>
+
           <Button
             type="text"
             icon={<DownloadOutlined />}
@@ -214,7 +241,7 @@ const DocumentCard = ({ document, onView, onDownload, onDelete, onRename }) => {
         </div>
       </Card>
 
-      {/* Rename Modal */}
+      {/* -------- Rename Modal -------- */}
       <Modal
         title="Rename Document"
         open={isRenameModalVisible}
@@ -222,6 +249,7 @@ const DocumentCard = ({ document, onView, onDownload, onDelete, onRename }) => {
         onCancel={() => setIsRenameModalVisible(false)}
         okText="Rename"
         cancelText="Cancel"
+        destroyOnClose
       >
         <Input
           value={newFileName}
