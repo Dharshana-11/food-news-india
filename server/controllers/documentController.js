@@ -1,7 +1,7 @@
 import Document from "../models/Document.js";
 import KYCDocument from "../models/KYCDocument.js";
 import ComplianceItem from "../models/ComplianceItem.js";
-import BusinessProfile from "../models/BusinessProfile.js"; 
+import BusinessProfile from "../models/BusinessProfile.js";
 import Users from "../models/Users.js";
 import { unlinkSync } from "fs";
 import { join } from "path";
@@ -283,8 +283,8 @@ export const reviewDocument = async (req, res) => {
     // Validate status
     const validStatuses = ["approved", "rejected", "expired"];
     if (!validStatuses.includes(status)) {
-      return res.status(400).json({ 
-        error: `Invalid status. Must be one of: ${validStatuses.join(", ")}` 
+      return res.status(400).json({
+        error: `Invalid status. Must be one of: ${validStatuses.join(", ")}`,
       });
     }
 
@@ -295,7 +295,7 @@ export const reviewDocument = async (req, res) => {
         status,
         reviewNotes: notes || "",
       },
-      { new: true }
+      { new: true },
     ).populate("uploadedForUser", "role");
 
     if (!document) {
@@ -303,7 +303,10 @@ export const reviewDocument = async (req, res) => {
     }
 
     // Check if all KYC documents for this user are now approved
-    await checkAndUpdateUserVerification(document.uploadedForUser._id, document.uploadedForUser.role);
+    await checkAndUpdateUserVerification(
+      document.uploadedForUser._id,
+      document.uploadedForUser.role,
+    );
 
     res.json({
       message: `Document ${status} successfully`,
@@ -340,7 +343,7 @@ async function checkAndUpdateUserVerification(userId, userRole) {
       return uploadedDocs.some(
         (uploadedDoc) =>
           uploadedDoc.kycDocumentId.toString() === requiredDoc._id.toString() &&
-          uploadedDoc.status === "approved"
+          uploadedDoc.status === "approved",
       );
     });
 
@@ -352,7 +355,7 @@ async function checkAndUpdateUserVerification(userId, userRole) {
           kycStatus: "verified",
           verifiedAt: new Date(),
           kycProgress: 100,
-        }
+        },
       );
 
       // Update User model to verified

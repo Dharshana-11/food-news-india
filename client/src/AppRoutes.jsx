@@ -204,17 +204,14 @@ const AppRoutes = () => {
         }
       />
 
-       <Route 
-          path={ROUTES.BUSINESS_OWNER_KYC} 
-          element={<KYCVerification />} 
-        />
+      <Route path={ROUTES.BUSINESS_OWNER_KYC} element={<KYCVerification />} />
 
       <Route
         path={ROUTES.BUSINESS_OWNER_DASHBOARD}
         element={
           <ProtectedRoute allowedRoles={[ROLES.BUSINESS_OWNER]}>
             {/* <KYCGuard userRole={ROLES.BUSINESS_OWNER}> */}
-              <BusinessOwnerDashboard />
+            <BusinessOwnerDashboard />
             {/* </KYCGuard> */}
           </ProtectedRoute>
         }

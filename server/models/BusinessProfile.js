@@ -128,7 +128,7 @@ const businessProfileSchema = new mongoose.Schema(
       default: "",
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 // Index for faster queries

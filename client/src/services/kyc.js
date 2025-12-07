@@ -13,8 +13,8 @@ export const getKYCRequirements = async () => {
  * Get user's business profile
  */
 export const getKYCProfile = async () => {
-    const response = await api.get(`${KYC_API}/profile`);
-    return response.data;
+  const response = await api.get(`${KYC_API}/profile`);
+  return response.data;
 };
 
 /**
@@ -24,18 +24,22 @@ export const getKYCProfile = async () => {
  * @param {string} validFrom - Optional start date (ISO string)
  * @param {string} validUntil - Optional end date (ISO string)
  */
-export const uploadKYCDocument = async (file, kycDocumentCode, validFrom = null, validUntil = null) => {
+export const uploadKYCDocument = async (
+  file,
+  kycDocumentCode,
+  validFrom = null,
+  validUntil = null,
+) => {
+  // --- Safety: ensure inputs exist (won't break your existing flows) ---
+  if (!file) throw new Error("File is required for KYC upload.");
+  if (!kycDocumentCode) throw new Error("KYC Document Code is required.");
+
   const formData = new FormData();
   formData.append("file", file);
   formData.append("kycDocumentCode", kycDocumentCode);
-  
-  if (validFrom) {
-    formData.append("validFrom", validFrom);
-  }
-  
-  if (validUntil) {
-    formData.append("validUntil", validUntil);
-  }
+
+  if (validFrom) formData.append("validFrom", validFrom);
+  if (validUntil) formData.append("validUntil", validUntil);
 
   const response = await api.post(`${KYC_API}/upload`, formData, {
     headers: {
@@ -51,6 +55,10 @@ export const uploadKYCDocument = async (file, kycDocumentCode, validFrom = null,
  * @param {Object} profileData - Profile fields to update
  */
 export const updateBusinessProfile = async (profileData) => {
+  if (!profileData || typeof profileData !== "object") {
+    throw new Error("Profile data must be a valid object.");
+  }
+
   const response = await api.put(`${KYC_API}/profile`, profileData);
   return response.data;
 };

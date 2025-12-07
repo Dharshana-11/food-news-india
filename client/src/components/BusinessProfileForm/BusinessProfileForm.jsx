@@ -1,3 +1,12 @@
+/**
+ * BusinessProfileForm.jsx
+ * ------------------------------------------------------------
+ * Form to display and update the business profile.
+ * Fetches KYC profile on mount and allows editing fields.
+ * Uses Ant Design components for layout and validation.
+ * ------------------------------------------------------------
+ */
+
 import React, { useState, useEffect } from "react";
 import {
   Card,
@@ -14,10 +23,16 @@ import {
 } from "antd";
 import dayjs from "dayjs";
 import { getKYCProfile, updateBusinessProfile } from "../../services/kyc";
-import "./BusinessProfileForm.css"; 
+import "./BusinessProfileForm.css";
 
 const { Title, Text } = Typography;
 
+/**
+ * BusinessProfileForm component
+ *
+ * @param {Object} props
+ * @param {Function} props.onUpdate - Callback triggered after successful profile update
+ */
 const BusinessProfileForm = ({ onUpdate }) => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -27,6 +42,9 @@ const BusinessProfileForm = ({ onUpdate }) => {
     loadProfile();
   }, []);
 
+  /**
+   * Loads business profile from backend and populates form fields
+   */
   const loadProfile = async () => {
     try {
       const { profile } = await getKYCProfile();
@@ -54,6 +72,11 @@ const BusinessProfileForm = ({ onUpdate }) => {
     }
   };
 
+  /**
+   * Handles form submission and updates business profile
+   *
+   * @param {Object} values - Form values
+   */
   const handleSubmit = async (values) => {
     try {
       setSaving(true);
@@ -65,10 +88,9 @@ const BusinessProfileForm = ({ onUpdate }) => {
       };
 
       await updateBusinessProfile(payload);
-      message.success("Profile updated!");
-
+      message.success("Profile updated successfully!");
       onUpdate?.();
-    } catch (e) {
+    } catch (err) {
       message.error("Update failed");
     } finally {
       setSaving(false);
@@ -113,23 +135,30 @@ const BusinessProfileForm = ({ onUpdate }) => {
           <Input size="large" placeholder="Enter business name" />
         </Form.Item>
 
-        {/* Address */}
+        {/* Registered Address */}
         <Form.Item
           label="Registered Address"
           name="registeredAddress"
           rules={[{ required: true, message: "Address is required" }]}
         >
-          <Input.TextArea rows={3} size="large" placeholder="Enter full address" />
+          <Input.TextArea
+            rows={3}
+            size="large"
+            placeholder="Enter full address"
+          />
         </Form.Item>
 
-        {/* FSSAI */}
+        {/* FSSAI License Number + Validity */}
         <Row gutter={16}>
           <Col xs={24} sm={24} md={12}>
             <Form.Item label="FSSAI License Number" name="fssaiLicenseNumber">
-              <Input maxLength={14} size="large" placeholder="14-digit license" />
+              <Input
+                maxLength={14}
+                size="large"
+                placeholder="14-digit license"
+              />
             </Form.Item>
           </Col>
-
           <Col xs={24} sm={24} md={12}>
             <Form.Item label="FSSAI Valid Till" name="fssaiValidityPeriod">
               <DatePicker size="large" style={{ width: "100%" }} />
@@ -137,7 +166,7 @@ const BusinessProfileForm = ({ onUpdate }) => {
           </Col>
         </Row>
 
-        {/* Category */}
+        {/* FSSAI Category */}
         <Form.Item label="FSSAI Category" name="fssaiCategory">
           <Select size="large" allowClear placeholder="Select category">
             <Select.Option value="manufacturer">Manufacturer</Select.Option>
@@ -156,7 +185,6 @@ const BusinessProfileForm = ({ onUpdate }) => {
               <Input size="large" maxLength={15} placeholder="15-char GST" />
             </Form.Item>
           </Col>
-
           <Col xs={24} sm={24} md={12}>
             <Form.Item label="PAN Number" name="panNumber">
               <Input size="large" maxLength={10} placeholder="10-char PAN" />
@@ -164,14 +192,17 @@ const BusinessProfileForm = ({ onUpdate }) => {
           </Col>
         </Row>
 
-        {/* Aadhaar + DOB */}
+        {/* Aadhaar + Date of Birth */}
         <Row gutter={16}>
           <Col xs={24} sm={24} md={12}>
             <Form.Item label="Aadhaar Number" name="aadhaarNumber">
-              <Input size="large" maxLength={12} placeholder="12-digit Aadhaar" />
+              <Input
+                size="large"
+                maxLength={12}
+                placeholder="12-digit Aadhaar"
+              />
             </Form.Item>
           </Col>
-
           <Col xs={24} sm={24} md={12}>
             <Form.Item label="Date of Birth" name="dateOfBirth">
               <DatePicker size="large" style={{ width: "100%" }} />
@@ -179,6 +210,7 @@ const BusinessProfileForm = ({ onUpdate }) => {
           </Col>
         </Row>
 
+        {/* Submit Button */}
         <Button
           type="primary"
           htmlType="submit"

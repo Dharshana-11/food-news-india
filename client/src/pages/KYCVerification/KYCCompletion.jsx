@@ -4,7 +4,18 @@ import { CheckOutlined } from "@ant-design/icons";
 import "./KYCVerification.css";
 
 /**
- * KYC Completion / Ready to submit screen
+ * KYCCompletion
+ *
+ * Renders the final state of the KYC verification flow:
+ * - If all documents are approved → Shows "KYC Verified" success message.
+ * - If all documents are uploaded but pending review → Shows "Ready to Submit".
+ *
+ * @param {Object} props
+ * @param {Array} props.requirements - List of required KYC doc definitions.
+ * @param {Object} props.uploadedFiles - Map of uploaded documents keyed by requirement code.
+ * @param {Function} props.handleSubmitForReview - Called when user submits documents for review.
+ * @param {boolean} props.uploading - Loading state for submit button.
+ * @param {Function} props.handleGoToDashboard - Called when KYC is verified and user continues.
  */
 const KYCCompletion = ({
   requirements,
@@ -13,14 +24,14 @@ const KYCCompletion = ({
   uploading,
   handleGoToDashboard,
 }) => {
-  const allDocsUploaded = requirements.every((req) => {
+  // All docs must be uploaded AND approved to mark KYC as complete
+  const allDocsApproved = requirements.every((req) => {
     const uploaded = uploadedFiles[req.code];
     return uploaded && uploaded.status === "approved";
   });
 
-  const allApproved = allDocsUploaded;
-
-  if (allApproved) {
+  // When fully approved → show verified screen
+  if (allDocsApproved) {
     return (
       <Card className="kyc-card kyc-completion verified" bordered={false}>
         <Result
@@ -28,7 +39,12 @@ const KYCCompletion = ({
           title="KYC Verified!"
           subTitle="Your KYC verification is complete. You can now access all features."
           extra={[
-            <Button type="primary" size="large" onClick={handleGoToDashboard} key="dashboard">
+            <Button
+              type="primary"
+              size="large"
+              onClick={handleGoToDashboard}
+              key="dashboard"
+            >
               Go to Dashboard
             </Button>,
           ]}
@@ -37,6 +53,7 @@ const KYCCompletion = ({
     );
   }
 
+  // Else → show "Ready to submit" screen (documents uploaded but not yet reviewed)
   return (
     <Card className="kyc-card kyc-completion ready" bordered={false}>
       <Result
@@ -49,7 +66,7 @@ const KYCCompletion = ({
             type="primary"
             size="large"
             onClick={handleSubmitForReview}
-            disabled={!allDocsUploaded}
+            disabled={!allDocsApproved}
             loading={uploading}
             className="kyc-submit-btn"
           >

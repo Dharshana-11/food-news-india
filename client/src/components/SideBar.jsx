@@ -1,11 +1,13 @@
 /**
  * SideBar.jsx
  * ------------------------------------------------------------
- * Original Sidebar with integrated KYC restriction logic.
+ * Sidebar with integrated KYC restriction logic.
+ * Includes role-based menu items and KYC checks for restricted access.
  * No UI, icons, or structure changed.
  * ------------------------------------------------------------
  */
 
+import { useEffect, useState } from "react";
 import { Menu } from "antd";
 import {
   MenuOutlined,
@@ -23,12 +25,20 @@ import {
   BellOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
+
 import { useAuth } from "../context/AuthContext";
 import ROLES from "../constants/roles";
 import { ROUTES } from "../routes";
-import { useEffect, useState } from "react";
 import { getKYCProfile } from "../services/kyc";
 
+/**
+ * Sidebar component with role-based access and KYC verification logic.
+ *
+ * @param {Object} props
+ * @param {string} props.role - Current user role
+ * @param {boolean} props.isOpen - Sidebar open/close state
+ * @param {Function} props.onClose - Callback for closing sidebar
+ */
 const SideBar = ({ role, isOpen, onClose }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -58,6 +68,9 @@ const SideBar = ({ role, isOpen, onClose }) => {
     }
   }, [role]);
 
+  /**
+   * Fetches KYC status for the current user.
+   */
   const checkKYCStatus = async () => {
     try {
       setCheckingKYC(true);
@@ -73,15 +86,19 @@ const SideBar = ({ role, isOpen, onClose }) => {
 
   const isKYCPage = (path) => path?.includes("kyc");
 
+  /**
+   * Handles sidebar menu clicks
+   *
+   * @param {Object} param0
+   * @param {string} param0.key - Menu key clicked
+   */
   const handleMenuClick = async ({ key }) => {
-    // Always allow KYC navigation
     if (isKYCPage(key)) {
       navigate(key);
-      if (onClose) onClose();
+      onClose?.();
       return;
     }
 
-    // Block others if unverified
     if (!kycVerified && rolesRequiringKYC.includes(role)) {
       alert("Please complete KYC to access this feature.");
       return;
@@ -98,17 +115,24 @@ const SideBar = ({ role, isOpen, onClose }) => {
     }
 
     navigate(key);
-
-    if (window.innerWidth <= 768 && onClose) onClose();
+    if (window.innerWidth <= 768) onClose?.();
   };
 
-  // ---------------- MENU ITEMS (ORIGINAL) ----------------
+  // ---------------- MENU ITEMS ----------------
   let items = [];
 
   if (role === ROLES.SUPER_ADMIN) {
     items = [
-      { key: ROUTES.SUPER_ADMIN_DASHBOARD, icon: <DashboardOutlined />, label: "Dashboard" },
-      { key: ROUTES.SUPER_ADMIN_USERS, icon: <UserOutlined />, label: "User Management" },
+      {
+        key: ROUTES.SUPER_ADMIN_DASHBOARD,
+        icon: <DashboardOutlined />,
+        label: "Dashboard",
+      },
+      {
+        key: ROUTES.SUPER_ADMIN_USERS,
+        icon: <UserOutlined />,
+        label: "User Management",
+      },
       {
         key: ROUTES.SUPER_ADMIN_COMPLIANCE,
         icon: <FileSearchOutlined />,
@@ -122,58 +146,114 @@ const SideBar = ({ role, isOpen, onClose }) => {
           ROUTES.SUPER_ADMIN_DOCUMENTS,
         ],
       },
-      { key: ROUTES.SUPER_ADMIN_SUPPORT, icon: <CustomerServiceOutlined />, label: "Support Tickets" },
-      { key: ROUTES.SUPER_ADMIN_SETTINGS, icon: <ControlOutlined />, label: "Platform Settings" },
-      { key: ROUTES.SUPER_ADMIN_CONTENT, icon: <FileTextOutlined />, label: "Content Management" },
-      { key: ROUTES.SUPER_ADMIN_AUDIT, icon: <HistoryOutlined />, label: "System Logs" },
-      { key: ROUTES.SUPER_ADMIN_PROFILE, icon: <UserOutlined />, label: "My Profile" },
+      {
+        key: ROUTES.SUPER_ADMIN_SUPPORT,
+        icon: <CustomerServiceOutlined />,
+        label: "Support Tickets",
+      },
+      {
+        key: ROUTES.SUPER_ADMIN_SETTINGS,
+        icon: <ControlOutlined />,
+        label: "Platform Settings",
+      },
+      {
+        key: ROUTES.SUPER_ADMIN_CONTENT,
+        icon: <FileTextOutlined />,
+        label: "Content Management",
+      },
+      {
+        key: ROUTES.SUPER_ADMIN_AUDIT,
+        icon: <HistoryOutlined />,
+        label: "System Logs",
+      },
+      {
+        key: ROUTES.SUPER_ADMIN_PROFILE,
+        icon: <UserOutlined />,
+        label: "My Profile",
+      },
       { key: "logout", icon: <LogoutOutlined />, label: "Log Out" },
     ];
   }
 
   if (role === ROLES.BUSINESS_OWNER) {
     items = [
-      { key: ROUTES.BUSINESS_OWNER_DASHBOARD, icon: <DashboardOutlined />, label: "Dashboard" },
-
-      // Insert KYC item cleanly (added; no styling change)
-      // Only include KYC menu option if NOT verified
+      {
+        key: ROUTES.BUSINESS_OWNER_DASHBOARD,
+        icon: <DashboardOutlined />,
+        label: "Dashboard",
+      },
       !kycVerified && {
         key: ROUTES.BUSINESS_OWNER_KYC,
         icon: <FileSearchOutlined />,
         label: "KYC Verification ⚠️",
       },
-
-      { key: ROUTES.BUSINESS_OWNER_MY_SERVICES, icon: <AppstoreOutlined />, label: "My Services" },
-      { key: ROUTES.BUSINESS_OWNER_MY_AGENTS, icon: <UserOutlined />, label: "My Agents" },
-      { key: ROUTES.BUSINESS_OWNER_DOCUMENT_VAULT, icon: <FileTextOutlined />, label: "Document Vault" },
-      { key: ROUTES.BUSINESS_OWNER_COMPLIANCE_CALENDAR, icon: <HistoryOutlined />, label: "Compliance Calendar" },
-      { key: ROUTES.BUSINESS_OWNER_TRAINING, icon: <CustomerServiceOutlined />, label: "Training" },
-      { key: ROUTES.BUSINESS_OWNER_CHECKLIST, icon: <FileSearchOutlined />, label: "Compliance Checklist" },
-      { key: ROUTES.BUSINESS_OWNER_MESSAGES, icon: <MessageOutlined />, label: "Messages / Chat" },
-      { key: ROUTES.BUSINESS_OWNER_MY_NOTIFICATIONS, icon: <BellOutlined />, label: "Notifications" },
-      { key: ROUTES.BUSINESS_OWNER_HELP_SUPPORT, icon: <CustomerServiceOutlined />, label: "Help & Support" },
+      {
+        key: ROUTES.BUSINESS_OWNER_MY_SERVICES,
+        icon: <AppstoreOutlined />,
+        label: "My Services",
+      },
+      {
+        key: ROUTES.BUSINESS_OWNER_MY_AGENTS,
+        icon: <UserOutlined />,
+        label: "My Agents",
+      },
+      {
+        key: ROUTES.BUSINESS_OWNER_DOCUMENT_VAULT,
+        icon: <FileTextOutlined />,
+        label: "Document Vault",
+      },
+      {
+        key: ROUTES.BUSINESS_OWNER_COMPLIANCE_CALENDAR,
+        icon: <HistoryOutlined />,
+        label: "Compliance Calendar",
+      },
+      {
+        key: ROUTES.BUSINESS_OWNER_TRAINING,
+        icon: <CustomerServiceOutlined />,
+        label: "Training",
+      },
+      {
+        key: ROUTES.BUSINESS_OWNER_CHECKLIST,
+        icon: <FileSearchOutlined />,
+        label: "Compliance Checklist",
+      },
+      {
+        key: ROUTES.BUSINESS_OWNER_MESSAGES,
+        icon: <MessageOutlined />,
+        label: "Messages / Chat",
+      },
+      {
+        key: ROUTES.BUSINESS_OWNER_MY_NOTIFICATIONS,
+        icon: <BellOutlined />,
+        label: "Notifications",
+      },
+      {
+        key: ROUTES.BUSINESS_OWNER_HELP_SUPPORT,
+        icon: <CustomerServiceOutlined />,
+        label: "Help & Support",
+      },
       { key: "logout", icon: <LogoutOutlined />, label: "Log Out" },
     ];
   }
 
-  // ---------------- ACTIVE HIGHLIGHT ----------------
+  // ---------------- ACTIVE MENU HIGHLIGHT ----------------
   const selectedKey =
     items.find(
       (item) =>
         location.pathname.startsWith(item.key) ||
-        item.paths?.some((p) => location.pathname.startsWith(p))
+        item.paths?.some((p) => location.pathname.startsWith(p)),
     )?.key || ROUTES.SUPER_ADMIN_DASHBOARD;
 
   // ---------------- RESIZE BEHAVIOR ----------------
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth > 768 && onClose) onClose();
+      if (window.innerWidth > 768) onClose?.();
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [onClose]);
 
-  // ---------------- LOADING UI (NO STYLE CHANGE) ----------------
+  // ---------------- LOADING / KYC CHECK ----------------
   if (checkingKYC) {
     return (
       <div className={`sidebar ${isOpen ? "open" : ""}`}>
@@ -189,6 +269,7 @@ const SideBar = ({ role, isOpen, onClose }) => {
       {isOpen && <div className="sidebar-blur-overlay" onClick={onClose} />}
 
       <div className={`sidebar ${isOpen ? "open" : ""}`}>
+        {/* Desktop Title */}
         <div className="sidebar-title-desktop">
           <MenuOutlined className="menu-title-icon" />
           <span className="menu-title-text">Menu</span>
@@ -201,7 +282,11 @@ const SideBar = ({ role, isOpen, onClose }) => {
           <CloseOutlined className="close-btn" onClick={onClose} />
           <div className="sidebar-profile">
             {userProfilePicture ? (
-              <img src={userProfilePicture} alt="Profile" className="sidebar-profile-pic" />
+              <img
+                src={userProfilePicture}
+                alt="Profile"
+                className="sidebar-profile-pic"
+              />
             ) : (
               <UserOutlined className="sidebar-profile-icon" />
             )}
@@ -212,21 +297,18 @@ const SideBar = ({ role, isOpen, onClose }) => {
           </div>
         </div>
 
-        {/* MENU */}
+        {/* Menu */}
         <Menu
           mode="inline"
           selectedKeys={[selectedKey]}
-          items={items
-            .filter(Boolean)   // <-- removes false, null, undefined items
-            .map((item) => ({
-              ...item,
-              disabled:
-                !isKYCPage(item.key) &&
-                rolesRequiringKYC.includes(role) &&
-                !kycVerified &&
-                item.key !== ROUTES.BUSINESS_OWNER_KYC,
-            }))
-          }
+          items={items.filter(Boolean).map((item) => ({
+            ...item,
+            disabled:
+              !isKYCPage(item.key) &&
+              rolesRequiringKYC.includes(role) &&
+              !kycVerified &&
+              item.key !== ROUTES.BUSINESS_OWNER_KYC,
+          }))}
           onClick={handleMenuClick}
         />
       </div>

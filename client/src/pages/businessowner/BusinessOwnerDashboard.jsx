@@ -10,24 +10,24 @@ const BusinessOwnerDashboard = () => {
         <div style={styles.container}>
           <h1>Business Owner Dashboard</h1>
           <p>Welcome to your verified dashboard!</p>
-          
+
           {/* Add your dashboard content here */}
           <div style={styles.cards}>
             <div style={styles.card}>
               <h3>My Services</h3>
               <p>Manage your food safety services</p>
             </div>
-            
+
             <div style={styles.card}>
               <h3>My Agents</h3>
               <p>View and manage your agents</p>
             </div>
-            
+
             <div style={styles.card}>
               <h3>Documents</h3>
               <p>Access your compliance documents</p>
             </div>
-            
+
             <div style={styles.card}>
               <h3>Compliance Calendar</h3>
               <p>Track important compliance dates</p>
