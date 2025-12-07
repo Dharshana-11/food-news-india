@@ -92,9 +92,36 @@ export const uploadMyDocument = async (req, res) => {
       });
     }
 
+    // ===============================================
+    // Duplicate handling — YOUR REQUIRED LOGIC
+    // Soft delete old document for same item
+    // ===============================================
+    let existing;
+    if (kycDocumentId) {
+      existing = await Document.findOne({
+        uploadedForUser: userId,
+        kycDocumentId,
+        status: { $ne: "trash" },
+      });
+    }
+
+    if (complianceItemId) {
+      existing = await Document.findOne({
+        uploadedForUser: userId,
+        complianceItemId,
+        status: { $ne: "trash" },
+      });
+    }
+
+    if (existing) {
+      existing.status = "trash";
+      await existing.save();
+    }
+    // ===============================================
+
     let computedValidUntil = null;
 
-    // Compliance: compute expiry
+    // Compliance expiry
     if (complianceItemId) {
       const complianceItem = await ComplianceItem.findById(complianceItemId);
       if (!complianceItem) {

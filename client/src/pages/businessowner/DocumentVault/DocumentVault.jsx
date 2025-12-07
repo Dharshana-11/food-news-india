@@ -158,38 +158,38 @@ const DocumentVault = () => {
    * Downloads a document with fallback method.
    * @param {object} doc
    */
-  const handleDownload = async (doc) => {
-    try {
-      const url = getDocumentUrl(doc?.file?.filePath);
-      if (!url) return message.error("Unable to download the file");
+  const handleDownload = (doc) => {
+    const url = getDocumentUrl(doc.file.filePath);
 
-      // Primary fast download
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = doc.file.originalName;
-      link.rel = "noopener noreferrer";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+    // Create a temporary anchor element
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = doc.file.originalName;
+    link.target = "_blank"; // Fallback for some browsers
+    link.rel = "noopener noreferrer";
 
-      // Fallback: fetch
-      const response = await fetch(url);
-      const blob = await response.blob();
-      const blobUrl = window.URL.createObjectURL(blob);
+    // Append to body, click, and remove
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 
-      const a = document.createElement("a");
-      a.href = blobUrl;
-      a.download = doc.file.originalName;
-
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-
-      window.URL.revokeObjectURL(blobUrl);
-    } catch (error) {
-      console.error("Download error:", error);
-      message.error("Failed to download document");
-    }
+    // Alternative method using fetch for better cross-browser support
+    fetch(url)
+      .then((response) => response.blob())
+      .then((blob) => {
+        const blobUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = blobUrl;
+        a.download = doc.file.originalName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(blobUrl);
+      })
+      .catch((error) => {
+        console.error("Download error:", error);
+        message.error("Failed to download document");
+      });
   };
 
   /**
