@@ -1,8 +1,6 @@
 // services/documentVaultService.js
 import api from "../api/axios";
-
-const DOCUMENT_VAULT_API = "/business-owner/documents";
-
+import { DOCUMENT_VAULT_API } from "./api";
 /**
  * Get all documents for the current business owner
  * @param {Object} filters - Filter options

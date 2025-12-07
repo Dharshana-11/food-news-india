@@ -30,3 +30,5 @@ export const DOCUMENT_API = `${BASE_URL}/documents`;
 
 // KYC Flow (Requirements, Profile, Upload, Submit)
 export const KYC_API = `${BASE_URL}/kyc`;
+
+export const DOCUMENT_VAULT_API = `${BASE_URL}/business-owner/documents`;
