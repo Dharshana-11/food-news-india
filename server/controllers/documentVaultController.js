@@ -269,3 +269,50 @@ export const getDocumentCategories = async (req, res) => {
     });
   }
 };
+
+/**
+ * PATCH: Rename document
+ * PATCH /api/business-owner/documents/:id/rename
+ */
+export const renameMyDocument = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const { id } = req.params;
+    const { newFileName } = req.body;
+
+    if (!newFileName || !newFileName.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "New file name is required",
+      });
+    }
+
+    const document = await Document.findOne({
+      _id: id,
+      uploadedForUser: userId,
+    });
+
+    if (!document) {
+      return res.status(404).json({
+        success: false,
+        message: "Document not found",
+      });
+    }
+
+    // Update the original name
+    document.file.originalName = newFileName.trim();
+    await document.save();
+
+    return res.json({
+      success: true,
+      message: "Document renamed successfully",
+      data: document,
+    });
+  } catch (error) {
+    console.error("Error renaming document:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};

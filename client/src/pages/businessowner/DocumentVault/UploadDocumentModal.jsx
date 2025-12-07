@@ -10,12 +10,11 @@ import {
   message,
   Radio,
 } from "antd";
-import { UploadOutlined, InboxOutlined } from "@ant-design/icons";
+import { InboxOutlined } from "@ant-design/icons";
 import {
   uploadDocument,
   getDocumentCategories,
 } from "../../../services/documentVaultService";
-import dayjs from "dayjs";
 
 const { Dragger } = Upload;
 
@@ -27,9 +26,7 @@ const UploadDocumentModal = ({ visible, onCancel, onSuccess }) => {
   const [categories, setCategories] = useState({ kyc: [], compliance: [] });
 
   useEffect(() => {
-    if (visible) {
-      fetchCategories();
-    }
+    if (visible) fetchCategories();
   }, [visible]);
 
   const fetchCategories = async () => {
@@ -42,15 +39,21 @@ const UploadDocumentModal = ({ visible, onCancel, onSuccess }) => {
   };
 
   const handleSubmit = async (values) => {
-    if (fileList.length === 0) {
+    if (!fileList.length) {
       message.error("Please select a file to upload");
+      return;
+    }
+
+    const fileObj = fileList[0]?.originFileObj || fileList[0];
+    if (!fileObj) {
+      message.error("No valid file selected");
       return;
     }
 
     setLoading(true);
     try {
       const formData = new FormData();
-      formData.append("file", fileList[0].originFileObj);
+      formData.append("file", fileObj);
 
       if (documentType === "kyc") {
         formData.append("kycDocumentId", values.documentId);
@@ -59,6 +62,11 @@ const UploadDocumentModal = ({ visible, onCancel, onSuccess }) => {
         if (values.validFrom) {
           formData.append("validFrom", values.validFrom.toISOString());
         }
+      }
+
+      console.log("Sending FormData...");
+      for (let pair of formData.entries()) {
+        console.log(pair[0], pair[1]);
       }
 
       await uploadDocument(formData);
@@ -92,12 +100,18 @@ const UploadDocumentModal = ({ visible, onCancel, onSuccess }) => {
         message.error("File must be smaller than 10MB!");
         return Upload.LIST_IGNORE;
       }
-      setFileList([file]);
-      return false;
+
+      setFileList([
+        {
+          uid: file.uid,
+          name: file.name,
+          status: "done",
+          originFileObj: file,
+        },
+      ]);
+      return false; // prevent auto-upload
     },
-    onRemove: () => {
-      setFileList([]);
-    },
+    onRemove: () => setFileList([]),
     fileList,
     maxCount: 1,
   };
@@ -136,7 +150,6 @@ const UploadDocumentModal = ({ visible, onCancel, onSuccess }) => {
               setDocumentType(e.target.value);
               form.setFieldValue("documentId", undefined);
             }}
-            className="document-type-radio"
           >
             <Radio.Button value="kyc">KYC Document</Radio.Button>
             <Radio.Button value="compliance">Compliance Document</Radio.Button>
@@ -172,7 +185,7 @@ const UploadDocumentModal = ({ visible, onCancel, onSuccess }) => {
           </Select>
         </Form.Item>
 
-        {/* Valid From (Only for Compliance) */}
+        {/* Valid From (Compliance Only) */}
         {documentType === "compliance" && (
           <Form.Item
             label="Valid From"
@@ -213,7 +226,7 @@ const UploadDocumentModal = ({ visible, onCancel, onSuccess }) => {
             type="primary"
             htmlType="submit"
             loading={loading}
-            disabled={fileList.length === 0}
+            disabled={!fileList.length}
           >
             Upload
           </Button>

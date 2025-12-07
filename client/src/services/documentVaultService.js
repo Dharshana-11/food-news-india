@@ -1,6 +1,8 @@
 // services/documentVaultService.js
 import api from "../api/axios";
-import { DOCUMENT_VAULT_API } from "./api";
+
+const DOCUMENT_VAULT_API = "/business-owner/documents";
+
 /**
  * Get all documents for the current business owner
  * @param {Object} filters - Filter options
@@ -28,6 +30,22 @@ export const uploadDocument = async (formData) => {
   const response = await api.post(DOCUMENT_VAULT_API, formData, {
     headers: { "Content-Type": "multipart/form-data" },
   });
+  return response.data;
+};
+
+/**
+ * Rename a document
+ * @param {string} documentId
+ * @param {string} newFileName
+ * @returns {Promise<Object>}
+ */
+export const renameDocument = async (documentId, newFileName) => {
+  const response = await api.patch(
+    `${DOCUMENT_VAULT_API}/${documentId}/rename`,
+    {
+      newFileName,
+    }
+  );
   return response.data;
 };
 

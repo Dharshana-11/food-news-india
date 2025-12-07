@@ -5,6 +5,7 @@ import {
   uploadMyDocument,
   deleteMyDocument,
   getMyDocumentStats,
+  renameMyDocument,
   getDocumentCategories,
 } from "../controllers/documentVaultController.js";
 import { verifySession } from "../middleware/sessionMiddleware.js";
@@ -44,6 +45,13 @@ router.get("/", getMyDocuments);
  * @access Business Owner
  */
 router.post("/", upload.single("file"), uploadMyDocument);
+
+/**
+ * @route PATCH /api/business-owner/documents/:id/rename
+ * @description Rename a document
+ * @access Business Owner
+ */
+router.patch("/:id/rename", renameMyDocument);
 
 /**
  * @route DELETE /api/business-owner/documents/:id

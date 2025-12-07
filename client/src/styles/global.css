@@ -234,14 +234,15 @@ body {
   min-height: calc(100vh - 70px);
   padding-top: 20px;
   transition: left 0.3s ease;
-  overflow-y: auto;       /* Enables scrolling */
-  overflow-x: hidden;     /* Prevents sideways scroll */
-  scroll-behavior: smooth;  scrollbar-width: none;    /* Firefox */
+  overflow-y: auto; /* Enables scrolling */
+  overflow-x: hidden; /* Prevents sideways scroll */
+  scroll-behavior: smooth;
+  scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE/Edge */
 }
 
-.sidebar::-webkit-scrollbar { 
-  display: none;            /* Chrome, Safari */
+.sidebar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
 }
 
 /* ===== Sidebar Title (Desktop) ===== */
@@ -941,7 +942,7 @@ body {
 
 /* Each filter option item */
 .ant-dropdown .ant-dropdown-menu-item {
-  color: #fff !important;
+  color: #fff;
   background: transparent;
   transition:
     background 0.2s ease,
@@ -1535,7 +1536,7 @@ body {
 }
 
 /* =========================================================
-   =============== SUPER ADMIN LAYOUT ======================
+   =============== APP LAYOUT ======================
    ========================================================= */
 
 /* keep your existing desktop look */

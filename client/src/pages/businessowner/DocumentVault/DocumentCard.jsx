@@ -1,5 +1,15 @@
 // pages/BusinessOwner/DocumentVault/DocumentCard.jsx
-import { Card, Tag, Button, Dropdown, Tooltip } from "antd";
+import {
+  Card,
+  Tag,
+  Button,
+  Dropdown,
+  Tooltip,
+  Modal,
+  Input,
+  message,
+} from "antd";
+import { useState } from "react";
 import {
   FilePdfOutlined,
   FileImageOutlined,
@@ -11,6 +21,7 @@ import {
   CheckCircleOutlined,
   ExclamationCircleOutlined,
   CloseCircleOutlined,
+  EditOutlined,
 } from "@ant-design/icons";
 import {
   formatDate,
@@ -18,9 +29,11 @@ import {
   isExpiringSoon,
 } from "../../../utils/dateHelpers";
 
-const DocumentCard = ({ document, onView, onDownload, onDelete }) => {
+const DocumentCard = ({ document, onView, onDownload, onDelete, onRename }) => {
   const { file, status, validUntil, kycDocumentId, complianceItemId } =
     document;
+  const [isRenameModalVisible, setIsRenameModalVisible] = useState(false);
+  const [newFileName, setNewFileName] = useState("");
 
   // File icon based on type
   const getFileIcon = () => {
@@ -79,109 +92,146 @@ const DocumentCard = ({ document, onView, onDownload, onDelete }) => {
     return null;
   };
 
-  // Dropdown menu
+  // Handle rename
+  const handleRename = () => {
+    setNewFileName(file.originalName);
+    setIsRenameModalVisible(true);
+  };
+
+  const handleRenameSubmit = () => {
+    if (!newFileName.trim()) {
+      message.error("File name cannot be empty");
+      return;
+    }
+    onRename && onRename(document._id, newFileName.trim());
+    setIsRenameModalVisible(false);
+  };
+
+  // Dropdown menu items
   const menuItems = [
-    {
-      key: "view",
-      label: "View",
-      icon: <EyeOutlined />,
-      onClick: onView,
-    },
-    {
-      key: "download",
-      label: "Download",
-      icon: <DownloadOutlined />,
-      onClick: onDownload,
-    },
-    {
-      type: "divider",
-    },
-    {
-      key: "delete",
-      label: "Delete",
-      icon: <DeleteOutlined />,
-      onClick: onDelete,
-      danger: true,
-    },
+    { key: "rename", label: "Rename", icon: <EditOutlined /> },
+    { type: "divider" },
+    { key: "delete", label: "Delete", icon: <DeleteOutlined />, danger: true },
   ];
 
   return (
-    <Card className="document-card" hoverable>
-      {/* Card Header */}
-      <div className="card-header">
-        <div className="card-icon-wrapper">{getFileIcon()}</div>
-        <Dropdown menu={{ items: menuItems }} trigger={["click"]}>
+    <>
+      <Card className="document-card" hoverable>
+        {/* Card Header */}
+        <div className="card-header">
+          <div className="card-icon-wrapper">{getFileIcon()}</div>
+          {/* <Dropdown
+            menu={{ items: menuItems }}
+            trigger={["click"]}
+            placement="bottomRight"
+          >
+            <Button
+              type="text"
+              icon={<MoreOutlined />}
+              className="card-menu-btn"
+            />
+          </Dropdown> */}
+          <Dropdown
+            menu={{
+              items: menuItems,
+              onClick: ({ key }) => {
+                if (key === "rename") handleRename();
+                if (key === "delete") onDelete && onDelete();
+              },
+            }}
+            trigger={["click"]}
+            placement="bottomRight"
+          >
+            <Button
+              type="text"
+              icon={<MoreOutlined />}
+              className="card-menu-btn"
+            />
+          </Dropdown>
+        </div>
+
+        {/* Card Body */}
+        <div className="card-body">
+          <Tooltip title={file.originalName}>
+            <h3 className="card-title">{file.originalName}</h3>
+          </Tooltip>
+
+          {/* Document Type */}
+          <div className="card-type">
+            {kycDocumentId ? (
+              <Tag color="blue">KYC: {kycDocumentId.name}</Tag>
+            ) : complianceItemId ? (
+              <Tag color="purple">Compliance: {complianceItemId.name}</Tag>
+            ) : (
+              <Tag>Document</Tag>
+            )}
+          </div>
+
+          {/* Metadata */}
+          <div className="card-meta">
+            <span className="meta-item">
+              {file.fileType.toUpperCase()} •{" "}
+              {(file.fileSize / 1024).toFixed(1)} KB
+            </span>
+          </div>
+
+          {/* Valid Until */}
+          {validUntil && (
+            <div className="card-validity">
+              Valid until: {formatDate(validUntil)}
+            </div>
+          )}
+
+          {/* Expiry Badge */}
+          {renderExpiryBadge()}
+
+          {/* Status */}
+          <div className="card-status">
+            <Tag color={currentStatus.color} icon={currentStatus.icon}>
+              {currentStatus.text}
+            </Tag>
+          </div>
+        </div>
+
+        {/* Card Actions */}
+        <div className="card-actions">
           <Button
             type="text"
-            icon={<MoreOutlined />}
-            className="card-menu-btn"
-          />
-        </Dropdown>
-      </div>
-
-      {/* Card Body */}
-      <div className="card-body">
-        <Tooltip title={file.originalName}>
-          <h3 className="card-title">{file.originalName}</h3>
-        </Tooltip>
-
-        {/* Document Type */}
-        <div className="card-type">
-          {kycDocumentId ? (
-            <Tag color="blue">KYC: {kycDocumentId.name}</Tag>
-          ) : complianceItemId ? (
-            <Tag color="purple">Compliance: {complianceItemId.name}</Tag>
-          ) : (
-            <Tag>Document</Tag>
-          )}
+            icon={<EyeOutlined />}
+            onClick={onView}
+            className="action-btn"
+          >
+            View
+          </Button>
+          <Button
+            type="text"
+            icon={<DownloadOutlined />}
+            onClick={onDownload}
+            className="action-btn"
+          >
+            Download
+          </Button>
         </div>
+      </Card>
 
-        {/* Metadata */}
-        <div className="card-meta">
-          <span className="meta-item">
-            {file.fileType.toUpperCase()} • {(file.fileSize / 1024).toFixed(1)}{" "}
-            KB
-          </span>
-        </div>
-
-        {/* Valid Until */}
-        {validUntil && (
-          <div className="card-validity">
-            Valid until: {formatDate(validUntil)}
-          </div>
-        )}
-
-        {/* Expiry Badge */}
-        {renderExpiryBadge()}
-
-        {/* Status */}
-        <div className="card-status">
-          <Tag color={currentStatus.color} icon={currentStatus.icon}>
-            {currentStatus.text}
-          </Tag>
-        </div>
-      </div>
-
-      {/* Card Actions */}
-      <div className="card-actions">
-        <Button
-          type="text"
-          icon={<EyeOutlined />}
-          onClick={onView}
-          className="action-btn"
-        >
-          View
-        </Button>
-        <Button
-          type="text"
-          icon={<DownloadOutlined />}
-          onClick={onDownload}
-          className="action-btn"
-        >
-          Download
-        </Button>
-      </div>
-    </Card>
+      {/* Rename Modal */}
+      <Modal
+        title="Rename Document"
+        open={isRenameModalVisible}
+        onOk={handleRenameSubmit}
+        onCancel={() => setIsRenameModalVisible(false)}
+        okText="Rename"
+        cancelText="Cancel"
+      >
+        <Input
+          value={newFileName}
+          onChange={(e) => setNewFileName(e.target.value)}
+          placeholder="Enter new file name"
+          onPressEnter={handleRenameSubmit}
+          autoFocus
+        />
+      </Modal>
+    </>
   );
 };
 

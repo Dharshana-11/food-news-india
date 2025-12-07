@@ -40,13 +40,13 @@ const StatsCards = ({ stats }) => {
   ];
 
   return (
-    <div className="stats-section">
-      <div className="stats-grid">
+    <div className="vault-stats-section">
+      <div className="vault-stats-grid">
         {statsData.map((stat) => (
-          <Card key={stat.key} className="stat-card" hoverable>
-            <div className="stat-content">
+          <Card key={stat.key} className="vault-stat-card" hoverable>
+            <div className="vault-stat-content">
               <div
-                className="stat-icon"
+                className="vault-stat-icon"
                 style={{
                   backgroundColor: `${stat.color}20`,
                   color: stat.color,
@@ -54,9 +54,9 @@ const StatsCards = ({ stats }) => {
               >
                 {stat.icon}
               </div>
-              <div className="stat-info">
-                <div className="stat-value">{stat.value}</div>
-                <div className="stat-label">{stat.label}</div>
+              <div className="vault-stat-info">
+                <div className="vault-stat-value">{stat.value}</div>
+                <div className="vault-stat-label">{stat.label}</div>
               </div>
             </div>
           </Card>

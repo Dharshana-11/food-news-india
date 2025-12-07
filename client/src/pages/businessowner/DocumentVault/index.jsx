@@ -19,6 +19,7 @@ import {
   getDocumentStats,
   deleteMyDocument,
   getDocumentUrl,
+  renameDocument,
 } from "../../../services/documentVaultService";
 import "./DocumentVault.css";
 
@@ -112,12 +113,47 @@ const DocumentVault = () => {
 
   const handleDownload = (doc) => {
     const url = getDocumentUrl(doc.file.filePath);
+
+    // Create a temporary anchor element
     const link = document.createElement("a");
     link.href = url;
     link.download = doc.file.originalName;
+    link.target = "_blank"; // Fallback for some browsers
+    link.rel = "noopener noreferrer";
+
+    // Append to body, click, and remove
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+
+    // Alternative method using fetch for better cross-browser support
+    fetch(url)
+      .then((response) => response.blob())
+      .then((blob) => {
+        const blobUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = blobUrl;
+        a.download = doc.file.originalName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(blobUrl);
+      })
+      .catch((error) => {
+        console.error("Download error:", error);
+        message.error("Failed to download document");
+      });
+  };
+
+  const handleRename = async (docId, newFileName) => {
+    try {
+      await renameDocument(docId, newFileName);
+      message.success("Document renamed successfully");
+      fetchDocuments();
+    } catch (error) {
+      message.error("Failed to rename document");
+      console.error(error);
+    }
   };
 
   const handleUploadSuccess = () => {
@@ -138,24 +174,26 @@ const DocumentVault = () => {
         <div className="document-vault-page">
           {/* Header */}
           <div className="vault-header">
-            <div className="header-content">
-              <FolderOpenOutlined className="header-icon" />
-              <div>
-                <h1 className="vault-title">Document Vault</h1>
-                <p className="vault-subtitle">
-                  Securely store and manage all your business documents
-                </p>
+            <div className="vault-header-content">
+              <div className="docs-title-section">
+                <FolderOpenOutlined className="header-icon" />
+                <div>
+                  <h1 className="vault-title">Document Vault</h1>
+                  <p className="vault-subtitle">
+                    Securely store and manage all your business documents
+                  </p>
+                </div>
               </div>
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={() => setIsUploadModalOpen(true)}
+                className="document-vault-upload-btn"
+                size="large"
+              >
+                Upload Document
+              </Button>
             </div>
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={() => setIsUploadModalOpen(true)}
-              className="upload-btn"
-              size="large"
-            >
-              Upload Document
-            </Button>
           </div>
 
           {/* Stats Cards */}
@@ -233,6 +271,7 @@ const DocumentVault = () => {
                     onView={() => handleView(doc)}
                     onDownload={() => handleDownload(doc)}
                     onDelete={() => handleDelete(doc._id)}
+                    onRename={handleRename}
                   />
                 ))}
               </div>
