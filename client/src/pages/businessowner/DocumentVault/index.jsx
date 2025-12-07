@@ -7,7 +7,9 @@ import {
   FilterOutlined,
   FolderOpenOutlined,
 } from "@ant-design/icons";
-import BusinessOwnerLayout from "../../../layouts/BusinessOwnerLayout";
+import AppLayout from "../../../layouts/AppLayout.jsx";
+import ROLES from "../../../constants/roles.js";
+import KYCGuard from "../../../components/KYCGuard/KYCGuard.jsx";
 import DocumentCard from "./DocumentCard";
 import UploadDocumentModal from "./UploadDocumentModal";
 import FilterDrawer from "./FilterDrawer";
@@ -131,126 +133,128 @@ const DocumentVault = () => {
   const displayDocuments = getDisplayDocuments();
 
   return (
-    <BusinessOwnerLayout>
-      <div className="document-vault-page">
-        {/* Header */}
-        <div className="vault-header">
-          <div className="header-content">
-            <FolderOpenOutlined className="header-icon" />
-            <div>
-              <h1 className="vault-title">Document Vault</h1>
-              <p className="vault-subtitle">
-                Securely store and manage all your business documents
-              </p>
+    <AppLayout role={ROLES.BUSINESS_OWNER}>
+      <KYCGuard userRole={ROLES.BUSINESS_OWNER}>
+        <div className="document-vault-page">
+          {/* Header */}
+          <div className="vault-header">
+            <div className="header-content">
+              <FolderOpenOutlined className="header-icon" />
+              <div>
+                <h1 className="vault-title">Document Vault</h1>
+                <p className="vault-subtitle">
+                  Securely store and manage all your business documents
+                </p>
+              </div>
             </div>
-          </div>
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => setIsUploadModalOpen(true)}
-            className="upload-btn"
-            size="large"
-          >
-            Upload Document
-          </Button>
-        </div>
-
-        {/* Stats Cards */}
-        {stats && <StatsCards stats={stats} />}
-
-        {/* Controls */}
-        <div className="vault-controls">
-          <Search
-            placeholder="Search documents..."
-            allowClear
-            size="large"
-            prefix={<SearchOutlined />}
-            onChange={(e) => setSearchText(e.target.value)}
-            className="vault-search"
-          />
-
-          <div className="control-buttons">
-            <Select
-              value={viewMode}
-              onChange={setViewMode}
-              className="view-mode-select"
-              size="large"
-            >
-              <Select.Option value="all">All Documents</Select.Option>
-              <Select.Option value="kyc">KYC Documents</Select.Option>
-              <Select.Option value="compliance">
-                Compliance Documents
-              </Select.Option>
-            </Select>
-
             <Button
-              icon={<FilterOutlined />}
-              onClick={() => setIsFilterDrawerOpen(true)}
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => setIsUploadModalOpen(true)}
+              className="upload-btn"
               size="large"
-              className="filter-btn"
             >
-              Filter
+              Upload Document
             </Button>
           </div>
-        </div>
 
-        {/* Documents Grid */}
-        <div className="documents-section">
-          {loading ? (
-            <div className="vault-loading">
-              <Spin size="large" />
-            </div>
-          ) : displayDocuments.length === 0 ? (
-            <div className="vault-empty">
-              <Empty
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description={
-                  searchText
-                    ? "No documents found"
-                    : "No documents yet. Upload your first document!"
-                }
+          {/* Stats Cards */}
+          {stats && <StatsCards stats={stats} />}
+
+          {/* Controls */}
+          <div className="vault-controls">
+            <Search
+              placeholder="Search documents..."
+              allowClear
+              size="large"
+              prefix={<SearchOutlined />}
+              onChange={(e) => setSearchText(e.target.value)}
+              className="vault-search"
+            />
+
+            <div className="control-buttons">
+              <Select
+                value={viewMode}
+                onChange={setViewMode}
+                className="view-mode-select"
+                size="large"
               >
-                {!searchText && (
-                  <Button
-                    type="primary"
-                    icon={<PlusOutlined />}
-                    onClick={() => setIsUploadModalOpen(true)}
-                  >
-                    Upload Document
-                  </Button>
-                )}
-              </Empty>
+                <Select.Option value="all">All Documents</Select.Option>
+                <Select.Option value="kyc">KYC Documents</Select.Option>
+                <Select.Option value="compliance">
+                  Compliance Documents
+                </Select.Option>
+              </Select>
+
+              <Button
+                icon={<FilterOutlined />}
+                onClick={() => setIsFilterDrawerOpen(true)}
+                size="large"
+                className="filter-btn"
+              >
+                Filter
+              </Button>
             </div>
-          ) : (
-            <div className="documents-grid">
-              {displayDocuments.map((doc) => (
-                <DocumentCard
-                  key={doc._id}
-                  document={doc}
-                  onView={() => handleView(doc)}
-                  onDownload={() => handleDownload(doc)}
-                  onDelete={() => handleDelete(doc._id)}
-                />
-              ))}
-            </div>
-          )}
+          </div>
+
+          {/* Documents Grid */}
+          <div className="documents-section">
+            {loading ? (
+              <div className="vault-loading">
+                <Spin size="large" />
+              </div>
+            ) : displayDocuments.length === 0 ? (
+              <div className="vault-empty">
+                <Empty
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  description={
+                    searchText
+                      ? "No documents found"
+                      : "No documents yet. Upload your first document!"
+                  }
+                >
+                  {!searchText && (
+                    <Button
+                      type="primary"
+                      icon={<PlusOutlined />}
+                      onClick={() => setIsUploadModalOpen(true)}
+                    >
+                      Upload Document
+                    </Button>
+                  )}
+                </Empty>
+              </div>
+            ) : (
+              <div className="documents-grid">
+                {displayDocuments.map((doc) => (
+                  <DocumentCard
+                    key={doc._id}
+                    document={doc}
+                    onView={() => handleView(doc)}
+                    onDownload={() => handleDownload(doc)}
+                    onDelete={() => handleDelete(doc._id)}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Modals & Drawers */}
+          <UploadDocumentModal
+            visible={isUploadModalOpen}
+            onCancel={() => setIsUploadModalOpen(false)}
+            onSuccess={handleUploadSuccess}
+          />
+
+          <FilterDrawer
+            visible={isFilterDrawerOpen}
+            onClose={() => setIsFilterDrawerOpen(false)}
+            onApply={handleFilterApply}
+            currentFilters={filters}
+          />
         </div>
-
-        {/* Modals & Drawers */}
-        <UploadDocumentModal
-          visible={isUploadModalOpen}
-          onCancel={() => setIsUploadModalOpen(false)}
-          onSuccess={handleUploadSuccess}
-        />
-
-        <FilterDrawer
-          visible={isFilterDrawerOpen}
-          onClose={() => setIsFilterDrawerOpen(false)}
-          onApply={handleFilterApply}
-          currentFilters={filters}
-        />
-      </div>
-    </BusinessOwnerLayout>
+      </KYCGuard>
+    </AppLayout>
   );
 };
 

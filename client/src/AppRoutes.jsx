@@ -25,7 +25,8 @@ import KYCDocuments from "./pages/KYCDocuments/KYCDocuments";
 import Documents from "./pages/Documents/Documents";
 import BusinessOwnerDashboard from "./pages/businessowner/BusinessOwnerDashboard";
 import KYCVerification from "./pages/KYCVerification/KYCVerification";
-// import KYCGuard from "./components/KYCGuard.jsx/KYCGuard";
+import DocumentVault from "./pages/BusinessOwner/DocumentVault";
+
 /**
  * Renders all application routes with public and role-protected access.
  * Displays a loading spinner while authentication state is being determined.
@@ -210,9 +211,16 @@ const AppRoutes = () => {
         path={ROUTES.BUSINESS_OWNER_DASHBOARD}
         element={
           <ProtectedRoute allowedRoles={[ROLES.BUSINESS_OWNER]}>
-            {/* <KYCGuard userRole={ROLES.BUSINESS_OWNER}> */}
             <BusinessOwnerDashboard />
-            {/* </KYCGuard> */}
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path={ROUTES.BUSINESS_OWNER_DOCUMENT_VAULT}
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.BUSINESS_OWNER]}>
+            <DocumentVault />
           </ProtectedRoute>
         }
       />
