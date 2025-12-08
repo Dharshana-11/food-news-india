@@ -3,7 +3,7 @@
  * @description Handles session creation, refresh, and logout logic for authenticated users.
  */
 
-import Users from "../models/Users.js";
+import Users from "../models/User.js";
 import UserSession from "../models/UserSession.js";
 import { v4 as uuidv4 } from "uuid";
 
@@ -57,6 +57,8 @@ export const createSession = async (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "Strict",
+      // secure: false,
+      // sameSite: "Lax",
       maxAge: sessionTTL * 60 * 60 * 1000,
       expires: expiresAt,
     });

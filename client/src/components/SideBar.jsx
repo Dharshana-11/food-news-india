@@ -25,6 +25,7 @@ import {
   ControlOutlined,
   LogoutOutlined,
   CloseOutlined,
+  NotificationOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -78,7 +79,7 @@ const SideBar = ({ role, isOpen, onClose }) => {
         label: "Service Management",
       },
       {
-        key: ROUTES.SUPER_ADMIN_SUPPORT,
+        key: ROUTES.SUPER_ADMIN_TICKETS,
         icon: <CustomerServiceOutlined />,
         label: "Support Tickets",
       },
@@ -86,6 +87,11 @@ const SideBar = ({ role, isOpen, onClose }) => {
         key: ROUTES.SUPER_ADMIN_SETTINGS,
         icon: <ControlOutlined />,
         label: "Platform Settings",
+      },
+      {
+        key: ROUTES.SUPER_ADMIN_NOTIFICATIONS,
+        icon: <NotificationOutlined />,
+        label: "Notification Settings",
       },
       {
         key: ROUTES.SUPER_ADMIN_CONTENT,
@@ -150,9 +156,24 @@ const SideBar = ({ role, isOpen, onClose }) => {
   };
 
   // --- Determine which menu item is currently active ---
-  const selectedKey =
-    items.find((item) => location.pathname.startsWith(item.key))?.key ||
-    ROUTES.SUPER_ADMIN_DASHBOARD;
+  let selectedKey = ROUTES.SUPER_ADMIN_DASHBOARD;
+
+  // If ticket details page -> highlight Support Tickets
+  if (location.pathname.startsWith("/tickets/")) {
+    selectedKey = ROUTES.SUPER_ADMIN_TICKETS;
+  }
+  // If another user's profile is opened -> highlight User Management
+  else if (location.pathname.startsWith("/super-admin/profile/")) {
+    selectedKey = ROUTES.SUPER_ADMIN_USERS;
+  }
+  // Otherwise, auto-select based on matching menu key
+  else {
+    selectedKey =
+      items.find((item) => location.pathname.startsWith(item.key))?.key ||
+      ROUTES.SUPER_ADMIN_DASHBOARD;
+  }
+
+
 
   /**
    * Automatically close the sidebar when resizing above mobile width.

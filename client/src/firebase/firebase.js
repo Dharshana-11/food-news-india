@@ -1,6 +1,7 @@
 // Import the necessary Firebase functions
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
+import { getMessaging } from "firebase/messaging";
 
 /**
  * Firebase configuration
@@ -21,3 +22,5 @@ const app = initializeApp(firebaseConfig);
 
 // Initialize Firebase Auth
 export const auth = getAuth(app);
+
+export const messaging = getMessaging(app);

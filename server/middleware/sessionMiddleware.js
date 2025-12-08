@@ -3,7 +3,7 @@
  * @description Middleware to verify active user sessions using session tokens stored in cookies.
  */
 
-import Users from "../models/Users.js";
+import Users from "../models/User.js";
 import UserSession from "../models/UserSession.js";
 
 /**
@@ -50,7 +50,7 @@ export const verifySession = async (req, res, next) => {
     }
 
     // Attach user info to the request for downstream usage
-    req.user = user;
+    req.user = { ...req.user, ...user.toObject() };
 
     next();
   } catch (error) {

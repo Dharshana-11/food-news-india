@@ -13,7 +13,6 @@ import express, { json } from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
-import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import cookieParser from "cookie-parser";
 
@@ -21,6 +20,8 @@ import cookieParser from "cookie-parser";
 import authRoutes from "./routes/authRoutes.js";
 import sessionRoutes from "./routes/sessionRoutes.js";
 import superAdminRoutes from "./routes/superAdminRoutes.js";
+import ticketRoutes from "./routes/ticketRoutes.js";
+import notificationRoutes from "./routes/notificationRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -58,6 +59,8 @@ mongoose
 app.use("/api/auth", authRoutes); // Authentication routes
 app.use("/api/session", sessionRoutes); // Session management routes
 app.use("/api/super-admin", superAdminRoutes); // Super Admin routes
+app.use("/api/tickets", ticketRoutes); // Ticket management routes
+app.use("/api/notifications", notificationRoutes);
 
 //User Routes
 app.use("/api/users", userRoutes);

@@ -1,3 +1,13 @@
+/**
+ * Custom tooltip component for chart libraries such as Recharts.
+ * Renders a styled tooltip box when the user hovers over a chart item.
+ *
+ * @param {Object} props - Tooltip properties passed from the chart.
+ * @param {boolean} props.active - Indicates whether the tooltip should be visible.
+ * @param {Array} props.payload - Data array containing tooltip values from the chart.
+ * @param {string|number} props.label - Label corresponding to the hovered data point.
+ * @returns {JSX.Element|null} - Returns a styled tooltip element when active, otherwise null.
+ */
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (

@@ -48,6 +48,13 @@ const userSchema = new mongoose.Schema(
       default: false,
       required: true,
     },
+    status: {
+      type: String,
+      enum: ["pending", "verified", "invalid"],
+      default: "pending"
+    },
+    isDeleted: { type: Boolean, default: false },
+    rejectionReason: { type: String, default: null },
     updatedBy: {
         type: String   // UID of user who last updated
     }, 

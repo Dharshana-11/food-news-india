@@ -10,7 +10,7 @@
  */
 
 import { createContext, useContext, useState, useEffect } from "react";
-import { auth } from "../../firebase";
+import { auth } from "../firebase/firebase.js";
 import {
   signInWithEmailAndPassword,
   onAuthStateChanged,
