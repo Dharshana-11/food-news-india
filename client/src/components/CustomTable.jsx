@@ -25,9 +25,14 @@
 
 import { Table } from "antd";
 
-const CustomTable = ({ columns, data, loading, pagination, onChange }) => (
+const CustomTable = ({
+  columns,
+  data,
+  loading,
+  pagination = false,
+  onChange,
+}) => (
   <div className="custom-table-wrapper">
-    {/* Scrollable container for horizontal overflow handling */}
     <div className="custom-table-scroll">
       <Table
         columns={columns} // Table column definitions

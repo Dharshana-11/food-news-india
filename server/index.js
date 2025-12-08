@@ -15,6 +15,11 @@ import dotenv from "dotenv";
 import cors from "cors";
 import userRoutes from "./routes/userRoutes.js";
 import cookieParser from "cookie-parser";
+import { fileURLToPath } from "url";
+import path from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Route imports
 import authRoutes from "./routes/authRoutes.js";
@@ -22,6 +27,12 @@ import sessionRoutes from "./routes/sessionRoutes.js";
 import superAdminRoutes from "./routes/superAdminRoutes.js";
 import ticketRoutes from "./routes/ticketRoutes.js";
 import notificationRoutes from "./routes/notificationRoutes.js";
+import complianceItemRoutes from "./routes/admin/complianceItemRoutes.js";
+import businessTypeRoutes from "./routes/businessTypeRoutes.js";
+import complianceRequirementMappingRoutes from "./routes/complianceRequirementMappingRoutes.js";
+import kycDocumentRoutes from "./routes/kycDocumentRoutes.js";
+import documentRoutes from "./routes/documentRoutes.js";
+import kycRoutes from "./routes/kycRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -40,7 +51,6 @@ app.use(
 );
 
 app.use(express.json());
-app.use(json()); // Parse incoming JSON requests
 app.use(cookieParser()); // Parse cookies in incoming requests
 
 /**
@@ -65,6 +75,13 @@ app.use("/api/notifications", notificationRoutes);
 //User Routes
 app.use("/api/users", userRoutes);
 
+app.use("/api/compliance-items", complianceItemRoutes);
+app.use("/api/business-types", businessTypeRoutes);
+app.use("/api/admin/compliance-mappings", complianceRequirementMappingRoutes);
+app.use("/api/kyc-documents", kycDocumentRoutes);
+app.use("/api/documents", documentRoutes);
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/api/kyc", kycRoutes); // Register KYC routes
 /**
  * Server Startup
  * ------------------------------------------------------------

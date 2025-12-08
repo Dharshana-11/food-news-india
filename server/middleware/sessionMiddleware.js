@@ -19,17 +19,24 @@ import UserSession from "../models/UserSession.js";
  */
 export const verifySession = async (req, res, next) => {
   try {
-    // Extract session token from cookie
+    console.log("=== VERIFY SESSION CALLED ===");
+    console.log("URL:", req.url);
+    console.log("Cookies:", req.cookies);
+
     const sessionToken = req.cookies.sessionToken;
 
     if (!sessionToken) {
-      return res.status(400).json({ message: "Session token required!" });
+      console.log("No session token found");
+      return res
+        .status(401)
+        .json({ message: "Session token missing or required!" });
     }
 
     // Check if session is active
     const session = await UserSession.findOne({ sessionToken, isActive: true });
 
     if (!session) {
+      console.log("Session not found or inactive");
       return res
         .status(401)
         .json({ message: "Session expired. Please refresh." });
@@ -37,21 +44,24 @@ export const verifySession = async (req, res, next) => {
 
     // Check if session has expired by time
     if (new Date() > session.expiresAt) {
+      console.log("Session expired by time");
       return res
         .status(401)
         .json({ message: "Session expired. Please login again." });
     }
 
-    // Fetch associated user details
     const user = await Users.findOne({ uid: session.uid });
 
     if (!user) {
+      console.log("User not found");
       return res.status(404).json({ message: "User not found." });
     }
 
     // Attach user info to the request for downstream usage
     req.user = { ...req.user, ...user.toObject() };
+    console.log("Session verified successfully for:", user.email || user.phone);
 
+    req.user = user;
     next();
   } catch (error) {
     console.error("Session verification error:", error);

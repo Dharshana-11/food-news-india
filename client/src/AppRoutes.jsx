@@ -38,28 +38,21 @@ import NotificationLogs from "./pages/notifications/NotificationLogs";
 import { onMessage } from "firebase/messaging";
 import { messaging } from "./firebase/firebase";
 
-/**
- * Main routing component that defines all application routes
- * @function AppRoutes
- * @returns {JSX.Element} The application's route configuration
- * @description
- * - Handles authentication state and loading states
- * - Registers FCM tokens for push notifications
- * - Defines public and protected routes
- * - Implements role-based access control
- * @example
- * // In App.jsx
- * <Router>
- *   <AppRoutes />
- * </Router>
- */
+// SUPER ADMIN DOCUMENT & COMPLIANCE PAGES
+import ComplianceAndDocumentManagement from "./pages/ComplianceAndDocumentManagement/ComplianceAndDocumentManagement";
+import ComplianceItems from "./pages/ComplianceAndDocumentManagement/ComplianceItems";
+import BusinessTypes from "./pages/BusinessTypes/BusinessTypes";
+import ComplianceMappings from "./pages/ComplianceMappings/ComplianceMappings";
+import KYCDocuments from "./pages/KYCDocuments/KYCDocuments";
+import Documents from "./pages/Documents/Documents";
+
+// BUSINESS OWNER
+import BusinessOwnerDashboard from "./pages/businessowner/BusinessOwnerDashboard";
+import KYCVerification from "./pages/KYCVerification/KYCVerification";
+
 const AppRoutes = () => {
   const { currentUser, loading } = useAuth();
 
-  /**
-   * Display loading indicator while authentication state is being determined
-   * @type {JSX.Element}
-   */
   if (loading) {
     return (
       <div className="loading-container">
@@ -68,13 +61,6 @@ const AppRoutes = () => {
     );
   }
 
-  /**
-   * Register Firebase Cloud Messaging token for push notifications
-   * when user is authenticated
-   * @function registerToken
-   * @async
-   * @private
-   */
   useEffect(() => {
     async function registerToken() {
       if (currentUser) {
@@ -82,7 +68,7 @@ const AppRoutes = () => {
         if (token) {
           await saveTokenAPI({
             uid: currentUser.uid,
-            token: token,
+            token,
             role: currentUser.role,
           });
         }
@@ -91,7 +77,7 @@ const AppRoutes = () => {
     registerToken();
   }, [currentUser]);
 
-  // 🔔 FOREGROUND NOTIFICATION HANDLER
+  // 🔔 Foreground Notification Handler
   useEffect(() => {
     if (!messaging) return;
     const unsubscribe = onMessage(messaging, (payload) => {
@@ -118,33 +104,29 @@ const AppRoutes = () => {
 
   return (
     <Routes>
-      {/* =========================================================
-          PUBLIC ROUTES
-      ========================================================= */}
+      {/* ================= PUBLIC ROUTES ================= */}
       <Route path={ROUTES.LOGIN} element={<Login />} />
       <Route path={ROUTES.ADMIN_LOGIN} element={<AdminLogin />} />
 
-      {/* =========================================================
-          SUPER ADMIN PROTECTED ROUTES
-      ========================================================= */}
+      {/* ================= SUPER ADMIN ROUTES ================= */}
 
-      {/* DASHBOARD */}
       <Route
         path={ROUTES.SUPER_ADMIN_DASHBOARD}
         element={
           <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
-            <SuperAdminDashboard />
+            <SuperAdminLayout>
+              <SuperAdminDashboard />
+            </SuperAdminLayout>
           </ProtectedRoute>
         }
       />
 
-      {/* 🔁 USER MANAGEMENT REDIRECT */}
+      {/* 👤 USERS */}
       <Route
         path={ROUTES.SUPER_ADMIN_USERS}
         element={<Navigate to={ROUTES.USER_LIST} replace />}
       />
 
-      {/* 👤 USERS PAGE */}
       <Route
         path={ROUTES.USER_LIST}
         element={
@@ -156,17 +138,17 @@ const AppRoutes = () => {
         }
       />
 
-      {/* 🔁 TICKET MANAGEMENT REDIRECT */}
+      {/* 🎫 TICKETS */}
       <Route
         path={ROUTES.SUPER_ADMIN_TICKETS}
         element={<Navigate to={ROUTES.TICKET_BOARD} replace />}
       />
 
-      {/* 🎫 TICKET BOARD */}
       <Route
         path={ROUTES.TICKET_BOARD}
         element={
           <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
+            {/* KEEP BOTH CHANGES */}
             <SuperAdminLayout>
               <TicketBoard />
             </SuperAdminLayout>
@@ -174,7 +156,7 @@ const AppRoutes = () => {
         }
       />
 
-      {/* 🎫 TICKET DETAILS WITH ID */}
+      {/* 🎫 TICKET DETAILS MODAL PAGE */}
       <Route
         path="/tickets/:id"
         element={
@@ -186,11 +168,75 @@ const AppRoutes = () => {
         }
       />
 
-      {/* =========================================================
-          NOTIFICATION MODULE
-      ========================================================= */}
+      {/* 📚 DOCUMENT & COMPLIANCE SYSTEM (KEEP DEV CHANGE + WRAP) */}
+      <Route
+        path={ROUTES.SUPER_ADMIN_COMPLIANCE}
+        element={
+          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
+            <SuperAdminLayout>
+              <ComplianceAndDocumentManagement />
+            </SuperAdminLayout>
+          </ProtectedRoute>
+        }
+      />
 
-      {/* 🔁 NOTIFICATIONS REDIRECT */}
+      <Route
+        path={ROUTES.SUPER_ADMIN_COMPLIANCE_ITEMS}
+        element={
+          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
+            <SuperAdminLayout>
+              <ComplianceItems />
+            </SuperAdminLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path={ROUTES.SUPER_ADMIN_BUSINESS_TYPES}
+        element={
+          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
+            <SuperAdminLayout>
+              <BusinessTypes />
+            </SuperAdminLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path={ROUTES.SUPER_ADMIN_COMPLIANCE_MAPPINGS}
+        element={
+          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
+            <SuperAdminLayout>
+              <ComplianceMappings />
+            </SuperAdminLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path={ROUTES.SUPER_ADMIN_KYC_DOCUMENTS}
+        element={
+          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
+            <SuperAdminLayout>
+              <KYCDocuments />
+            </SuperAdminLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path={ROUTES.SUPER_ADMIN_DOCUMENTS}
+        element={
+          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
+            <SuperAdminLayout>
+              <Documents />
+            </SuperAdminLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* ================= NOTIFICATION MODULE ================= */}
+
       <Route
         path={ROUTES.SUPER_ADMIN_NOTIFICATIONS}
         element={<Navigate to={ROUTES.NOTIF_OVERVIEW} replace />}
@@ -251,9 +297,8 @@ const AppRoutes = () => {
         }
       />
 
-      {/* =========================================================
-         OTHER SUPER ADMIN MODULES
-      ========================================================= */}
+      {/* ================= OTHER MODULE PAGES ================= */}
+
       <Route
         path={ROUTES.SUPER_ADMIN_SETTINGS}
         element={
@@ -281,7 +326,8 @@ const AppRoutes = () => {
         }
       />
 
-      {/* 👤 PROFILE */}
+      {/* ================= PROFILE ================= */}
+
       <Route
         path={ROUTES.SUPER_ADMIN_PROFILE}
         element={
@@ -300,6 +346,19 @@ const AppRoutes = () => {
             <SuperAdminLayout>
               <ProfileSelf currentUser={currentUser} />
             </SuperAdminLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* ================= BUSINESS OWNER ================= */}
+
+      <Route path={ROUTES.BUSINESS_OWNER_KYC} element={<KYCVerification />} />
+
+      <Route
+        path={ROUTES.BUSINESS_OWNER_DASHBOARD}
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.BUSINESS_OWNER]}>
+            <BusinessOwnerDashboard />
           </ProtectedRoute>
         }
       />

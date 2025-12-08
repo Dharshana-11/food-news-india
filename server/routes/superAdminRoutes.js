@@ -9,8 +9,9 @@
 
 import express from "express";
 import authenticateUser from "../middleware/authMiddleware.js";
-import authorizeSuperAdmin from "../middleware/authSuperAdminMiddleware.js";
+import { authorizeRoles } from "../middleware/authorizeRolesMiddleware.js";
 import { verifySession } from "../middleware/sessionMiddleware.js";
+import ROLES from "../utils/constants/roles.js";
 
 const router = express.Router();
 
@@ -24,7 +25,7 @@ const router = express.Router();
 router.get(
   "/dashboard",
   authenticateUser, // Validates JWT and attaches user to request
-  authorizeSuperAdmin, // Ensures user role === 'super_admin'
+  authorizeRoles(ROLES.SUPER_ADMIN), // Ensures user role === 'super_admin'
   verifySession, // Validates active session token
   (req, res) => {
     return res.status(200).json({
