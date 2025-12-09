@@ -327,7 +327,7 @@ const SuperAdminDashboard = () => {
               <RightOutlined />
             </a>
           </div>
-          <CustomTable columns={pendingColumns} data={allVerifications} />
+          <CustomTable columns={pendingColumns} data={allVerifications} pagination={false} />
         </div>
 
         {/* ---------- Summary, Tickets, Notifications ---------- */}

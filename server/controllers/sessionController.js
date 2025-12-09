@@ -1,4 +1,9 @@
-import Users from "../models/Users.js";
+/**
+ * @file sessionController.js
+ * @description Handles session creation, refresh, and logout logic for authenticated users.
+ */
+
+import Users from "../models/User.js";
 import UserSession from "../models/UserSession.js";
 import { v4 as uuidv4 } from "uuid";
 

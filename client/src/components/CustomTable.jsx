@@ -35,13 +35,13 @@ const CustomTable = ({
   <div className="custom-table-wrapper">
     <div className="custom-table-scroll">
       <Table
-        columns={columns}
-        dataSource={data}
-        rowKey={(record, index) => record.id || index}
+        columns={columns} // Table column definitions
+        dataSource={data} // Data array
+        rowKey={(record) => record._id || record.ticketId} // Unique key for each row
         loading={loading}
-        pagination={pagination} // false disables, object enables
-        onChange={onChange}
-        className="custom-table"
+        pagination={pagination}
+        onChange={onChange} // antd Table passes sorter, filters, pagination info
+        className="custom-table" // Custom CSS class for theme consistency
       />
     </div>
   </div>

@@ -1,8 +1,21 @@
 import { connect } from "mongoose";
 
 /**
- * Connect to MongoDB using Mongoose.
- * MONGO_URI should be stored in .env for security.
+ * Establishes a connection to MongoDB using Mongoose
+ * @module config/db
+ * @requires mongoose
+ */
+
+/**
+ * Connects to MongoDB using the provided MONGO_URI from environment variables
+ * @async
+ * @function connectDB
+ * @returns {Promise<void>} Resolves when the connection is established
+ * @throws {Error} If connection to MongoDB fails
+ * @example
+ * // In your main server file
+ * import connectDB from './config/db';
+ * await connectDB();
  */
 const connectDB = async () => {
   try {
