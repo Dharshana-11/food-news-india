@@ -4,11 +4,12 @@ import {
   getTicketById,
   createTicket,
   updateTicket,
-  deleteTicket
+  deleteTicket,
 } from "../controllers/ticketController.js";
 import { verifySession } from "../middleware/sessionMiddleware.js";
 import { authorizeRoles } from "../middleware/authorizeRoles.js";
 import ROLES from "../utils/constants/roles.js";
+import upload from "../middleware/uploadMiddleware.js";
 
 const router = express.Router();
 
@@ -22,7 +23,7 @@ const router = express.Router();
  * - Update ticket status/details (Admin + Super Admin)
  * - Delete/archive ticket (Super Admin only)
  *
- * 🔐 Every route requires `verifySession` before role-based authorization.
+ * Every route requires `verifySession` before role-based authorization.
  *
  * @module TicketRoutes
  * @example
@@ -30,7 +31,7 @@ const router = express.Router();
  * // /api/tickets
  */
 
-// 📌 GET All Tickets (Only Admin & Super Admin)
+// GET All Tickets (Only Admin & Super Admin)
 router.get(
   "/",
   verifySession,
@@ -38,7 +39,7 @@ router.get(
   getTickets
 );
 
-// 📌 GET Ticket By ID (Only Admin & Super Admin)
+// GET Ticket By ID (Only Admin & Super Admin)
 router.get(
   "/:id",
   verifySession,
@@ -46,15 +47,16 @@ router.get(
   getTicketById
 );
 
-// 📌 CREATE Ticket (Only Super Admin)
+// CREATE Ticket (Only Super Admin)
 router.post(
   "/",
   verifySession,
   authorizeRoles(ROLES.SUPER_ADMIN),
+  upload.array("attachments", 5),
   createTicket
 );
 
-// 📌 UPDATE Ticket (Admin & Super Admin)
+// UPDATE Ticket (Admin & Super Admin)
 router.patch(
   "/:id",
   verifySession,
@@ -62,7 +64,7 @@ router.patch(
   updateTicket
 );
 
-// 📌 DELETE Ticket (Only Super Admin)
+// DELETE Ticket (Only Super Admin)
 router.delete(
   "/:id",
   verifySession,

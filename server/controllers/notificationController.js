@@ -187,7 +187,7 @@ export const getTemplate = async (req, res) => {
 //   7. SEND TEST NOTIFICATION
 // -----------------------------------*/
 // export const sendTestNotification = async (req, res) => {
-//     console.log("🔥 TEST ROUTE HIT");
+//     console.log(" TEST ROUTE HIT");
 //     console.log("Method:", req.method);
 //     console.log("Body:", req.body);
 //   const { uid, title, body, event } = req.body;
@@ -259,4 +259,3 @@ export const getNotificationLogs = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch logs" });
   }
 };
-

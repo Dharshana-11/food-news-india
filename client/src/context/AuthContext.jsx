@@ -40,17 +40,41 @@ export const AuthProvider = ({ children }) => {
   const [confirmationResult, setConfirmationResult] = useState(null);
 
   // ---------------------------------------------------------------------------
-  // Backend Session Verification
+  // Backend Session Verification (Axios-friendly)
   // ---------------------------------------------------------------------------
-
   /**
-   * Verify active backend session.
-   * @returns {Promise<Object>} backend user object
+   * verifyActiveSession()
+   * ----------------------
+   * Validates the user's active backend session using HttpOnly cookies.
+   * If session expired (401), tries to refresh once.
+   * @returns {Promise<Object>} verified backend user object
+   * @throws {Error} if session is invalid or backend returns an error
    */
   const verifyActiveSession = async () => {
-    const res = await api.get(ENDPOINTS.VERIFY_SESSION);
-    if (!res.data?.user) throw new Error("Invalid user data");
-    return res.data.user;
+    try {
+      // First attempt to verify session
+      let res = await api.get(ENDPOINTS.VERIFY_SESSION);
+
+      // Axios throws for non-2xx by default, but just in case:
+      if (res.status === 401) {
+        // Attempt refresh
+        try {
+          await api.get(ENDPOINTS.REFRESH_SESSION);
+          // Retry verification
+          res = await api.get(ENDPOINTS.VERIFY_SESSION);
+        } catch (refreshErr) {
+          throw new Error("Session expired and refresh failed");
+        }
+      }
+
+      const user = res.data?.user;
+      if (!user) throw new Error("Invalid backend user data");
+
+      return user;
+    } catch (err) {
+      console.error("verifyActiveSession error:", err.message || err);
+      throw new Error("Backend session verification failed");
+    }
   };
 
   // ---------------------------------------------------------------------------
@@ -73,7 +97,7 @@ export const AuthProvider = ({ children }) => {
             console.log("reCAPTCHA expired");
             window.recaptchaVerifier = null;
           },
-        },
+        }
       );
     }
     return window.recaptchaVerifier;
@@ -96,14 +120,14 @@ export const AuthProvider = ({ children }) => {
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
-        password,
+        password
       );
       const idToken = await userCredential.user.getIdToken();
 
       const response = await api.post(
         ENDPOINTS.CREATE_SESSION,
         {},
-        { headers: { Authorization: `Bearer ${idToken}` } },
+        { headers: { Authorization: `Bearer ${idToken}` } }
       );
 
       const backendUser = response.data.user;
@@ -128,7 +152,7 @@ export const AuthProvider = ({ children }) => {
       const result = await signInWithPhoneNumber(
         auth,
         phoneNumber,
-        appVerifier,
+        appVerifier
       );
 
       setConfirmationResult(result);
@@ -167,7 +191,7 @@ export const AuthProvider = ({ children }) => {
       const response = await api.post(
         ENDPOINTS.CREATE_SESSION,
         {},
-        { headers: { Authorization: `Bearer ${idToken}` } },
+        { headers: { Authorization: `Bearer ${idToken}` } }
       );
 
       const backendUser = response.data.user;

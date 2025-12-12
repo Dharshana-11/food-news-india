@@ -1,6 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Tag, message, Spin, Button, Modal } from "antd";
-import { PlusOutlined, UserOutlined, CalendarOutlined, ClockCircleOutlined, AlertOutlined, FileTextOutlined } from "@ant-design/icons";
+import {
+  PlusOutlined,
+  UserOutlined,
+  CalendarOutlined,
+  ClockCircleOutlined,
+  AlertOutlined,
+  FileTextOutlined,
+} from "@ant-design/icons";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -66,10 +73,9 @@ const TicketBoard = () => {
       const data = Array.isArray(res.data)
         ? res.data
         : Array.isArray(res.data.data)
-        ? res.data.data
-        : [];
+          ? res.data.data
+          : [];
 
-      console.log("✅ Tickets from API:", res.data);
       setTickets(data);
     } catch (err) {
       console.error("Error fetching tickets:", err);
@@ -175,7 +181,9 @@ const TicketBoard = () => {
               </div>
               <div className="meta-right">
                 <CalendarOutlined />{" "}
-                <span>{new Date(ticket.createdAt).toLocaleDateString("en-IN")}</span>
+                <span>
+                  {new Date(ticket.createdAt).toLocaleDateString("en-IN")}
+                </span>
               </div>
             </div>
 
@@ -213,7 +221,7 @@ const TicketBoard = () => {
           type="primary"
           icon={<PlusOutlined />}
           onClick={() => setIsModalOpen(true)}
-          style={{ backgroundColor: "#162247", color: "#fff", border: "none" }} 
+          style={{ backgroundColor: "#162247", color: "#fff", border: "none" }}
         >
           Raise Ticket
         </Button>

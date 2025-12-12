@@ -16,4 +16,6 @@ export const ENDPOINTS = {
 
   // Logout (invalidate session & cookies)
   LOGOUT: "/session/logout",
+
+  TICKETS: "/tickets",
 };

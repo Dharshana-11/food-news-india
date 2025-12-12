@@ -51,7 +51,7 @@ const TicketsSnapshot = ({ tickets = [] }) => {
           styles={{ body: { padding: "14px 10px" } }}
         >
           {/* Icon for each ticket type */}
-          <div className="ticket-icon">
+          <div className="ticket-snapshot-icon">
             {iconMap[ticket.type] || (
               <FileSearchOutlined style={{ color: "#8c8c8c" }} />
             )}

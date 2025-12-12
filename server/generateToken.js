@@ -3,12 +3,12 @@ import firebaseAdmin from "./firebase.js"; // your admin setup
 /**
  * Generates a Firebase Custom Auth Token for a given user UID.
  *
- * 🔐 A custom token is typically used for:
+ *  A custom token is typically used for:
  * - Authenticating server-trusted users on the client
  * - Migrating users from another auth system
  * - Granting privileged access using your backend
  *
- * 📌 REQUIREMENTS:
+ *  REQUIREMENTS:
  * - The provided UID must already exist in Firebase Authentication.
  *
  * @async

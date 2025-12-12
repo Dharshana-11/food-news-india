@@ -1,14 +1,14 @@
 /**
  * Middleware to authorize only Super Admin users.
  *
- * 🔐 Requirements:
+ *  Requirements:
  * - Must be used **after** `authenticateUser`, which attaches `req.user`.
  *
- * 🛑 If:
+ *  If:
  * - `req.user` is missing → responds with `401 Unauthorized`
  * - User exists but `role` !== `super-admin` → responds with `403 Forbidden`
  *
- * 🟢 If allowed:
+ *  If allowed:
  * - Calls `next()` and continues execution.
  *
  * @function authorizeSuperAdmin

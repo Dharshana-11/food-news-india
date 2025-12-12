@@ -327,7 +327,11 @@ const SuperAdminDashboard = () => {
               <RightOutlined />
             </a>
           </div>
-          <CustomTable columns={pendingColumns} data={allVerifications} pagination={false} />
+          <CustomTable
+            columns={pendingColumns}
+            data={allVerifications}
+            pagination={false}
+          />
         </div>
 
         {/* ---------- Summary, Tickets, Notifications ---------- */}
@@ -359,14 +363,14 @@ const SuperAdminDashboard = () => {
               extra={
                 <a
                   style={{ color: "#162247", fontWeight: "600" }}
-                  onClick={() => navigate(ROUTES.SUPER_ADMIN_SUPPORT)}
+                  onClick={() => navigate(ROUTES.SUPER_ADMIN_TICKETS)}
                 >
                   <RightOutlined />
                 </a>
               }
             >
               <div
-                onClick={() => navigate(ROUTES.SUPER_ADMIN_SUPPORT)}
+                onClick={() => navigate(ROUTES.SUPER_ADMIN_TICKETS)}
                 style={{ cursor: "pointer" }}
               >
                 <TicketsSnapshot tickets={ticketsData} />

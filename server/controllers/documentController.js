@@ -2,7 +2,7 @@ import Document from "../models/Document.js";
 import KYCDocument from "../models/KYCDocument.js";
 import ComplianceItem from "../models/ComplianceItem.js";
 import BusinessProfile from "../models/BusinessProfile.js";
-import Users from "../models/Users.js";
+import User from "../models/User.js";
 import { unlinkSync } from "fs";
 import { join } from "path";
 
@@ -68,7 +68,7 @@ export const createDocument = async (req, res) => {
 
       const startDate = new Date(validFrom);
       computedValidUntil = new Date(
-        startDate.getTime() + complianceItem.validityDays * 24 * 60 * 60 * 1000,
+        startDate.getTime() + complianceItem.validityDays * 24 * 60 * 60 * 1000
       );
     }
 
@@ -182,7 +182,7 @@ export const updateDocument = async (req, res) => {
 
     const doc = await Document.findById(req.params.id).populate(
       "complianceItemId",
-      "validityDays",
+      "validityDays"
     );
 
     if (!doc) {
@@ -249,7 +249,7 @@ export const deleteDocument = async (req, res) => {
     const doc = await Document.findByIdAndUpdate(
       req.params.id,
       { status: "trash" },
-      { new: true },
+      { new: true }
     );
 
     if (!doc) {
@@ -295,7 +295,7 @@ export const reviewDocument = async (req, res) => {
         status,
         reviewNotes: notes || "",
       },
-      { new: true },
+      { new: true }
     ).populate("uploadedForUser", "role");
 
     if (!document) {
@@ -305,7 +305,7 @@ export const reviewDocument = async (req, res) => {
     // Check if all KYC documents for this user are now approved
     await checkAndUpdateUserVerification(
       document.uploadedForUser._id,
-      document.uploadedForUser.role,
+      document.uploadedForUser.role
     );
 
     res.json({
@@ -343,7 +343,7 @@ async function checkAndUpdateUserVerification(userId, userRole) {
       return uploadedDocs.some(
         (uploadedDoc) =>
           uploadedDoc.kycDocumentId.toString() === requiredDoc._id.toString() &&
-          uploadedDoc.status === "approved",
+          uploadedDoc.status === "approved"
       );
     });
 
@@ -355,17 +355,17 @@ async function checkAndUpdateUserVerification(userId, userRole) {
           kycStatus: "verified",
           verifiedAt: new Date(),
           kycProgress: 100,
-        },
+        }
       );
 
       // Update User model to verified
-      await Users.findByIdAndUpdate(userId, {
+      await User.findByIdAndUpdate(userId, {
         isVerified: true,
       });
 
-      console.log(`✅ User ${userId} fully verified!`);
+      console.log(` User ${userId} fully verified!`);
     } else {
-      console.log(`⏳ User ${userId} still has pending/rejected documents`);
+      console.log(` User ${userId} still has pending/rejected documents`);
     }
   } catch (error) {
     console.error("Error checking user verification:", error);

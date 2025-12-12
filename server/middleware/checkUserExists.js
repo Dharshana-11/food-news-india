@@ -3,7 +3,7 @@ import User from "../models/User.js";
 /**
  * Middleware to verify that a user exists in the database using UID from route params.
  *
- * 🔍 Behavior:
+ *  Behavior:
  * - Reads `uid` from `req.params.uid`
  * - Searches for an existing user in MongoDB
  * - If no user is found → returns `404 Not Found`
@@ -20,25 +20,24 @@ import User from "../models/User.js";
  * // Use for routes where user must exist
  * router.get("/users/:uid", checkUserExists, getUserProfile);
  */
-const checkUserExists = async (req,res,next)=>{
-    try{
-        const uid=req.params.uid;
+const checkUserExists = async (req, res, next) => {
+  try {
+    const uid = req.params.uid;
 
-        const user=await User.findOne({ uid });
+    const user = await User.findOne({ uid });
 
-        if (!user) {
-            return res.status(404).json({ error: `User not found with UID: ${uid}` });
-        }
-
-        // Attach user to request object so next middleware/handler can use it
-        req.userData = user;
-
-        next();
-
-    } catch (err){
-        console.error("Error checking user existence:", err.message);
-        return res.status(500).json({ error: "Server error while verifying user" });
+    if (!user) {
+      return res.status(404).json({ error: `User not found with UID: ${uid}` });
     }
-}
+
+    // Attach user to request object so next middleware/handler can use it
+    req.userData = user;
+
+    next();
+  } catch (err) {
+    console.error("Error checking user existence:", err.message);
+    return res.status(500).json({ error: "Server error while verifying user" });
+  }
+};
 
 export default checkUserExists;
