@@ -1,0 +1,481 @@
+/* =========================================================
+   DOCUMENT VAULT — GLOBAL LAYOUT & HEADER
+   ========================================================= */
+
+.vault-header {
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.vault-header-content {
+  width: 100%;
+  margin: 0;
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Icon + Title */
+.docs-title-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-icon {
+  font-size: 40px;
+  background: rgba(255, 108, 31, 0.12);
+  padding: 12px;
+  border-radius: 14px;
+  color: var(--color-primary-orange);
+}
+
+.vault-title {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 0 6px 0;
+  color: var(--color-primary-blue);
+}
+
+.vault-subtitle {
+  font-size: 15px;
+  color: var(--color-text-medium);
+  margin: 0;
+}
+
+/* Upload Button */
+.document-vault-upload-btn {
+  background: linear-gradient(
+    135deg,
+    var(--color-primary-orange),
+    var(--color-hover-orange)
+  );
+  border: none;
+  height: 48px;
+  padding: 0 32px;
+  font-weight: 600;
+  font-size: 15px;
+  border-radius: 12px;
+  color: white;
+  box-shadow: 0 4px 12px rgba(255, 108, 31, 0.3);
+  transition: all 0.3s ease;
+}
+
+.document-vault-upload-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 108, 31, 0.4) !important;
+  background: linear-gradient(
+    135deg,
+    var(--color-hover-orange),
+    #d94d00
+  ) !important;
+  color: white !important;
+}
+
+/* =========================================================
+   STATS SECTION
+   ========================================================= */
+
+.vault-stats-section {
+  padding: 24px;
+}
+
+.vault-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.vault-stat-card {
+  border-radius: 16px;
+  border: none;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.vault-stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.vault-stat-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.vault-stat-icon {
+  font-size: 32px;
+  padding: 12px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vault-stat-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--color-text-dark);
+  margin-bottom: 4px;
+}
+
+.vault-stat-label {
+  font-size: 13px;
+  color: var(--color-text-medium);
+  font-weight: 500;
+}
+
+/* =========================================================
+   CONTROLS (SEARCH, FILTER)
+   ========================================================= */
+
+.vault-controls {
+  padding: 0 24px 24px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.vault-search {
+  flex: 1;
+  min-width: 280px;
+}
+
+.vault-search .ant-input-affix-wrapper {
+  border-radius: 12px;
+  border: 2px solid #e2e8f0;
+}
+
+.vault-search .ant-input-affix-wrapper:hover,
+.vault-search .ant-input-affix-wrapper-focused {
+  border-color: var(--color-primary-orange);
+  box-shadow: 0 0 0 3px rgba(255, 108, 31, 0.1);
+}
+
+.control-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.view-mode-select {
+  min-width: 180px;
+}
+
+.filter-btn {
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+/* =========================================================
+   DOCUMENT CARDS & LIST GRID
+   ========================================================= */
+
+.documents-section {
+  padding: 0 24px 40px;
+}
+
+.documents-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.document-card {
+  border-radius: 16px;
+  border: 2px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  overflow: hidden;
+  padding: 10px;
+}
+
+.document-card:hover {
+  border-color: var(--color-primary-orange);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-4px);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.card-icon-wrapper {
+  background: linear-gradient(135deg, #fef3eb 0%, #fee8d6 100%);
+  padding: 4px;
+  border-radius: 14px;
+}
+
+.file-icon {
+  width: 56px;
+  height: 56px;
+  font-size: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+}
+
+.pdf-icon {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+}
+
+.image-icon {
+  background: linear-gradient(135deg, #d97706 0%, #ff6c1f 100%);
+  color: white;
+}
+
+.card-menu-btn {
+  font-size: 20px;
+  color: var(--color-text-medium);
+}
+
+.card-body {
+  margin-bottom: 16px;
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-dark);
+  margin: 0 0 12px 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  min-height: 44px;
+}
+
+.card-type .ant-tag {
+  font-weight: 600;
+  border: none;
+  padding: 4px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.card-meta {
+  font-size: 12px;
+  color: var(--color-text-medium);
+  margin-bottom: 8px;
+}
+
+.meta-item {
+  display: inline-block;
+  padding: 3px 8px;
+  background: #f1f5f9;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.card-validity {
+  font-size: 12px;
+  color: var(--color-text-medium);
+  margin: 8px 0;
+  font-weight: 500;
+}
+
+/* EXPIRY BADGES */
+.expiry-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 8px 0;
+}
+
+.expiry-badge.expired {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.expiry-badge.expiring {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+/* Card Status */
+.card-status .ant-tag {
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 10px;
+  border: none;
+}
+
+/* Footer Actions */
+.card-actions {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  padding-top: 16px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.action-btn {
+  border-radius: 10px;
+  font-weight: 600;
+  height: 40px;
+}
+
+.action-btn:hover {
+  background: #f1f5f9;
+}
+
+/* =========================================================
+   EMPTY & LOADING STATES
+   ========================================================= */
+
+.vault-empty,
+.vault-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  padding: 60px 20px;
+}
+
+.vault-empty .ant-empty-description {
+  font-size: 16px;
+  color: var(--color-text-medium);
+}
+
+/* =========================================================
+   UPLOAD MODAL
+   ========================================================= */
+
+.upload-document-modal .ant-modal-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-text-dark);
+}
+
+.document-type-radio {
+  width: 100%;
+}
+
+.document-type-radio .ant-radio-button-wrapper {
+  flex: 1;
+  text-align: center;
+  height: 40px;
+  line-height: 38px;
+  font-weight: 600;
+  border-radius: 10px !important;
+  margin-right: 10px;
+}
+
+.document-type-radio .ant-radio-button-wrapper-checked {
+  background: var(--color-primary-orange);
+  border-color: var(--color-primary-orange);
+  color: white;
+}
+
+/* =========================================================
+   FILTER DRAWER
+   ========================================================= */
+
+.filter-drawer .drawer-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+}
+
+.drawer-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.drawer-footer button {
+  flex: 1;
+}
+
+/* =========================================================
+   RESPONSIVE — TABLETS
+   ========================================================= */
+
+@media (max-width: 768px) {
+  .vault-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 24px 16px;
+  }
+
+  .header-icon {
+    font-size: 36px;
+  }
+
+  .vault-title {
+    font-size: 22px;
+  }
+
+  .vault-controls {
+    flex-direction: column;
+    padding: 0 16px 16px;
+  }
+
+  .vault-search {
+    width: 100%;
+  }
+
+  .control-buttons {
+    width: 100%;
+  }
+
+  .documents-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =========================================================
+   RESPONSIVE — MOBILE (425px)
+   ========================================================= */
+
+@media (max-width: 425px) {
+  .vault-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .vault-header-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 0;
+  }
+
+  .document-vault-upload-btn {
+    width: 100%;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .vault-controls {
+    flex-direction: column;
+    padding: 0 16px 16px;
+  }
+
+  .control-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .view-mode-select,
+  .filter-btn {
+    width: 100%;
+  }
+}

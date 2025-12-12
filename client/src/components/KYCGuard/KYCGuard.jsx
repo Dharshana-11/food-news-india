@@ -71,7 +71,6 @@ const KYCGuard = ({ children, userRole }) => {
     return (
       <div style={styles.loading}>
         <div style={styles.spinner}></div>
-        <p>Checking verification status...</p>
       </div>
     );
   }

@@ -942,7 +942,7 @@ body {
 
 /* Each filter option item */
 .ant-dropdown .ant-dropdown-menu-item {
-  color: #fff !important;
+  color: #fff;
   background: transparent;
   transition:
     background 0.2s ease,
@@ -1536,7 +1536,7 @@ body {
 }
 
 /* =========================================================
-   =============== SUPER ADMIN LAYOUT ======================
+   =============== APP LAYOUT ======================
    ========================================================= */
 
 /* keep your existing desktop look */

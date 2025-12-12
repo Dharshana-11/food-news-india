@@ -87,7 +87,7 @@ const Documents = () => {
   useEffect(() => {
     if (searchText) {
       const filtered = allDocuments.filter((doc) =>
-        doc.file?.originalName.toLowerCase().includes(searchText.toLowerCase()),
+        doc.file?.originalName.toLowerCase().includes(searchText.toLowerCase())
       );
       setFilteredDocuments(filtered);
     } else {

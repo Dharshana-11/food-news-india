@@ -35,6 +35,15 @@ import NotificationLogs from "./pages/notifications/NotificationLogs";
 import ProfileSelf from "./pages/profile/ProfileSelf";
 import BusinessOwnerDashboard from "./pages/businessowner/BusinessOwnerDashboard";
 import KYCVerification from "./pages/KYCVerification/KYCVerification";
+import DocumentVault from "./pages/BusinessOwner/DocumentVault/DocumentVault";
+
+/**
+ * Renders all application routes with public and role-protected access.
+ * Displays a loading spinner while authentication state is being determined.
+ *
+ * @component
+ * @returns {JSX.Element} The complete route structure of the application.
+ */
 
 import AdminLogin from "./pages/auth/AdminLogin";
 import Login from "./pages/auth/Login";
@@ -197,6 +206,15 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute allowedRoles={[ROLES.BUSINESS_OWNER]}>
             <BusinessOwnerDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path={ROUTES.BUSINESS_OWNER_DOCUMENT_VAULT}
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.BUSINESS_OWNER]}>
+            <DocumentVault />
           </ProtectedRoute>
         }
       />
