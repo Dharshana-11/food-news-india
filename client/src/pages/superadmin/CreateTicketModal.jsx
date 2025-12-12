@@ -1,5 +1,14 @@
-import React from "react";
-import { Modal, Form, Input, Select, DatePicker, Upload, message, Button } from "antd";
+import React, { useState } from "react";
+import {
+  Modal,
+  Form,
+  Input,
+  Select,
+  DatePicker,
+  Upload,
+  message,
+  Button,
+} from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import axios from "axios";
 
@@ -23,8 +32,9 @@ const { Option } = Select;
 
 const CreateTicketModal = ({ open, onCancel, onSuccess }) => {
   const [form] = Form.useForm();
+  const [submitLoading, setSubmitLoading] = useState(false);
 
-    /**
+  /**
    * Handles ticket submission:
    * - Converts uploaded attachments to an array of file names.
    * - Sends ticket data to the backend API.
@@ -41,12 +51,13 @@ const CreateTicketModal = ({ open, onCancel, onSuccess }) => {
    * @returns {Promise<void>}
    */
 
-
   const handleSubmit = async (values) => {
     try {
+      setSubmitLoading(true);
+
       // Convert attachments -> array of URLs or file names (your choice)
 
-            /**
+      /**
        * Extract uploaded file names from the file list provided by Ant Design Upload component.
        * Used to store filenames instead of full file objects.
        *
@@ -54,20 +65,33 @@ const CreateTicketModal = ({ open, onCancel, onSuccess }) => {
        * @type {string[]}
        */
 
-      const attachments = values.attachments?.map(file => file.name) || [];
+      const formData = new FormData();
+      formData.append("category", values.category);
+      formData.append("priority", values.priority);
+      formData.append("description", values.description);
 
-      await axios.post("http://localhost:5000/api/tickets", {
-        ...values,
-        attachments,
+      if (values.sla) {
+        formData.append("sla", values.sla.toISOString());
+      }
+
+      if (values.attachments?.length) {
+        values.attachments.forEach((file) => {
+          formData.append("attachments", file.originFileObj);
+        });
+      }
+
+      await axios.post("http://localhost:5000/api/tickets", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
 
       message.success("Ticket created successfully");
       form.resetFields();
       onSuccess();
-
     } catch (error) {
       console.error("Error creating ticket:", error);
       message.error("Failed to create ticket");
+    } finally {
+      setSubmitLoading(false);
     }
   };
 
@@ -77,11 +101,18 @@ const CreateTicketModal = ({ open, onCancel, onSuccess }) => {
       title="Create New Ticket"
       okText="Create"
       cancelText="Cancel"
-      onCancel={onCancel}
+      onCancel={submitLoading ? null : onCancel}
       onOk={() => form.submit()}
+      confirmLoading={submitLoading}
+      maskClosable={!submitLoading}
     >
-      <Form layout="vertical" form={form} onFinish={handleSubmit} initialValues={{ priority: "Medium" }}>
-
+      <Form
+        layout="vertical"
+        form={form}
+        onFinish={handleSubmit}
+        initialValues={{ priority: "Medium" }}
+        disabled={submitLoading}
+      >
         {/* CATEGORY */}
         <Form.Item
           name="category"
@@ -92,7 +123,9 @@ const CreateTicketModal = ({ open, onCancel, onSuccess }) => {
             <Option value="Compliance">Compliance</Option>
             <Option value="Login Issue">Login Issue</Option>
             <Option value="Payment">Payment</Option>
-            <Option value="Agent Not Responding">Agent / Service Provider Not Responding</Option>
+            <Option value="Agent Not Responding">
+              Agent / Service Provider Not Responding
+            </Option>
             <Option value="Delayed Service">Delayed Service</Option>
             <Option value="Technical Error">Technical Error</Option>
             <Option value="Data Update Request">Data Update Request</Option>
@@ -139,10 +172,7 @@ const CreateTicketModal = ({ open, onCancel, onSuccess }) => {
           <Upload beforeUpload={() => false} multiple>
             <Button icon={<UploadOutlined />}>Upload</Button>
           </Upload>
-
         </Form.Item>
-
-
       </Form>
     </Modal>
   );

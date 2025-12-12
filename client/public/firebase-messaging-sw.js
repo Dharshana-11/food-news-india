@@ -5,8 +5,12 @@
  * This file is executed in the Service Worker context and not in the main window.
  */
 
-importScripts("https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js");
-importScripts("https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging-compat.js");
+importScripts(
+  "https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"
+);
+importScripts(
+  "https://www.gstatic.com/firebasejs/9.6.1/firebase-messaging-compat.js"
+);
 
 /**
  * Initializes the Firebase app in the Service Worker using the provided configuration.
@@ -41,8 +45,10 @@ const messaging = firebase.messaging();
  * @param {string} payload.notification.body - Body text of the notification.
  */
 messaging.onBackgroundMessage((payload) => {
-  self.registration.showNotification(payload.notification.title, {
-    body: payload.notification.body,
-    icon: "/logo192.png",
-  });
+  if (payload.notification) {
+    self.registration.showNotification(payload.notification.title, {
+      body: payload.notification.body,
+      icon: "/logo192.png",
+    });
+  }
 });

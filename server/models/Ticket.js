@@ -22,7 +22,7 @@ const messageSchema = new mongoose.Schema({
   senderId: { type: String, required: true },
   senderRole: { type: String, required: true },
   message: { type: String, required: true },
-  timestamp: { type: Date, default: Date.now }
+  timestamp: { type: Date, default: Date.now },
 });
 
 /**
@@ -54,7 +54,7 @@ const ticketSchema = new mongoose.Schema({
   createdBy: {
     userId: { type: String, required: true },
     name: { type: String, required: true },
-    role: { type: String, required: true }
+    role: { type: String, required: true },
   },
 
   category: { type: String, required: true },
@@ -63,7 +63,19 @@ const ticketSchema = new mongoose.Schema({
 
   description: { type: String, required: true },
 
-  attachments: { type: [String], default: [] },
+  attachments: {
+    type: [
+      {
+        originalName: String,
+        storedName: String,
+        filePath: String,
+        fileSize: Number,
+        fileType: String,
+        storageProvider: { type: String, default: "local" },
+      },
+    ],
+    default: [],
+  },
   messages: { type: [messageSchema], default: [] },
 
   sla: { type: Date },
@@ -71,7 +83,7 @@ const ticketSchema = new mongoose.Schema({
   isDeleted: { type: Boolean, default: false },
 
   createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
+  updatedAt: { type: Date, default: Date.now },
 });
 
 // Create and export the Ticket model

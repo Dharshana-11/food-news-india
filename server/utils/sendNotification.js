@@ -12,7 +12,7 @@ import { renderTemplate } from "./template.js";
 /**
  * Sends a notification based on event type, payload, target, and channel rules.
  *
- * 🔧 Features:
+ *  Features:
  * - Fetches notification settings and types with fallback logic.
  * - Resolves templates dynamically using `renderTemplate()`.
  * - Determines eligible users via UID, role groups, or direct tokens.
@@ -20,7 +20,7 @@ import { renderTemplate } from "./template.js";
  * - Sends email notifications when enabled.
  * - Logs every notification attempt (`NotificationLog`) including failures.
  *
- * 📌 Channel fallback priority:
+ *  Channel fallback priority:
  * ```txt
  * Explicit channels → NotificationSetting → NotificationType → Push Only
  * ```
@@ -57,7 +57,12 @@ import { renderTemplate } from "./template.js";
  *   channels: ["email"]
  * });
  */
-const sendNotification = async ({ event, payload = {}, target = {}, channels = [] }) => {
+const sendNotification = async ({
+  event,
+  payload = {},
+  target = {},
+  channels = [],
+}) => {
   try {
     /* ------------------ 1) SETTINGS + TYPE FALLBACK ------------------- */
     const setting = await NotificationSetting.findOne({ event });
@@ -82,8 +87,14 @@ const sendNotification = async ({ event, payload = {}, target = {}, channels = [
     /* ------------------ 2) TEMPLATE LOAD ------------------- */
     const tpl = await NotificationTemplate.findOne({ event });
 
-    const title = renderTemplate(tpl?.titleTemplate || `Notification: ${event}`, payload);
-    const body = renderTemplate(tpl?.bodyTemplate || JSON.stringify(payload), payload);
+    const title = renderTemplate(
+      tpl?.titleTemplate || `Notification: ${event}`,
+      payload
+    );
+    const body = renderTemplate(
+      tpl?.bodyTemplate || JSON.stringify(payload),
+      payload
+    );
 
     /* ------------------ 3) RESOLVE TOKENS ------------------- */
     let finalRoles = target.roles;
@@ -118,15 +129,13 @@ const sendNotification = async ({ event, payload = {}, target = {}, channels = [
             data: {
               event,
               channels: enabledChannels.join(","),
-              ...payload
-            }
-
+              ...payload,
+            },
           });
 
           successCount = resp.successCount;
           failureCount = resp.failureCount;
           rawResponse = resp;
-
         } catch (err) {
           successCount = 0;
           failureCount = tokens.length;
@@ -147,10 +156,9 @@ const sendNotification = async ({ event, payload = {}, target = {}, channels = [
         if (target.uid) {
           const user = await User.findOne({ uid: target.uid });
           if (user?.email) emails.push(user.email);
-        } 
-        else if (finalRoles) {
+        } else if (finalRoles) {
           const users = await User.find({ role: { $in: finalRoles } });
-          emails = users.map(u => u.email).filter(Boolean);
+          emails = users.map((u) => u.email).filter(Boolean);
         }
 
         for (const email of emails) {
@@ -164,15 +172,13 @@ const sendNotification = async ({ event, payload = {}, target = {}, channels = [
                 <hr>
                 <small>This is an automated notification.</small>
               </div>
-              `
+              `,
           });
         }
-
       } catch (err) {
         console.error("❌ Email sending failed:", err);
       }
     }
-
 
     /* ------------------ 5) LOG INTO DB ------------------- */
     await NotificationLog.create({
@@ -189,7 +195,6 @@ const sendNotification = async ({ event, payload = {}, target = {}, channels = [
     });
 
     return { successCount, failureCount, rawResponse };
-
   } catch (err) {
     console.error("❌ ERROR IN sendNotification:", err);
 

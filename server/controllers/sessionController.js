@@ -21,16 +21,20 @@ export const createSession = async (req, res) => {
     const { uid } = req.user;
 
     const user = await Users.findOne({ uid });
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    // Only block deleted or rejected users
+    if (user.isDeleted)
+      return res.status(403).json({ message: "Account deleted" });
+    if (user.status === "rejected")
+      return res.status(403).json({ message: "Account rejected" });
 
     const now = new Date();
 
-    // Close all other valid active sessions
+    // Close other active sessions
     await UserSession.updateMany(
       { uid, isActive: true, expiresAt: { $gt: now } },
-      { isActive: false, logoutTime: now },
+      { isActive: false, logoutTime: now }
     );
 
     const sessionTTL = Number(process.env.SESSION_TTL_HOURS ?? 1);
@@ -64,16 +68,12 @@ export const createSession = async (req, res) => {
       ...cookieOptions,
       maxAge: sessionTTL * 3600 * 1000,
     });
-
     res.cookie("refreshToken", refreshToken, {
       ...cookieOptions,
       maxAge: refreshTTL * 86400 * 1000,
     });
 
-    return res.json({
-      message: "Session created successfully",
-      user,
-    });
+    return res.json({ message: "Session created successfully", user });
   } catch (error) {
     console.error("Error creating session:", error);
     return res.status(500).json({ message: "Internal server error" });

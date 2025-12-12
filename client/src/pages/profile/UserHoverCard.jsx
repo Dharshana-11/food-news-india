@@ -19,23 +19,22 @@ import { useNavigate } from "react-router-dom";
  * @returns {JSX.Element|null} A clickable hover card or `null` if no user is provided.
  */
 
-
- /**
-   * Navigates to the user's profile page when the user name or card is clicked.
-   *
-   * @function navigate
-   * @param {void}
-   * @example
-   * // Example navigation route:
-   * navigate(`/super-admin/profile/${user.uid}`);
-   */
+/**
+ * Navigates to the user's profile page when the user name or card is clicked.
+ *
+ * @function navigate
+ * @param {void}
+ * @example
+ * // Example navigation route:
+ * navigate(`/super-admin/profile/${user.uid}`);
+ */
 
 const UserHoverCard = ({ user, placement = "right", size = "small" }) => {
   const navigate = useNavigate();
 
   if (!user) return null;
 
-   /**
+  /**
    * Converts a snake_case user role (e.g., "business_owner") into a readable format.
    *
    * @constant
@@ -53,7 +52,9 @@ const UserHoverCard = ({ user, placement = "right", size = "small" }) => {
 
   return (
     <Tooltip
-      overlayInnerStyle={{ padding: 0, background: "transparent" }}
+      styles={{
+        body: { padding: 0, background: "transparent" },
+      }}
       placement={placement}
       color="transparent"
       title={
@@ -69,7 +70,15 @@ const UserHoverCard = ({ user, placement = "right", size = "small" }) => {
           onClick={() => navigate(`/super-admin/profile/${user.uid}`)}
         >
           <Avatar size={64} src={avatar} icon={<UserOutlined />} />
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8 ,flexDirection: 'row'}}>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 8,
+              flexDirection: "row",
+            }}
+          >
             <h3 style={{ marginTop: 8, fontWeight: 600 }}>{user.name}</h3>
             {user.isVerified && (
               <CheckCircleFilled style={{ color: "#52c41a", fontSize: 16 }} />
@@ -96,4 +105,3 @@ const UserHoverCard = ({ user, placement = "right", size = "small" }) => {
 };
 
 export default UserHoverCard;
-

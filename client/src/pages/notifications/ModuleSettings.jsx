@@ -7,7 +7,7 @@
  * @requires ../../components/CustomTable
  * @requires ../../services/notificationService
  * @requires @ant-design/icons
- * 
+ *
  * @example
  * // Basic usage in a route
  * <Route path="/notifications/modules" element={<ModuleSettings />} />
@@ -48,7 +48,9 @@ const CATEGORY_ICONS = {
   user: <UserOutlined style={{ fontSize: 22, color: "#52c41a" }} />,
   system: <WarningOutlined style={{ fontSize: 22, color: "#faad14" }} />,
   feedback: <CheckCircleOutlined style={{ fontSize: 22, color: "#722ed1" }} />,
-  compliance: <QuestionCircleOutlined style={{ fontSize: 22, color: "#eb2f96" }} />,
+  compliance: (
+    <QuestionCircleOutlined style={{ fontSize: 22, color: "#eb2f96" }} />
+  ),
   other: <FileTextOutlined style={{ fontSize: 22 }} />,
 };
 
@@ -73,13 +75,13 @@ const CATEGORY_COLORS = {
 
 /**
  * ModuleSettings Component
- * 
+ *
  * @description
  * Provides an interface for managing notification settings at the module level.
  * Allows enabling/disabling notification types and viewing their current status.
- * 
+ *
  * @returns {JSX.Element} A card-based UI with a table of notification modules and their settings
- * 
+ *
  * @example
  * // In a parent component
  * <ModuleSettings />
@@ -192,7 +194,6 @@ const ModuleSettings = () => {
     }
   };
 
-
   // Columns WITHOUT category tag
   /**
    * Table column configuration
@@ -214,7 +215,7 @@ const ModuleSettings = () => {
       render: (_, row) => (
         <Switch
           checked={row.channels?.push}
-          onChange={(val) => updateSetting(row.event, "push", val)}
+          onChange={(val) => handleToggle(row.event, "push", val)}
         />
       ),
     },
@@ -224,7 +225,7 @@ const ModuleSettings = () => {
       render: (_, row) => (
         <Switch
           checked={row.channels?.email}
-          onChange={(val) => updateSetting(row.event, "email", val)}
+          onChange={(val) => handleToggle(row.event, "email", val)}
         />
       ),
     },
@@ -234,7 +235,7 @@ const ModuleSettings = () => {
       render: (_, row) => (
         <Switch
           checked={row.channels?.sms}
-          onChange={(val) => updateSetting(row.event, "sms", val)}
+          onChange={(val) => handleToggle(row.event, "sms", val)}
         />
       ),
     },
@@ -244,7 +245,7 @@ const ModuleSettings = () => {
       render: (_, row) => (
         <Switch
           checked={row.channels?.web}
-          onChange={(val) => updateSetting(row.event, "web", val)}
+          onChange={(val) => handleToggle(row.event, "web", val)}
         />
       ),
     },

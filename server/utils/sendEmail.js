@@ -3,7 +3,7 @@ import nodemailer from "nodemailer";
 /**
  * Email transporter instance using Nodemailer.
  *
- * 🔐 Uses Gmail or another SMTP provider based on configuration.
+ * Uses Gmail or another SMTP provider based on configuration.
  * Requires the following environment variables:
  * - `EMAIL_USER`: Sender email address
  * - `EMAIL_PASS`: App password or SMTP password
@@ -14,8 +14,8 @@ const transporter = nodemailer.createTransport({
   service: "gmail", // or SMTP provider
   auth: {
     user: process.env.EMAIL_USER, // your email
-    pass: process.env.EMAIL_PASS  // app password
-  }
+    pass: process.env.EMAIL_PASS, // app password
+  },
 });
 
 /**
@@ -41,7 +41,7 @@ const sendEmail = async ({ to, subject, html }) => {
     from: `"Support System" <${process.env.EMAIL_USER}>`,
     to,
     subject,
-    html
+    html,
   };
 
   return transporter.sendMail(mailOptions);

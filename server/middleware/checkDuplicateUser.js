@@ -3,12 +3,12 @@ import User from "../models/User.js";
 /**
  * Middleware to prevent duplicate user creation based on `email` or `phone`.
  *
- * 🔍 Behavior:
+ *  Behavior:
  * - Checks whether an incoming request contains an email or phone.
  * - If present, verifies whether a user already exists with the same email/phone.
  * - If a duplicate is found, responds with `409 Conflict`.
  *
- * 🛑 Intended for use during **user registration / account creation** only.
+ *  Intended for use during **user registration / account creation** only.
  *
  * @async
  * @function checkDuplicateUser
@@ -29,7 +29,9 @@ const checkDuplicateUser = async (req, res, next) => {
     if (email) {
       const existingEmail = await User.findOne({ email });
       if (existingEmail) {
-        return res.status(409).json({ error: `User already exists with the email: ${email}` });
+        return res
+          .status(409)
+          .json({ error: `User already exists with the email: ${email}` });
       }
     }
 
@@ -37,7 +39,9 @@ const checkDuplicateUser = async (req, res, next) => {
     if (phone) {
       const existingPhone = await User.findOne({ phone });
       if (existingPhone) {
-        return res.status(409).json({ error: `User already exists with the phone number: ${phone}` });
+        return res.status(409).json({
+          error: `User already exists with the phone number: ${phone}`,
+        });
       }
     }
 

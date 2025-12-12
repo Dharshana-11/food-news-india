@@ -1,7 +1,7 @@
 import Document from "../models/Document.js";
 import BusinessProfile from "../models/BusinessProfile.js";
 import KYCDocument from "../models/KYCDocument.js";
-import User from "../models/Users.js";
+import User from "../models/User.js";
 import path from "path";
 
 /**
@@ -30,7 +30,7 @@ export const getKYCRequirements = async (req, res) => {
     })
       .populate("kycDocumentId", "code")
       .select(
-        "kycDocumentId status file validFrom validUntil reviewNotes createdAt",
+        "kycDocumentId status file validFrom validUntil reviewNotes createdAt"
       );
 
     const uploadedMap = {};
@@ -77,7 +77,7 @@ export const getKYCProfile = async (req, res) => {
 
     let profile = await BusinessProfile.findOne({ userId: user._id }).populate(
       "businessTypeId",
-      "name code",
+      "name code"
     );
 
     if (!profile) {
@@ -139,7 +139,7 @@ export const uploadKYCDocument = async (req, res) => {
         kycDocumentId: kycDoc._id,
         status: { $ne: "trash" },
       },
-      { status: "trash" },
+      { status: "trash" }
     );
 
     const document = await Document.create({
@@ -216,7 +216,7 @@ export const updateBusinessProfile = async (req, res) => {
     const profile = await BusinessProfile.findOneAndUpdate(
       { userId: user._id },
       { $set: filteredUpdates },
-      { new: true, upsert: true },
+      { new: true, upsert: true }
     ).populate("businessTypeId", "name code");
 
     await updateKYCProgress(user._id);
@@ -262,7 +262,7 @@ export const submitKYCForReview = async (req, res) => {
     }).distinct("kycDocumentId");
 
     const allUploaded = requiredDocs.every((doc) =>
-      uploadedDocs.some((id) => id.equals(doc._id)),
+      uploadedDocs.some((id) => id.equals(doc._id))
     );
 
     if (!allUploaded) {
@@ -307,17 +307,17 @@ async function updateKYCProgress(userId) {
     });
 
     const uniqueKycDocIds = new Set(
-      uploadedDocs.map((doc) => doc.kycDocumentId?.toString()),
+      uploadedDocs.map((doc) => doc.kycDocumentId?.toString())
     );
 
     const progress = Math.round(
-      (uniqueKycDocIds.size / requiredDocs.length) * 100,
+      (uniqueKycDocIds.size / requiredDocs.length) * 100
     );
 
     await BusinessProfile.findOneAndUpdate(
       { userId },
       { kycProgress: progress },
-      { upsert: true },
+      { upsert: true }
     );
 
     console.log(`KYC Progress updated: ${progress}% for user ${userId}`);

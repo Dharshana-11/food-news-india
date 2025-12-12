@@ -3,12 +3,12 @@ import User from "../models/User.js";
 /**
  * Middleware to prevent duplicate `email` or `phone` during user profile update.
  *
- * 🔍 Behavior:
+ *  Behavior:
  * - Automatically determines whether the update is for self (`/me`) or another user (`/:uid`)
  * - Checks if another user already exists with the same email/phone
  * - Excludes the target user from the duplicate check
  *
- * 🛑 If duplicate found → returns `409 Conflict` with a descriptive message
+ *  If duplicate found → returns `409 Conflict` with a descriptive message
  *
  * @async
  * @function checkDuplicateForUpdate
@@ -52,11 +52,9 @@ const checkDuplicateForUpdate = async (req, res, next) => {
         uid: { $ne: targetUid },
       });
       if (existingPhone) {
-        return res
-          .status(409)
-          .json({
-            error: `User already exists with the phone number: ${phone}`,
-          });
+        return res.status(409).json({
+          error: `User already exists with the phone number: ${phone}`,
+        });
       }
     }
 

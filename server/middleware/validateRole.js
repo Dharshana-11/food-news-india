@@ -3,17 +3,17 @@ import ROLES from "../utils/constants/roles.js";
 /**
  * Middleware to validate user role and required contact fields during creation or update.
  *
- * 🔐 Validation Rules:
+ *  Validation Rules:
  * - `role` is mandatory for every user.
  * - If role is **Admin or Super Admin**, `email` is required.
  * - If role is **not** Admin or Super Admin, `phone` is required.
  *
- * 📌 Assumes `ROLES` contains:
+ *  Assumes `ROLES` contains:
  * - `ADMIN`
  * - `SUPER_ADMIN`
  * - Any other roles (agent, business_owner, etc.)
  *
- * 🛑 Responds with:
+ *  Responds with:
  * - `400 Bad Request` if a mandatory field is missing.
  * - `500 Internal Server Error` for unexpected errors.
  *
@@ -29,7 +29,7 @@ import ROLES from "../utils/constants/roles.js";
  */
 const validateRole = (req, res, next) => {
   try {
-    console.log("req body",req.body);
+    console.log("req body", req.body);
     const { role, email, phone } = req.body;
 
     if (!role) {
@@ -37,11 +37,15 @@ const validateRole = (req, res, next) => {
     }
 
     if ((role === ROLES.ADMIN || role === ROLES.SUPER_ADMIN) && !email) {
-      return res.status(400).json({ error: "Admin and Super Admin must have email" });
+      return res
+        .status(400)
+        .json({ error: "Admin and Super Admin must have email" });
     }
 
-    if ((role !== ROLES.ADMIN && role !== ROLES.SUPER_ADMIN) && !phone) {
-      return res.status(400).json({ error: "Non-admin users must have a phone number" });
+    if (role !== ROLES.ADMIN && role !== ROLES.SUPER_ADMIN && !phone) {
+      return res
+        .status(400)
+        .json({ error: "Non-admin users must have a phone number" });
     }
 
     next();
