@@ -11,49 +11,97 @@
  * 5. User is redirected based on role
  * ----------------------------------------------------------------
  */
+/**
+ * Login.jsx - Enhanced
+ * ----------------------------------------------------------------
+ * Integrated Login + Signup Flow
+ *
+ * Steps:
+ * 1. User enters phone number
+ * 2. Firebase sends OTP
+ * 3. User enters OTP
+ * 4. Backend checks if user exists:
+ *    - Existing → Create session → Dashboard
+ *    - New → Show profile form (role + name)
+ * 5. New user completes profile → Dashboard
+ */
 
 import { useState } from "react";
-import { Form, Input, Button, Typography, Image, message } from "antd";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import {
+  Form,
+  Input,
+  Button,
+  Typography,
+  Image,
+  message,
+  Select,
+  Radio,
+} from "antd";
+import { UserOutlined, PhoneOutlined, SafetyOutlined } from "@ant-design/icons";
+
+// Mock useAuth and useNavigate for demonstration
+const useAuth = () => ({
+  loading: false,
+  loginWithPhone: async () => {},
+  verifyOTP: async () => ({
+    isNewUser: false,
+    user: { role: "business_owner", name: "Demo User" },
+  }),
+  completeProfile: async () => ({ role: "business_owner", name: "Demo User" }),
+});
+
+const useNavigate = () => (path) => console.log("Navigate to:", path);
 
 import "../auth/login.css";
-import { ROUTES } from "../../routes";
-import ROLES from "../../constants/roles";
-import BRAND from "../../constants/branding";
+
+// Mock constants - replace with your actual imports
+const ROUTES = {
+  LOGIN: "/login",
+  REGISTER: "/register",
+  BUSINESS_OWNER_DASHBOARD: "/business-owner/dashboard",
+  AGENT_DASHBOARD: "/agent/dashboard",
+  SERVICE_PROVIDER_DASHBOARD: "/service-provider/dashboard",
+};
+
+const ROLES = {
+  BUSINESS_OWNER: "business_owner",
+  AGENT: "agent",
+  SERVICE_PROVIDER: "service_provider",
+};
+
+const BRAND = {
+  NAME: "Food News India",
+  HIGHLIGHT: "Food",
+  SLOGAN: "Simplifying Compliance, Empowering Food Businesses",
+  LOGO_LIGHT: "/logo-light.svg",
+  LOGO_DARK: "/logo-dark.svg",
+  IMAGE: "/login-illustration.svg",
+};
 
 const { Text, Link } = Typography;
 
-/**
- * @component Login
- * @description Login screen for Firebase phone-based authentication
- */
 const Login = () => {
-  const [step, setStep] = useState(0); // 0 = phone, 1 = OTP
+  const [step, setStep] = useState(0); // 0=phone, 1=OTP, 2=profile
   const [loadingState, setLoadingState] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [newUserData, setNewUserData] = useState(null);
   const [form] = Form.useForm();
   const navigate = useNavigate();
-  const { loading, loginWithPhone, verifyOTP } = useAuth();
+  const { loading, loginWithPhone, verifyOTP, completeProfile } = useAuth();
 
-  /**
-   * Convert phone to E.164 format
-   */
   const formatPhone = (phone) => {
     const cleaned = phone.replace(/\D/g, "");
     return cleaned.length === 10 ? `+91${cleaned}` : cleaned;
   };
 
-  /**
-   * Step 1 → Send OTP
-   */
+  // ---------------------------------------------------------------------------
+  // Step 1: Send OTP
+  // ---------------------------------------------------------------------------
   const handleSendOTP = async (values) => {
     setLoadingState(true);
     try {
       const formatted = formatPhone(values.phone);
-
       await loginWithPhone(formatted);
-
       setPhoneNumber(formatted);
       setStep(1);
       message.success("OTP sent successfully!");
@@ -65,36 +113,31 @@ const Login = () => {
     }
   };
 
-  /**
-   * Step 2 → Verify OTP
-   */
+  // ---------------------------------------------------------------------------
+  // Step 2: Verify OTP
+  // ---------------------------------------------------------------------------
   const handleVerifyOTP = async (values) => {
     setLoadingState(true);
     try {
-      const user = await verifyOTP(values.otp);
+      const result = await verifyOTP(values.otp);
 
-      if (!user) {
+      if (!result) {
         message.error("Authentication failed.");
         return;
       }
 
-      // Role-based navigation
-      switch (user.role) {
-        case ROLES.BUSINESS_OWNER:
-          navigate(ROUTES.BUSINESS_OWNER_DASHBOARD);
-          break;
-        case ROLES.AGENT:
-          navigate(ROUTES.AGENT_DASHBOARD);
-          break;
-        case ROLES.SERVICE_PROVIDER:
-          navigate(ROUTES.SERVICE_PROVIDER_DASHBOARD);
-          break;
-        default:
-          message.warning("Invalid role. Contact support.");
-          navigate(ROUTES.LOGIN);
+      // New user - show profile form
+      if (result.isNewUser) {
+        setNewUserData({ uid: result.uid, phone: result.phone });
+        setStep(2);
+        message.info("Welcome! Please complete your profile.");
+        return;
       }
 
-      message.success(`Welcome ${user.name}!`);
+      // Existing user - redirect to dashboard
+      const user = result.user;
+      navigateToDashboard(user.role);
+      message.success(`Welcome back, ${user.name}!`);
     } catch (err) {
       console.error("Verify OTP error:", err);
       message.error(err.message || "Invalid OTP.");
@@ -103,9 +146,47 @@ const Login = () => {
     }
   };
 
-  /**
-   * Resend OTP
-   */
+  // ---------------------------------------------------------------------------
+  // Step 3: Complete Profile (New Users Only)
+  // ---------------------------------------------------------------------------
+  const handleCompleteProfile = async (values) => {
+    setLoadingState(true);
+    try {
+      const user = await completeProfile(values.name, values.role);
+
+      navigateToDashboard(user.role);
+      message.success(`Welcome, ${user.name}! Your account is ready.`);
+    } catch (err) {
+      console.error("Profile completion error:", err);
+      message.error(err.message || "Failed to complete profile.");
+    } finally {
+      setLoadingState(false);
+    }
+  };
+
+  // ---------------------------------------------------------------------------
+  // Navigation Helper
+  // ---------------------------------------------------------------------------
+  const navigateToDashboard = (role) => {
+    switch (role) {
+      case ROLES.BUSINESS_OWNER:
+        navigate(ROUTES.BUSINESS_OWNER_DASHBOARD);
+        break;
+      case ROLES.AGENT:
+        navigate(ROUTES.AGENT_DASHBOARD);
+        break;
+      case ROLES.SERVICE_PROVIDER:
+        navigate(ROUTES.SERVICE_PROVIDER_DASHBOARD);
+        break;
+      default:
+        message.warning("Invalid role. Contact support.");
+        navigate(ROUTES.LOGIN);
+    }
+  };
+
+  // ---------------------------------------------------------------------------
+  // Resend OTP
+  // ---------------------------------------------------------------------------
   const handleResendOTP = async () => {
     setLoadingState(true);
     try {
@@ -118,18 +199,19 @@ const Login = () => {
     }
   };
 
-  /**
-   * Reset to Step 1
-   */
   const backToPhone = () => {
     setStep(0);
+    setNewUserData(null);
     form.resetFields();
   };
 
+  // ---------------------------------------------------------------------------
+  // Render
+  // ---------------------------------------------------------------------------
   return (
     <div className="login-container">
       <main className="login-main">
-        {/* ---------------------- Header ---------------------- */}
+        {/* Header */}
         <div className="login-header">
           <div className="login-brand">
             <picture>
@@ -141,19 +223,17 @@ const Login = () => {
                 className="login-logo"
               />
             </picture>
-
             <h1 className="login-brand-title">
               <span className="text-orange">{BRAND.HIGHLIGHT}</span>{" "}
               {BRAND.NAME.replace(`${BRAND.HIGHLIGHT} `, "")}
             </h1>
           </div>
-
           <Button className="login-btn-home" onClick={() => navigate("/")}>
             Home
           </Button>
         </div>
 
-        {/* ---------------------- Left Panel ---------------------- */}
+        {/* Left Panel */}
         <div className="login-left-panel">
           <Image src={BRAND.IMAGE} preview={false} width={250} />
           <h2 className="login-slogan">
@@ -166,36 +246,53 @@ const Login = () => {
           </h2>
         </div>
 
-        {/* ---------------------- Right Panel ---------------------- */}
+        {/* Right Panel */}
         <div className="login-right-panel">
           <div className="login-form-card">
             {/* Step Indicator */}
             <div className="login-step-indicator">
               <div className={`step ${step === 0 ? "active" : ""}`}>
-                <div className="step-circle">1</div>
+                <div className="step-circle">
+                  <PhoneOutlined />
+                </div>
                 <span className="step-label">Phone</span>
               </div>
               <div className="step-line"></div>
               <div className={`step ${step === 1 ? "active" : ""}`}>
-                <div className="step-circle">2</div>
+                <div className="step-circle">
+                  <SafetyOutlined />
+                </div>
                 <span className="step-label">Verify</span>
               </div>
+              {step === 2 && (
+                <>
+                  <div className="step-line"></div>
+                  <div className={`step active`}>
+                    <div className="step-circle">
+                      <UserOutlined />
+                    </div>
+                    <span className="step-label">Profile</span>
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Form Header */}
             <div className="login-form-header">
               <h2 className="login-form-title">
-                {step === 0 ? "Welcome Back!" : "Verify OTP"}
+                {step === 0 && "Welcome!"}
+                {step === 1 && "Verify OTP"}
+                {step === 2 && "Complete Your Profile"}
               </h2>
               <p className="login-form-subtitle">
-                {step === 0
-                  ? "Enter your mobile number to continue"
-                  : `OTP sent to ${phoneNumber}`}
+                {step === 0 && "Enter your mobile number to continue"}
+                {step === 1 && `OTP sent to ${phoneNumber}`}
+                {step === 2 && "Tell us a bit about yourself"}
               </p>
             </div>
 
-            {/* ---------------------- Step 1: Phone ---------------------- */}
-            {step === 0 ? (
+            {/* Step 0: Phone Number */}
+            {step === 0 && (
               <Form form={form} layout="vertical" onFinish={handleSendOTP}>
                 <Form.Item
                   label="Mobile Number"
@@ -229,17 +326,15 @@ const Login = () => {
                 </Button>
 
                 <div className="login-footer-links">
-                  <Text>Don't have an account? </Text>
-                  <Link
-                    onClick={() => navigate(ROUTES.REGISTER)}
-                    className="login-link"
-                  >
-                    Create Account
-                  </Link>
+                  <Text style={{ fontSize: 13, color: "#888" }}>
+                    New users will be guided to create an account
+                  </Text>
                 </div>
               </Form>
-            ) : (
-              /* ---------------------- Step 2: OTP ---------------------- */
+            )}
+
+            {/* Step 1: OTP Verification */}
+            {step === 1 && (
               <Form form={form} layout="vertical" onFinish={handleVerifyOTP}>
                 <Form.Item
                   label="OTP Code"
@@ -260,7 +355,7 @@ const Login = () => {
                   size="large"
                   className="login-btn-primary"
                 >
-                  Verify & Login
+                  Verify & Continue
                 </Button>
 
                 <div className="login-footer-links">
@@ -274,6 +369,66 @@ const Login = () => {
                   <Link onClick={backToPhone} className="login-link-secondary">
                     Change number
                   </Link>
+                </div>
+              </Form>
+            )}
+
+            {/* Step 2: Profile Completion */}
+            {step === 2 && (
+              <Form
+                form={form}
+                layout="vertical"
+                onFinish={handleCompleteProfile}
+              >
+                <Form.Item
+                  label="Full Name"
+                  name="name"
+                  rules={[
+                    { required: true, message: "Enter your name" },
+                    {
+                      min: 2,
+                      message: "Name must be at least 2 characters",
+                    },
+                  ]}
+                >
+                  <Input
+                    placeholder="Enter your full name"
+                    size="large"
+                    prefix={<UserOutlined />}
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  label="I am a..."
+                  name="role"
+                  rules={[{ required: true, message: "Select your role" }]}
+                >
+                  <Radio.Group size="large">
+                    <Radio.Button value={ROLES.BUSINESS_OWNER}>
+                      Business Owner
+                    </Radio.Button>
+                    <Radio.Button value={ROLES.AGENT}>Agent</Radio.Button>
+                    <Radio.Button value={ROLES.SERVICE_PROVIDER}>
+                      Service Provider
+                    </Radio.Button>
+                  </Radio.Group>
+                </Form.Item>
+
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  loading={loading || loadingState}
+                  block
+                  size="large"
+                  className="login-btn-primary"
+                >
+                  Complete Profile
+                </Button>
+
+                <div className="login-footer-links" style={{ marginTop: 16 }}>
+                  <Text style={{ fontSize: 12, color: "#888" }}>
+                    By continuing, you agree to our Terms & Privacy Policy
+                  </Text>
                 </div>
               </Form>
             )}
