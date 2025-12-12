@@ -1,17 +1,11 @@
 /**
- * AuthContext.jsx
+ * AuthContext.jsx - Enhanced
  * ============================================================================
- * Centralized authentication context for FoodPoint.
- * Supports:
- * - Admin login (email + password)
- * - User login (phone number + OTP via Firebase)
- * - Backend session creation & verification
- * - Automatic session refresh & logout handling
- *
- * Handles:
- * - Firebase Auth state
- * - Invisible reCAPTCHA setup for OTP
- * - Axios session expiration hooks
+ * Centralized authentication with integrated signup flow
+ * New features:
+ * - Detects new users after OTP verification
+ * - Handles profile completion (role + name)
+ * - Seamless login + signup experience
  */
 
 import { createContext, useContext, useState, useEffect } from "react";
@@ -25,42 +19,29 @@ import {
 } from "firebase/auth";
 import api from "../api/axios";
 import { ENDPOINTS } from "../api/endpoints";
-
 const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
-
   const [isPerformingLogin, setIsPerformingLogin] = useState(false);
   const [isRefreshingSession, setIsRefreshingSession] = useState(false);
-
-  // Holds Firebase confirmation result for OTP verification
   const [confirmationResult, setConfirmationResult] = useState(null);
 
+  // New user state
+  const [pendingNewUser, setPendingNewUser] = useState(null);
+
   // ---------------------------------------------------------------------------
-  // Backend Session Verification (Axios-friendly)
+  // Backend Session Verification
   // ---------------------------------------------------------------------------
-  /**
-   * verifyActiveSession()
-   * ----------------------
-   * Validates the user's active backend session using HttpOnly cookies.
-   * If session expired (401), tries to refresh once.
-   * @returns {Promise<Object>} verified backend user object
-   * @throws {Error} if session is invalid or backend returns an error
-   */
   const verifyActiveSession = async () => {
     try {
-      // First attempt to verify session
       let res = await api.get(ENDPOINTS.VERIFY_SESSION);
 
-      // Axios throws for non-2xx by default, but just in case:
       if (res.status === 401) {
-        // Attempt refresh
         try {
           await api.get(ENDPOINTS.REFRESH_SESSION);
-          // Retry verification
           res = await api.get(ENDPOINTS.VERIFY_SESSION);
         } catch (refreshErr) {
           throw new Error("Session expired and refresh failed");
@@ -80,11 +61,6 @@ export const AuthProvider = ({ children }) => {
   // ---------------------------------------------------------------------------
   // reCAPTCHA Setup
   // ---------------------------------------------------------------------------
-
-  /**
-   * Setup invisible reCAPTCHA verifier for Firebase phone login.
-   * Ensures a single global instance.
-   */
   const setupRecaptcha = () => {
     if (!window.recaptchaVerifier) {
       window.recaptchaVerifier = new RecaptchaVerifier(
@@ -106,14 +82,6 @@ export const AuthProvider = ({ children }) => {
   // ---------------------------------------------------------------------------
   // Admin Login (Email + Password)
   // ---------------------------------------------------------------------------
-
-  /**
-   * Admin/Super Admin login using email + password.
-   * Creates backend session using Firebase ID token.
-   * @param {string} email
-   * @param {string} password
-   * @returns {Promise<Object>} backend user
-   */
   const loginWithEmail = async (email, password) => {
     setIsPerformingLogin(true);
     try {
@@ -141,11 +109,6 @@ export const AuthProvider = ({ children }) => {
   // ---------------------------------------------------------------------------
   // OTP Login (Phone Number)
   // ---------------------------------------------------------------------------
-
-  /**
-   * Send OTP to user phone number using Firebase.
-   * @param {string} phoneNumber - Full E.164 format (+91XXXXXXXXXX)
-   */
   const loginWithPhone = async (phoneNumber) => {
     try {
       const appVerifier = setupRecaptcha();
@@ -160,7 +123,6 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       console.error("Error sending OTP:", error);
 
-      // Reset reCAPTCHA on failure
       if (window.recaptchaVerifier) {
         window.recaptchaVerifier.clear();
         window.recaptchaVerifier = null;
@@ -170,11 +132,9 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  /**
-   * Verify OTP and create backend session.
-   * @param {string} code - 6-digit OTP
-   * @returns {Promise<Object>} backend user
-   */
+  // ---------------------------------------------------------------------------
+  // Verify OTP - Enhanced with new user detection
+  // ---------------------------------------------------------------------------
   const verifyOTP = async (code) => {
     setIsPerformingLogin(true);
 
@@ -183,22 +143,38 @@ export const AuthProvider = ({ children }) => {
         throw new Error("No OTP session found. Please request OTP again.");
       }
 
-      // Firebase verification
+      // Step 1: Firebase verification
       const userCredential = await confirmationResult.confirm(code);
       const idToken = await userCredential.user.getIdToken();
 
-      // Create backend session
-      const response = await api.post(
-        ENDPOINTS.CREATE_SESSION,
-        {},
-        { headers: { Authorization: `Bearer ${idToken}` } }
-      );
+      // Step 2: Check if user exists in backend
+      const verifyResponse = await api.get(ENDPOINTS.VERIFY_USER, {
+        headers: { Authorization: `Bearer ${idToken}` },
+      });
 
-      const backendUser = response.data.user;
-      setCurrentUser(backendUser);
+      const { exists, user, uid, phone } = verifyResponse.data;
+
+      // Existing user - create session and login
+      if (exists) {
+        const sessionResponse = await api.post(
+          ENDPOINTS.CREATE_SESSION,
+          {},
+          { headers: { Authorization: `Bearer ${idToken}` } }
+        );
+
+        const backendUser = sessionResponse.data.user;
+        setCurrentUser(backendUser);
+        setConfirmationResult(null);
+        setPendingNewUser(null);
+
+        return { isNewUser: false, user: backendUser };
+      }
+
+      // New user - set pending state for profile completion
+      setPendingNewUser({ uid, phone, idToken });
       setConfirmationResult(null);
 
-      return backendUser;
+      return { isNewUser: true, uid, phone };
     } catch (error) {
       console.error("OTP verification error:", error);
       throw error;
@@ -208,14 +184,50 @@ export const AuthProvider = ({ children }) => {
   };
 
   // ---------------------------------------------------------------------------
+  // Complete Profile - For new users
+  // ---------------------------------------------------------------------------
+  const completeProfile = async (name, role) => {
+    if (!pendingNewUser) {
+      throw new Error("No pending user profile to complete");
+    }
+
+    setIsPerformingLogin(true);
+
+    try {
+      const { idToken } = pendingNewUser;
+
+      // Step 1: Create user profile
+      const profileResponse = await api.post(
+        ENDPOINTS.COMPLETE_PROFILE,
+        { name, role },
+        { headers: { Authorization: `Bearer ${idToken}` } }
+      );
+
+      const newUser = profileResponse.data.user;
+
+      // Step 2: Create session
+      const sessionResponse = await api.post(
+        ENDPOINTS.CREATE_SESSION,
+        {},
+        { headers: { Authorization: `Bearer ${idToken}` } }
+      );
+
+      const backendUser = sessionResponse.data.user;
+      setCurrentUser(backendUser);
+      setPendingNewUser(null);
+
+      return backendUser;
+    } catch (error) {
+      console.error("Profile completion error:", error);
+      throw error;
+    } finally {
+      setIsPerformingLogin(false);
+    }
+  };
+
+  // ---------------------------------------------------------------------------
   // Generic Login Selector
   // ---------------------------------------------------------------------------
-
-  /**
-   * Auto-detect login method (email or phone).
-   * @param {string} identifier - email OR +91 phone number
-   * @param {string} password  - required only for email login
-   */
   const login = async (identifier, password) => {
     if (identifier.includes("@")) {
       return loginWithEmail(identifier, password);
@@ -223,7 +235,7 @@ export const AuthProvider = ({ children }) => {
 
     if (identifier.startsWith("+91")) {
       await loginWithPhone(identifier);
-      return null; // Move to OTP screen next
+      return null;
     }
 
     throw new Error("Invalid identifier format");
@@ -232,15 +244,11 @@ export const AuthProvider = ({ children }) => {
   // ---------------------------------------------------------------------------
   // Logout
   // ---------------------------------------------------------------------------
-
-  /**
-   * Logout user from both backend session and Firebase auth.
-   */
   const logout = async () => {
     try {
       await api.post(ENDPOINTS.LOGOUT);
     } catch (err) {
-      console.log("Logout API error (likely session expired):", err.message);
+      console.log("Logout API error:", err.message);
     }
 
     try {
@@ -251,8 +259,8 @@ export const AuthProvider = ({ children }) => {
 
     setCurrentUser(null);
     setConfirmationResult(null);
+    setPendingNewUser(null);
 
-    // Clear reCAPTCHA instance
     if (window.recaptchaVerifier) {
       window.recaptchaVerifier.clear();
       window.recaptchaVerifier = null;
@@ -262,10 +270,8 @@ export const AuthProvider = ({ children }) => {
   // ---------------------------------------------------------------------------
   // Firebase Auth State Listener
   // ---------------------------------------------------------------------------
-
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
-      // Skip interference during login
       if (isPerformingLogin) return;
 
       if (!firebaseUser) {
@@ -291,7 +297,6 @@ export const AuthProvider = ({ children }) => {
   // ---------------------------------------------------------------------------
   // Axios Session Expiry Hooks
   // ---------------------------------------------------------------------------
-
   useEffect(() => {
     api.onSessionExpired = async () => {
       console.log("Session expired — logging out");
@@ -316,25 +321,24 @@ export const AuthProvider = ({ children }) => {
   // ---------------------------------------------------------------------------
   // Provider
   // ---------------------------------------------------------------------------
-
   return (
     <AuthContext.Provider
       value={{
         currentUser,
         loading,
+        pendingNewUser,
 
         login,
         loginWithEmail,
         loginWithPhone,
         verifyOTP,
+        completeProfile,
 
         logout,
         isRefreshingSession,
       }}
     >
-      {/* Invisible reCAPTCHA container */}
       <div id="recaptcha-container" />
-
       {children}
     </AuthContext.Provider>
   );

@@ -1,21 +1,23 @@
-// src/api/endpoints.js
+/**
+ * endpoints.js
+ * ============================================================================
+ * Centralized API endpoint constants for FoodNewsIndia
+ */
 
 export const ENDPOINTS = {
-  /* ================================
-   * AUTH / SESSION
-   * ================================ */
+  // Authentication
+  VERIFY_USER: "auth/verify",
+  COMPLETE_PROFILE: "auth/complete-profile",
 
-  // Create backend session after Firebase login
-  CREATE_SESSION: "/session",
+  // Session Management
+  CREATE_SESSION: "session",
+  VERIFY_SESSION: "session/verify-session",
+  REFRESH_SESSION: "session/refresh-session",
+  LOGOUT: "session/logout",
 
-  // Verify active session
-  VERIFY_SESSION: "/session/verify-session",
-
-  // Refresh (rotate) session & refresh tokens
-  REFRESH_SESSION: "/session/refresh-session",
-
-  // Logout (invalidate session & cookies)
-  LOGOUT: "/session/logout",
-
-  TICKETS: "/tickets",
+  // User Management (Admin)
+  USERS_LIST: "/users",
+  USER_DETAIL: (uid) => `/users/${uid}`,
+  USER_UPDATE: (uid) => `/users/${uid}`,
+  USER_DELETE: (uid) => `/users/${uid}`,
 };

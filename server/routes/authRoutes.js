@@ -5,7 +5,7 @@
 
 import express from "express";
 import authenticateUser from "../middleware/authMiddleware.js";
-import { verifyUser } from "../controllers/authController.js";
+import { verifyUser, completeProfile } from "../controllers/authController.js";
 
 const router = express.Router();
 
@@ -19,4 +19,12 @@ const router = express.Router();
  */
 router.get("/verify", authenticateUser, verifyUser);
 
+/**
+ * @route POST /api/auth/complete-profile
+ * @description Completes profile for new users (role + name)
+ * @access Private (Requires Firebase authentication)
+ * @body { name: string, role: string }
+ * @returns { user: Object }
+ */
+router.post("/complete-profile", authenticateUser, completeProfile);
 export default router;
