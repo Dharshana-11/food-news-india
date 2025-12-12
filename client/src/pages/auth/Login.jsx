@@ -38,45 +38,12 @@ import {
   Radio,
 } from "antd";
 import { UserOutlined, PhoneOutlined, SafetyOutlined } from "@ant-design/icons";
-
-// Mock useAuth and useNavigate for demonstration
-const useAuth = () => ({
-  loading: false,
-  loginWithPhone: async () => {},
-  verifyOTP: async () => ({
-    isNewUser: false,
-    user: { role: "business_owner", name: "Demo User" },
-  }),
-  completeProfile: async () => ({ role: "business_owner", name: "Demo User" }),
-});
-
-const useNavigate = () => (path) => console.log("Navigate to:", path);
-
+import BRAND from "../../constants/branding";
+import ROLES from "../../constants/roles";
+import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import "../auth/login.css";
-
-// Mock constants - replace with your actual imports
-const ROUTES = {
-  LOGIN: "/login",
-  REGISTER: "/register",
-  BUSINESS_OWNER_DASHBOARD: "/business-owner/dashboard",
-  AGENT_DASHBOARD: "/agent/dashboard",
-  SERVICE_PROVIDER_DASHBOARD: "/service-provider/dashboard",
-};
-
-const ROLES = {
-  BUSINESS_OWNER: "business_owner",
-  AGENT: "agent",
-  SERVICE_PROVIDER: "service_provider",
-};
-
-const BRAND = {
-  NAME: "Food News India",
-  HIGHLIGHT: "Food",
-  SLOGAN: "Simplifying Compliance, Empowering Food Businesses",
-  LOGO_LIGHT: "/logo-light.svg",
-  LOGO_DARK: "/logo-dark.svg",
-  IMAGE: "/login-illustration.svg",
-};
+import { ROUTES } from "../../routes";
 
 const { Text, Link } = Typography;
 

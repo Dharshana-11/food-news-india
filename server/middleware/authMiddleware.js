@@ -22,8 +22,7 @@
  * });
  */
 
-
-import firebaseAdmin from "../firebase/firebase.js";      // Firebase admin SDK instance
+import firebaseAdmin from "../firebase/firebase.js"; // Firebase admin SDK instance
 import Users from "../models/User.js";
 import AdminModel from "../models/Admin.js";
 
@@ -35,37 +34,29 @@ const authenticateUser = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
 
-    // Check if Authorization header exists and has Bearer token
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({ message: "No token provided" });
     }
 
-    // Extract the token
     const token = authHeader.split(" ")[1];
-
-    // Verify Firebase ID token
     const decodedToken = await firebaseAdmin.auth().verifyIdToken(token);
-    const { uid } = decodedToken;
+    const { uid, phone_number } = decodedToken;
 
-    // Find admin user in database
     const user = await Users.findOne({ uid });
-    if (!user) {
-      return res.status(403).json({ message: "Not authorized as admin" });
-    }
 
-    // Attach user info to request object for downstream middlewares/controllers
+    // Let new users proceed → verifyUser handles them
     req.user = {
-      uid: user.uid,
-      role: user.role,
-      name: user.name,
-      identifier: user.email || user.phone, // identifier used for login
-      isVerified: user.isVerified,
+      uid,
+      role: user?.role || null,
+      name: user?.name || null,
+      phoneNumber: phone_number,
+      isVerified: user?.isVerified || false,
     };
 
-    next(); // proceed to next middleware or route handler
+    next();
   } catch (error) {
     console.error("Authentication error:", error);
-    res.status(401).json({ message: "Invalid or expired token" });
+    return res.status(401).json({ message: "Invalid or expired token" });
   }
 };
 

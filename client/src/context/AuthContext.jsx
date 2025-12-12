@@ -18,17 +18,7 @@ import {
   signOut,
 } from "firebase/auth";
 import api from "../api/axios";
-
-// Mock endpoints - update with your actual endpoints
-const ENDPOINTS = {
-  VERIFY_USER: "/api/auth/verify",
-  COMPLETE_PROFILE: "/api/auth/complete-profile",
-  CREATE_SESSION: "/api/session",
-  VERIFY_SESSION: "/api/session/verify-session",
-  REFRESH_SESSION: "/api/session/refresh-session",
-  LOGOUT: "/api/session/logout",
-};
-
+import { ENDPOINTS } from "../api/endpoints";
 const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 

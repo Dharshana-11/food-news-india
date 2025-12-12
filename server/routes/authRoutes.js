@@ -5,7 +5,7 @@
 
 import express from "express";
 import authenticateUser from "../middleware/authMiddleware.js";
-import { verifyUser } from "../controllers/authController.js";
+import { verifyUser, completeProfile } from "../controllers/authController.js";
 
 const router = express.Router();
 
