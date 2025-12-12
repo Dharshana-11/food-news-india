@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       enum: Object.values(ROLES),
-      required:true,
+      required: true,
     },
     name: {
       type: String,
@@ -51,17 +51,20 @@ const userSchema = new mongoose.Schema(
     status: {
       type: String,
       enum: ["pending", "verified", "invalid"],
-      default: "pending"
+      default: "pending",
     },
     isDeleted: { type: Boolean, default: false },
     rejectionReason: { type: String, default: null },
     updatedBy: {
-        type: String   // UID of user who last updated
-    }, 
+      type: String, // UID of user who last updated
+    },
   },
   { timestamps: true } // automatically adds createdAt and updatedAt
 );
 
+userSchema.virtual("displayName").get(function () {
+  return this.name;
+});
 /**
  * Indexes
  */
@@ -75,7 +78,6 @@ userSchema.index({ role: 1, status: 1 }); // compound index for faster filtering
 userSchema.index({ status: 1, createdAt: -1 });
 userSchema.index({ role: 1, createdAt: -1 });
 userSchema.index({ role: 1, status: 1, createdAt: -1 });
-
 
 /**
  * User Model
