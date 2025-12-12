@@ -1,10 +1,10 @@
 import mongoose from "mongoose";
 import ROLES from "../utils/constants/roles.js";
+
 /**
  * @typedef User
  * @property {String} uid - Unique identifier for the user (Firebase UID), required and unique
  * @property {String} [email] - User's email, unique if provided (required for admin/super_admin)
- * @property {String} [password] - User's password, sparse (required for admin/super_admin)
  * @property {String} [phone] - User's phone number, unique if provided (required for non-admin users)
  * @property {String} role - Role of the user. Enum: "business_owner", "agent", "service_provider", "admin", "super_admin"
  * @property {String} name - Full name of the user, required
@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       enum: Object.values(ROLES),
-      required: true,
+      required:true,
     },
     name: {
       type: String,
@@ -45,11 +45,21 @@ const userSchema = new mongoose.Schema(
     },
     isVerified: {
       type: Boolean,
-      default: "false",
+      default: false,
       required: true,
     },
+    status: {
+      type: String,
+      enum: ["pending", "verified", "invalid"],
+      default: "pending"
+    },
+    isDeleted: { type: Boolean, default: false },
+    rejectionReason: { type: String, default: null },
+    updatedBy: {
+        type: String   // UID of user who last updated
+    }, 
   },
-  { timestamps: true }, // automatically adds createdAt and updatedAt
+  { timestamps: true } // automatically adds createdAt and updatedAt
 );
 
 /**
@@ -57,7 +67,15 @@ const userSchema = new mongoose.Schema(
  */
 userSchema.index({ role: 1 }); // ascending index on role field
 userSchema.index({ status: 1 }); // ascending index on status field
+userSchema.index({ name: "text" });
+userSchema.index({ createdAt: -1 }); // descending for newest first
+userSchema.index({ updatedAt: -1 });
+
 userSchema.index({ role: 1, status: 1 }); // compound index for faster filtering
+userSchema.index({ status: 1, createdAt: -1 });
+userSchema.index({ role: 1, createdAt: -1 });
+userSchema.index({ role: 1, status: 1, createdAt: -1 });
+
 
 /**
  * User Model

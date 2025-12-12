@@ -2,6 +2,7 @@
 // Provides backend access to verify users, manage Firebase data, and send FCM notifications.
 
 import admin from "firebase-admin";
+import { getMessaging } from "firebase-admin/messaging";
 import dotenv from "dotenv";
 import fs from "fs";
 import path from "path";
@@ -21,5 +22,7 @@ const firebaseAdmin = admin.initializeApp({
   //starts the firebase admin in server
   credential: admin.credential.cert(serviceAccountKey), //Verifies key and creates a credential obj that can be used for verification of tokens etc.
 });
+
+export const messaging = getMessaging(firebaseAdmin);
 
 export default firebaseAdmin;

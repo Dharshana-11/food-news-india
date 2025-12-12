@@ -1,7 +1,26 @@
 // server/firebase.js
+
 /**
- * Initializes Firebase Admin SDK with service account credentials.
- * Provides backend access to verify users, manage Firebase data, and send FCM notifications.
+ * Initializes Firebase Admin SDK for backend services.
+ *
+ *  Provides:
+ * - Secure user authentication (verify ID tokens)
+ * - Access to Firestore / Firebase Auth management
+ * - Ability to send Firebase Cloud Messaging (FCM) push notifications
+ *
+ *  Uses a private service account JSON file whose path is stored in
+ * `process.env.FIREBASE_KEY_PATH` for security.
+ *
+ * @module FirebaseAdmin
+ * @requires firebase-admin
+ * @requires dotenv
+ * @requires fs
+ * @requires path
+ *
+ * @example
+ * // Example usage:
+ * import firebaseAdmin from "./firebase.js";
+ * const decoded = await firebaseAdmin.auth().verifyIdToken(idToken);
  */
 
 import admin from "firebase-admin";
@@ -16,7 +35,7 @@ const serviceAccountPath = path.resolve(process.env.FIREBASE_KEY_PATH);
 
 // Read and parse the JSON key
 const serviceAccountKey = JSON.parse(
-  fs.readFileSync(serviceAccountPath, "utf8"),
+  fs.readFileSync(serviceAccountPath, "utf8")
 );
 
 // Initialize Firebase Admin SDK

@@ -1,28 +1,38 @@
-/**
- * AppRoutes.jsx
- * ------------------------------------------------------------
- * Centralized route configuration for the React application.
- * Handles public and protected routes, including role-based access
- * using the ProtectedRoute component and AuthContext.
- * ------------------------------------------------------------
- */
+import { Routes, Route, Navigate } from "react-router-dom";
+import { Spin, notification } from "antd";
+import { useEffect } from "react";
+import { onMessage } from "firebase/messaging";
 
-import { Routes, Route } from "react-router-dom";
-import { Spin } from "antd";
 import ProtectedRoute from "./components/ProtectedRoute";
-import SuperAdminDashboard from "./pages/superadmin/SuperAdminDashboard";
-import SuperAdminUsers from "./pages/superadmin/SuperAdminUsers";
-import AdminLogin from "./pages/auth/AdminLogin";
-import Login from "./pages/auth/Login";
+import AppLayout from "./layouts/AppLayout";
 import { useAuth } from "./context/AuthContext";
 import { ROUTES } from "./routes";
 import ROLES from "./constants/roles";
+
+import { requestForToken } from "./firebase/requestForToken";
+import saveTokenAPI from "./api/saveTokenAPI";
+import { messaging } from "./firebase/firebase";
+
+// Pages
+import SuperAdminDashboard from "./pages/superadmin/SuperAdminDashboard";
+import UserManagement from "./pages/superadmin/UserManagement";
+import TicketBoard from "./pages/superadmin/TicketBoard";
+import TicketDetailsBoard from "./pages/superadmin/TicketDetailsBoard";
+
 import ComplianceAndDocumentManagement from "./pages/ComplianceAndDocumentManagement/ComplianceAndDocumentManagement";
 import ComplianceItems from "./pages/ComplianceAndDocumentManagement/ComplianceItems";
 import BusinessTypes from "./pages/BusinessTypes/BusinessTypes";
 import ComplianceMappings from "./pages/ComplianceMappings/ComplianceMappings";
 import KYCDocuments from "./pages/KYCDocuments/KYCDocuments";
 import Documents from "./pages/Documents/Documents";
+
+import NotificationOverview from "./pages/notifications/NotificationOverview";
+import ModuleSettings from "./pages/notifications/ModuleSettings";
+import RoleSettings from "./pages/notifications/RoleSettings";
+import TemplateSettings from "./pages/notifications/TemplateSettings";
+import NotificationLogs from "./pages/notifications/NotificationLogs";
+
+import ProfileSelf from "./pages/profile/ProfileSelf";
 import BusinessOwnerDashboard from "./pages/businessowner/BusinessOwnerDashboard";
 import KYCVerification from "./pages/KYCVerification/KYCVerification";
 import DocumentVault from "./pages/BusinessOwner/DocumentVault/DocumentVault";
@@ -34,177 +44,161 @@ import DocumentVault from "./pages/BusinessOwner/DocumentVault/DocumentVault";
  * @component
  * @returns {JSX.Element} The complete route structure of the application.
  */
+
+import AdminLogin from "./pages/auth/AdminLogin";
+import Login from "./pages/auth/Login";
+
+// ------------------------------------------
+// ROUTE CONFIG (Cleaner, Minimal, Scalable)
+// ------------------------------------------
+
+const SUPER_ADMIN_ROUTES = [
+  { path: ROUTES.SUPER_ADMIN_DASHBOARD, element: <SuperAdminDashboard /> },
+
+  // USERS
+  {
+    path: ROUTES.SUPER_ADMIN_USERS,
+    element: <Navigate to={ROUTES.USER_LIST} />,
+  },
+  { path: ROUTES.USER_LIST, layout: true, element: <UserManagement /> },
+
+  // TICKETS
+  {
+    path: ROUTES.SUPER_ADMIN_TICKETS,
+    element: <Navigate to={ROUTES.TICKET_BOARD} />,
+  },
+  { path: ROUTES.TICKET_BOARD, layout: true, element: <TicketBoard /> },
+  { path: "/tickets/:id", layout: true, element: <TicketDetailsBoard /> },
+
+  // COMPLIANCE
+  {
+    path: ROUTES.SUPER_ADMIN_COMPLIANCE,
+    element: <ComplianceAndDocumentManagement />,
+  },
+  { path: ROUTES.SUPER_ADMIN_COMPLIANCE_ITEMS, element: <ComplianceItems /> },
+  { path: ROUTES.SUPER_ADMIN_BUSINESS_TYPES, element: <BusinessTypes /> },
+  {
+    path: ROUTES.SUPER_ADMIN_COMPLIANCE_MAPPINGS,
+    element: <ComplianceMappings />,
+  },
+  { path: ROUTES.SUPER_ADMIN_KYC_DOCUMENTS, element: <KYCDocuments /> },
+  { path: ROUTES.SUPER_ADMIN_DOCUMENTS, element: <Documents /> },
+
+  // NOTIFICATIONS
+  {
+    path: ROUTES.SUPER_ADMIN_NOTIFICATIONS,
+    element: <Navigate to={ROUTES.NOTIF_OVERVIEW} />,
+  },
+  {
+    path: ROUTES.NOTIF_OVERVIEW,
+    layout: true,
+    element: <NotificationOverview />,
+  },
+  {
+    path: ROUTES.NOTIF_MODULE_SETTINGS,
+    layout: true,
+    element: <ModuleSettings />,
+  },
+  { path: ROUTES.NOTIF_ROLE_SETTINGS, layout: true, element: <RoleSettings /> },
+  {
+    path: ROUTES.NOTIF_TEMPLATE_SETTINGS,
+    layout: true,
+    element: <TemplateSettings />,
+  },
+  { path: ROUTES.NOTIF_LOGS, layout: true, element: <NotificationLogs /> },
+
+  // PROFILE
+  { path: ROUTES.SUPER_ADMIN_PROFILE, layout: true, element: <ProfileSelf /> },
+  { path: "/super-admin/profile/:uid", layout: true, element: <ProfileSelf /> },
+
+  // OTHER RAW PAGES
+  {
+    path: ROUTES.SUPER_ADMIN_SETTINGS,
+    element: <div>Platform Settings Page</div>,
+  },
+  {
+    path: ROUTES.SUPER_ADMIN_CONTENT,
+    element: <div>Content Management Page</div>,
+  },
+  { path: ROUTES.SUPER_ADMIN_AUDIT, element: <div>System Logs Page</div> },
+];
+
+// ------------------------------------------
+// COMPONENT
+// ------------------------------------------
+
 const AppRoutes = () => {
   const { currentUser, loading } = useAuth();
 
-  // --- Show loading indicator while authentication status initializes ---
-  if (loading) {
+  // Register FCM Token
+  useEffect(() => {
+    (async () => {
+      if (!currentUser) return;
+      const token = await requestForToken();
+      if (token)
+        saveTokenAPI({
+          uid: currentUser.uid,
+          token,
+          role: currentUser.role,
+        });
+    })();
+  }, [currentUser]);
+
+  // Foreground Notifications
+  useEffect(() => {
+    if (!messaging) return;
+    const unsubscribe = onMessage(messaging, (payload) => {
+      const channels = payload.data?.channels?.split(",") ?? [];
+
+      if (channels.includes("web")) {
+        notification.info({
+          message: payload.notification?.title || "New Notification",
+          description: payload.notification?.body || "",
+          placement: "topRight",
+        });
+      }
+
+      if (channels.includes("push") && Notification.permission === "granted") {
+        new Notification(payload.notification.title, {
+          body: payload.notification.body,
+          icon: "/logo192.png",
+        });
+      }
+    });
+    return unsubscribe;
+  }, []);
+
+  if (loading)
     return (
       <div className="loading-container">
-        {/* style in global CSS */}
         <Spin size="large" />
       </div>
     );
-  }
 
   return (
     <Routes>
-      {/* =========================================================
-          PUBLIC ROUTES
-          ========================================================= */}
+      {/* PUBLIC ROUTES */}
       <Route path={ROUTES.LOGIN} element={<Login />} />
       <Route path={ROUTES.ADMIN_LOGIN} element={<AdminLogin />} />
 
-      {/* =========================================================
-          SUPER ADMIN PROTECTED ROUTES
-          ---------------------------------------------------------
-          Each route uses ProtectedRoute to verify:
-          - A valid authenticated user (`currentUser`)
-          - The user's role matches `ROLES.SUPER_ADMIN`
-          If not, the component redirects appropriately.
-          ========================================================= */}
-      <Route
-        path={ROUTES.SUPER_ADMIN_DASHBOARD}
-        element={
-          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
-            <SuperAdminDashboard />
-          </ProtectedRoute>
-        }
-      />
+      {/* SUPER ADMIN ROUTES (AUTO-MAPPED) */}
+      {SUPER_ADMIN_ROUTES.map(({ path, element, layout }) => (
+        <Route
+          key={path}
+          path={path}
+          element={
+            <ProtectedRoute requiredRole={ROLES.SUPER_ADMIN}>
+              {layout ? (
+                <AppLayout role={ROLES.SUPER_ADMIN}>{element}</AppLayout>
+              ) : (
+                element
+              )}
+            </ProtectedRoute>
+          }
+        />
+      ))}
 
-      <Route
-        path={ROUTES.SUPER_ADMIN_USERS}
-        element={
-          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
-            <SuperAdminUsers />
-          </ProtectedRoute>
-        }
-      />
-
-      {/* -------- Placeholder routes for additional modules -------- */}
-      <Route
-        path={ROUTES.SUPER_ADMIN_COMPLIANCE}
-        element={
-          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
-            <ComplianceAndDocumentManagement />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path={ROUTES.SUPER_ADMIN_COMPLIANCE_ITEMS} // rename constant instead of COMPLIANCE_CATEGORIES
-        element={
-          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
-            <ComplianceItems />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path={ROUTES.SUPER_ADMIN_BUSINESS_TYPES}
-        element={
-          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
-            <BusinessTypes />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path={ROUTES.SUPER_ADMIN_COMPLIANCE_MAPPINGS}
-        element={
-          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
-            <ComplianceMappings />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path={ROUTES.SUPER_ADMIN_KYC_DOCUMENTS}
-        element={
-          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
-            <KYCDocuments />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path={ROUTES.SUPER_ADMIN_DOCUMENTS}
-        element={
-          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
-            <Documents />
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path={ROUTES.SUPER_ADMIN_SERVICES}
-        element={
-          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
-            <div>Service Management Page</div>
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path={ROUTES.SUPER_ADMIN_SUPPORT}
-        element={
-          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
-            <div>Support Tickets Page</div>
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path={ROUTES.SUPER_ADMIN_SETTINGS}
-        element={
-          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
-            <div>Platform Settings Page</div>
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path={ROUTES.SUPER_ADMIN_CONTENT}
-        element={
-          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
-            <div>Content Management Page</div>
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path={ROUTES.SUPER_ADMIN_AUDIT}
-        element={
-          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
-            <div>System Logs Page</div>
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path={ROUTES.SUPER_ADMIN_PROFILE}
-        element={
-          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
-            <div>My Profile Page</div>
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path={ROUTES.SUPER_ADMIN_NOTIFICATIONS}
-        element={
-          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
-            <div>Notifications</div>
-          </ProtectedRoute>
-        }
-      />
-
-      <Route
-        path={ROUTES.SUPER_ADMIN_TICKETS}
-        element={
-          <ProtectedRoute user={currentUser} requiredRole={ROLES.SUPER_ADMIN}>
-            <div>Tickets</div>
-          </ProtectedRoute>
-        }
-      />
-
+      {/* BUSINESS OWNER */}
       <Route path={ROUTES.BUSINESS_OWNER_KYC} element={<KYCVerification />} />
 
       <Route

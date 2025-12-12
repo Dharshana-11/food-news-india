@@ -3,7 +3,7 @@
  * @description Middleware to verify active user sessions using session tokens stored in cookies.
  */
 
-import Users from "../models/Users.js";
+import Users from "../models/User.js";
 import UserSession from "../models/UserSession.js";
 
 /**
@@ -57,6 +57,8 @@ export const verifySession = async (req, res, next) => {
       return res.status(404).json({ message: "User not found." });
     }
 
+    // Attach user info to the request for downstream usage
+    req.user = { ...req.user, ...user.toObject() };
     console.log("Session verified successfully for:", user.email || user.phone);
 
     req.user = user;

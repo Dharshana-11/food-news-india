@@ -21,6 +21,7 @@ import {
   ControlOutlined,
   LogoutOutlined,
   CloseOutlined,
+  NotificationOutlined,
   MessageOutlined,
   BellOutlined,
 } from "@ant-design/icons";
@@ -147,7 +148,7 @@ const SideBar = ({ role, isOpen, onClose }) => {
         ],
       },
       {
-        key: ROUTES.SUPER_ADMIN_SUPPORT,
+        key: ROUTES.SUPER_ADMIN_TICKETS,
         icon: <CustomerServiceOutlined />,
         label: "Support Tickets",
       },
@@ -155,6 +156,11 @@ const SideBar = ({ role, isOpen, onClose }) => {
         key: ROUTES.SUPER_ADMIN_SETTINGS,
         icon: <ControlOutlined />,
         label: "Platform Settings",
+      },
+      {
+        key: ROUTES.SUPER_ADMIN_NOTIFICATIONS,
+        icon: <NotificationOutlined />,
+        label: "Notification Settings",
       },
       {
         key: ROUTES.SUPER_ADMIN_CONTENT,
@@ -238,11 +244,15 @@ const SideBar = ({ role, isOpen, onClose }) => {
 
   // ---------------- ACTIVE MENU HIGHLIGHT ----------------
   const selectedKey =
-    items.find(
-      (item) =>
-        location.pathname.startsWith(item.key) ||
-        item.paths?.some((p) => location.pathname.startsWith(p)),
-    )?.key || ROUTES.SUPER_ADMIN_DASHBOARD;
+    location.pathname.startsWith("/tickets/")
+      ? ROUTES.SUPER_ADMIN_TICKETS
+      : location.pathname.startsWith("/super-admin/profile/")
+      ? ROUTES.SUPER_ADMIN_USERS
+      : items.find(
+          (item) =>
+            location.pathname.startsWith(item?.key) ||
+            item?.paths?.some((p) => location.pathname.startsWith(p)),
+        )?.key || ROUTES.SUPER_ADMIN_DASHBOARD;
 
   // ---------------- RESIZE BEHAVIOR ----------------
   useEffect(() => {
