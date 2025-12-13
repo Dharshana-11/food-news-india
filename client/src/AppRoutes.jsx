@@ -36,6 +36,9 @@ import ProfileSelf from "./pages/profile/ProfileSelf";
 import BusinessOwnerDashboard from "./pages/businessowner/BusinessOwnerDashboard";
 import KYCVerification from "./pages/KYCVerification/KYCVerification";
 import DocumentVault from "./pages/BusinessOwner/DocumentVault/DocumentVault";
+import MyAgents from "./pages/BusinessOwner/Agents/MyAgents";
+import ViewMyAgent from "./pages/BusinessOwner/Agents/ViewMyAgent";
+import AddAgent from "./pages/BusinessOwner/Agents/AddAgent";
 
 /**
  * Renders all application routes with public and role-protected access.
@@ -215,6 +218,34 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute allowedRoles={[ROLES.BUSINESS_OWNER]}>
             <DocumentVault />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* BUSINESS OWNER – AGENTS */}
+      <Route
+        path="/business-owner/agents"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.BUSINESS_OWNER]}>
+            <MyAgents />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/business-owner/agents/:relationId"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.BUSINESS_OWNER]}>
+            <ViewMyAgent />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/business-owner/add-agent"
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.BUSINESS_OWNER]}>
+            <AddAgent />
           </ProtectedRoute>
         }
       />
