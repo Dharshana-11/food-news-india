@@ -7,7 +7,7 @@
 import express from "express";
 import authenticateUser from "../middleware/authMiddleware.js";
 import { verifySession } from "../middleware/sessionMiddleware.js";
-import authorizeRoles from "../middleware/authorizeRolesMiddleware.js";
+import { authorizeRoles } from "../middleware/authorizeRolesMiddleware.js";
 import ROLES from "../utils/constants/roles.js";
 
 import {
@@ -22,7 +22,6 @@ import {
 const router = express.Router();
 
 // All routes require authentication + business owner role
-router.use(authenticateUser);
 router.use(verifySession);
 router.use(authorizeRoles(ROLES.BUSINESS_OWNER));
 

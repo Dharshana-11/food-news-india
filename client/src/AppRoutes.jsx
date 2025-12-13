@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { Spin, notification } from "antd";
 import { useEffect } from "react";
 import { onMessage } from "firebase/messaging";
+import { useNavigate } from "react-router-dom";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import AppLayout from "./layouts/AppLayout";
@@ -203,52 +204,33 @@ const AppRoutes = () => {
 
       {/* BUSINESS OWNER */}
       <Route path={ROUTES.BUSINESS_OWNER_KYC} element={<KYCVerification />} />
-
+      {/* BUSINESS OWNER (LAYOUT GROUP) */}
       <Route
-        path={ROUTES.BUSINESS_OWNER_DASHBOARD}
         element={
           <ProtectedRoute allowedRoles={[ROLES.BUSINESS_OWNER]}>
-            <BusinessOwnerDashboard />
+            <AppLayout role={ROLES.BUSINESS_OWNER} />
           </ProtectedRoute>
         }
-      />
+      >
+        <Route
+          path={ROUTES.BUSINESS_OWNER_DASHBOARD}
+          element={<BusinessOwnerDashboard />}
+        />
 
-      <Route
-        path={ROUTES.BUSINESS_OWNER_DOCUMENT_VAULT}
-        element={
-          <ProtectedRoute allowedRoles={[ROLES.BUSINESS_OWNER]}>
-            <DocumentVault />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path={ROUTES.BUSINESS_OWNER_DOCUMENT_VAULT}
+          element={<DocumentVault />}
+        />
 
-      {/* BUSINESS OWNER – AGENTS */}
-      <Route
-        path="/business-owner/agents"
-        element={
-          <ProtectedRoute allowedRoles={[ROLES.BUSINESS_OWNER]}>
-            <MyAgents />
-          </ProtectedRoute>
-        }
-      />
+        <Route path={ROUTES.BUSINESS_OWNER_MY_AGENTS} element={<MyAgents />} />
 
-      <Route
-        path="/business-owner/agents/:relationId"
-        element={
-          <ProtectedRoute allowedRoles={[ROLES.BUSINESS_OWNER]}>
-            <ViewMyAgent />
-          </ProtectedRoute>
-        }
-      />
+        <Route path={ROUTES.BUSINESS_OWNER_ADD_AGENT} element={<AddAgent />} />
 
-      <Route
-        path="/business-owner/add-agent"
-        element={
-          <ProtectedRoute allowedRoles={[ROLES.BUSINESS_OWNER]}>
-            <AddAgent />
-          </ProtectedRoute>
-        }
-      />
+        <Route
+          path={ROUTES.BUSINESS_OWNER_AGENT_DETAILS}
+          element={<ViewMyAgent />}
+        />
+      </Route>
     </Routes>
   );
 };

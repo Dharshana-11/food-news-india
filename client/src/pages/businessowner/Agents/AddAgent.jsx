@@ -15,7 +15,7 @@ import {
   StarFilled,
   SendOutlined,
 } from "@ant-design/icons";
-import agentService from "../../services/myAgentService";
+import agentService from "../../../services/myAgentService";
 
 const AddAgent = ({ onBack }) => {
   const [agents, setAgents] = useState([]);

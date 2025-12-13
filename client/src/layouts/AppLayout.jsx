@@ -23,6 +23,7 @@
  */
 
 import React, { useState, useEffect } from "react";
+import { Outlet } from "react-router-dom";
 import { Layout } from "antd";
 import SideBar from "../components/SideBar";
 import Header from "../components/Header";
@@ -69,7 +70,7 @@ const AppLayout = ({ children, role }) => {
 
         {/* Main page content */}
         <Content className="main-content" onClick={closeSidebar}>
-          {children}
+          <Outlet />
         </Content>
       </div>
     </div>

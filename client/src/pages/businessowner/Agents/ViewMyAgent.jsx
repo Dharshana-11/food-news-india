@@ -20,7 +20,7 @@ import {
   SyncOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import agentService from "../../services/myAgentService";
+import agentService from "../../../services/myAgentService";
 
 const ViewMyAgent = ({ relationId, onBack }) => {
   const [agent, setAgent] = useState(null);

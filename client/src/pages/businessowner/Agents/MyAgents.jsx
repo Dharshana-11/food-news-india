@@ -7,7 +7,7 @@ import {
   EyeOutlined,
   StarFilled,
 } from "@ant-design/icons";
-import agentService from "../../services/myAgentService";
+import agentService from "../../../services/myAgentService";
 
 const MyAgents = () => {
   const [agents, setAgents] = useState([]);

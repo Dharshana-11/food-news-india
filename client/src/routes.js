@@ -25,7 +25,7 @@ export const ROUTES = {
      SUPER ADMIN MAIN MODULES (Top-Level Menu)
   ========================================================= */
   SUPER_ADMIN_DASHBOARD: "/super-admin/dashboard",
-  SUPER_ADMIN_USERS: "/super-admin/users",             // Parent (redirects)
+  SUPER_ADMIN_USERS: "/super-admin/users", // Parent (redirects)
   SUPER_ADMIN_COMPLIANCE: "/super-admin/compliance",
   SUPER_ADMIN_SERVICES: "/super-admin/services",
   SUPER_ADMIN_SETTINGS: "/super-admin/settings",
@@ -33,7 +33,7 @@ export const ROUTES = {
   SUPER_ADMIN_AUDIT: "/super-admin/audit",
   SUPER_ADMIN_PROFILE: "/super-admin/profile",
   SUPER_ADMIN_NOTIFICATIONS: "/super-admin/notifications", // Parent (redirects)
-  SUPER_ADMIN_TICKETS: "/super-admin/tickets",             // Parent (redirects)
+  SUPER_ADMIN_TICKETS: "/super-admin/tickets", // Parent (redirects)
 
   /* =========================================================
      USERS MODULE (Subpages)
@@ -47,7 +47,7 @@ export const ROUTES = {
   ========================================================= */
   TICKET_BOARD: "/super-admin/tickets/board",
   TICKET_LIST: "/super-admin/tickets/list",
-  TICKET_DETAILS: "/tickets/:id",   
+  TICKET_DETAILS: "/tickets/:id",
 
   /* =========================================================
      NOTIFICATION MODULE (Subpages)
@@ -94,4 +94,11 @@ export const ROUTES = {
   ========================================================= */
   SERVICE_PROVIDER_DASHBOARD: "/service-provider/dashboard",
   SERVICE_PROVIDER_KYC: "/service-provider/kyc-verification",
+
+  /* =========================================================
+   BUSINESS OWNER – AGENTS
+========================================================= */
+  BUSINESS_OWNER_MY_AGENTS: "/business-owner/agents",
+  BUSINESS_OWNER_AGENT_DETAILS: "/business-owner/agents/:relationId",
+  BUSINESS_OWNER_ADD_AGENT: "/business-owner/add-agent",
 };
