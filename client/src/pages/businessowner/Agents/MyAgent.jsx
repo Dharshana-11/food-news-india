@@ -7,7 +7,7 @@ import {
   EyeOutlined,
   StarFilled,
 } from "@ant-design/icons";
-import api from "../../api/axios";
+import agentService from "../../services/myAgentService";
 
 const MyAgents = () => {
   const [agents, setAgents] = useState([]);
@@ -21,8 +21,8 @@ const MyAgents = () => {
   const fetchMyAgents = async () => {
     try {
       setLoading(true);
-      const response = await api.get("/agents/my-agents");
-      setAgents(response.data.agents || []);
+      const data = await agentService.getMyAgents();
+      setAgents(data.agents || []);
     } catch (error) {
       console.error("Fetch agents error:", error);
       message.error("Failed to load agents");

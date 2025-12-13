@@ -20,7 +20,7 @@ import {
   SyncOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import api from "../../api/axios";
+import agentService from "../../services/myAgentService";
 
 const ViewMyAgent = ({ relationId, onBack }) => {
   const [agent, setAgent] = useState(null);
@@ -34,8 +34,8 @@ const ViewMyAgent = ({ relationId, onBack }) => {
   const fetchAgentDetails = async () => {
     try {
       setLoading(true);
-      const response = await api.get(`/agents/${relationId}`);
-      setAgent(response.data.data);
+      const data = await agentService.getAgentDetails(relationId);
+      setAgent(data.data);
     } catch (error) {
       console.error("Fetch agent error:", error);
       message.error("Failed to load agent details");
@@ -66,7 +66,7 @@ const ViewMyAgent = ({ relationId, onBack }) => {
         const reason = document.getElementById("removal-reason")?.value || "";
         try {
           setRemoving(true);
-          await api.delete(`/agents/${relationId}`, { data: { reason } });
+          await agentService.removeAgent(relationId, reason);
           message.success("Agent removed successfully");
           if (onBack) onBack();
         } catch (error) {

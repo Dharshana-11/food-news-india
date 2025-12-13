@@ -15,7 +15,7 @@ import {
   StarFilled,
   SendOutlined,
 } from "@ant-design/icons";
-import api from "../../api/axios";
+import agentService from "../../services/myAgentService";
 
 const AddAgent = ({ onBack }) => {
   const [agents, setAgents] = useState([]);
@@ -32,8 +32,8 @@ const AddAgent = ({ onBack }) => {
   const fetchAvailableAgents = async () => {
     try {
       setLoading(true);
-      const response = await api.get("/agents/available");
-      setAgents(response.data.agents || []);
+      const data = await agentService.getAvailableAgents();
+      setAgents(data.agents || []);
     } catch (error) {
       console.error("Fetch agents error:", error);
       message.error("Failed to load available agents");
@@ -50,7 +50,7 @@ const AddAgent = ({ onBack }) => {
   const handleSendInvite = async (values) => {
     try {
       setInviting(true);
-      await api.post("/agents/invite", {
+      await agentService.inviteAgent({
         agentId: selectedAgent._id,
         agreedCommission: values.agreedCommission,
         permissions: {
@@ -60,6 +60,7 @@ const AddAgent = ({ onBack }) => {
           canReceiveUpdates: true,
         },
       });
+
       message.success("Invitation sent successfully!");
       setSelectedAgent(null);
       setCommissionAmount(0);
