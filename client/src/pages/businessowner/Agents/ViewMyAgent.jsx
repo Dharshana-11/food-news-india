@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
   Card,
   Button,
@@ -22,13 +22,16 @@ import {
   UserOutlined,
 } from "@ant-design/icons";
 import agentService from "../../../services/myAgentService";
+import "./ViewMyAgent.css";
 
 const ViewMyAgent = ({ onBack }) => {
   const [agent, setAgent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [removing, setRemoving] = useState(false);
+  const [removalReason, setRemovalReason] = useState("");
 
   const { relationId } = useParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchAgentDetails();
@@ -59,9 +62,10 @@ const ViewMyAgent = ({ onBack }) => {
       content: (
         <div>
           <p>Are you sure you want to remove this agent?</p>
+
           <Input.TextArea
-            placeholder="Reason for removal (optional)"
             id="removal-reason"
+            placeholder="Reason for removal (optional)"
             rows={3}
             style={{ marginTop: 12 }}
           />
@@ -72,6 +76,7 @@ const ViewMyAgent = ({ onBack }) => {
       cancelText: "Cancel",
       onOk: async () => {
         const reason = document.getElementById("removal-reason")?.value || "";
+
         try {
           setRemoving(true);
           await agentService.removeAgent(relationId, reason);
@@ -124,152 +129,99 @@ const ViewMyAgent = ({ onBack }) => {
   }
 
   return (
-    <div style={{ padding: "16px", maxWidth: 600, margin: "0 auto" }}>
-      {/* Header */}
-      <div style={{ marginBottom: 24 }}>
-        <Button
-          type="text"
-          icon={<ArrowLeftOutlined />}
-          onClick={onBack}
-          style={{ marginBottom: 12 }}
+    <div className="view-agent-page">
+      <div className="view-agent-container">
+        {/* Header */}
+        <div className="view-agent-header">
+          <Button
+            type="text"
+            icon={<ArrowLeftOutlined />}
+            onClick={() => (onBack ? onBack() : navigate(-1))}
+            style={{ marginBottom: 10 }}
+          >
+            {/* Back */}
+          </Button>
+
+          <h2 className="view-agent-title">View My Agent</h2>
+        </div>
+
+        {/* Profile */}
+        <Card className="view-agent-section-card agent-profile-card">
+          <div className="view-agent-profile">
+            <div className="view-agent-avatar">
+              {agent.agent.name?.charAt(0).toUpperCase()}
+            </div>
+
+            <div className="view-agent-info">
+              <div className="view-agent-name">{agent.agent.name}</div>
+
+              <div className="view-agent-meta">
+                Managing <span>{agent.businessesManaged}+ businesses</span>
+              </div>
+
+              <div className="view-agent-price">
+                ₹{agent.agreedCommission} <span>per month</span>
+              </div>
+            </div>
+
+            <div className="view-agent-rating">
+              <span>{agent.rating?.toFixed(1) || "0.0"}</span>
+              <StarFilled style={{ color: "#faad14", fontSize: 18 }} />
+            </div>
+          </div>
+        </Card>
+
+        {/* Actions */}
+        <Card title="Quick Actions" className="view-agent-section-card">
+          <div className="view-agent-actions">
+            {/* <Button icon={<EyeOutlined />} size="large" block>
+              View Activity
+            </Button> */}
+
+            <Button
+              icon={<DeleteOutlined />}
+              danger
+              size="large"
+              block
+              onClick={handleRemoveAgent}
+              loading={removing}
+            >
+              Remove Agent
+            </Button>
+
+            <Button icon={<ExclamationCircleOutlined />} size="large" block>
+              Raise Ticket
+            </Button>
+          </div>
+        </Card>
+
+        {/* Activity */}
+        <Card
+          title="Recent Activity"
+          className="view-agent-activity-section-card"
         >
-          Back
-        </Button>
-        <h2 style={{ fontSize: 20, fontWeight: 600 }}>View My Agent</h2>
+          {agent.activityLog?.length ? (
+            <Timeline
+              items={agent.activityLog.slice(0, 5).map((activity) => ({
+                dot: getActivityIcon(activity.action),
+                children: (
+                  <>
+                    <div style={{ fontWeight: 500 }}>
+                      {activity.description ||
+                        activity.action.replace(/_/g, " ").toUpperCase()}
+                    </div>
+                    <div style={{ fontSize: 12, color: "#999" }}>
+                      {formatDate(activity.timestamp)}
+                    </div>
+                  </>
+                ),
+              }))}
+            />
+          ) : (
+            <div className="view-agent-activity-empty">No recent activity</div>
+          )}
+        </Card>
       </div>
-
-      {/* Agent Profile Card */}
-      <Card
-        style={{ marginBottom: 24, borderRadius: 12 }}
-        styles={{ body: { padding: 16 } }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <div
-            style={{
-              width: 56,
-              height: 56,
-              borderRadius: "50%",
-              background: "#ff6b35",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              color: "white",
-              fontSize: 22,
-              fontWeight: 600,
-            }}
-          >
-            {agent.agent.name?.charAt(0).toUpperCase()}
-          </div>
-
-          <div style={{ flex: 1 }}>
-            <div
-              style={{
-                fontSize: 16,
-                fontWeight: 600,
-                marginBottom: 4,
-              }}
-            >
-              {agent.agent.name}
-            </div>
-            <div style={{ fontSize: 13, color: "#666" }}>
-              Managing{" "}
-              <span style={{ fontWeight: 600, color: "#ff6b35" }}>
-                {agent.businessesManaged}+ businesses
-              </span>
-            </div>
-            <div
-              style={{
-                fontSize: 16,
-                fontWeight: 600,
-                color: "#ff6b35",
-                marginTop: 4,
-              }}
-            >
-              ₹{agent.agreedCommission}{" "}
-              <span style={{ fontSize: 12, color: "#999" }}>per month</span>
-            </div>
-          </div>
-
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 4,
-              fontSize: 14,
-              fontWeight: 600,
-            }}
-          >
-            <span>{agent.rating?.toFixed(1) || "0.0"}</span>
-            <StarFilled style={{ color: "#faad14", fontSize: 18 }} />
-          </div>
-        </div>
-      </Card>
-
-      {/* Quick Actions */}
-      <Card
-        title="Quick Actions"
-        style={{ marginBottom: 24 }}
-        styles={{ body: { padding: 16 } }}
-      >
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          <Button
-            icon={<EyeOutlined />}
-            size="large"
-            block
-            onClick={() => message.info("View activity feature coming soon")}
-          >
-            View Activity
-          </Button>
-          <Button
-            icon={<DeleteOutlined />}
-            danger
-            size="large"
-            block
-            onClick={handleRemoveAgent}
-            loading={removing}
-          >
-            Remove Agent
-          </Button>
-          <Button
-            icon={<ExclamationCircleOutlined />}
-            size="large"
-            block
-            onClick={() => message.info("Raise ticket feature coming soon")}
-          >
-            Raise Ticket
-          </Button>
-        </div>
-      </Card>
-
-      {/* Activity Timeline */}
-      <Card
-        title="View Activity"
-        style={{ marginBottom: 24 }}
-        styles={{ body: { padding: "20px 16px" } }}
-      >
-        {agent.activityLog && agent.activityLog.length > 0 ? (
-          <Timeline
-            items={agent.activityLog.slice(0, 5).map((activity) => ({
-              dot: getActivityIcon(activity.action),
-              children: (
-                <div>
-                  <div style={{ fontWeight: 500, fontSize: 14 }}>
-                    {activity.description ||
-                      activity.action.replace(/_/g, " ").toUpperCase()}
-                  </div>
-                  <div style={{ fontSize: 12, color: "#999", marginTop: 4 }}>
-                    {formatDate(activity.timestamp)}
-                  </div>
-                </div>
-              ),
-            }))}
-          />
-        ) : (
-          <p style={{ textAlign: "center", color: "#999" }}>
-            No recent activity
-          </p>
-        )}
-      </Card>
     </div>
   );
 };

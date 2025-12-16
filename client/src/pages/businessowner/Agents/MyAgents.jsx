@@ -8,6 +8,7 @@ import {
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import agentService from "../../../services/myAgentService";
+import "./MyAgents.css";
 
 const MyAgents = () => {
   const [myAgents, setMyAgents] = useState([]);
@@ -56,77 +57,40 @@ const MyAgents = () => {
     <Card
       key={agent.relationId || agent.agentId || agent._id}
       hoverable
+      className="my-agents-card"
       onClick={() =>
         agent.relationId
           ? navigate(`/business-owner/agents/${agent.relationId}`)
           : message.info("Agent details not available")
       }
-      style={{ borderRadius: 12 }}
-      bodyStyle={{ padding: 16 }}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <div
-          style={{
-            width: 48,
-            height: 48,
-            borderRadius: "50%",
-            background: "#ff6b35",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "white",
-            fontSize: 18,
-            fontWeight: 600,
-            flexShrink: 0,
-          }}
-        >
+      <div className="my-agents-row">
+        <div className="my-agents-avatar">
           {agent.name?.charAt(0).toUpperCase()}
         </div>
 
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <span style={{ fontWeight: 600, fontSize: 15 }}>{agent.name}</span>
+        <div className="my-agents-info">
+          <div className="my-agents-name-row">
+            <span className="my-agents-name">{agent.name}</span>
             {agent.status && getStatusBadge(agent.status)}
           </div>
-          <div
-            style={{
-              fontSize: 13,
-              color: "#666",
-              marginTop: 4,
-              display: "flex",
-              alignItems: "center",
-              gap: 4,
-            }}
-          >
+
+          <div className="my-agents-meta">
             Managing{" "}
-            <span style={{ fontWeight: 600, color: "#ff6b35" }}>
+            <span className="highlight">
               {agent.businessesManaged || 0}+ businesses
             </span>
           </div>
-          <div
-            style={{
-              fontSize: 16,
-              fontWeight: 600,
-              color: "#ff6b35",
-              marginTop: 4,
-            }}
-          >
-            ₹{agent.agreedCommission ?? agent.commissionRate ?? 0}{" "}
-            <span style={{ fontSize: 12, color: "#999" }}>per month</span>
+
+          <div className="my-agents-price">
+            ₹{agent.agreedCommission ?? agent.commissionRate ?? 0}
+            <span className="per-month"> per month</span>
           </div>
         </div>
 
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 4,
-            fontSize: 14,
-            fontWeight: 600,
-          }}
-        >
+        <div className="my-agents-rating">
           <span>{agent.rating?.toFixed(1) || "0.0"}</span>
-          <StarFilled style={{ color: "#faad14", fontSize: 16 }} />
+          <StarFilled />
         </div>
       </div>
     </Card>
@@ -134,7 +98,7 @@ const MyAgents = () => {
 
   if (loading) {
     return (
-      <div style={{ textAlign: "center", padding: "100px 20px" }}>
+      <div className="my-agents-loader-wrapper">
         <Spin size="large" />
       </div>
     );
@@ -143,92 +107,75 @@ const MyAgents = () => {
   const firstMyAgent = filteredAgents(myAgents)[0];
 
   return (
-    <div style={{ padding: "16px", maxWidth: 600, margin: "0 auto" }}>
-      {/* Header */}
-      <div style={{ marginBottom: 24 }}>
-        <h2 style={{ fontSize: 20, fontWeight: 600, marginBottom: 8 }}>
-          My Agents
-        </h2>
-        <p style={{ color: "#888", fontSize: 14 }}>
-          Manage your assigned and available agents
-        </p>
+    <div className="my-agents-page">
+      <div className="my-agents-container">
+        {/* Header */}
+        <div className="my-agents-page-header">
+          <h2>My Agents</h2>
+          <p>Manage your assigned and available agents</p>
+        </div>
+
+        <Input
+          placeholder="Search agents here"
+          prefix={<SearchOutlined />}
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          size="large"
+          className="my-agents-search-input"
+        />
+
+        <Card title="Quick Actions" className="my-agents-quick-actions">
+          <div className="my-agents-quick-actions-row">
+            <Button
+              type="primary"
+              icon={<UserAddOutlined />}
+              className="add-my-agent"
+              onClick={() => navigate("/business-owner/add-agent")}
+              block
+            >
+              Add Agent
+            </Button>
+
+            <Button
+              icon={<EyeOutlined />}
+              onClick={() =>
+                firstMyAgent
+                  ? navigate(
+                      `/business-owner/agents/${firstMyAgent.relationId}`
+                    )
+                  : message.info("No agents available")
+              }
+              block
+            >
+              View My Agent
+            </Button>
+          </div>
+        </Card>
+
+        <h3 className="my-agents-section-title">My Agents</h3>
+        {filteredAgents(myAgents).length === 0 ? (
+          <Empty
+            description="No agents assigned"
+            className="my-agents-empty-state"
+          />
+        ) : (
+          <div className="my-agents-agent-list">
+            {filteredAgents(myAgents).map(renderAgentCard)}
+          </div>
+        )}
+
+        <h3 className="my-agents-section-title">Available Agents</h3>
+        {filteredAgents(availableAgents).length === 0 ? (
+          <Empty
+            description="No available agents"
+            className="my-agents-empty-state"
+          />
+        ) : (
+          <div className="my-agents-list">
+            {filteredAgents(availableAgents).map(renderAgentCard)}
+          </div>
+        )}
       </div>
-
-      {/* Search */}
-      <Input
-        placeholder="Search agents here"
-        prefix={<SearchOutlined />}
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        style={{ marginBottom: 16 }}
-        size="large"
-      />
-
-      {/* Quick Actions */}
-      <Card
-        title="Quick Actions"
-        style={{ marginBottom: 24 }}
-        bodyStyle={{ padding: 16 }}
-      >
-        <div style={{ display: "flex", gap: 16 }}>
-          <Button
-            type="primary"
-            icon={<UserAddOutlined />}
-            onClick={() => navigate("/business-owner/add-agent")}
-            style={{ flex: 1 }}
-          >
-            Add Agent
-          </Button>
-          <Button
-            icon={<EyeOutlined />}
-            onClick={() =>
-              firstMyAgent
-                ? navigate(`/business-owner/agents/${firstMyAgent.relationId}`)
-                : message.info("No agents available")
-            }
-            style={{ flex: 1 }}
-          >
-            View My Agent
-          </Button>
-        </div>
-      </Card>
-
-      {/* My Agents */}
-      <h3 style={{ fontSize: 16, fontWeight: 600, marginBottom: 16 }}>
-        My Agents
-      </h3>
-      {filteredAgents(myAgents).length === 0 ? (
-        <Empty
-          description="No agents assigned"
-          style={{ padding: "60px 20px" }}
-        />
-      ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {filteredAgents(myAgents).map(renderAgentCard)}
-        </div>
-      )}
-
-      {/* Available Agents */}
-      <h3
-        style={{
-          fontSize: 16,
-          fontWeight: 600,
-          marginTop: 32,
-          marginBottom: 16,
-        }}
-      >
-        Available Agents
-      </h3>
-      {filteredAgents(availableAgents).length === 0 ? (
-        <Empty
-          description="No available agents"
-          style={{ padding: "60px 20px" }}
-        />
-      ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {filteredAgents(availableAgents).map(renderAgentCard)}
-        </div>
-      )}
     </div>
   );
 };

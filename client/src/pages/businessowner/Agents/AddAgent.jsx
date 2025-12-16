@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Card,
   Input,
@@ -8,14 +9,18 @@ import {
   message,
   Modal,
   InputNumber,
+  Checkbox,
 } from "antd";
 import {
   SearchOutlined,
   ArrowLeftOutlined,
   StarFilled,
   SendOutlined,
+  EnvironmentOutlined,
+  PhoneOutlined,
 } from "@ant-design/icons";
 import agentService from "../../../services/myAgentService";
+import "./AddAgent.css";
 
 const AddAgent = ({ onBack }) => {
   const [agents, setAgents] = useState([]);
@@ -24,6 +29,11 @@ const AddAgent = ({ onBack }) => {
   const [inviting, setInviting] = useState(false);
   const [selectedAgent, setSelectedAgent] = useState(null);
   const [commissionAmount, setCommissionAmount] = useState(0);
+  const [inviteError, setInviteError] = useState("");
+  const [agreePermissions, setAgreePermissions] = useState(false);
+  const navigate = useNavigate();
+
+  const { confirm } = Modal;
 
   useEffect(() => {
     fetchAvailableAgents();
@@ -45,6 +55,8 @@ const AddAgent = ({ onBack }) => {
   const handleInvite = (agent) => {
     setSelectedAgent(agent);
     setCommissionAmount(agent.commissionRate);
+    setInviteError("");
+    setAgreePermissions(false);
   };
 
   const handleSendInvite = async (values) => {
@@ -60,19 +72,45 @@ const AddAgent = ({ onBack }) => {
           canReceiveUpdates: true,
         },
       });
-
       message.success("Invitation sent successfully!");
       setSelectedAgent(null);
       setCommissionAmount(0);
+      setAgreePermissions(false);
+      fetchAvailableAgents();
       if (onBack) onBack();
     } catch (error) {
       console.error("Invite error:", error);
-      message.error(
-        error.response?.data?.message || "Failed to send invitation"
-      );
+      const backendMessage =
+        error?.response?.data?.message ||
+        error?.response?.data?.error ||
+        error?.message ||
+        "Failed to send invitation";
+
+      message.error(backendMessage);
+      setInviteError(backendMessage);
     } finally {
       setInviting(false);
     }
+  };
+
+  const cancelInvite = (relationId) => {
+    confirm({
+      title: "Cancel Invitation?",
+      content: "Are you sure you want to cancel this invitation?",
+      okText: "Yes, cancel",
+      okType: "danger",
+      cancelText: "No",
+      onOk: async () => {
+        try {
+          await agentService.removeAgent(relationId, "Invitation cancelled");
+          message.success("Invitation cancelled");
+          fetchAvailableAgents();
+        } catch (err) {
+          console.error("Cancel invite error:", err);
+          message.error("Failed to cancel invitation");
+        }
+      },
+    });
   };
 
   const filteredAgents = agents.filter((agent) =>
@@ -81,176 +119,156 @@ const AddAgent = ({ onBack }) => {
 
   if (loading) {
     return (
-      <div style={{ textAlign: "center", padding: "100px 20px" }}>
+      <div className="add-agent-loading">
         <Spin size="large" />
       </div>
     );
   }
 
   return (
-    <div style={{ padding: "16px", maxWidth: 600, margin: "0 auto" }}>
+    <div className="add-agent-container">
       {/* Header */}
-      <div style={{ marginBottom: 24 }}>
+      <div className="add-agent-header">
         <Button
           type="text"
           icon={<ArrowLeftOutlined />}
-          onClick={onBack}
-          style={{ marginBottom: 12 }}
-        >
-          Back
-        </Button>
-        <h2 style={{ fontSize: 20, fontWeight: 600, marginBottom: 8 }}>
-          Add Agent
-        </h2>
-        <p style={{ color: "#888", fontSize: 14 }}>
-          Browse and invite agents to manage your business
-        </p>
+          onClick={() => {
+            if (onBack) onBack();
+            else navigate(-1);
+          }}
+        />
+        <h2>Add Agent</h2>
+        <p>Browse and invite agents to manage your business</p>
       </div>
 
       {/* Search */}
       <Input
+        className="add-agent-search"
         placeholder="Search agents by name"
         prefix={<SearchOutlined />}
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        style={{ marginBottom: 16 }}
         size="large"
       />
 
       {/* Agent List */}
       {filteredAgents.length === 0 ? (
-        <Empty
-          description="No agents available"
-          style={{ padding: "60px 20px" }}
-        />
+        <Empty description="No agents available" className="add-agent-empty" />
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          {filteredAgents.map((agent) => (
-            <Card
-              key={agent._id}
-              hoverable
-              style={{ borderRadius: 12 }}
-              styles={{ body: { padding: 16 } }}
-            >
-              <div
-                style={{ display: "flex", alignItems: "flex-start", gap: 12 }}
-              >
-                {/* Avatar */}
-                <div
-                  style={{
-                    width: 48,
-                    height: 48,
-                    borderRadius: "50%",
-                    background: "#ff6b35",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    color: "white",
-                    fontSize: 18,
-                    fontWeight: 600,
-                    flexShrink: 0,
-                  }}
-                >
-                  {agent.name?.charAt(0).toUpperCase()}
-                </div>
+        <div className="agent-list">
+          {filteredAgents.map((agent) => {
+            const isActive = agent.inviteStatus === "active";
+            const isPending = agent.inviteStatus === "pending";
 
-                {/* Info */}
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      marginBottom: 4,
-                    }}
-                  >
-                    <span style={{ fontWeight: 600, fontSize: 15 }}>
-                      {agent.name}
-                    </span>
+            return (
+              <Card
+                key={agent._id}
+                hoverable={!isActive}
+                className={`agent-card ${isActive ? "disabled" : ""}`}
+              >
+                <div className="agent-card-body">
+                  {/* Avatar & Header Info Section */}
+                  <div className="agent-avatar-section">
                     <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 4,
-                        fontSize: 13,
-                        fontWeight: 600,
-                      }}
+                      className={`agent-avatar ${isActive ? "disabled" : ""}`}
                     >
-                      <span>{agent.rating?.toFixed(1) || "0.0"}</span>
-                      <StarFilled style={{ color: "#faad14" }} />
+                      {agent.name?.charAt(0).toUpperCase()}
+                    </div>
+
+                    <div className="agent-info">
+                      <div className="agent-header-info">
+                        {/* Name + Rating */}
+                        <div className="agent-name-rating">
+                          <span>{agent.name}</span>
+                          <div className="agent-rating-badge">
+                            <span>{agent.rating?.toFixed(1) || "0.0"}</span>
+                            <StarFilled style={{ color: "#faad14" }} />
+                            <span>({agent.totalReviews || 0})</span>
+                          </div>
+                        </div>
+
+                        {/* Experience */}
+                        <div className="agent-exp-businesses">
+                          {agent.experience || 0}+ years exp • Managing{" "}
+                          {agent.businessesManaged || 0}+ businesses
+                        </div>
+
+                        {/* Location */}
+                        {agent.city && (
+                          <div className="agent-city-state">
+                            <EnvironmentOutlined /> {agent.city}
+                            {agent.state && `, ${agent.state}`}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
 
-                  <div style={{ fontSize: 13, color: "#666", marginBottom: 4 }}>
-                    {agent.experience || 0}+ years exp • Managing{" "}
-                    {agent.businessesManaged || 0}+ businesses
-                  </div>
+                  {/* Details Section (Bio & Phone) */}
+                  {(agent.bio || agent.phone) && (
+                    <div className="agent-details-section">
+                      {agent.bio && (
+                        <div className="agent-bio">{agent.bio}</div>
+                      )}
 
-                  {agent.city && (
-                    <div
-                      style={{ fontSize: 12, color: "#999", marginBottom: 8 }}
-                    >
-                      📍 {agent.city}
-                      {agent.state && `, ${agent.state}`}
+                      {agent.phone && (
+                        <div className="agent-phone">
+                          <PhoneOutlined /> {agent.phone}
+                        </div>
+                      )}
                     </div>
                   )}
 
-                  {agent.specialization && agent.specialization.length > 0 && (
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: 6,
-                        flexWrap: "wrap",
-                        marginBottom: 8,
-                      }}
-                    >
-                      {agent.specialization.slice(0, 3).map((spec) => (
-                        <span
-                          key={spec}
-                          style={{
-                            fontSize: 11,
-                            padding: "2px 8px",
-                            background: "#f0f0f0",
-                            borderRadius: 12,
-                            color: "#666",
-                          }}
-                        >
-                          {spec}
-                        </span>
+                  {/* Specialization */}
+                  {agent.specialization?.length > 0 && (
+                    <div className="agent-specialization">
+                      {agent.specialization.map((spec) => (
+                        <span key={spec}>{spec}</span>
                       ))}
                     </div>
                   )}
 
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      marginTop: 8,
-                    }}
-                  >
-                    <span
+                  {/* Footer */}
+                  <div className="agent-footer">
+                    <span className="agent-commission">
+                      ₹{agent.commissionRate}
+                    </span>
+
+                    <div
                       style={{
-                        fontSize: 16,
-                        fontWeight: 600,
-                        color: "#ff6b35",
+                        display: "flex",
+                        gap: "8px",
+                        flex: 1,
+                        justifyContent: "flex-end",
                       }}
                     >
-                      ₹{agent.commissionRate}/month
-                    </span>
-                    <Button
-                      type="primary"
-                      size="small"
-                      icon={<SendOutlined />}
-                      onClick={() => handleInvite(agent)}
-                    >
-                      Invite
-                    </Button>
+                      {/* Invite button */}
+                      <Button
+                        type="primary"
+                        size="small"
+                        icon={<SendOutlined />}
+                        onClick={() => handleInvite(agent)}
+                        disabled={isPending}
+                      >
+                        {isActive ? "Active" : isPending ? "Pending" : "Invite"}
+                      </Button>
+
+                      {/* Cancel only for pending */}
+                      {isPending && (
+                        <Button
+                          size="small"
+                          danger
+                          onClick={() => cancelInvite(agent.relationId)}
+                        >
+                          Cancel
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Card>
-          ))}
+              </Card>
+            );
+          })}
         </div>
       )}
 
@@ -261,88 +279,84 @@ const AddAgent = ({ onBack }) => {
         onCancel={() => {
           setSelectedAgent(null);
           setCommissionAmount(0);
+          setInviteError("");
+          setAgreePermissions(false);
         }}
         footer={null}
       >
         {selectedAgent && (
           <div>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 12,
-                marginBottom: 24,
-                padding: 12,
-                background: "#f5f5f5",
-                borderRadius: 8,
-              }}
-            >
-              <div
-                style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: "50%",
-                  background: "#ff6b35",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  color: "white",
-                  fontSize: 16,
-                  fontWeight: 600,
-                }}
-              >
+            <div className="invite-modal-header">
+              <div className="invite-modal-avatar">
                 {selectedAgent.name?.charAt(0).toUpperCase()}
               </div>
-              <div>
-                <div style={{ fontWeight: 600 }}>{selectedAgent.name}</div>
-                <div style={{ fontSize: 12, color: "#666" }}>
-                  {selectedAgent.rating?.toFixed(1)} ⭐ •{" "}
-                  {selectedAgent.businessesManaged}+ businesses
+              <div className="invite-modal-info">
+                <div>{selectedAgent.name}</div>
+                <div>
+                  {selectedAgent.rating?.toFixed(1)}{" "}
+                  <StarFilled style={{ color: "#faad14" }} /> •{" "}
+                  {selectedAgent.totalReviews || 0} reviews
                 </div>
+                {selectedAgent.city && (
+                  <div>
+                    <EnvironmentOutlined style={{ color: "#ff6b35" }} />{" "}
+                    {selectedAgent.city}
+                    {selectedAgent.state && `, ${selectedAgent.state}`}
+                  </div>
+                )}
               </div>
             </div>
 
-            <div style={{ marginBottom: 16 }}>
-              <label
-                style={{ fontWeight: 500, marginBottom: 8, display: "block" }}
-              >
-                Agreed Commission (per month)
-              </label>
+            {selectedAgent.bio && (
+              <div className="invite-modal-bio">{selectedAgent.bio}</div>
+            )}
+
+            <div className="invite-modal-commission">
+              <label>Agreed Commission (per month)</label>
               <InputNumber
                 prefix="₹"
                 style={{ width: "100%" }}
                 size="large"
-                placeholder="Enter amount"
                 value={commissionAmount}
                 onChange={(val) => setCommissionAmount(val)}
                 min={0}
               />
             </div>
 
-            <div
-              style={{
-                background: "#f9f9f9",
-                padding: 12,
-                borderRadius: 8,
-                marginBottom: 16,
-                fontSize: 13,
-                color: "#666",
-              }}
-            >
-              <div style={{ fontWeight: 600, marginBottom: 4 }}>
-                Default Permissions:
-              </div>
-              <div>✓ Upload documents</div>
-              <div>✓ Submit applications</div>
-              <div>✓ View dashboard</div>
-              <div>✓ Receive updates</div>
+            <div className="invite-modal-permissions">
+              <div>Permissions Granted</div>
+
+              <Checkbox checked disabled>
+                Upload documents
+              </Checkbox>
+              <Checkbox checked disabled>
+                Submit applications
+              </Checkbox>
+              <Checkbox checked disabled>
+                View dashboard
+              </Checkbox>
+              <Checkbox checked disabled>
+                Receive updates
+              </Checkbox>
+
+              <Checkbox
+                checked={agreePermissions}
+                onChange={(e) => setAgreePermissions(e.target.checked)}
+              >
+                I understand and agree to grant these permissions
+              </Checkbox>
             </div>
+
+            {inviteError && (
+              <div className="invite-error-message">{inviteError}</div>
+            )}
 
             <Button
               type="primary"
               loading={inviting}
               block
               size="large"
+              disabled={!agreePermissions}
               onClick={() => {
                 if (!commissionAmount || commissionAmount <= 0) {
                   message.error("Enter valid commission amount");
@@ -350,11 +364,11 @@ const AddAgent = ({ onBack }) => {
                 }
                 handleSendInvite({ agreedCommission: commissionAmount });
               }}
+              className="invite-submit-button"
             >
               Send Invitation
             </Button>
           </div>
-          //   </div>
         )}
       </Modal>
     </div>

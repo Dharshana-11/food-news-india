@@ -62,6 +62,11 @@ const businessAgentRelationSchema = new mongoose.Schema(
       index: true,
     },
 
+    pendingExpiresAt: {
+      type: Date,
+      default: () => new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+    },
+
     // Permissions granted to agent
     permissions: {
       canUploadDocuments: { type: Boolean, default: true },
@@ -136,19 +141,27 @@ const businessAgentRelationSchema = new mongoose.Schema(
 // Compound indexes
 businessAgentRelationSchema.index({ businessOwnerId: 1, status: 1 });
 businessAgentRelationSchema.index({ agentId: 1, status: 1 });
-businessAgentRelationSchema.index(
-  { businessOwnerId: 1, agentId: 1 },
-  { unique: true }
-);
 
 // Prevent duplicate active relations
 businessAgentRelationSchema.index(
   { businessOwnerId: 1, agentId: 1, status: 1 },
   {
     unique: true,
-    partialFilterExpression: { status: "active" },
+    partialFilterExpression: { status: { $in: ["pending", "active"] } }, // only active and pending agents are unique
   }
 );
+
+// Optional: pending invite expiry field
+businessAgentRelationSchema.add({
+  pendingExpiresAt: { type: Date, default: null },
+});
+
+// Helper method to check if a pending invite is still valid
+businessAgentRelationSchema.methods.isPendingActive = function () {
+  if (this.status !== "pending") return false;
+  if (!this.pendingExpiresAt) return true; // no expiry set
+  return this.pendingExpiresAt > new Date();
+};
 
 export default mongoose.model(
   "BusinessAgentRelation",

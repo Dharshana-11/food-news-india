@@ -43,6 +43,21 @@ export const getAvailableAgents = async (req, res) => {
       .select("uid name phone email createdAt")
       .lean();
 
+    const businessOwnerId = req.user._id;
+
+    const relations = await BusinessAgentRelation.find({
+      businessOwnerId,
+      status: { $in: ["pending", "active"] },
+    }).lean();
+
+    const relationMap = {};
+    relations.forEach((r) => {
+      relationMap[r.agentId.toString()] = {
+        status: r.status,
+        relationId: r._id,
+      };
+    });
+
     const agentIds = agents.map((a) => a._id);
 
     const profiles = await AgentProfile.find({
@@ -58,12 +73,16 @@ export const getAvailableAgents = async (req, res) => {
         );
         if (!profile) return null;
 
+        const relation = relationMap[agent._id.toString()] || null;
+
         return {
           _id: agent._id,
           uid: agent.uid,
           name: agent.name,
           phone: agent.phone,
           email: agent.email,
+
+          // Profile
           rating: profile.rating || 0,
           totalReviews: profile.totalReviews || 0,
           businessesManaged: profile.businessesManaged || 0,
@@ -73,6 +92,9 @@ export const getAvailableAgents = async (req, res) => {
           city: profile.city || "",
           state: profile.state || "",
           bio: profile.bio || "",
+
+          inviteStatus: relation?.status || null, // pending | active | null
+          relationId: relation?.relationId || null,
         };
       })
       .filter(Boolean);
@@ -235,18 +257,41 @@ export const inviteAgent = async (req, res) => {
         .json({ message: "Agent not found or not available" });
     }
 
+    const activeAgentExists = await BusinessAgentRelation.exists({
+      businessOwnerId,
+      status: "active",
+    });
+
+    if (activeAgentExists) {
+      return res.status(400).json({
+        message:
+          "You already have an active agent. Remove the current agent before inviting another.",
+      });
+    }
     // Check for existing relation
+    // Check for existing active or pending relation with this agent
     const existingRelation = await BusinessAgentRelation.findOne({
       businessOwnerId,
       agentId,
       status: { $in: ["pending", "active"] },
     });
 
-    if (existingRelation) {
+    // If active, block invite
+    if (existingRelation && existingRelation.status === "active") {
       return res.status(400).json({
-        message:
-          "You already have an active or pending invitation with this agent",
+        message: "You already have an active relation with this agent",
       });
+    }
+
+    // If pending, check if invite is still active
+    if (existingRelation && existingRelation.status === "pending") {
+      if (existingRelation.isPendingActive()) {
+        return res.status(400).json({
+          message:
+            "You already have a pending invitation to this agent. Cancel or wait for it to expire.",
+        });
+      }
+      // Otherwise, pending invite expired → allow creating a new one
     }
 
     // Create invitation
@@ -262,6 +307,7 @@ export const inviteAgent = async (req, res) => {
         canReceiveUpdates: true,
       },
       invitedAt: new Date(),
+      pendingExpiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // optional 7-day expiry
     });
 
     return res.status(201).json({

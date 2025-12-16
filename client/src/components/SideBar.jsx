@@ -202,6 +202,11 @@ const SideBar = ({ role, isOpen, onClose }) => {
         key: ROUTES.BUSINESS_OWNER_MY_AGENTS,
         icon: <UserOutlined />,
         label: "My Agents",
+        paths: [
+          ROUTES.BUSINESS_OWNER_MY_AGENTS,
+          ROUTES.BUSINESS_OWNER_AGENT_DETAILS,
+          ROUTES.BUSINESS_OWNER_ADD_AGENT,
+        ],
       },
       {
         key: ROUTES.BUSINESS_OWNER_DOCUMENT_VAULT,
@@ -243,15 +248,14 @@ const SideBar = ({ role, isOpen, onClose }) => {
   }
 
   // ---------------- ACTIVE MENU HIGHLIGHT ----------------
-  const selectedKey =
-    location.pathname.startsWith("/tickets/")
-      ? ROUTES.SUPER_ADMIN_TICKETS
-      : location.pathname.startsWith("/super-admin/profile/")
+  const selectedKey = location.pathname.startsWith("/tickets/")
+    ? ROUTES.SUPER_ADMIN_TICKETS
+    : location.pathname.startsWith("/super-admin/profile/")
       ? ROUTES.SUPER_ADMIN_USERS
       : items.find(
           (item) =>
             location.pathname.startsWith(item?.key) ||
-            item?.paths?.some((p) => location.pathname.startsWith(p)),
+            item?.paths?.some((p) => location.pathname.startsWith(p))
         )?.key || ROUTES.SUPER_ADMIN_DASHBOARD;
 
   // ---------------- RESIZE BEHAVIOR ----------------

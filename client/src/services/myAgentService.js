@@ -45,8 +45,13 @@ const agentService = {
    * @param {Object} data - { agentId, agreedCommission, permissions }
    */
   inviteAgent: async (data) => {
-    const response = await api.post("/agents/invite", data);
-    return response.data;
+    try {
+      const response = await api.post("/agents/invite", data);
+      return response.data;
+    } catch (error) {
+      // IMPORTANT: forward backend message
+      throw error.response?.data || { message: "Invite failed" };
+    }
   },
 
   /**
@@ -58,6 +63,15 @@ const agentService = {
     const response = await api.patch(`/agents/${relationId}/permissions`, {
       permissions,
     });
+    return response.data;
+  },
+
+  /**
+   * Cancel pending agent invitation
+   * @param {string} relationId
+   */
+  cancelInvite: async (relationId) => {
+    const response = await api.delete(`/agents/${relationId}`);
     return response.data;
   },
 
