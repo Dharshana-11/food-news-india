@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import {
   Card,
   Button,
@@ -22,16 +23,23 @@ import {
 } from "@ant-design/icons";
 import agentService from "../../../services/myAgentService";
 
-const ViewMyAgent = ({ relationId, onBack }) => {
+const ViewMyAgent = ({ onBack }) => {
   const [agent, setAgent] = useState(null);
   const [loading, setLoading] = useState(true);
   const [removing, setRemoving] = useState(false);
+
+  const { relationId } = useParams();
 
   useEffect(() => {
     fetchAgentDetails();
   }, [relationId]);
 
   const fetchAgentDetails = async () => {
+    if (!relationId) {
+      console.warn("No relationId provided to fetch agent details");
+      return;
+    }
+
     try {
       setLoading(true);
       const data = await agentService.getAgentDetails(relationId);

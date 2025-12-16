@@ -22,6 +22,7 @@ export const getAvailableAgents = async (req, res) => {
     const userFilter = {
       role: ROLES.AGENT,
       status: "verified",
+      isVerified: true,
       isDeleted: false,
     };
     if (search) {
