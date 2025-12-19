@@ -130,7 +130,7 @@ const SideBar = ({ role, isOpen, onClose }) => {
         label: "Dashboard",
       },
       {
-        key: ROUTES.SUPER_ADMIN_USERS,
+        key: ROUTES.USER_LIST,
         icon: <UserOutlined />,
         label: "User Management",
       },
@@ -148,7 +148,7 @@ const SideBar = ({ role, isOpen, onClose }) => {
         ],
       },
       {
-        key: ROUTES.SUPER_ADMIN_TICKETS,
+        key: ROUTES.TICKET_BOARD,
         icon: <CustomerServiceOutlined />,
         label: "Support Tickets",
       },
@@ -158,9 +158,17 @@ const SideBar = ({ role, isOpen, onClose }) => {
         label: "Platform Settings",
       },
       {
-        key: ROUTES.SUPER_ADMIN_NOTIFICATIONS,
+        key: ROUTES.NOTIF_OVERVIEW,
         icon: <NotificationOutlined />,
         label: "Notification Settings",
+        paths: [
+          ROUTES.NOTIF_OVERVIEW,
+          ROUTES.NOTIF_MODULE_SETTINGS,
+          ROUTES.NOTIF_ROLE_SETTINGS,
+          ROUTES.NOTIF_TEMPLATE_SETTINGS,
+          ROUTES.NOTIF_GLOBAL_SETTINGS,
+          ROUTES.NOTIF_LOGS,
+        ],
       },
       {
         key: ROUTES.SUPER_ADMIN_CONTENT,

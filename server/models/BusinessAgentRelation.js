@@ -79,6 +79,7 @@ const businessAgentRelationSchema = new mongoose.Schema(
     agreedCommission: {
       type: Number, // ₹ per month
       required: true,
+      immutable: true,
     },
 
     paymentFrequency: {

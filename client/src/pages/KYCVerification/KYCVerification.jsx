@@ -179,26 +179,26 @@ const KYCVerification = () => {
 
   if (loading) {
     return (
-      <AppLayout role={ROLES.BUSINESS_OWNER}>
-        <div className="kyc-container">
-          <div className="kyc-loading">
-            <Spin size="large" tip="Loading KYC data..." />
-          </div>
+      // <AppLayout role={ROLES.BUSINESS_OWNER}>
+      <div className="kyc-container">
+        <div className="kyc-loading">
+          <Spin size="large" tip="Loading KYC data..." />
         </div>
-      </AppLayout>
+      </div>
+      // </AppLayout>
     );
   }
 
   // Show business profile form if profile not filled yet
   if (!profile?.businessName) {
     return (
-      <AppLayout role={ROLES.BUSINESS_OWNER}>
-        <div className="kyc-container">
-          <div className="no-result-padding">
-            <BusinessProfileForm onUpdate={fetchData} />
-          </div>
+      // <AppLayout role={ROLES.BUSINESS_OWNER}>
+      <div className="kyc-container">
+        <div className="no-result-padding">
+          <BusinessProfileForm onUpdate={fetchData} />
         </div>
-      </AppLayout>
+      </div>
+      // </AppLayout>
     );
   }
 

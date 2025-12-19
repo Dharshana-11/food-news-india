@@ -17,13 +17,10 @@ import { useAuth } from "../context/AuthContext";
  * @param {JSX.Element} props.children - Component to render after authentication
  * @returns {JSX.Element}
  */
-const ProtectedRoute = ({ requiredRole, children }) => {
+const ProtectedRoute = ({ allowedRoles, children }) => {
   const { currentUser, loading, isRefreshingSession } = useAuth();
 
-  const isLoading = loading || isRefreshingSession;
-
-  // Show loader during initial authentication or session refresh
-  if (isLoading) {
+  if (loading || isRefreshingSession) {
     return (
       <div
         style={{
@@ -33,18 +30,16 @@ const ProtectedRoute = ({ requiredRole, children }) => {
           height: "100vh",
         }}
       >
-        <Spin size="large" tip="Loading..." />
+        <Spin size="large" />
       </div>
     );
   }
 
-  // If not authenticated → redirect to login
   if (!currentUser) {
     return <Navigate to={ROUTES.LOGIN} replace />;
   }
 
-  // Role-based protection (optional)
-  if (requiredRole && currentUser.role !== requiredRole) {
+  if (allowedRoles && !allowedRoles.includes(currentUser.role)) {
     return <Navigate to="/unauthorized" replace />;
   }
 

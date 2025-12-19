@@ -191,6 +191,14 @@ export const getAgentDetails = async (req, res) => {
       return res.status(404).json({ message: "Agent relation not found" });
     }
 
+    if (!relation || relation.status === "pending") {
+      return res.status(200).json({
+        success: true,
+        data: null,
+        message: "Agent is pending", // specific message
+      });
+    }
+
     const profile = await AgentProfile.findOne({
       userId: relation.agentId._id,
     }).lean();
@@ -241,7 +249,7 @@ export const getAgentDetails = async (req, res) => {
 export const inviteAgent = async (req, res) => {
   try {
     const businessOwnerId = req.user._id;
-    const { agentId, agreedCommission, permissions } = req.body;
+    const { agentId, permissions } = req.body;
 
     // Validate agent exists
     const agent = await Users.findOne({
@@ -294,12 +302,23 @@ export const inviteAgent = async (req, res) => {
       // Otherwise, pending invite expired → allow creating a new one
     }
 
+    const agentProfile = await AgentProfile.findOne({
+      userId: agentId,
+      isAvailable: true,
+    });
+
+    if (!agentProfile || agentProfile.commissionRate <= 0) {
+      return res.status(400).json({
+        message: "Agent commission is not set or invalid",
+      });
+    }
+
     // Create invitation
     const relation = await BusinessAgentRelation.create({
       businessOwnerId,
       agentId,
       status: "pending",
-      agreedCommission: agreedCommission || 7500,
+      agreedCommission: agentProfile.commissionRate,
       permissions: permissions || {
         canUploadDocuments: true,
         canSubmitApplications: true,

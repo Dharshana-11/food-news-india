@@ -5,6 +5,7 @@ import {
   UserAddOutlined,
   EyeOutlined,
   StarFilled,
+  ArrowRightOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import agentService from "../../../services/myAgentService";
@@ -56,13 +57,7 @@ const MyAgents = () => {
   const renderAgentCard = (agent) => (
     <Card
       key={agent.relationId || agent.agentId || agent._id}
-      hoverable
       className="my-agents-card"
-      onClick={() =>
-        agent.relationId
-          ? navigate(`/business-owner/agents/${agent.relationId}`)
-          : message.info("Agent details not available")
-      }
     >
       <div className="my-agents-row">
         <div className="my-agents-avatar">
@@ -104,7 +99,13 @@ const MyAgents = () => {
     );
   }
 
-  const firstMyAgent = filteredAgents(myAgents)[0];
+  // Only consider active agents for viewing
+  const activeAgents = filteredAgents(myAgents).filter(
+    (agent) => agent.status === "active"
+  );
+  const pendingAgents = filteredAgents(myAgents).filter(
+    (agent) => agent.status === "pending"
+  );
 
   return (
     <div className="my-agents-page">
@@ -135,16 +136,22 @@ const MyAgents = () => {
             >
               Add Agent
             </Button>
-
             <Button
               icon={<EyeOutlined />}
-              onClick={() =>
-                firstMyAgent
-                  ? navigate(
-                      `/business-owner/agents/${firstMyAgent.relationId}`
-                    )
-                  : message.info("No agents available")
-              }
+              onClick={() => {
+                if (activeAgents.length > 0) {
+                  // Navigate to first active agent
+                  navigate(
+                    `/business-owner/agents/${activeAgents[0].relationId}`
+                  );
+                } else if (pendingAgents.length > 0) {
+                  // All agents are pending
+                  message.info("Your agent is still pending");
+                } else {
+                  // No agents at all
+                  message.info("No agents available");
+                }
+              }}
               block
             >
               View My Agent
@@ -159,12 +166,20 @@ const MyAgents = () => {
             className="my-agents-empty-state"
           />
         ) : (
-          <div className="my-agents-agent-list">
+          <div className="my-agents-list">
             {filteredAgents(myAgents).map(renderAgentCard)}
           </div>
         )}
 
-        <h3 className="my-agents-section-title">Available Agents</h3>
+        <div className="my-agents-section-header">
+          <h3 className="my-agents-section-title">Available Agents</h3>
+
+          <ArrowRightOutlined
+            className="my-agents-forward-arrow"
+            onClick={() => navigate("/business-owner/add-agent")}
+          />
+        </div>
+
         {filteredAgents(availableAgents).length === 0 ? (
           <Empty
             description="No available agents"

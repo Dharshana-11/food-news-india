@@ -45,12 +45,33 @@
   display: flex;
   gap: 16px;
 }
+.my-agents-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.my-agents-forward-arrow {
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 20px;
+  /* color: #555; */
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.my-agents-forward-arrow:hover {
+  transform: translateX(3px); /* subtle forward motion */
+}
 
 /* Section titles */
 .my-agents-section-title {
   font-size: 16px;
   font-weight: 600;
   margin: 32px 0 16px;
+  align-items: center;
 }
 
 /* Agent list */

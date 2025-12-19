@@ -59,12 +59,11 @@ const AddAgent = ({ onBack }) => {
     setAgreePermissions(false);
   };
 
-  const handleSendInvite = async (values) => {
+  const handleSendInvite = async () => {
     try {
       setInviting(true);
       await agentService.inviteAgent({
         agentId: selectedAgent._id,
-        agreedCommission: values.agreedCommission,
         permissions: {
           canUploadDocuments: true,
           canSubmitApplications: true,
@@ -318,9 +317,11 @@ const AddAgent = ({ onBack }) => {
                 style={{ width: "100%" }}
                 size="large"
                 value={commissionAmount}
-                onChange={(val) => setCommissionAmount(val)}
-                min={0}
+                disabled
               />
+              <small style={{ color: "#888" }}>
+                Commission is fixed by the agent and cannot be changed
+              </small>
             </div>
 
             <div className="invite-modal-permissions">
@@ -358,11 +359,7 @@ const AddAgent = ({ onBack }) => {
               size="large"
               disabled={!agreePermissions}
               onClick={() => {
-                if (!commissionAmount || commissionAmount <= 0) {
-                  message.error("Enter valid commission amount");
-                  return;
-                }
-                handleSendInvite({ agreedCommission: commissionAmount });
+                handleSendInvite();
               }}
               className="invite-submit-button"
             >

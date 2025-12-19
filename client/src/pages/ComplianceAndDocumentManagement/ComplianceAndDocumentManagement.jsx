@@ -15,23 +15,23 @@ import ROLES from "../../constants/roles";
  */
 const ComplianceAndDocumentManagement = () => {
   return (
-    <AppLayout role={ROLES.SUPER_ADMIN}>
-      <div className="compliance-docs-page">
-        {/* Page Header */}
-        <div className="page-header">
-          <h2 className="page-title">Compliance & Documents Management</h2>
-        </div>
-
-        {/* Summaries Grid */}
-        <div className="summaries-grid">
-          <ComplianceItemSummary />
-          <BusinessTypeSummary />
-          <ComplianceMappingSummary />
-          <KYCDocumentSummary />
-          <DocumentSummary />
-        </div>
+    // <AppLayout role={ROLES.SUPER_ADMIN}>
+    <div className="compliance-docs-page">
+      {/* Page Header */}
+      <div className="page-header">
+        <h2 className="page-title">Compliance & Documents Management</h2>
       </div>
-    </AppLayout>
+
+      {/* Summaries Grid */}
+      <div className="summaries-grid">
+        <ComplianceItemSummary />
+        <BusinessTypeSummary />
+        <ComplianceMappingSummary />
+        <KYCDocumentSummary />
+        <DocumentSummary />
+      </div>
+    </div>
+    // </AppLayout>
   );
 };
 
