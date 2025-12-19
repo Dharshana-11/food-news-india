@@ -183,106 +183,104 @@ const ComplianceMappings = () => {
 
   // -------------------- Render --------------------
   return (
-    <AppLayout role={ROLES.SUPER_ADMIN}>
-      <div className="compliance-mappings-page">
-        <div className="page-header-section">
-          <div className="header-content">
-            <h2 className="page-main-title">Compliance Requirement Mappings</h2>
-            <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
-              Add Mapping
-            </Button>
-          </div>
+    <div className="compliance-mappings-page">
+      <div className="page-header-section">
+        <div className="header-content">
+          <h2 className="page-main-title">Compliance Requirement Mappings</h2>
+          <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
+            Add Mapping
+          </Button>
         </div>
-
-        <Tabs
-          activeKey={activeTab}
-          onChange={setActiveTab}
-          items={[
-            {
-              key: "list",
-              label: (
-                <span>
-                  <TableOutlined /> List View
-                </span>
-              ),
-              children: (
-                <>
-                  <div className="filter-section">
-                    <Search
-                      placeholder="Search by business type or compliance item..."
-                      allowClear
-                      enterButton={<SearchOutlined />}
-                      onSearch={handleSearch}
-                      style={{ width: 400 }}
-                    />
-                  </div>
-
-                  <CustomTable
-                    columns={columns}
-                    data={data}
-                    loading={loading}
-                    pagination={pagination}
-                    onChange={handleTableChange}
-                  />
-                </>
-              ),
-            },
-            {
-              key: "grid",
-              label: (
-                <span>
-                  <AppstoreOutlined /> Grid View
-                </span>
-              ),
-              children: (
-                <>
-                  <div className="filter-section">
-                    <Select
-                      placeholder="Select Business Type"
-                      value={selectedBusinessType}
-                      onChange={setSelectedBusinessType}
-                      style={{ width: 300 }}
-                    >
-                      {businessTypes.map((type) => (
-                        <Select.Option key={type._id} value={type._id}>
-                          {type.name}
-                        </Select.Option>
-                      ))}
-                    </Select>
-                  </div>
-
-                  {selectedBusinessType && (
-                    <MappingGrid
-                      businessTypeId={selectedBusinessType}
-                      onUpdate={() =>
-                        fetchData(
-                          pagination.current,
-                          pagination.pageSize,
-                          searchText,
-                        )
-                      }
-                    />
-                  )}
-                </>
-              ),
-            },
-          ]}
-        />
-
-        <Modal
-          title="Add Compliance Mapping"
-          open={isModalOpen}
-          onCancel={() => setIsModalOpen(false)}
-          footer={null}
-          width={600}
-        >
-          <MappingForm
-            onSuccess={handleFormSuccess}
-            onCancel={() => setIsModalOpen(false)}
-          />
-        </Modal>
       </div>
-    </AppLayout>
+
+      <Tabs
+        activeKey={activeTab}
+        onChange={setActiveTab}
+        items={[
+          {
+            key: "list",
+            label: (
+              <span>
+                <TableOutlined /> List View
+              </span>
+            ),
+            children: (
+              <>
+                <div className="filter-section">
+                  <Search
+                    placeholder="Search by business type or compliance item..."
+                    allowClear
+                    enterButton={<SearchOutlined />}
+                    onSearch={handleSearch}
+                    style={{ width: 400 }}
+                  />
+                </div>
+
+                <CustomTable
+                  columns={columns}
+                  data={data}
+                  loading={loading}
+                  pagination={pagination}
+                  onChange={handleTableChange}
+                />
+              </>
+            ),
+          },
+          {
+            key: "grid",
+            label: (
+              <span>
+                <AppstoreOutlined /> Grid View
+              </span>
+            ),
+            children: (
+              <>
+                <div className="filter-section">
+                  <Select
+                    placeholder="Select Business Type"
+                    value={selectedBusinessType}
+                    onChange={setSelectedBusinessType}
+                    style={{ width: 300 }}
+                  >
+                    {businessTypes.map((type) => (
+                      <Select.Option key={type._id} value={type._id}>
+                        {type.name}
+                      </Select.Option>
+                    ))}
+                  </Select>
+                </div>
+
+                {selectedBusinessType && (
+                  <MappingGrid
+                    businessTypeId={selectedBusinessType}
+                    onUpdate={() =>
+                      fetchData(
+                        pagination.current,
+                        pagination.pageSize,
+                        searchText
+                      )
+                    }
+                  />
+                )}
+              </>
+            ),
+          },
+        ]}
+      />
+
+      <Modal
+        title="Add Compliance Mapping"
+        open={isModalOpen}
+        onCancel={() => setIsModalOpen(false)}
+        footer={null}
+        width={600}
+      >
+        <MappingForm
+          onSuccess={handleFormSuccess}
+          onCancel={() => setIsModalOpen(false)}
+        />
+      </Modal>
+    </div>
   );
 };
 

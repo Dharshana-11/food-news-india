@@ -20,4 +20,11 @@ export const ENDPOINTS = {
   USER_DETAIL: (uid) => `/users/${uid}`,
   USER_UPDATE: (uid) => `/users/${uid}`,
   USER_DELETE: (uid) => `/users/${uid}`,
+
+  AGENTS_AVAILABLE: "/agents/available",
+  AGENTS_MY: "/agents/my-agents",
+  AGENT_DETAILS: (id) => `/agents/${id}`,
+  AGENT_INVITE: "/agents/invite",
+  AGENT_PERMISSIONS: (id) => `/agents/${id}/permissions`,
+  AGENT_REMOVE: (id) => `/agents/${id}`,
 };

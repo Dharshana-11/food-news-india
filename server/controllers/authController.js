@@ -137,8 +137,8 @@ export const completeProfile = async (req, res) => {
       phone: phoneNumber,
       name: name.trim(),
       role,
-      isVerified: true, // Firebase already verified the phone
-      status: "verified",
+      // isVerified: true, // Firebase already verified the phone
+      // status: "verified",
       updatedBy: uid, // Self-created
     });
 

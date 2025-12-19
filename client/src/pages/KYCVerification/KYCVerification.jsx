@@ -9,8 +9,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Row, Col, Spin, Typography, message, Card } from "antd";
-import AppLayout from "../../layouts/AppLayout";
-import ROLES from "../../constants/roles";
 import { ROUTES } from "../../routes";
 import {
   getKYCRequirements,
@@ -179,98 +177,94 @@ const KYCVerification = () => {
 
   if (loading) {
     return (
-      <AppLayout role={ROLES.BUSINESS_OWNER}>
-        <div className="kyc-container">
-          <div className="kyc-loading">
-            <Spin size="large" tip="Loading KYC data..." />
-          </div>
+      <div className="kyc-container">
+        <div className="kyc-loading">
+          <Spin size="large" tip="Loading KYC data..." />
         </div>
-      </AppLayout>
+      </div>
+      // </AppLayout>
     );
   }
 
   // Show business profile form if profile not filled yet
   if (!profile?.businessName) {
     return (
-      <AppLayout role={ROLES.BUSINESS_OWNER}>
-        <div className="kyc-container">
-          <div className="no-result-padding">
-            <BusinessProfileForm onUpdate={fetchData} />
-          </div>
+      // <AppLayout role={ROLES.BUSINESS_OWNER}>
+      <div className="kyc-container">
+        <div className="no-result-padding">
+          <BusinessProfileForm onUpdate={fetchData} />
         </div>
-      </AppLayout>
+      </div>
     );
   }
 
   return (
-    <AppLayout role={ROLES.BUSINESS_OWNER}>
-      <div className="kyc-container kyc-wizard">
-        {/* Header */}
-        <div className="kyc-header">
-          <Title level={2}>KYC Verification</Title>
-          <Paragraph type="secondary">
-            Complete your KYC to access all features
-          </Paragraph>
-        </div>
-
-        {/* Stepper */}
-        <KYCStepper
-          requirements={requirements}
-          uploadedFiles={uploadedFiles}
-          currentStep={currentStep}
-          setCurrentStep={setCurrentStep}
-        />
-
-        {/* Progress Summary */}
-        <KYCProgress
-          requirements={requirements} // pass requirements array
-          uploadedFiles={uploadedFiles}
-        />
-
-        {/* Main Content */}
-        <Row gutter={[24, 24]} style={{ marginTop: 24 }}>
-          <Col xs={24}>
-            {currentStep < requirements.length ? (
-              <KYCDocumentCard
-                requirement={requirements[currentStep]}
-                uploadedFiles={uploadedFiles}
-                handleFileSelect={handleFileSelect}
-                handleUpload={handleUpload}
-                uploading={uploading}
-              />
-            ) : (
-              <KYCCompletion
-                requirements={requirements}
-                uploadedFiles={uploadedFiles}
-                uploading={uploading}
-                handleSubmitForReview={handleSubmitForReview}
-                handleGoToDashboard={handleGoToDashboard}
-              />
-            )}
-          </Col>
-        </Row>
-
-        {/* Optional Profile Update Form */}
-        {showProfileForm && (
-          <Card bordered={false} style={{ marginTop: 16 }}>
-            <BusinessProfileForm
-              onUpdate={() => {
-                fetchData();
-                setShowProfileForm(false);
-              }}
-            />
-          </Card>
-        )}
-
-        {/* Footer Navigation */}
-        <KYCFooter
-          currentStep={currentStep}
-          requirements={requirements}
-          uploadedFiles={uploadedFiles}
-          setCurrentStep={setCurrentStep}
-        />
+    <div className="kyc-container kyc-wizard">
+      {/* Header */}
+      <div className="kyc-header">
+        <Title level={2}>KYC Verification</Title>
+        <Paragraph type="secondary">
+          Complete your KYC to access all features
+        </Paragraph>
       </div>
-    </AppLayout>
+
+      {/* Stepper */}
+      <KYCStepper
+        requirements={requirements}
+        uploadedFiles={uploadedFiles}
+        currentStep={currentStep}
+        setCurrentStep={setCurrentStep}
+      />
+
+      {/* Progress Summary */}
+      <KYCProgress
+        requirements={requirements} // pass requirements array
+        uploadedFiles={uploadedFiles}
+      />
+
+      {/* Main Content */}
+      <Row gutter={[24, 24]} style={{ marginTop: 24 }}>
+        <Col xs={24}>
+          {currentStep < requirements.length ? (
+            <KYCDocumentCard
+              requirement={requirements[currentStep]}
+              uploadedFiles={uploadedFiles}
+              handleFileSelect={handleFileSelect}
+              handleUpload={handleUpload}
+              uploading={uploading}
+            />
+          ) : (
+            <KYCCompletion
+              requirements={requirements}
+              uploadedFiles={uploadedFiles}
+              uploading={uploading}
+              handleSubmitForReview={handleSubmitForReview}
+              handleGoToDashboard={handleGoToDashboard}
+            />
+          )}
+        </Col>
+      </Row>
+
+      {/* Optional Profile Update Form */}
+      {showProfileForm && (
+        <Card bordered={false} style={{ marginTop: 16 }}>
+          <BusinessProfileForm
+            onUpdate={() => {
+              fetchData();
+              setShowProfileForm(false);
+            }}
+          />
+        </Card>
+      )}
+
+      {/* Footer Navigation */}
+      <KYCFooter
+        currentStep={currentStep}
+        requirements={requirements}
+        uploadedFiles={uploadedFiles}
+        setCurrentStep={setCurrentStep}
+      />
+    </div>
   );
 };
 

@@ -222,132 +222,130 @@ const DocumentVault = () => {
 
   // ===================== RENDER =====================
   return (
-    <AppLayout role={ROLES.BUSINESS_OWNER}>
-      <KYCGuard userRole={ROLES.BUSINESS_OWNER}>
-        <div className="document-vault-page">
-          {/* Header */}
-          <div className="vault-header">
-            <div className="vault-header-content">
-              <div className="docs-title-section">
-                <FolderOpenOutlined className="header-icon" />
-                <div>
-                  <h1 className="vault-title">Document Vault</h1>
-                  <p className="vault-subtitle">
-                    Securely store and manage all your business documents
-                  </p>
-                </div>
+    <KYCGuard userRole={ROLES.BUSINESS_OWNER}>
+      <div className="document-vault-page">
+        {/* Header */}
+        <div className="vault-header">
+          <div className="vault-header-content">
+            <div className="docs-title-section">
+              <FolderOpenOutlined className="header-icon" />
+              <div>
+                <h1 className="vault-title">Document Vault</h1>
+                <p className="vault-subtitle">
+                  Securely store and manage all your business documents
+                </p>
               </div>
-
-              <Button
-                type="primary"
-                size="large"
-                icon={<PlusOutlined />}
-                onClick={() => setIsUploadModalOpen(true)}
-                className="document-vault-upload-btn"
-              >
-                Upload Document
-              </Button>
             </div>
-          </div>
 
-          {/* Stats */}
-          {stats && <StatsCards stats={stats} />}
-
-          {/* Controls */}
-          <div className="vault-controls">
-            <Search
-              placeholder="Search documents..."
-              allowClear
+            <Button
+              type="primary"
               size="large"
-              prefix={<SearchOutlined />}
-              onChange={(e) => setSearchText(e.target.value)}
-              className="vault-search"
-            />
-
-            <div className="control-buttons">
-              <Select
-                size="large"
-                value={viewMode}
-                onChange={setViewMode}
-                className="view-mode-select"
-              >
-                <Select.Option value="all">All Documents</Select.Option>
-                <Select.Option value="kyc">KYC Documents</Select.Option>
-                <Select.Option value="compliance">
-                  Compliance Documents
-                </Select.Option>
-              </Select>
-
-              <Button
-                size="large"
-                icon={<FilterOutlined />}
-                className="filter-btn"
-                onClick={() => setIsFilterDrawerOpen(true)}
-              >
-                Filter
-              </Button>
-            </div>
+              icon={<PlusOutlined />}
+              onClick={() => setIsUploadModalOpen(true)}
+              className="document-vault-upload-btn"
+            >
+              Upload Document
+            </Button>
           </div>
-
-          {/* Documents Section */}
-          <div className="documents-section">
-            {loading ? (
-              <div className="vault-loading">
-                <Spin size="large" />
-              </div>
-            ) : displayDocuments.length === 0 ? (
-              <div className="vault-empty">
-                <Empty
-                  image={Empty.PRESENTED_IMAGE_SIMPLE}
-                  description={
-                    searchText
-                      ? "No documents found"
-                      : "No documents yet. Upload your first document!"
-                  }
-                >
-                  {!searchText && (
-                    <Button
-                      type="primary"
-                      icon={<PlusOutlined />}
-                      onClick={() => setIsUploadModalOpen(true)}
-                    >
-                      Upload Document
-                    </Button>
-                  )}
-                </Empty>
-              </div>
-            ) : (
-              <div className="documents-grid">
-                {displayDocuments.map((doc) => (
-                  <DocumentCard
-                    key={doc._id}
-                    document={doc}
-                    onView={() => handleView(doc)}
-                    onDownload={() => handleDownload(doc)}
-                    onDelete={() => handleDelete(doc._id)}
-                    onRename={handleRename}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Modals */}
-          <UploadDocumentModal
-            visible={isUploadModalOpen}
-            onCancel={() => setIsUploadModalOpen(false)}
-            onSuccess={handleUploadSuccess}
-          />
-
-          <FilterDrawer
-            visible={isFilterDrawerOpen}
-            onClose={() => setIsFilterDrawerOpen(false)}
-            onApply={handleFilterApply}
-            currentFilters={filters}
-          />
         </div>
-      </KYCGuard>
-    </AppLayout>
+
+        {/* Stats */}
+        {stats && <StatsCards stats={stats} />}
+
+        {/* Controls */}
+        <div className="vault-controls">
+          <Search
+            placeholder="Search documents..."
+            allowClear
+            size="large"
+            prefix={<SearchOutlined />}
+            onChange={(e) => setSearchText(e.target.value)}
+            className="vault-search"
+          />
+
+          <div className="control-buttons">
+            <Select
+              size="large"
+              value={viewMode}
+              onChange={setViewMode}
+              className="view-mode-select"
+            >
+              <Select.Option value="all">All Documents</Select.Option>
+              <Select.Option value="kyc">KYC Documents</Select.Option>
+              <Select.Option value="compliance">
+                Compliance Documents
+              </Select.Option>
+            </Select>
+
+            <Button
+              size="large"
+              icon={<FilterOutlined />}
+              className="filter-btn"
+              onClick={() => setIsFilterDrawerOpen(true)}
+            >
+              Filter
+            </Button>
+          </div>
+        </div>
+
+        {/* Documents Section */}
+        <div className="documents-section">
+          {loading ? (
+            <div className="vault-loading">
+              <Spin size="large" />
+            </div>
+          ) : displayDocuments.length === 0 ? (
+            <div className="vault-empty">
+              <Empty
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description={
+                  searchText
+                    ? "No documents found"
+                    : "No documents yet. Upload your first document!"
+                }
+              >
+                {!searchText && (
+                  <Button
+                    type="primary"
+                    icon={<PlusOutlined />}
+                    onClick={() => setIsUploadModalOpen(true)}
+                  >
+                    Upload Document
+                  </Button>
+                )}
+              </Empty>
+            </div>
+          ) : (
+            <div className="documents-grid">
+              {displayDocuments.map((doc) => (
+                <DocumentCard
+                  key={doc._id}
+                  document={doc}
+                  onView={() => handleView(doc)}
+                  onDownload={() => handleDownload(doc)}
+                  onDelete={() => handleDelete(doc._id)}
+                  onRename={handleRename}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Modals */}
+        <UploadDocumentModal
+          visible={isUploadModalOpen}
+          onCancel={() => setIsUploadModalOpen(false)}
+          onSuccess={handleUploadSuccess}
+        />
+
+        <FilterDrawer
+          visible={isFilterDrawerOpen}
+          onClose={() => setIsFilterDrawerOpen(false)}
+          onApply={handleFilterApply}
+          currentFilters={filters}
+        />
+      </div>
+    </KYCGuard>
   );
 };
 

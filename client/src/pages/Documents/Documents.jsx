@@ -160,178 +160,172 @@ const Documents = () => {
   };
 
   return (
-    <AppLayout role={ROLES.SUPER_ADMIN}>
-      <div className="documents-page-new">
-        {/* Header */}
-        <div className="docs-header">
-          <div className="docs-header-content">
-            <div className="docs-title-section">
-              <div>
-                <h1 className="docs-title">Document Management</h1>
-                <p className="docs-subtitle">
-                  Upload, review, and manage compliance documents
-                </p>
-              </div>
+    <div className="documents-page-new">
+      {/* Header */}
+      <div className="docs-header">
+        <div className="docs-header-content">
+          <div className="docs-title-section">
+            <div>
+              <h1 className="docs-title">Document Management</h1>
+              <p className="docs-subtitle">
+                Upload, review, and manage compliance documents
+              </p>
             </div>
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={handleAdd}
-              size="large"
-              className="docs-add-btn"
-            >
-              Upload Document
-            </Button>
           </div>
-        </div>
-
-        {/* STAT CARDS */}
-        <div className="stats-cards">
-          <StatCard
-            title="Pending"
-            value={groupedDocuments.pending.length}
-            icon={
-              <ClockCircleOutlined
-                style={{ color: "var(--color-icon-orange)" }}
-              />
-            }
-            bgColor="var(--color-bg-orange)"
-          />
-          <StatCard
-            title="Approved"
-            value={groupedDocuments.approved.length}
-            icon={
-              <CheckCircleOutlined
-                style={{ color: "var(--color-icon-green)" }}
-              />
-            }
-            bgColor="var(--color-bg-green)"
-          />
-          <StatCard
-            title="Rejected"
-            value={groupedDocuments.rejected.length}
-            icon={
-              <CloseCircleOutlined style={{ color: "var(--color-icon-red)" }} />
-            }
-            bgColor="var(--color-bg-red)"
-          />
-          <StatCard
-            title="Expired"
-            value={groupedDocuments.expired.length}
-            icon={
-              <StopOutlined style={{ color: "var(--color-icon-yellow)" }} />
-            }
-            bgColor="var(--color-bg-yellow)"
-          />
-        </div>
-
-        {/* Controls */}
-        <div className="docs-controls">
-          <Search
-            placeholder="Search documents..."
-            allowClear
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={handleAdd}
             size="large"
-            onChange={(e) => setSearchText(e.target.value)}
-            className="docs-search"
-          />
-          <Tabs
-            activeKey={viewMode}
-            onChange={setViewMode}
-            items={[
-              {
-                key: "kanban",
-                label: (
-                  <span>
-                    <AppstoreOutlined /> Kanban View
-                  </span>
-                ),
-              },
-              {
-                key: "list",
-                label: (
-                  <span>
-                    <UnorderedListOutlined /> List View
-                  </span>
-                ),
-              },
-            ]}
-            className="view-toggle"
-          />
+            className="docs-add-btn"
+          >
+            Upload Document
+          </Button>
         </div>
+      </div>
 
-        {/* Content */}
-        {loading ? (
-          <div className="docs-loading">
-            <div className="docs-spinner"></div>
-          </div>
-        ) : viewMode === "kanban" ? (
-          <div className="kanban-board">
-            {Object.entries(statusConfig).map(([status, config]) => (
-              <KanbanColumn
-                key={status}
-                status={status}
-                config={config}
-                documents={groupedDocuments[status]}
-                onView={handleViewFile}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-                onReview={handleReview}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="list-view">
-            {filteredDocuments.length === 0 ? (
-              <Empty description="No documents found" />
-            ) : (
-              <div className="docs-list-grid">
-                {filteredDocuments.map((doc) => (
-                  <DocumentCard
-                    key={doc._id}
-                    doc={doc}
-                    onView={handleViewFile}
-                    onEdit={handleEdit}
-                    onDelete={handleDelete}
-                    onReview={handleReview}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
-        )}
+      {/* STAT CARDS */}
+      <div className="stats-cards">
+        <StatCard
+          title="Pending"
+          value={groupedDocuments.pending.length}
+          icon={
+            <ClockCircleOutlined
+              style={{ color: "var(--color-icon-orange)" }}
+            />
+          }
+          bgColor="var(--color-bg-orange)"
+        />
+        <StatCard
+          title="Approved"
+          value={groupedDocuments.approved.length}
+          icon={
+            <CheckCircleOutlined style={{ color: "var(--color-icon-green)" }} />
+          }
+          bgColor="var(--color-bg-green)"
+        />
+        <StatCard
+          title="Rejected"
+          value={groupedDocuments.rejected.length}
+          icon={
+            <CloseCircleOutlined style={{ color: "var(--color-icon-red)" }} />
+          }
+          bgColor="var(--color-bg-red)"
+        />
+        <StatCard
+          title="Expired"
+          value={groupedDocuments.expired.length}
+          icon={<StopOutlined style={{ color: "var(--color-icon-yellow)" }} />}
+          bgColor="var(--color-bg-yellow)"
+        />
+      </div>
 
-        {/* Modals */}
-        <Modal
-          title="Upload Document"
-          open={isModalOpen}
+      {/* Controls */}
+      <div className="docs-controls">
+        <Search
+          placeholder="Search documents..."
+          allowClear
+          size="large"
+          onChange={(e) => setSearchText(e.target.value)}
+          className="docs-search"
+        />
+        <Tabs
+          activeKey={viewMode}
+          onChange={setViewMode}
+          items={[
+            {
+              key: "kanban",
+              label: (
+                <span>
+                  <AppstoreOutlined /> Kanban View
+                </span>
+              ),
+            },
+            {
+              key: "list",
+              label: (
+                <span>
+                  <UnorderedListOutlined /> List View
+                </span>
+              ),
+            },
+          ]}
+          className="view-toggle"
+        />
+      </div>
+
+      {/* Content */}
+      {loading ? (
+        <div className="docs-loading">
+          <div className="docs-spinner"></div>
+        </div>
+      ) : viewMode === "kanban" ? (
+        <div className="kanban-board">
+          {Object.entries(statusConfig).map(([status, config]) => (
+            <KanbanColumn
+              key={status}
+              status={status}
+              config={config}
+              documents={groupedDocuments[status]}
+              onView={handleViewFile}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              onReview={handleReview}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="list-view">
+          {filteredDocuments.length === 0 ? (
+            <Empty description="No documents found" />
+          ) : (
+            <div className="docs-list-grid">
+              {filteredDocuments.map((doc) => (
+                <DocumentCard
+                  key={doc._id}
+                  doc={doc}
+                  onView={handleViewFile}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                  onReview={handleReview}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Modals */}
+      <Modal
+        title="Upload Document"
+        open={isModalOpen}
+        onCancel={() => {
+          setIsModalOpen(false);
+          setEditingRecord(null);
+        }}
+        footer={null}
+        width={700}
+      >
+        <DocumentForm
+          editingRecord={editingRecord}
+          onSuccess={handleFormSuccess}
           onCancel={() => {
             setIsModalOpen(false);
             setEditingRecord(null);
           }}
-          footer={null}
-          width={700}
-        >
-          <DocumentForm
-            editingRecord={editingRecord}
-            onSuccess={handleFormSuccess}
-            onCancel={() => {
-              setIsModalOpen(false);
-              setEditingRecord(null);
-            }}
-          />
-        </Modal>
-
-        <DocumentReviewModal
-          visible={isReviewModalOpen}
-          document={reviewingRecord}
-          onSuccess={handleReviewSuccess}
-          onCancel={() => {
-            setIsReviewModalOpen(false);
-            setReviewingRecord(null);
-          }}
         />
-      </div>
-    </AppLayout>
+      </Modal>
+
+      <DocumentReviewModal
+        visible={isReviewModalOpen}
+        document={reviewingRecord}
+        onSuccess={handleReviewSuccess}
+        onCancel={() => {
+          setIsReviewModalOpen(false);
+          setReviewingRecord(null);
+        }}
+      />
+    </div>
   );
 };
 

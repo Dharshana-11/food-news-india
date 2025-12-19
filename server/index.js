@@ -34,6 +34,7 @@ import kycDocumentRoutes from "./routes/kycDocumentRoutes.js";
 import documentRoutes from "./routes/documentRoutes.js";
 import kycRoutes from "./routes/kycRoutes.js";
 import documentVaultRoutes from "./routes/documentVaultRoutes.js";
+import agentRoutes from "./routes/agentRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -84,6 +85,7 @@ app.use("/api/documents", documentRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/kyc", kycRoutes); // Register KYC routes
 app.use("/api/business-owner/documents", documentVaultRoutes);
+app.use("/api/agents", agentRoutes);
 /**
  * Server Startup
  * ------------------------------------------------------------

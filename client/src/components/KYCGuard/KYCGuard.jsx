@@ -21,8 +21,13 @@ import { Navigate, useLocation } from "react-router-dom";
 import { getKYCProfile } from "../../services/kyc.js";
 import { ROUTES } from "../../routes.js";
 import ROLES from "../../constants/roles.js";
+import { useAuth } from "../../context/AuthContext";
 
-const KYCGuard = ({ children, userRole }) => {
+const KYCGuard = ({ children }) => {
+  console.log("KYCGuard mounted");
+  const { currentUser } = useAuth();
+  const userRole = currentUser?.role;
+
   const [loading, setLoading] = useState(true);
   const [kycStatus, setKycStatus] = useState(null);
   const location = useLocation();

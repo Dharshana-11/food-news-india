@@ -196,72 +196,70 @@ const ComplianceItems = () => {
 
   // ----------------- Render -----------------
   return (
-    <AppLayout role={ROLES.SUPER_ADMIN}>
-      <div className="compliance-items-section">
-        {/* Header */}
-        <div className="compliance-items-header">
-          <h3 className="compliance-items-title">Compliance Items</h3>
-        </div>
-
-        {/* Toolbar */}
-        <div className="compliance-toolbar">
-          <div className="compliance-items-search-wrapper">
-            <Input
-              placeholder="Search items..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              onPressEnter={fetchItems}
-              allowClear
-            />
-            <Button
-              className="compliance-items-search-icon"
-              icon={<SearchOutlined />}
-              onClick={fetchItems}
-            />
-            <Button
-              className="refresh-btn"
-              icon={<ReloadOutlined />}
-              onClick={handleRefresh}
-            />
-          </div>
-
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={handleAdd}
-            className="add-item-btn"
-          >
-            Add Item
-          </Button>
-        </div>
-
-        {/* Table */}
-        <div className="custom-table-wrapper compliance-items-table">
-          <div className="custom-table-scroll">
-            <CustomTable
-              columns={columns}
-              data={items}
-              loading={loading}
-              pagination={{
-                current: page,
-                pageSize: limit,
-                total,
-                showSizeChanger: false,
-              }}
-              onChange={handleTableChange}
-            />
-          </div>
-        </div>
-
-        {/* Add/Edit Modal */}
-        <ComplianceItemModal
-          visible={modalVisible}
-          onCancel={() => setModalVisible(false)}
-          onSubmit={handleModalSubmit}
-          initialValues={selectedItem}
-        />
+    <div className="compliance-items-section">
+      {/* Header */}
+      <div className="compliance-items-header">
+        <h3 className="compliance-items-title">Compliance Items</h3>
       </div>
-    </AppLayout>
+
+      {/* Toolbar */}
+      <div className="compliance-toolbar">
+        <div className="compliance-items-search-wrapper">
+          <Input
+            placeholder="Search items..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            onPressEnter={fetchItems}
+            allowClear
+          />
+          <Button
+            className="compliance-items-search-icon"
+            icon={<SearchOutlined />}
+            onClick={fetchItems}
+          />
+          <Button
+            className="refresh-btn"
+            icon={<ReloadOutlined />}
+            onClick={handleRefresh}
+          />
+        </div>
+
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={handleAdd}
+          className="add-item-btn"
+        >
+          Add Item
+        </Button>
+      </div>
+
+      {/* Table */}
+      <div className="custom-table-wrapper compliance-items-table">
+        <div className="custom-table-scroll">
+          <CustomTable
+            columns={columns}
+            data={items}
+            loading={loading}
+            pagination={{
+              current: page,
+              pageSize: limit,
+              total,
+              showSizeChanger: false,
+            }}
+            onChange={handleTableChange}
+          />
+        </div>
+      </div>
+
+      {/* Add/Edit Modal */}
+      <ComplianceItemModal
+        visible={modalVisible}
+        onCancel={() => setModalVisible(false)}
+        onSubmit={handleModalSubmit}
+        initialValues={selectedItem}
+      />
+    </div>
   );
 };
 

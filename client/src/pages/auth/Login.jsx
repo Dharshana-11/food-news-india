@@ -292,11 +292,11 @@ const Login = () => {
                   Send OTP
                 </Button>
 
-                <div className="login-footer-links">
+                {/* <div className="login-footer-links">
                   <Text style={{ fontSize: 13, color: "#888" }}>
                     New users will be guided to create an account
                   </Text>
-                </div>
+                </div> */}
               </Form>
             )}
 

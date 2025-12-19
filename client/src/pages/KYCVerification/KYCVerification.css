@@ -6,7 +6,9 @@
   min-height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #f0f3f8 100%);
   color: #1f2d3d;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
 }
 
 .no-result-padding .ant-result {
@@ -45,7 +47,7 @@
   align-items: center;
   min-height: 400px;
 }
-.kyc-card kyc-document-card{
+.kyc-card kyc-document-card {
   padding: 0px;
 }
 /* ---------- STEP (HORIZONTAL) ---------- */
@@ -87,8 +89,8 @@
   background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%) !important;
   color: #fff !important;
 }
-.ant-steps-item-icon .anticon svg{
-  color: white ;
+.ant-steps-item-icon .anticon svg {
+  color: white;
 }
 
 .ant-steps-item-error .ant-steps-item-icon {
@@ -276,7 +278,11 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, rgba(24, 144, 255, 0.05) 0%, rgba(255, 107, 53, 0.05) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(24, 144, 255, 0.05) 0%,
+    rgba(255, 107, 53, 0.05) 100%
+  );
   opacity: 0;
   transition: opacity 0.3s ease;
 }

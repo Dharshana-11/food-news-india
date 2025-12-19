@@ -46,7 +46,7 @@ const KYCDocumentCard = ({
   const flatRoles = doc.applicableRoles.flat();
 
   return (
-    <Card key={doc._id} className="kyc-document-card" hoverable>
+    <Card key={doc._id} className="kyc-document-card-superadmin" hoverable>
       <div className="kyc-card-layout">
         {/* Left: basic info */}
         <div className="kyc-card-left">

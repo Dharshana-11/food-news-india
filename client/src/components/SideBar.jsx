@@ -130,9 +130,10 @@ const SideBar = ({ role, isOpen, onClose }) => {
         label: "Dashboard",
       },
       {
-        key: ROUTES.SUPER_ADMIN_USERS,
+        key: ROUTES.USER_LIST,
         icon: <UserOutlined />,
         label: "User Management",
+        paths: [ROUTES.USER_PROFILE],
       },
       {
         key: ROUTES.SUPER_ADMIN_COMPLIANCE,
@@ -148,7 +149,7 @@ const SideBar = ({ role, isOpen, onClose }) => {
         ],
       },
       {
-        key: ROUTES.SUPER_ADMIN_TICKETS,
+        key: ROUTES.TICKET_BOARD,
         icon: <CustomerServiceOutlined />,
         label: "Support Tickets",
       },
@@ -158,9 +159,17 @@ const SideBar = ({ role, isOpen, onClose }) => {
         label: "Platform Settings",
       },
       {
-        key: ROUTES.SUPER_ADMIN_NOTIFICATIONS,
+        key: ROUTES.NOTIF_OVERVIEW,
         icon: <NotificationOutlined />,
         label: "Notification Settings",
+        paths: [
+          ROUTES.NOTIF_OVERVIEW,
+          ROUTES.NOTIF_MODULE_SETTINGS,
+          ROUTES.NOTIF_ROLE_SETTINGS,
+          ROUTES.NOTIF_TEMPLATE_SETTINGS,
+          ROUTES.NOTIF_GLOBAL_SETTINGS,
+          ROUTES.NOTIF_LOGS,
+        ],
       },
       {
         key: ROUTES.SUPER_ADMIN_CONTENT,
@@ -202,6 +211,11 @@ const SideBar = ({ role, isOpen, onClose }) => {
         key: ROUTES.BUSINESS_OWNER_MY_AGENTS,
         icon: <UserOutlined />,
         label: "My Agents",
+        paths: [
+          ROUTES.BUSINESS_OWNER_MY_AGENTS,
+          ROUTES.BUSINESS_OWNER_AGENT_DETAILS,
+          ROUTES.BUSINESS_OWNER_ADD_AGENT,
+        ],
       },
       {
         key: ROUTES.BUSINESS_OWNER_DOCUMENT_VAULT,
@@ -243,15 +257,14 @@ const SideBar = ({ role, isOpen, onClose }) => {
   }
 
   // ---------------- ACTIVE MENU HIGHLIGHT ----------------
-  const selectedKey =
-    location.pathname.startsWith("/tickets/")
-      ? ROUTES.SUPER_ADMIN_TICKETS
-      : location.pathname.startsWith("/super-admin/profile/")
+  const selectedKey = location.pathname.startsWith("/tickets/")
+    ? ROUTES.SUPER_ADMIN_TICKETS
+    : location.pathname.startsWith("/super-admin/profile/")
       ? ROUTES.SUPER_ADMIN_USERS
       : items.find(
           (item) =>
             location.pathname.startsWith(item?.key) ||
-            item?.paths?.some((p) => location.pathname.startsWith(p)),
+            item?.paths?.some((p) => location.pathname.startsWith(p))
         )?.key || ROUTES.SUPER_ADMIN_DASHBOARD;
 
   // ---------------- RESIZE BEHAVIOR ----------------

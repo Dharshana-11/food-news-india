@@ -83,7 +83,7 @@ const KYCDocuments = () => {
       const filtered = data.filter(
         (item) =>
           item.name.toLowerCase().includes(searchText.toLowerCase()) ||
-          item.code.toLowerCase().includes(searchText.toLowerCase()),
+          item.code.toLowerCase().includes(searchText.toLowerCase())
       );
       setFilteredData(filtered);
     } else {
@@ -136,7 +136,7 @@ const KYCDocuments = () => {
     {
       title: "Business Owners",
       count: data.filter((doc) =>
-        doc.applicableRoles.flat().includes("business_owner"),
+        doc.applicableRoles.flat().includes("business_owner")
       ).length,
       icon: <ShopOutlined className="info-card-icon" />,
       className: "card-blue",
@@ -151,7 +151,7 @@ const KYCDocuments = () => {
     {
       title: "Service Providers",
       count: data.filter((doc) =>
-        doc.applicableRoles.flat().includes("service_provider"),
+        doc.applicableRoles.flat().includes("service_provider")
       ).length,
       icon: <TeamOutlined className="info-card-icon" />,
       className: "card-orange",
@@ -160,102 +160,100 @@ const KYCDocuments = () => {
 
   // ===================== RENDER =====================
   return (
-    <AppLayout role={ROLES.SUPER_ADMIN}>
-      <div className="kyc-documents-page">
-        {/* Header */}
-        <div className="kyc-header-section">
-          <div className="kyc-header-content">
-            <div className="kyc-header-left">
-              <div className="kyc-header-text">
-                <h1 className="kyc-main-title">KYC Documents</h1>
-                <p className="kyc-subtitle">
-                  Manage identity verification documents for all user roles
-                </p>
-              </div>
+    <div className="kyc-documents-page">
+      {/* Header */}
+      <div className="kyc-header-section">
+        <div className="kyc-header-content">
+          <div className="kyc-header-left">
+            <div className="kyc-header-text">
+              <h1 className="kyc-main-title">KYC Documents</h1>
+              <p className="kyc-subtitle">
+                Manage identity verification documents for all user roles
+              </p>
             </div>
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={handleAdd}
-              className="kyc-add-button"
-              size="large"
-            >
-              Add Document Type
-            </Button>
           </div>
-        </div>
-
-        {/* Info Cards */}
-        <div className="kyc-info-section">
-          <div className="kyc-info-cards">
-            {infoCardsData.map((card, index) => (
-              <KYCDocumentInfoCard key={index} {...card} />
-            ))}
-          </div>
-        </div>
-
-        {/* Search */}
-        <div className="kyc-search-section">
-          <Search
-            placeholder="Search documents by name or code..."
-            allowClear
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={handleAdd}
+            className="kyc-add-button"
             size="large"
-            onChange={(e) => setSearchText(e.target.value)}
-            className="kyc-search-bar"
-          />
+          >
+            Add Document Type
+          </Button>
         </div>
+      </div>
 
-        {/* Documents List */}
-        <div className="kyc-documents-list">
-          {loading ? (
-            <div className="kyc-loading">
-              <div className="kyc-spinner"></div>
-            </div>
-          ) : filteredData.length === 0 ? (
-            <div className="kyc-empty">
-              <Empty description="No KYC documents found" />
-            </div>
-          ) : (
-            filteredData.map((doc) => (
-              <KYCDocumentCard
-                key={doc._id}
-                doc={doc}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-                roleConfig={roleConfig}
-              />
-            ))
-          )}
+      {/* Info Cards */}
+      <div className="kyc-info-section">
+        <div className="kyc-info-cards">
+          {infoCardsData.map((card, index) => (
+            <KYCDocumentInfoCard key={index} {...card} />
+          ))}
         </div>
+      </div>
 
-        {/* Modal */}
-        <Modal
-          title={
-            <div className="kyc-modal-title">
-              <IdcardOutlined style={{ marginRight: 8 }} />
-              {editingRecord ? "Edit KYC Document" : "Add KYC Document"}
-            </div>
-          }
-          open={isModalOpen}
+      {/* Search */}
+      <div className="kyc-search-section">
+        <Search
+          placeholder="Search documents by name or code..."
+          allowClear
+          size="large"
+          onChange={(e) => setSearchText(e.target.value)}
+          className="kyc-search-bar"
+        />
+      </div>
+
+      {/* Documents List */}
+      <div className="kyc-documents-list">
+        {loading ? (
+          <div className="kyc-loading">
+            <div className="kyc-spinner"></div>
+          </div>
+        ) : filteredData.length === 0 ? (
+          <div className="kyc-empty">
+            <Empty description="No KYC documents found" />
+          </div>
+        ) : (
+          filteredData.map((doc) => (
+            <KYCDocumentCard
+              key={doc._id}
+              doc={doc}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              roleConfig={roleConfig}
+            />
+          ))
+        )}
+      </div>
+
+      {/* Modal */}
+      <Modal
+        title={
+          <div className="kyc-modal-title">
+            <IdcardOutlined style={{ marginRight: 8 }} />
+            {editingRecord ? "Edit KYC Document" : "Add KYC Document"}
+          </div>
+        }
+        open={isModalOpen}
+        onCancel={() => {
+          setIsModalOpen(false);
+          setEditingRecord(null);
+        }}
+        footer={null}
+        width={650}
+        className="kyc-document-modal"
+      >
+        <KYCDocumentForm
+          editingRecord={editingRecord}
+          onSuccess={handleFormSuccess}
           onCancel={() => {
             setIsModalOpen(false);
             setEditingRecord(null);
           }}
-          footer={null}
-          width={650}
-          className="kyc-document-modal"
-        >
-          <KYCDocumentForm
-            editingRecord={editingRecord}
-            onSuccess={handleFormSuccess}
-            onCancel={() => {
-              setIsModalOpen(false);
-              setEditingRecord(null);
-            }}
-          />
-        </Modal>
-      </div>
-    </AppLayout>
+        />
+      </Modal>
+    </div>
   );
 };
 

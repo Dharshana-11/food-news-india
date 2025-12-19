@@ -47,7 +47,7 @@ const BusinessTypeCard = ({ businessType, onEdit, onDelete }) => {
       </div>
 
       {/* Action buttons */}
-      <div className="card-actions">
+      <div className="business-type-card-actions">
         <Tooltip title="Edit">
           <Button
             type="text"

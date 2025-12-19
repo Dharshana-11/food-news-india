@@ -520,7 +520,7 @@ body {
 }
 
 .ant-card .ant-card-body {
-  padding: 10px !important;
+  padding: 10px;
 }
 
 /* ====================== Responsive Stats Row ====================== */
@@ -3575,7 +3575,7 @@ body {
   gap: 16px;
 }
 
-.kyc-document-card {
+.kyc-document-card-superadmin {
   border-radius: 16px;
   border: 2px solid #e2e8f0;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
@@ -3583,7 +3583,7 @@ body {
   overflow: hidden;
 }
 
-.kyc-document-card:hover {
+.kyc-document-card-superadmin:hover {
   border-color: var(--color-primary-orange);
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
   transform: translateY(-2px);
@@ -4197,7 +4197,7 @@ body {
   color: var(--color-primary-orange);
 }
 
-.card-actions {
+.business-type-card-actions {
   display: flex;
   gap: 8px;
   padding-top: 16px;

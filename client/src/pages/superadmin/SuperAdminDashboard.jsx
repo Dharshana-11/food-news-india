@@ -256,146 +256,145 @@ const SuperAdminDashboard = () => {
   ======================================================= */
 
   return (
-    <AppLayout role={ROLES.SUPER_ADMIN}>
-      <div className="super-admin-dashboard" style={{ padding: "24px" }}>
-        {/* ---------- Statistic Cards ---------- */}
-        <Row gutter={[24, 24]} className="stats-row">
-          {statsData.map((item, index) => (
-            <Col xs={24} sm={12} md={6} key={index}>
-              <div
-                onClick={() => navigate(item.path)}
-                style={{ cursor: "pointer" }}
-              >
-                <StatCard {...item} />
-              </div>
-            </Col>
-          ))}
-        </Row>
-
-        {/* ---------- Charts Section ---------- */}
-        <Row gutter={[24, 24]} style={{ marginTop: 20 }}>
-          <Col xs={24} md={8}>
-            <ChartCard
-              title="Compliance Overview"
-              data={complianceData}
-              color="#ff6c1f"
-              chartType="donut"
-            />
+    // <AppLayout role={ROLES.SUPER_ADMIN}>
+    <div className="super-admin-dashboard" style={{ padding: "24px" }}>
+      {/* ---------- Statistic Cards ---------- */}
+      <Row gutter={[24, 24]} className="stats-row">
+        {statsData.map((item, index) => (
+          <Col xs={24} sm={12} md={6} key={index}>
+            <div
+              onClick={() => navigate(item.path)}
+              style={{ cursor: "pointer" }}
+            >
+              <StatCard {...item} />
+            </div>
           </Col>
-          <Col xs={24} md={16}>
-            <ChartCard
-              title="Activity Chart"
-              data={activityData}
-              color="#ff6c1f"
-              chartType="line"
-              className="activity-chart"
-            />
-          </Col>
-        </Row>
+        ))}
+      </Row>
 
-        {/* ---------- Pending Verifications ---------- */}
+      {/* ---------- Charts Section ---------- */}
+      <Row gutter={[24, 24]} style={{ marginTop: 20 }}>
+        <Col xs={24} md={8}>
+          <ChartCard
+            title="Compliance Overview"
+            data={complianceData}
+            color="#ff6c1f"
+            chartType="donut"
+          />
+        </Col>
+        <Col xs={24} md={16}>
+          <ChartCard
+            title="Activity Chart"
+            data={activityData}
+            color="#ff6c1f"
+            chartType="line"
+            className="activity-chart"
+          />
+        </Col>
+      </Row>
+
+      {/* ---------- Pending Verifications ---------- */}
+      <div
+        style={{
+          background: "#fff",
+          borderRadius: "12px",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
+          marginTop: 20,
+          padding: "20px",
+        }}
+      >
         <div
           style={{
-            background: "#fff",
-            borderRadius: "12px",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
-            marginTop: 20,
-            padding: "20px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
-          <div
+          <h3
             style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
+              fontFamily: "Poppins, sans-serif",
+              fontWeight: 600,
+              color: "#162247",
+              marginBottom: 16,
             }}
           >
-            <h3
-              style={{
-                fontFamily: "Poppins, sans-serif",
-                fontWeight: 600,
-                color: "#162247",
-                marginBottom: 16,
-              }}
-            >
-              Pending Verifications
-            </h3>
-            <a
-              onClick={() => navigate(ROUTES.SUPER_ADMIN_COMPLIANCE)}
-              style={{ color: "#162247", fontWeight: 500, cursor: "pointer" }}
-            >
-              <RightOutlined />
-            </a>
-          </div>
-          <CustomTable
-            columns={pendingColumns}
-            data={allVerifications}
-            pagination={false}
-          />
+            Pending Verifications
+          </h3>
+          <a
+            onClick={() => navigate(ROUTES.SUPER_ADMIN_COMPLIANCE)}
+            style={{ color: "#162247", fontWeight: 500, cursor: "pointer" }}
+          >
+            <RightOutlined />
+          </a>
         </div>
-
-        {/* ---------- Summary, Tickets, Notifications ---------- */}
-        <Row gutter={[24, 24]} style={{ marginTop: 20 }}>
-          <Col xs={24} md={8}>
-            <Card
-              title="Service Summary"
-              extra={
-                <a
-                  style={{ color: "#162247", fontWeight: "600" }}
-                  onClick={() => navigate(ROUTES.SUPER_ADMIN_SERVICES)}
-                >
-                  <RightOutlined />
-                </a>
-              }
-            >
-              <ServiceSummary
-                summary={serviceSummaryData.map((item) => ({
-                  ...item,
-                  onClick: () => navigate(item.path),
-                }))}
-              />
-            </Card>
-          </Col>
-
-          <Col xs={24} md={8}>
-            <Card
-              title="Tickets Snapshot"
-              extra={
-                <a
-                  style={{ color: "#162247", fontWeight: "600" }}
-                  onClick={() => navigate(ROUTES.SUPER_ADMIN_TICKETS)}
-                >
-                  <RightOutlined />
-                </a>
-              }
-            >
-              <div
-                onClick={() => navigate(ROUTES.SUPER_ADMIN_TICKETS)}
-                style={{ cursor: "pointer" }}
-              >
-                <TicketsSnapshot tickets={ticketsData} />
-              </div>
-            </Card>
-          </Col>
-
-          <Col xs={24} md={8}>
-            <Card
-              title="Notifications"
-              extra={
-                <a
-                  style={{ color: "#162247", fontWeight: "600" }}
-                  onClick={() => navigate(ROUTES.SUPER_ADMIN_NOTIFICATIONS)}
-                >
-                  <RightOutlined />
-                </a>
-              }
-            >
-              <Notifications notifications={notificationsData} />
-            </Card>
-          </Col>
-        </Row>
+        <CustomTable
+          columns={pendingColumns}
+          data={allVerifications}
+          pagination={false}
+        />
       </div>
-    </AppLayout>
+
+      {/* ---------- Summary, Tickets, Notifications ---------- */}
+      <Row gutter={[24, 24]} style={{ marginTop: 20 }}>
+        <Col xs={24} md={8}>
+          <Card
+            title="Service Summary"
+            extra={
+              <a
+                style={{ color: "#162247", fontWeight: "600" }}
+                onClick={() => navigate(ROUTES.SUPER_ADMIN_SERVICES)}
+              >
+                <RightOutlined />
+              </a>
+            }
+          >
+            <ServiceSummary
+              summary={serviceSummaryData.map((item) => ({
+                ...item,
+                onClick: () => navigate(item.path),
+              }))}
+            />
+          </Card>
+        </Col>
+
+        <Col xs={24} md={8}>
+          <Card
+            title="Tickets Snapshot"
+            extra={
+              <a
+                style={{ color: "#162247", fontWeight: "600" }}
+                onClick={() => navigate(ROUTES.SUPER_ADMIN_TICKETS)}
+              >
+                <RightOutlined />
+              </a>
+            }
+          >
+            <div
+              onClick={() => navigate(ROUTES.SUPER_ADMIN_TICKETS)}
+              style={{ cursor: "pointer" }}
+            >
+              <TicketsSnapshot tickets={ticketsData} />
+            </div>
+          </Card>
+        </Col>
+
+        <Col xs={24} md={8}>
+          <Card
+            title="Notifications"
+            extra={
+              <a
+                style={{ color: "#162247", fontWeight: "600" }}
+                onClick={() => navigate(ROUTES.SUPER_ADMIN_NOTIFICATIONS)}
+              >
+                <RightOutlined />
+              </a>
+            }
+          >
+            <Notifications notifications={notificationsData} />
+          </Card>
+        </Col>
+      </Row>
+    </div>
   );
 };
 

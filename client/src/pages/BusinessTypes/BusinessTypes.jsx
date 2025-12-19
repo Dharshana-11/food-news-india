@@ -67,7 +67,7 @@ const BusinessTypes = () => {
       list = list.filter(
         (item) =>
           item.name.toLowerCase().includes(searchText.toLowerCase()) ||
-          item.code.toLowerCase().includes(searchText.toLowerCase()),
+          item.code.toLowerCase().includes(searchText.toLowerCase())
       );
     }
 
@@ -120,99 +120,97 @@ const BusinessTypes = () => {
 
   // ===================== RENDER =====================
   return (
-    <AppLayout role={ROLES.SUPER_ADMIN}>
-      <div className="business-types-page">
-        {/* Header */}
-        <div className="page-header-section">
-          <div className="header-content">
-            <div className="header-text">
-              <h1 className="page-main-title">Business Types</h1>
-              <p className="page-subtitle">
-                Manage and organize different food business categories
-              </p>
-            </div>
-
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={handleAdd}
-              size="large"
-              className="add-button"
-            >
-              Add Business Type
-            </Button>
+    <div className="business-types-page">
+      {/* Header */}
+      <div className="page-header-section">
+        <div className="header-content">
+          <div className="header-text">
+            <h1 className="page-main-title">Business Types</h1>
+            <p className="page-subtitle">
+              Manage and organize different food business categories
+            </p>
           </div>
+
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={handleAdd}
+            size="large"
+            className="add-button"
+          >
+            Add Business Type
+          </Button>
         </div>
+      </div>
 
-        {/* Stats Section */}
-        <StatsSection data={data} />
+      {/* Stats Section */}
+      <StatsSection data={data} />
 
-        {/* Filters */}
-        <FilterBar
-          searchText={searchText}
-          setSearchText={setSearchText}
-          statusFilter={statusFilter}
-          setStatusFilter={setStatusFilter}
-        />
+      {/* Filters */}
+      <FilterBar
+        searchText={searchText}
+        setSearchText={setSearchText}
+        statusFilter={statusFilter}
+        setStatusFilter={setStatusFilter}
+      />
 
-        {/* Business Types Grid */}
-        <div className="business-types-grid">
-          {loading ? (
-            <div className="loading-container">
-              <div className="spinner"></div>
-            </div>
-          ) : filteredData.length === 0 ? (
-            <div className="empty-state">
-              <Empty
-                description={
-                  searchText
-                    ? "No matching business types"
-                    : "You haven't added any business types yet"
-                }
-              />
-            </div>
-          ) : (
-            filteredData.map((bt) => (
-              <BusinessTypeCard
-                key={bt._id}
-                businessType={bt}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-              />
-            ))
-          )}
-        </div>
+      {/* Business Types Grid */}
+      <div className="business-types-grid">
+        {loading ? (
+          <div className="loading-container">
+            <div className="spinner"></div>
+          </div>
+        ) : filteredData.length === 0 ? (
+          <div className="empty-state">
+            <Empty
+              description={
+                searchText
+                  ? "No matching business types"
+                  : "You haven't added any business types yet"
+              }
+            />
+          </div>
+        ) : (
+          filteredData.map((bt) => (
+            <BusinessTypeCard
+              key={bt._id}
+              businessType={bt}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          ))
+        )}
+      </div>
 
-        {/* Modal */}
-        <Modal
-          title={
-            <div className="modal-title">
-              <ShopOutlined
-                style={{ marginRight: 8, color: "var(--color-primary-orange)" }}
-              />
-              {editingRecord ? "Edit Business Type" : "Add Business Type"}
-            </div>
-          }
-          open={isModalOpen}
+      {/* Modal */}
+      <Modal
+        title={
+          <div className="modal-title">
+            <ShopOutlined
+              style={{ marginRight: 8, color: "var(--color-primary-orange)" }}
+            />
+            {editingRecord ? "Edit Business Type" : "Add Business Type"}
+          </div>
+        }
+        open={isModalOpen}
+        onCancel={() => {
+          setIsModalOpen(false);
+          setEditingRecord(null);
+        }}
+        footer={null}
+        width={600}
+        className="business-type-modal"
+      >
+        <BusinessTypeForm
+          editingRecord={editingRecord}
+          onSuccess={handleFormSuccess}
           onCancel={() => {
             setIsModalOpen(false);
             setEditingRecord(null);
           }}
-          footer={null}
-          width={600}
-          className="business-type-modal"
-        >
-          <BusinessTypeForm
-            editingRecord={editingRecord}
-            onSuccess={handleFormSuccess}
-            onCancel={() => {
-              setIsModalOpen(false);
-              setEditingRecord(null);
-            }}
-          />
-        </Modal>
-      </div>
-    </AppLayout>
+        />
+      </Modal>
+    </div>
   );
 };
 
