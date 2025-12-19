@@ -160,7 +160,6 @@ const KYCDocuments = () => {
 
   // ===================== RENDER =====================
   return (
-    // <AppLayout role={ROLES.SUPER_ADMIN}>
     <div className="kyc-documents-page">
       {/* Header */}
       <div className="kyc-header-section">
@@ -255,7 +254,6 @@ const KYCDocuments = () => {
         />
       </Modal>
     </div>
-    // </AppLayout>
   );
 };
 

@@ -1,30 +1,53 @@
 /**
- * myAgentService.js
+ * myAgentService
  * ============================================================================
- * API service for agent management operations
+ * API service layer for Business Owner ↔ Agent operations.
+ *
+ * Responsibilities:
+ * - Fetch available agents
+ * - Manage agent invitations
+ * - View, update, and remove assigned agents
+ *
+ * NOTE:
+ * This file intentionally contains NO UI logic.
  */
 
 import api from "../api/axios";
 
+/**
+ * Build query params safely from optional filters
+ * @param {Object} filters
+ * @returns {string}
+ */
+const buildQueryParams = (filters = {}) => {
+  const params = new URLSearchParams();
+
+  if (filters.search) params.append("search", filters.search);
+  if (filters.city) params.append("city", filters.city);
+  if (filters.minRating) params.append("minRating", filters.minRating);
+  if (filters.maxCommission)
+    params.append("maxCommission", filters.maxCommission);
+
+  return params.toString();
+};
+
 const agentService = {
   /**
-   * Get list of available agents
+   * Fetch list of available agents
    * @param {Object} filters - { search, city, minRating, maxCommission }
+   * @returns {Promise<Object>}
    */
   getAvailableAgents: async (filters = {}) => {
-    const params = new URLSearchParams();
-    if (filters.search) params.append("search", filters.search);
-    if (filters.city) params.append("city", filters.city);
-    if (filters.minRating) params.append("minRating", filters.minRating);
-    if (filters.maxCommission)
-      params.append("maxCommission", filters.maxCommission);
-
-    const response = await api.get(`/agents/available?${params.toString()}`);
+    const query = buildQueryParams(filters);
+    const response = await api.get(
+      `/agents/available${query ? `?${query}` : ""}`
+    );
     return response.data;
   },
 
   /**
-   * Get business owner's agents
+   * Fetch business owner's agents (active + pending)
+   * @returns {Promise<Object>}
    */
   getMyAgents: async () => {
     const response = await api.get("/agents/my-agents");
@@ -32,8 +55,9 @@ const agentService = {
   },
 
   /**
-   * Get single agent details
+   * Fetch single agent details
    * @param {string} relationId - BusinessAgentRelation ID
+   * @returns {Promise<Object>}
    */
   getAgentDetails: async (relationId) => {
     const response = await api.get(`/agents/${relationId}`);
@@ -41,23 +65,32 @@ const agentService = {
   },
 
   /**
-   * Send invitation to agent
-   * @param {Object} data - { agentId, agreedCommission, permissions }
+   * Send invitation to an agent
+   * @param {Object} payload - { agentId, permissions }
+   * @returns {Promise<Object>}
    */
-  inviteAgent: async (data) => {
+  inviteAgent: async (payload) => {
     try {
-      const response = await api.post("/agents/invite", data);
+      const response = await api.post("/agents/invite", payload);
       return response.data;
     } catch (error) {
-      // IMPORTANT: forward backend message
-      throw error.response?.data || { message: "Invite failed" };
+      /**
+       * IMPORTANT:
+       * Preserve backend error message for UI consumption
+       */
+      throw (
+        error.response?.data || {
+          message: "Failed to send agent invitation",
+        }
+      );
     }
   },
 
   /**
-   * Update agent permissions
+   * Update permissions for an active agent
    * @param {string} relationId
    * @param {Object} permissions
+   * @returns {Promise<Object>}
    */
   updatePermissions: async (relationId, permissions) => {
     const response = await api.patch(`/agents/${relationId}/permissions`, {
@@ -67,8 +100,9 @@ const agentService = {
   },
 
   /**
-   * Cancel pending agent invitation
+   * Cancel a pending agent invitation
    * @param {string} relationId
+   * @returns {Promise<Object>}
    */
   cancelInvite: async (relationId) => {
     const response = await api.delete(`/agents/${relationId}`);
@@ -76,9 +110,10 @@ const agentService = {
   },
 
   /**
-   * Remove agent
+   * Remove an agent (active or pending)
    * @param {string} relationId
    * @param {string} reason
+   * @returns {Promise<Object>}
    */
   removeAgent: async (relationId, reason = "") => {
     const response = await api.delete(`/agents/${relationId}`, {

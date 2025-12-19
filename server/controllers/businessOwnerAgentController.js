@@ -11,20 +11,27 @@ import ROLES from "../utils/constants/roles.js";
 
 /**
  * Get list of available agents for selection
- * @route GET /api/agents/available
- * @access Private (Business Owner)
+ *
+ * @route   GET /api/agents/available
+ * @access  Private (Business Owner)
+ *
+ * @query   {string}  [search]         Name or phone search
+ * @query   {string}  [city]           City filter
+ * @query   {number}  [minRating]      Minimum rating
+ * @query   {number}  [maxCommission]  Maximum commission rate
  */
 export const getAvailableAgents = async (req, res) => {
   try {
     const { search, city, minRating, maxCommission } = req.query;
 
-    // Build filter
+    /** ---------------- User Filters ---------------- */
     const userFilter = {
       role: ROLES.AGENT,
       status: "verified",
       isVerified: true,
       isDeleted: false,
     };
+
     if (search) {
       userFilter.$or = [
         { name: { $regex: search, $options: "i" } },
@@ -32,45 +39,53 @@ export const getAvailableAgents = async (req, res) => {
       ];
     }
 
+    /** ---------------- Profile Filters ---------------- */
     const profileFilter = { isAvailable: true };
-    if (city) profileFilter.city = { $regex: city, $options: "i" };
-    if (minRating) profileFilter.rating = { $gte: parseFloat(minRating) };
-    if (maxCommission)
-      profileFilter.commissionRate = { $lte: parseFloat(maxCommission) };
 
-    // Get agents
+    if (city) profileFilter.city = { $regex: city, $options: "i" };
+    if (minRating) profileFilter.rating = { $gte: Number(minRating) };
+    if (maxCommission)
+      profileFilter.commissionRate = { $lte: Number(maxCommission) };
+
+    /** ---------------- Fetch Agents ---------------- */
     const agents = await Users.find(userFilter)
       .select("uid name phone email createdAt")
       .lean();
 
     const businessOwnerId = req.user._id;
 
+    /** ---------------- Existing Relations ---------------- */
     const relations = await BusinessAgentRelation.find({
       businessOwnerId,
       status: { $in: ["pending", "active"] },
     }).lean();
 
     const relationMap = {};
-    relations.forEach((r) => {
-      relationMap[r.agentId.toString()] = {
-        status: r.status,
-        relationId: r._id,
+    relations.forEach((rel) => {
+      relationMap[rel.agentId.toString()] = {
+        status: rel.status,
+        relationId: rel._id,
       };
     });
 
-    const agentIds = agents.map((a) => a._id);
+    /** ---------------- Agent Profiles ---------------- */
+    const agentIds = agents.map((agent) => agent._id);
 
     const profiles = await AgentProfile.find({
       userId: { $in: agentIds },
       ...profileFilter,
     }).lean();
 
-    // Merge data
+    /** ---------------- Merge Data ---------------- */
+    const profileMap = profiles.reduce((acc, profile) => {
+      acc[profile.userId.toString()] = profile;
+      return acc;
+    }, {});
+
     const result = agents
       .map((agent) => {
-        const profile = profiles.find(
-          (p) => p.userId.toString() === agent._id.toString()
-        );
+        const profile = profileMap[agent._id.toString()];
+
         if (!profile) return null;
 
         const relation = relationMap[agent._id.toString()] || null;
@@ -82,7 +97,6 @@ export const getAvailableAgents = async (req, res) => {
           phone: agent.phone,
           email: agent.email,
 
-          // Profile
           rating: profile.rating || 0,
           totalReviews: profile.totalReviews || 0,
           businessesManaged: profile.businessesManaged || 0,
@@ -93,7 +107,7 @@ export const getAvailableAgents = async (req, res) => {
           state: profile.state || "",
           bio: profile.bio || "",
 
-          inviteStatus: relation?.status || null, // pending | active | null
+          inviteStatus: relation?.status || null,
           relationId: relation?.relationId || null,
         };
       })
@@ -112,8 +126,9 @@ export const getAvailableAgents = async (req, res) => {
 
 /**
  * Get business owner's agents (active + pending)
- * @route GET /api/agents/my-agents
- * @access Private (Business Owner)
+ *
+ * @route   GET /api/agents/my-agents
+ * @access  Private (Business Owner)
  */
 export const getMyAgents = async (req, res) => {
   try {
@@ -126,17 +141,20 @@ export const getMyAgents = async (req, res) => {
       .populate("agentId", "uid name phone email")
       .lean();
 
-    const agentIds = relations.map((r) => r.agentId._id);
+    const agentIds = relations.map((rel) => rel.agentId._id);
 
     const profiles = await AgentProfile.find({
       userId: { $in: agentIds },
     }).lean();
 
+    const profileMap = profiles.reduce((acc, profile) => {
+      acc[profile.userId.toString()] = profile;
+      return acc;
+    }, {});
+
     const result = relations.map((rel) => {
       const agent = rel.agentId;
-      const profile = profiles.find(
-        (p) => p.userId.toString() === agent._id.toString()
-      );
+      const profile = profileMap[agent._id.toString()];
 
       return {
         relationId: rel._id,
@@ -145,13 +163,14 @@ export const getMyAgents = async (req, res) => {
         name: agent.name,
         phone: agent.phone,
         email: agent.email,
+
         status: rel.status,
         permissions: rel.permissions,
         agreedCommission: rel.agreedCommission,
         invitedAt: rel.invitedAt,
         acceptedAt: rel.acceptedAt,
         activityLog: rel.activityLog || [],
-        // Profile data
+
         rating: profile?.rating || 0,
         businessesManaged: profile?.businessesManaged || 0,
         experience: profile?.experience || 0,
@@ -172,8 +191,9 @@ export const getMyAgents = async (req, res) => {
 
 /**
  * Get single agent details with activity
- * @route GET /api/agents/:relationId
- * @access Private (Business Owner)
+ *
+ * @route   GET /api/agents/:relationId
+ * @access  Private (Business Owner)
  */
 export const getAgentDetails = async (req, res) => {
   try {
@@ -191,11 +211,11 @@ export const getAgentDetails = async (req, res) => {
       return res.status(404).json({ message: "Agent relation not found" });
     }
 
-    if (!relation || relation.status === "pending") {
+    if (relation.status === "pending") {
       return res.status(200).json({
         success: true,
         data: null,
-        message: "Agent is pending", // specific message
+        message: "Agent is pending",
       });
     }
 
@@ -203,55 +223,57 @@ export const getAgentDetails = async (req, res) => {
       userId: relation.agentId._id,
     }).lean();
 
-    const result = {
-      relationId: relation._id,
-      agent: {
-        _id: relation.agentId._id,
-        uid: relation.agentId.uid,
-        name: relation.agentId.name,
-        phone: relation.agentId.phone,
-        email: relation.agentId.email,
-      },
-      status: relation.status,
-      permissions: relation.permissions,
-      agreedCommission: relation.agreedCommission,
-      paymentFrequency: relation.paymentFrequency,
-      invitedAt: relation.invitedAt,
-      acceptedAt: relation.acceptedAt,
-      activityLog: relation.activityLog || [],
-      businessOwnerNotes: relation.businessOwnerNotes,
-      // Profile
-      rating: profile?.rating || 0,
-      totalReviews: profile?.totalReviews || 0,
-      businessesManaged: profile?.businessesManaged || 0,
-      experience: profile?.experience || 0,
-      specialization: profile?.specialization || [],
-      bio: profile?.bio || "",
-      city: profile?.city || "",
-      state: profile?.state || "",
-    };
-
     return res.json({
       success: true,
-      data: result,
+      data: {
+        relationId: relation._id,
+        agent: {
+          _id: relation.agentId._id,
+          uid: relation.agentId.uid,
+          name: relation.agentId.name,
+          phone: relation.agentId.phone,
+          email: relation.agentId.email,
+        },
+        status: relation.status,
+        permissions: relation.permissions,
+        agreedCommission: relation.agreedCommission,
+        paymentFrequency: relation.paymentFrequency,
+        invitedAt: relation.invitedAt,
+        acceptedAt: relation.acceptedAt,
+        activityLog: relation.activityLog || [],
+        businessOwnerNotes: relation.businessOwnerNotes,
+
+        rating: profile?.rating || 0,
+        totalReviews: profile?.totalReviews || 0,
+        businessesManaged: profile?.businessesManaged || 0,
+        experience: profile?.experience || 0,
+        specialization: profile?.specialization || [],
+        bio: profile?.bio || "",
+        city: profile?.city || "",
+        state: profile?.state || "",
+      },
     });
   } catch (error) {
     console.error("Get agent details error:", error);
     return res.status(500).json({ message: "Failed to fetch agent details" });
   }
 };
-
 /**
- * Send invitation to an agent
- * @route POST /api/agents/invite
- * @access Private (Business Owner)
+ * Invite an agent to manage the business
+ * -----------------------------------------------------------------------------
+ * - Only one active agent allowed per business owner
+ * - Prevents duplicate active/pending invitations
+ * - Uses agent's commission rate at time of invite
+ *
+ * @route   POST /api/agents/invite
+ * @access  Private (Business Owner)
  */
 export const inviteAgent = async (req, res) => {
   try {
     const businessOwnerId = req.user._id;
     const { agentId, permissions } = req.body;
 
-    // Validate agent exists
+    /* ---------------- Validate agent ---------------- */
     const agent = await Users.findOne({
       _id: agentId,
       role: ROLES.AGENT,
@@ -265,43 +287,46 @@ export const inviteAgent = async (req, res) => {
         .json({ message: "Agent not found or not available" });
     }
 
-    const activeAgentExists = await BusinessAgentRelation.exists({
+    /* ---------------- Enforce single active agent ---------------- */
+    const hasActiveAgent = await BusinessAgentRelation.exists({
       businessOwnerId,
       status: "active",
     });
 
-    if (activeAgentExists) {
+    if (hasActiveAgent) {
       return res.status(400).json({
         message:
           "You already have an active agent. Remove the current agent before inviting another.",
       });
     }
-    // Check for existing relation
-    // Check for existing active or pending relation with this agent
+
+    /* ---------------- Check existing relation ---------------- */
     const existingRelation = await BusinessAgentRelation.findOne({
       businessOwnerId,
       agentId,
       status: { $in: ["pending", "active"] },
     });
 
-    // If active, block invite
-    if (existingRelation && existingRelation.status === "active") {
-      return res.status(400).json({
-        message: "You already have an active relation with this agent",
-      });
-    }
+    if (existingRelation) {
+      if (existingRelation.status === "active") {
+        return res.status(400).json({
+          message: "You already have an active relation with this agent",
+        });
+      }
 
-    // If pending, check if invite is still active
-    if (existingRelation && existingRelation.status === "pending") {
-      if (existingRelation.isPendingActive()) {
+      if (
+        existingRelation.status === "pending" &&
+        existingRelation.isPendingActive()
+      ) {
         return res.status(400).json({
           message:
             "You already have a pending invitation to this agent. Cancel or wait for it to expire.",
         });
       }
-      // Otherwise, pending invite expired → allow creating a new one
+      // expired pending → allowed to re-invite
     }
 
+    /* ---------------- Validate agent profile ---------------- */
     const agentProfile = await AgentProfile.findOne({
       userId: agentId,
       isAvailable: true,
@@ -313,20 +338,22 @@ export const inviteAgent = async (req, res) => {
       });
     }
 
-    // Create invitation
+    /* ---------------- Create invitation ---------------- */
+    const defaultPermissions = {
+      canUploadDocuments: true,
+      canSubmitApplications: true,
+      canViewDashboard: true,
+      canReceiveUpdates: true,
+    };
+
     const relation = await BusinessAgentRelation.create({
       businessOwnerId,
       agentId,
       status: "pending",
       agreedCommission: agentProfile.commissionRate,
-      permissions: permissions || {
-        canUploadDocuments: true,
-        canSubmitApplications: true,
-        canViewDashboard: true,
-        canReceiveUpdates: true,
-      },
+      permissions: permissions || defaultPermissions,
       invitedAt: new Date(),
-      pendingExpiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // optional 7-day expiry
+      pendingExpiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     });
 
     return res.status(201).json({
@@ -339,11 +366,11 @@ export const inviteAgent = async (req, res) => {
     return res.status(500).json({ message: "Failed to send invitation" });
   }
 };
-
 /**
- * Update agent permissions
- * @route PATCH /api/agents/:relationId/permissions
- * @access Private (Business Owner)
+ * Update permissions for an active agent
+ *
+ * @route   PATCH /api/agents/:relationId/permissions
+ * @access  Private (Business Owner)
  */
 export const updateAgentPermissions = async (req, res) => {
   try {
@@ -386,11 +413,11 @@ export const updateAgentPermissions = async (req, res) => {
     return res.status(500).json({ message: "Failed to update permissions" });
   }
 };
-
 /**
- * Remove agent
- * @route DELETE /api/agents/:relationId
- * @access Private (Business Owner)
+ * Remove an agent (pending or active)
+ *
+ * @route   DELETE /api/agents/:relationId
+ * @access  Private (Business Owner)
  */
 export const removeAgent = async (req, res) => {
   try {
@@ -424,10 +451,11 @@ export const removeAgent = async (req, res) => {
       return res.status(404).json({ message: "Agent relation not found" });
     }
 
-    // Update agent's businessesManaged count
+    /* ---------------- Update agent metrics ---------------- */
     const agentProfile = await AgentProfile.findOne({
       userId: relation.agentId,
     });
+
     if (agentProfile && agentProfile.businessesManaged > 0) {
       agentProfile.businessesManaged -= 1;
       await agentProfile.save();

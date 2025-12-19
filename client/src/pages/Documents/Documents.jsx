@@ -160,7 +160,6 @@ const Documents = () => {
   };
 
   return (
-    // <AppLayout role={ROLES.SUPER_ADMIN}>
     <div className="documents-page-new">
       {/* Header */}
       <div className="docs-header">
@@ -327,7 +326,6 @@ const Documents = () => {
         }}
       />
     </div>
-    // </AppLayout>
   );
 };
 

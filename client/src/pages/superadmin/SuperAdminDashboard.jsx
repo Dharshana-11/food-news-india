@@ -395,7 +395,6 @@ const SuperAdminDashboard = () => {
         </Col>
       </Row>
     </div>
-    // </AppLayout>
   );
 };
 

@@ -17,7 +17,7 @@ import {
   inviteAgent,
   updateAgentPermissions,
   removeAgent,
-} from "../controllers/agentController.js";
+} from "../controllers/businessOwnerAgentController.js";
 
 const router = express.Router();
 

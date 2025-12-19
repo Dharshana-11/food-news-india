@@ -39,6 +39,7 @@ export const ROUTES = {
      USERS MODULE (Subpages)
   ========================================================= */
   USER_LIST: "/super-admin/users/list",
+  USER_PROFILE: "/super-admin/profile/",
   USER_INVITE: "/super-admin/users/invite",
   USER_ROLES: "/super-admin/users/roles",
 

@@ -133,6 +133,7 @@ const SideBar = ({ role, isOpen, onClose }) => {
         key: ROUTES.USER_LIST,
         icon: <UserOutlined />,
         label: "User Management",
+        paths: [ROUTES.USER_PROFILE],
       },
       {
         key: ROUTES.SUPER_ADMIN_COMPLIANCE,

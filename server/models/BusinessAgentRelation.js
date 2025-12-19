@@ -1,14 +1,24 @@
 /**
- * BusinessAgentRelation.js
+ * BusinessAgentRelation Model
  * ============================================================================
- * Maps business owners to their assigned agents
- * Tracks permissions, status, activity logs, and commission details
+ * Represents the relationship between a Business Owner and an Agent.
+ * Tracks assignment status, permissions, commission details,
+ * lifecycle timestamps, and activity history.
  */
 
 import mongoose from "mongoose";
 
-const activitySchema = new mongoose.Schema(
+const { Schema } = mongoose;
+
+/**
+ * Activity Log Schema
+ * Records significant actions performed within the relationship.
+ */
+const activitySchema = new Schema(
   {
+    /**
+     * Type of action performed.
+     */
     action: {
       type: String,
       required: true,
@@ -22,39 +32,66 @@ const activitySchema = new mongoose.Schema(
         "status_changed",
       ],
     },
+
+    /**
+     * Optional human-readable description of the action.
+     */
     description: {
       type: String,
       default: "",
     },
+
+    /**
+     * When the action occurred.
+     */
     timestamp: {
       type: Date,
       default: Date.now,
     },
+
+    /**
+     * Additional contextual data (document IDs, names, etc.).
+     */
     metadata: {
-      type: mongoose.Schema.Types.Mixed, // Extra data like document names, IDs, etc.
+      type: Schema.Types.Mixed,
       default: {},
     },
   },
   { _id: true }
 );
 
-const businessAgentRelationSchema = new mongoose.Schema(
+/**
+ * BusinessAgentRelation Schema
+ */
+const businessAgentRelationSchema = new Schema(
   {
+    /**
+     * Business owner user reference.
+     */
     businessOwnerId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "Users",
       required: true,
       index: true,
     },
 
+    /**
+     * Agent user reference.
+     */
     agentId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "Users",
       required: true,
       index: true,
     },
 
-    // Relationship Status
+    /* ------------------------------------------------------------------------
+     * Relationship Status
+     * ----------------------------------------------------------------------*/
+
+    /**
+     * Current state of the agent–business relationship.
+     */
     status: {
       type: String,
       enum: ["pending", "active", "rejected", "removed"],
@@ -62,12 +99,22 @@ const businessAgentRelationSchema = new mongoose.Schema(
       index: true,
     },
 
+    /**
+     * Expiry time for pending invitations.
+     * Defaults to 7 days from invitation.
+     */
     pendingExpiresAt: {
       type: Date,
-      default: () => new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+      default: () => new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
     },
 
-    // Permissions granted to agent
+    /* ------------------------------------------------------------------------
+     * Permissions
+     * ----------------------------------------------------------------------*/
+
+    /**
+     * Permissions granted to the agent by the business owner.
+     */
     permissions: {
       canUploadDocuments: { type: Boolean, default: true },
       canSubmitApplications: { type: Boolean, default: true },
@@ -75,20 +122,34 @@ const businessAgentRelationSchema = new mongoose.Schema(
       canReceiveUpdates: { type: Boolean, default: true },
     },
 
-    // Commission Details
+    /* ------------------------------------------------------------------------
+     * Commission Details
+     * ----------------------------------------------------------------------*/
+
+    /**
+     * Agreed commission amount (₹ per month).
+     * Immutable once relationship is created.
+     */
     agreedCommission: {
-      type: Number, // ₹ per month
+      type: Number,
       required: true,
       immutable: true,
+      min: 0,
     },
 
+    /**
+     * Frequency of commission payments.
+     */
     paymentFrequency: {
       type: String,
       enum: ["monthly", "quarterly", "yearly"],
       default: "monthly",
     },
 
-    // Dates
+    /* ------------------------------------------------------------------------
+     * Lifecycle Timestamps
+     * ----------------------------------------------------------------------*/
+
     invitedAt: {
       type: Date,
       default: Date.now,
@@ -109,58 +170,94 @@ const businessAgentRelationSchema = new mongoose.Schema(
       default: null,
     },
 
-    // Activity Log
+    /* ------------------------------------------------------------------------
+     * Activity & Notes
+     * ----------------------------------------------------------------------*/
+
+    /**
+     * Chronological log of actions related to this relationship.
+     */
     activityLog: [activitySchema],
 
-    // Notes
+    /**
+     * Notes added by the business owner.
+     */
     businessOwnerNotes: {
       type: String,
       maxlength: 1000,
       default: "",
+      trim: true,
     },
 
+    /**
+     * Notes added by the agent.
+     */
     agentNotes: {
       type: String,
       maxlength: 1000,
       default: "",
+      trim: true,
     },
 
-    // Rejection/Removal Reason
+    /* ------------------------------------------------------------------------
+     * Rejection / Removal Metadata
+     * ----------------------------------------------------------------------*/
+
     reasonForRejection: {
       type: String,
       default: "",
+      trim: true,
     },
 
     reasonForRemoval: {
       type: String,
       default: "",
+      trim: true,
     },
   },
   { timestamps: true }
 );
 
-// Compound indexes
+/* --------------------------------------------------------------------------
+ * Indexes
+ * ------------------------------------------------------------------------*/
+
+/**
+ * Used for fetching relationships by business owner and status.
+ */
 businessAgentRelationSchema.index({ businessOwnerId: 1, status: 1 });
+
+/**
+ * Used for fetching relationships by agent and status.
+ */
 businessAgentRelationSchema.index({ agentId: 1, status: 1 });
 
-// Prevent duplicate active relations
+/**
+ * Prevents multiple pending/active relationships
+ * between the same business owner and agent.
+ */
 businessAgentRelationSchema.index(
   { businessOwnerId: 1, agentId: 1, status: 1 },
   {
     unique: true,
-    partialFilterExpression: { status: { $in: ["pending", "active"] } }, // only active and pending agents are unique
+    partialFilterExpression: {
+      status: { $in: ["pending", "active"] },
+    },
   }
 );
 
-// Optional: pending invite expiry field
-businessAgentRelationSchema.add({
-  pendingExpiresAt: { type: Date, default: null },
-});
+/* --------------------------------------------------------------------------
+ * Instance Methods
+ * ------------------------------------------------------------------------*/
 
-// Helper method to check if a pending invite is still valid
+/**
+ * Checks whether a pending invitation is still valid.
+ *
+ * @returns {boolean} True if pending and not expired.
+ */
 businessAgentRelationSchema.methods.isPendingActive = function () {
   if (this.status !== "pending") return false;
-  if (!this.pendingExpiresAt) return true; // no expiry set
+  if (!this.pendingExpiresAt) return true;
   return this.pendingExpiresAt > new Date();
 };
 

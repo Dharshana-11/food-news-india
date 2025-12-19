@@ -15,7 +15,6 @@ import ROLES from "../../constants/roles";
  */
 const ComplianceAndDocumentManagement = () => {
   return (
-    // <AppLayout role={ROLES.SUPER_ADMIN}>
     <div className="compliance-docs-page">
       {/* Page Header */}
       <div className="page-header">
@@ -31,7 +30,6 @@ const ComplianceAndDocumentManagement = () => {
         <DocumentSummary />
       </div>
     </div>
-    // </AppLayout>
   );
 };
 

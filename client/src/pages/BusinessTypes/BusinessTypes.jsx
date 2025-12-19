@@ -120,7 +120,6 @@ const BusinessTypes = () => {
 
   // ===================== RENDER =====================
   return (
-    // <AppLayout role={ROLES.SUPER_ADMIN}>
     <div className="business-types-page">
       {/* Header */}
       <div className="page-header-section">
@@ -212,7 +211,6 @@ const BusinessTypes = () => {
         />
       </Modal>
     </div>
-    // </AppLayout>
   );
 };
 

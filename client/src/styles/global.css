@@ -4197,7 +4197,7 @@ body {
   color: var(--color-primary-orange);
 }
 
-.card-actions {
+.business-type-card-actions {
   display: flex;
   gap: 8px;
   padding-top: 16px;

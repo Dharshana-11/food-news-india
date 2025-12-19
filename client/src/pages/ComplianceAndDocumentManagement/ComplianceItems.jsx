@@ -196,7 +196,6 @@ const ComplianceItems = () => {
 
   // ----------------- Render -----------------
   return (
-    // <AppLayout role={ROLES.SUPER_ADMIN}>
     <div className="compliance-items-section">
       {/* Header */}
       <div className="compliance-items-header">
@@ -261,7 +260,6 @@ const ComplianceItems = () => {
         initialValues={selectedItem}
       />
     </div>
-    // </AppLayout>
   );
 };
 

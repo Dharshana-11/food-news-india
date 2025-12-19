@@ -1,18 +1,22 @@
+/**
+ * ViewMyAgent.jsx
+ * ============================================================================
+ * Displays detailed information about the currently assigned agent
+ * for a business owner, including profile, activity, and actions.
+ *
+ * Features:
+ * - View agent profile & commission
+ * - View recent activity timeline
+ * - Remove agent with confirmation
+ *
+ * @component
+ */
+
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import {
-  Card,
-  Button,
-  Timeline,
-  Spin,
-  message,
-  Badge,
-  Modal,
-  Input,
-} from "antd";
+import { Card, Button, Timeline, Spin, message, Modal, Input } from "antd";
 import {
   ArrowLeftOutlined,
-  EyeOutlined,
   DeleteOutlined,
   ExclamationCircleOutlined,
   StarFilled,
@@ -37,16 +41,16 @@ const ViewMyAgent = ({ onBack }) => {
     fetchAgentDetails();
   }, [relationId]);
 
+  /**
+   * Fetch agent details for the given relation ID
+   */
   const fetchAgentDetails = async () => {
-    if (!relationId) {
-      console.warn("No relationId provided to fetch agent details");
-      return;
-    }
+    if (!relationId) return;
 
     try {
       setLoading(true);
-      const data = await agentService.getAgentDetails(relationId);
-      setAgent(data.data);
+      const response = await agentService.getAgentDetails(relationId);
+      setAgent(response.data);
     } catch (error) {
       console.error("Fetch agent error:", error);
       message.error("Failed to load agent details");
@@ -55,42 +59,47 @@ const ViewMyAgent = ({ onBack }) => {
     }
   };
 
+  /**
+   * Handle agent removal with confirmation
+   */
   const handleRemoveAgent = () => {
     Modal.confirm({
       title: "Remove Agent?",
       icon: <ExclamationCircleOutlined />,
       content: (
-        <div>
+        <>
           <p>Are you sure you want to remove this agent?</p>
-
           <Input.TextArea
-            id="removal-reason"
             placeholder="Reason for removal (optional)"
             rows={3}
             style={{ marginTop: 12 }}
+            value={removalReason}
+            onChange={(e) => setRemovalReason(e.target.value)}
           />
-        </div>
+        </>
       ),
       okText: "Remove",
       okType: "danger",
       cancelText: "Cancel",
       onOk: async () => {
-        const reason = document.getElementById("removal-reason")?.value || "";
-
         try {
           setRemoving(true);
-          await agentService.removeAgent(relationId, reason);
+          await agentService.removeAgent(relationId, removalReason);
           message.success("Agent removed successfully");
           if (onBack) onBack();
         } catch (error) {
           message.error("Failed to remove agent");
         } finally {
           setRemoving(false);
+          setRemovalReason("");
         }
       },
     });
   };
 
+  /**
+   * Get activity icon based on action type
+   */
   const getActivityIcon = (action) => {
     const iconMap = {
       document_uploaded: <FileTextOutlined style={{ color: "#1890ff" }} />,
@@ -100,9 +109,13 @@ const ViewMyAgent = ({ onBack }) => {
       renewal_requested: <SyncOutlined style={{ color: "#faad14" }} />,
       profile_updated: <UserOutlined style={{ color: "#722ed1" }} />,
     };
+
     return iconMap[action] || <FileTextOutlined />;
   };
 
+  /**
+   * Format date for display
+   */
   const formatDate = (date) => {
     if (!date) return "N/A";
     return new Date(date).toLocaleDateString("en-IN", {
@@ -137,11 +150,7 @@ const ViewMyAgent = ({ onBack }) => {
             type="text"
             icon={<ArrowLeftOutlined />}
             onClick={() => (onBack ? onBack() : navigate(-1))}
-            style={{ marginBottom: 10 }}
-          >
-            {/* Back */}
-          </Button>
-
+          />
           <h2 className="view-agent-title">View My Agent</h2>
         </div>
 
@@ -174,10 +183,6 @@ const ViewMyAgent = ({ onBack }) => {
         {/* Actions */}
         <Card title="Quick Actions" className="view-agent-section-card">
           <div className="view-agent-actions">
-            {/* <Button icon={<EyeOutlined />} size="large" block>
-              View Activity
-            </Button> */}
-
             <Button
               icon={<DeleteOutlined />}
               danger

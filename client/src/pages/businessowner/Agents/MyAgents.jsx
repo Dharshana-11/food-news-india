@@ -11,26 +11,51 @@ import { useNavigate } from "react-router-dom";
 import agentService from "../../../services/myAgentService";
 import "./MyAgents.css";
 
+/**
+ * MyAgents
+ * ------------------------------------------------------------------
+ * Displays:
+ * - Assigned agents for the business owner
+ * - Available agents that can be added
+ *
+ * Features:
+ * - Search agents by name
+ * - View active/pending agents
+ * - Navigate to agent details or add agent page
+ *
+ * NOTE:
+ * Business logic is intentionally kept minimal here.
+ * All data fetching is handled via agentService.
+ */
 const MyAgents = () => {
   const [myAgents, setMyAgents] = useState([]);
   const [availableAgents, setAvailableAgents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+
   const navigate = useNavigate();
 
+  /**
+   * Fetch assigned and available agents on mount
+   */
   useEffect(() => {
     fetchAgents();
   }, []);
 
+  /**
+   * Fetch agents from backend
+   */
   const fetchAgents = async () => {
     try {
       setLoading(true);
+
       const [myData, availableData] = await Promise.all([
         agentService.getMyAgents(),
         agentService.getAvailableAgents(),
       ]);
-      setMyAgents(myData.agents || []);
-      setAvailableAgents(availableData.agents || []);
+
+      setMyAgents(myData?.agents || []);
+      setAvailableAgents(availableData?.agents || []);
     } catch (error) {
       console.error(error);
       message.error("Failed to load agents");
@@ -39,21 +64,44 @@ const MyAgents = () => {
     }
   };
 
-  const filteredAgents = (agentsArray) =>
-    agentsArray.filter((agent) =>
+  /**
+   * Filter agents by search term (case-insensitive)
+   *
+   * @param {Array<Object>} agents
+   * @returns {Array<Object>}
+   */
+  const filterAgentsBySearch = (agents) =>
+    agents.filter((agent) =>
       agent.name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+  /**
+   * Render status badge based on agent status
+   *
+   * @param {string} status
+   * @returns {JSX.Element}
+   */
   const getStatusBadge = (status) => {
     const statusMap = {
       active: { color: "green", text: "Active" },
       pending: { color: "orange", text: "Pending" },
       rejected: { color: "red", text: "Rejected" },
     };
-    const config = statusMap[status] || { color: "default", text: status };
+
+    const config = statusMap[status] || {
+      color: "default",
+      text: status,
+    };
+
     return <Badge color={config.color} text={config.text} />;
   };
 
+  /**
+   * Render single agent card
+   *
+   * @param {Object} agent
+   * @returns {JSX.Element}
+   */
   const renderAgentCard = (agent) => (
     <Card
       key={agent.relationId || agent.agentId || agent._id}
@@ -61,7 +109,7 @@ const MyAgents = () => {
     >
       <div className="my-agents-row">
         <div className="my-agents-avatar">
-          {agent.name?.charAt(0).toUpperCase()}
+          {agent.name?.charAt(0)?.toUpperCase()}
         </div>
 
         <div className="my-agents-info">
@@ -99,11 +147,15 @@ const MyAgents = () => {
     );
   }
 
-  // Only consider active agents for viewing
-  const activeAgents = filteredAgents(myAgents).filter(
+  // Pre-filtered lists (avoid repeating logic)
+  const filteredMyAgents = filterAgentsBySearch(myAgents);
+  const filteredAvailableAgents = filterAgentsBySearch(availableAgents);
+
+  const activeAgents = filteredMyAgents.filter(
     (agent) => agent.status === "active"
   );
-  const pendingAgents = filteredAgents(myAgents).filter(
+
+  const pendingAgents = filteredMyAgents.filter(
     (agent) => agent.status === "pending"
   );
 
@@ -125,6 +177,7 @@ const MyAgents = () => {
           className="my-agents-search-input"
         />
 
+        {/* Quick Actions */}
         <Card title="Quick Actions" className="my-agents-quick-actions">
           <div className="my-agents-quick-actions-row">
             <Button
@@ -136,19 +189,17 @@ const MyAgents = () => {
             >
               Add Agent
             </Button>
+
             <Button
               icon={<EyeOutlined />}
               onClick={() => {
                 if (activeAgents.length > 0) {
-                  // Navigate to first active agent
                   navigate(
                     `/business-owner/agents/${activeAgents[0].relationId}`
                   );
                 } else if (pendingAgents.length > 0) {
-                  // All agents are pending
                   message.info("Your agent is still pending");
                 } else {
-                  // No agents at all
                   message.info("No agents available");
                 }
               }}
@@ -159,35 +210,36 @@ const MyAgents = () => {
           </div>
         </Card>
 
+        {/* My Agents */}
         <h3 className="my-agents-section-title">My Agents</h3>
-        {filteredAgents(myAgents).length === 0 ? (
+        {filteredMyAgents.length === 0 ? (
           <Empty
             description="No agents assigned"
             className="my-agents-empty-state"
           />
         ) : (
           <div className="my-agents-list">
-            {filteredAgents(myAgents).map(renderAgentCard)}
+            {filteredMyAgents.map(renderAgentCard)}
           </div>
         )}
 
+        {/* Available Agents */}
         <div className="my-agents-section-header">
           <h3 className="my-agents-section-title">Available Agents</h3>
-
           <ArrowRightOutlined
             className="my-agents-forward-arrow"
             onClick={() => navigate("/business-owner/add-agent")}
           />
         </div>
 
-        {filteredAgents(availableAgents).length === 0 ? (
+        {filteredAvailableAgents.length === 0 ? (
           <Empty
             description="No available agents"
             className="my-agents-empty-state"
           />
         ) : (
           <div className="my-agents-list">
-            {filteredAgents(availableAgents).map(renderAgentCard)}
+            {filteredAvailableAgents.map(renderAgentCard)}
           </div>
         )}
       </div>

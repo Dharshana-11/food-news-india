@@ -183,7 +183,6 @@ const ComplianceMappings = () => {
 
   // -------------------- Render --------------------
   return (
-    // <AppLayout role={ROLES.SUPER_ADMIN}>
     <div className="compliance-mappings-page">
       <div className="page-header-section">
         <div className="header-content">
@@ -282,7 +281,6 @@ const ComplianceMappings = () => {
         />
       </Modal>
     </div>
-    // </AppLayout>
   );
 };
 

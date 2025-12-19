@@ -88,15 +88,6 @@
   pointer-events: none;
 }
 
-/* .agent-card.disabled .ant-btn-dangerous {
-  opacity: 1 !important;
-}
-
-.agent-card.disabled {
-  /* opacity: 0.6; */
-/* border-color: #e8e8e8; */
-/* } */
-
 /* =========================
    Card Body
 ========================= */
@@ -131,11 +122,6 @@
   flex-shrink: 0;
   box-shadow: 0 4px 12px rgba(255, 107, 53, 0.25);
 }
-
-/* .agent-avatar.disabled {
-  opacity: 0.5;
-  box-shadow: none;
-} */
 
 /* =========================
    Info Section
@@ -198,6 +184,7 @@
   color: #666;
   font-weight: 500;
   line-height: 1.5;
+  margin-bottom: 5px;
 }
 
 /* Location */
@@ -305,6 +292,7 @@
   font-weight: 600;
   height: 36px;
   padding: 0 20px;
+  margin-right: 10px;
 }
 
 .agent-footer .ant-btn-primary {
