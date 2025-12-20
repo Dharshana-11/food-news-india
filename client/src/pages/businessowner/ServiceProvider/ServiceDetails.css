@@ -1,0 +1,279 @@
+.service-details-page {
+  min-height: 100vh;
+  background: #f5f7fa;
+  padding: 16px;
+  padding-bottom: 80px;
+}
+
+.service-details-container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.details-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.details-header .back-icon {
+  font-size: 20px;
+  color: #666;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.details-header .back-icon:hover {
+  color: #1890ff;
+}
+
+.details-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+  flex: 1;
+}
+
+/* Service Info Card */
+.service-info-card {
+  border-radius: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.service-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.service-title-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.service-icon {
+  width: 48px;
+  height: 48px;
+  background: linear-gradient(135deg, #ff9966 0%, #ff5e62 100%);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.service-name {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+}
+
+.service-id {
+  font-size: 12px;
+  color: #999;
+}
+
+.status-tag {
+  font-size: 13px;
+  padding: 4px 12px;
+  border-radius: 12px;
+}
+
+.info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+}
+
+.info-label {
+  font-size: 14px;
+  color: #666;
+}
+
+.info-value {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1a1a1a;
+  text-align: right;
+}
+
+.price-row {
+  border-top: 2px dashed #e8eaed;
+  padding-top: 12px;
+  margin-top: 8px;
+}
+
+.info-value.price {
+  font-size: 20px;
+  font-weight: 700;
+  color: #ff6b35;
+}
+
+/* Progress Card */
+.progress-card {
+  border-radius: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.progress-card .ant-card-head {
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.progress-card .ant-card-head-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.timeline-item {
+  margin-left: 8px;
+}
+
+.timeline-status {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+}
+
+.timeline-date {
+  font-size: 13px;
+  color: #999;
+  margin-bottom: 4px;
+}
+
+.timeline-message {
+  font-size: 14px;
+  color: #666;
+  margin-top: 4px;
+}
+
+/* Documents Card */
+.documents-card {
+  border-radius: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.documents-card .ant-card-head {
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.documents-card .ant-card-head-title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.document-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #f9fafb;
+  border-radius: 8px;
+}
+
+.doc-icon {
+  font-size: 24px;
+}
+
+.doc-name {
+  flex: 1;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Support Card */
+.support-card {
+  border-radius: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.support-header {
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 16px;
+}
+
+.support-button {
+  height: 48px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+/* Action Buttons */
+.action-buttons {
+  margin-bottom: 24px;
+}
+
+.action-button {
+  height: 50px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+/* Rating Display */
+.rating-display-card {
+  border-radius: 16px;
+  background: linear-gradient(135deg, #fff9e6 0%, #fff3cc 100%);
+  border: 2px solid #ffd700;
+}
+
+.rating-header {
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 12px;
+}
+
+.rating-comment {
+  margin-top: 12px;
+  font-size: 14px;
+  color: #666;
+  padding: 12px;
+  background: white;
+  border-radius: 8px;
+}
+
+/* Loader & Error */
+.service-details-loader,
+.service-details-error {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+  gap: 16px;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .service-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+
+  .service-name {
+    font-size: 16px;
+  }
+
+  .status-tag {
+    font-size: 12px;
+    padding: 2px 8px;
+  }
+}
