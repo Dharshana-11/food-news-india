@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card, Input, Spin, message, Empty } from "antd";
 import { SearchOutlined, ArrowLeftOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import serviceService from "../../services/serviceService";
+import myServicesService from "../../../services/myServicesService";
 import "./BookServices.css";
 
 const BookServices = () => {
@@ -18,7 +18,7 @@ const BookServices = () => {
   const fetchServices = async () => {
     try {
       setLoading(true);
-      const response = await serviceService.getServices({
+      const response = await myServicesService.getServices({
         sortBy: "totalBookings",
         sortOrder: "desc",
         limit: 50,

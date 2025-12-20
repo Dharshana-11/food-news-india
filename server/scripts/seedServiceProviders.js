@@ -2,9 +2,7 @@ import mongoose from "mongoose";
 import ServiceProvider from "../models/ServiceProvider.js";
 import ComplianceItem from "../models/ComplianceItem.js";
 import User from "../models/User.js";
-import dotenv from "dotenv";
-
-dotenv.config();
+import "dotenv/config";
 
 const seedServiceProviders = async () => {
   try {

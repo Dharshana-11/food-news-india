@@ -22,7 +22,7 @@ import {
   MessageOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
-import bookingService from "../../services/bookingService";
+import bookingService from "../../../services/bookingService";
 import "./ServiceDetails.css";
 
 const { TextArea } = Input;
@@ -177,7 +177,9 @@ const ServiceDetails = () => {
             <div className="service-title-section">
               <div className="service-icon">🏛️</div>
               <div>
-                <div className="service-name">{booking.serviceId?.name}</div>
+                <div className="service-name">
+                  {booking.complianceItemId?.name}
+                </div>
                 <div className="service-id">
                   Booking ID: {booking.bookingId}
                 </div>

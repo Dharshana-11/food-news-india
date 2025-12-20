@@ -2,65 +2,151 @@ import ServiceBooking from "../models/ServiceBooking.js";
 import ComplianceItem from "../models/ComplianceItem.js";
 import ServiceProvider from "../models/ServiceProvider.js";
 import User from "../models/User.js";
+import ROLES from "../utils/constants/roles.js";
 
 /**
  * Create a new booking
  * POST /api/bookings
  * Body: { complianceItemId, providerId, agreedPrice, estimatedDays, notes }
  */
+// export const createBooking = async (req, res) => {
+//   try {
+//     const { complianceItemId, providerId, agreedPrice, estimatedDays, notes } =
+//       req.body;
+//     const user = await User.findOne({ uid: req.user.uid });
+// if (!user) {
+//   return res
+//     .status(401)
+//     .json({ success: false, message: "User not found" });
+// }
+
+// const businessOwnerId = user._id;
+
+//     // Validate compliance item and provider
+//     const [complianceItem, provider] = await Promise.all([
+//       ComplianceItem.findById(complianceItemId),
+//       ServiceProvider.findById(providerId),
+//     ]);
+
+//     if (!complianceItem || complianceItem.status !== "active") {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Service not found or inactive",
+//       });
+//     }
+
+//     if (!provider || provider.status !== "active") {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Service provider not found or inactive",
+//       });
+//     }
+
+//     // Verify provider offers this compliance item
+//     const providerOffersItem = provider.complianceItemsOffered.some(
+//       (itemId) => itemId.toString() === complianceItemId
+//     );
+
+//     if (!providerOffersItem) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "This provider does not offer the selected service",
+//       });
+//     }
+
+//      const pricing = provider.pricingPerItem.find(
+//   (p) => p.complianceItemId.toString() === complianceItemId
+// );
+
+//    const finalPrice = agreedPrice ?? pricing?.price;
+// const finalDays = estimatedDays ?? pricing?.estimatedDays ?? 7;
+
+//     // Calculate expected completion date
+//     const expectedCompletionDate = new Date();
+//     expectedCompletionDate.setDate(
+//       expectedCompletionDate.getDate() + finalDays
+//     );
+
+//     // Create booking
+//     const booking = await ServiceBooking.create({
+//       businessOwnerId,
+//       complianceItemId,
+//       providerId,
+//       agreedPrice: finalPrice,
+//       estimatedDays: finalDays,
+//       expectedCompletionDate,
+//       notes,
+//       timeline: [
+//         {
+//           status: "pending",
+//           message: "Booking request submitted",
+//           timestamp: new Date(),
+//           updatedBy: businessOwnerId,
+//         },
+//       ],
+//     });
+
+//
+
+//     res.status(201).json({
+//       success: true,
+//       message: "Booking created successfully",
+//       data: booking,
+//     });
+//   } catch (error) {
+//     console.error("Error creating booking:", error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Failed to create booking",
+//       error: error.message,
+//     });
+//   }
+// };
+
 export const createBooking = async (req, res) => {
   try {
     const { complianceItemId, providerId, agreedPrice, estimatedDays, notes } =
       req.body;
-    const businessOwnerId = req.user.userId;
 
-    // Validate compliance item and provider
+    // Resolve Mongo user from Firebase session
+    const user = await User.findOne({ uid: req.user.uid });
+    if (!user) {
+      return res
+        .status(401)
+        .json({ success: false, message: "User not found" });
+    }
+
+    const businessOwnerId = user._id;
+
     const [complianceItem, provider] = await Promise.all([
       ComplianceItem.findById(complianceItemId),
       ServiceProvider.findById(providerId),
     ]);
 
     if (!complianceItem || complianceItem.status !== "active") {
-      return res.status(404).json({
-        success: false,
-        message: "Service not found or inactive",
-      });
+      return res
+        .status(404)
+        .json({ success: false, message: "Service not found" });
     }
 
     if (!provider || provider.status !== "active") {
-      return res.status(404).json({
-        success: false,
-        message: "Service provider not found or inactive",
-      });
+      return res
+        .status(404)
+        .json({ success: false, message: "Provider not found" });
     }
 
-    // Verify provider offers this compliance item
-    const providerOffersItem = provider.complianceItemsOffered.some(
-      (itemId) => itemId.toString() === complianceItemId
-    );
-
-    if (!providerOffersItem) {
-      return res.status(400).json({
-        success: false,
-        message: "This provider does not offer the selected service",
-      });
-    }
-
-    // Get pricing from provider
-    const providerPricing = provider.pricingPerItem?.find(
+    const pricing = provider.pricingPerItem.find(
       (p) => p.complianceItemId.toString() === complianceItemId
     );
 
-    const finalPrice = agreedPrice || providerPricing?.price || 0;
-    const finalDays = estimatedDays || providerPricing?.estimatedDays || 7;
+    const finalPrice = agreedPrice ?? pricing?.price;
+    const finalDays = estimatedDays ?? pricing?.estimatedDays ?? 7;
 
-    // Calculate expected completion date
     const expectedCompletionDate = new Date();
     expectedCompletionDate.setDate(
       expectedCompletionDate.getDate() + finalDays
     );
 
-    // Create booking
     const booking = await ServiceBooking.create({
       businessOwnerId,
       complianceItemId,
@@ -73,29 +159,17 @@ export const createBooking = async (req, res) => {
         {
           status: "pending",
           message: "Booking request submitted",
-          timestamp: new Date(),
           updatedBy: businessOwnerId,
         },
       ],
     });
 
-    const populatedBooking = await ServiceBooking.findById(booking._id)
-      .populate("complianceItemId", "name code description")
-      .populate("providerId", "companyName rating logo")
-      .lean();
-
-    res.status(201).json({
-      success: true,
-      message: "Booking created successfully",
-      data: populatedBooking,
-    });
+    res.status(201).json({ success: true, data: booking });
   } catch (error) {
     console.error("Error creating booking:", error);
-    res.status(500).json({
-      success: false,
-      message: "Failed to create booking",
-      error: error.message,
-    });
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to create booking" });
   }
 };
 
@@ -114,15 +188,15 @@ export const getMyBookings = async (req, res) => {
       page = 1,
     } = req.query;
 
-    const userId = req.user.userId;
+    const userId = req.user._id;
     const userRole = req.user.role;
 
     let query = {};
 
     // Filter based on role
-    if (userRole === "business_owner") {
+    if (userRole === ROLES.BUSINESS_OWNER) {
       query.businessOwnerId = userId;
-    } else if (userRole === "service_provider") {
+    } else if (userRole === ROLES.SERVICE_PROVIDER) {
       const provider = await ServiceProvider.findOne({ userId });
       if (!provider) {
         return res.status(404).json({
@@ -187,7 +261,10 @@ export const getBookingById = async (req, res) => {
 
     const booking = await ServiceBooking.findById(id)
       .populate("complianceItemId")
-      .populate("providerId")
+      .populate({
+        path: "providerId",
+        select: "companyName rating logo userId",
+      })
       .populate("businessOwnerId", "name phone email")
       .populate("timeline.updatedBy", "name")
       .populate("documents.uploadedBy", "name")
@@ -200,11 +277,14 @@ export const getBookingById = async (req, res) => {
       });
     }
 
-    // Check authorization
-    const userId = req.user.userId;
+    const userId = req.user._id.toString();
+    const userRole = req.user.role;
+
     const isOwner = booking.businessOwnerId._id.toString() === userId;
-    const isProvider = booking.providerId.userId?.toString() === userId;
-    const isAdmin = ["admin", "super_admin"].includes(req.user.role);
+
+    const isProvider = booking.providerId?.userId?.toString() === userId;
+
+    const isAdmin = ["admin", "super_admin"].includes(userRole);
 
     if (!isOwner && !isProvider && !isAdmin) {
       return res.status(403).json({
@@ -236,7 +316,7 @@ export const updateBookingStatus = async (req, res) => {
   try {
     const { id } = req.params;
     const { status, message } = req.body;
-    const userId = req.user.userId;
+    const userId = req.user._id;
 
     const booking = await ServiceBooking.findById(id);
 
@@ -312,7 +392,8 @@ export const cancelBooking = async (req, res) => {
   try {
     const { id } = req.params;
     const { reason } = req.body;
-    const userId = req.user.userId;
+
+    const userId = req.user._id.toString();
 
     const booking = await ServiceBooking.findById(id);
 
@@ -344,8 +425,8 @@ export const cancelBooking = async (req, res) => {
     booking.timeline.push({
       status: "cancelled",
       message: reason || "Booking cancelled by customer",
+      updatedBy: booking.businessOwnerId,
       timestamp: new Date(),
-      updatedBy: userId,
     });
 
     await booking.save();
@@ -373,7 +454,7 @@ export const addRating = async (req, res) => {
   try {
     const { id } = req.params;
     const { score, comment } = req.body;
-    const userId = req.user.userId;
+    const userId = req.user._id;
 
     const booking = await ServiceBooking.findById(id);
 
@@ -451,14 +532,14 @@ export const addRating = async (req, res) => {
  */
 export const getBookingStats = async (req, res) => {
   try {
-    const userId = req.user.userId;
+    const userId = req.user._id;
     const userRole = req.user.role;
 
     let matchQuery = {};
 
-    if (userRole === "business_owner") {
+    if (userRole === ROLES.BUSINESS_OWNER) {
       matchQuery.businessOwnerId = userId;
-    } else if (userRole === "service_provider") {
+    } else if (userRole === ROLES.SERVICE_PROVIDER) {
       const provider = await ServiceProvider.findOne({ userId });
       if (!provider) {
         return res.status(404).json({

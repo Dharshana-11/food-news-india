@@ -7,7 +7,7 @@ import {
   TrophyOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
-import serviceService from "../../services/serviceService";
+import myServiceServices from "../../../services/myServicesService";
 import "./ServiceProviders.css";
 
 const ServiceProviders = () => {
@@ -28,8 +28,8 @@ const ServiceProviders = () => {
     try {
       setLoading(true);
       const [serviceRes, providersRes] = await Promise.all([
-        serviceService.getServiceById(serviceId),
-        serviceService.getServiceProviders(serviceId, {
+        myServiceServices.getServiceById(serviceId),
+        myServiceServices.getServiceProviders(serviceId, {
           sortBy: "rating",
           limit: 50,
         }),

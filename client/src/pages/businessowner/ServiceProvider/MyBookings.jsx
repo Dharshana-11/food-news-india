@@ -8,7 +8,7 @@ import {
   SyncOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import bookingService from "../../services/bookingService";
+import bookingService from "../../../services/bookingService";
 import "./MyBookings.css";
 
 const MyBookings = () => {
@@ -69,7 +69,7 @@ const MyBookings = () => {
   };
 
   const filteredBookings = bookings.filter((booking) => {
-    const serviceName = booking.serviceId?.name?.toLowerCase() || "";
+    const serviceName = booking.complianceItemId?.name?.toLowerCase() || "";
     const providerName = booking.providerId?.companyName?.toLowerCase() || "";
     const search = searchTerm.toLowerCase();
     return serviceName.includes(search) || providerName.includes(search);
@@ -165,7 +165,7 @@ const MyBookings = () => {
                     <div className="booking-info">
                       <div className="booking-header">
                         <span className="booking-name">
-                          {booking.serviceId?.name}
+                          {booking.complianceItemId?.name}
                         </span>
                         <Tag color={getStatusColor(booking.status)}>
                           {getStatusText(booking.status)}
@@ -230,7 +230,7 @@ const MyBookings = () => {
                     <div className="booking-info">
                       <div className="booking-header">
                         <span className="booking-name">
-                          {booking.serviceId?.name}
+                          {booking.complianceItemId?.name}
                         </span>
                         <Tag color="green">Completed</Tag>
                       </div>

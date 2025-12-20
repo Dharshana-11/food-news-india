@@ -18,8 +18,8 @@ import {
   PhoneOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
-import serviceService from "../../services/serviceService";
-import bookingService from "../../services/bookingService";
+import myServiceServices from "../../../services/myServicesService";
+import bookingService from "../../../services/bookingService";
 import "./ProviderDetails.css";
 
 const { TextArea } = Input;
@@ -45,8 +45,8 @@ const ProviderDetails = () => {
     try {
       setLoading(true);
       const [serviceRes, providersRes] = await Promise.all([
-        serviceService.getServiceById(serviceId),
-        serviceService.getServiceProviders(serviceId),
+        myServiceServices.getServiceById(serviceId),
+        myServiceServices.getServiceProviders(serviceId),
       ]);
 
       setService(serviceRes.data);
@@ -64,9 +64,10 @@ const ProviderDetails = () => {
     try {
       setSubmitting(true);
       await bookingService.createBooking({
-        serviceId,
+        complianceItemId: serviceId,
         providerId,
-        agreedPrice: provider.commissionRate,
+        agreedPrice: provider.priceForThisItem,
+        estimatedDays: provider.estimatedDaysForThisItem,
         notes,
       });
 
@@ -109,7 +110,6 @@ const ProviderDetails = () => {
           />
           <h2>{provider.companyName}</h2>
         </div>
-
         {/* Provider Info Card */}
         <Card className="provider-info-card">
           <div className="provider-banner">
@@ -138,19 +138,16 @@ const ProviderDetails = () => {
 
               <div className="info-item">
                 <EnvironmentOutlined className="icon" />
-                <span>
-                  {provider.location || "Based in Chennai, serving pan-india"}
-                </span>
+                <span>{provider.location}</span>
               </div>
 
               <div className="info-item">
-                <PhoneOutlined className="icon" />
-                <span>₹{provider.commissionRate}</span>
+                <CheckCircleOutlined className="icon" />
+                <span>₹{provider.priceForThisItem}</span>
               </div>
             </Space>
           </div>
         </Card>
-
         {/* Why Choose Card */}
         <Card className="why-choose-card" title="Why you should choose us?">
           <Space direction="vertical" size={12} style={{ width: "100%" }}>
@@ -166,9 +163,8 @@ const ProviderDetails = () => {
             </div>
           </Space>
         </Card>
-
-        {/* Required Documents */}
-        {service?.requiredDocuments && service.requiredDocuments.length > 0 && (
+        Required Documents
+        {/* {service?.requiredDocuments && service.requiredDocuments.length > 0 && (
           <Card className="documents-card" title="Required Documents">
             <Space direction="vertical" size={8} style={{ width: "100%" }}>
               {service.requiredDocuments.map((doc, index) => (
@@ -190,8 +186,13 @@ const ProviderDetails = () => {
               </Button>
             </div>
           </Card>
-        )}
-
+        )} */}
+        <Card className="documents-card" title="Documents">
+          <p style={{ color: "#666", margin: 0 }}>
+            Required documents will be requested by the service provider after
+            booking.
+          </p>
+        </Card>
         {/* Book Button */}
         <div className="book-action">
           <Button
@@ -233,7 +234,7 @@ const ProviderDetails = () => {
             <strong>Provider:</strong> {provider.companyName}
           </div>
           <div>
-            <strong>Price:</strong> ₹{provider.commissionRate}
+            <strong>Price:</strong> ₹{provider.priceForThisItem}
           </div>
           <Divider />
           <div>
