@@ -5,9 +5,14 @@ import ComplianceRequirementMapping from "../models/ComplianceRequirementMapping
 import BusinessProfile from "../models/BusinessProfile.js";
 
 /**
- * Get all active compliance items (services) with optional filters
- * GET /api/services
- * Query params: search, sortBy, sortOrder, limit, page
+ * Get all active compliance items (services)
+ *
+ * @route   GET /api/services
+ * @query   {string} search      Optional text search
+ * @query   {string} sortBy      Field to sort by (default: name)
+ * @query   {string} sortOrder   asc | desc (default: asc)
+ * @query   {number} limit       Results per page (default: 50)
+ * @query   {number} page        Page number (default: 1)
  */
 export const getServices = async (req, res) => {
   try {
@@ -31,16 +36,19 @@ export const getServices = async (req, res) => {
     }
 
     // Sorting
-    const sortOptions = {};
-    sortOptions[sortBy] = sortOrder === "asc" ? 1 : -1;
+    const sortOptions = {
+      [sortBy]: sortOrder === "asc" ? 1 : -1,
+    };
 
     // Pagination
-    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const parsedLimit = parseInt(limit);
+    const parsedPage = parseInt(page);
+    const skip = (parsedPage - 1) * parsedLimit;
 
     const [services, total] = await Promise.all([
       ComplianceItem.find(query)
         .sort(sortOptions)
-        .limit(parseInt(limit))
+        .limit(parsedLimit)
         .skip(skip)
         .lean(),
       ComplianceItem.countDocuments(query),
@@ -51,9 +59,9 @@ export const getServices = async (req, res) => {
       data: services,
       pagination: {
         total,
-        page: parseInt(page),
-        limit: parseInt(limit),
-        totalPages: Math.ceil(total / parseInt(limit)),
+        page: parsedPage,
+        limit: parsedLimit,
+        totalPages: Math.ceil(total / parsedLimit),
       },
     });
   } catch (error) {
@@ -67,14 +75,16 @@ export const getServices = async (req, res) => {
 };
 
 /**
- * Get services applicable to current user's business type
- * GET /api/services/my-applicable
+ * Get compliance services applicable to the current user's business type
+ *
+ * @route   GET /api/services/my-applicable
+ * @access  Authenticated (Business Owner)
  */
 export const getMyApplicableServices = async (req, res) => {
   try {
     const userId = req.user._id;
 
-    // Get business profile
+    // Fetch business profile
     const businessProfile = await BusinessProfile.findOne({ userId }).lean();
 
     if (!businessProfile || !businessProfile.businessTypeId) {
@@ -84,7 +94,7 @@ export const getMyApplicableServices = async (req, res) => {
       });
     }
 
-    // Get compliance requirements for this business type
+    // Fetch compliance mappings for the business type
     const mappings = await ComplianceRequirementMapping.find({
       businessTypeId: businessProfile.businessTypeId,
       status: "active",
@@ -94,12 +104,14 @@ export const getMyApplicableServices = async (req, res) => {
 
     const applicableServices = mappings
       .filter(
-        (m) => m.complianceItemId && m.complianceItemId.status === "active"
+        (mapping) =>
+          mapping.complianceItemId &&
+          mapping.complianceItemId.status === "active"
       )
-      .map((m) => ({
-        ...m.complianceItemId,
-        applicability: m.applicability,
-        isRequired: m.applicability === "required",
+      .map((mapping) => ({
+        ...mapping.complianceItemId,
+        applicability: mapping.applicability,
+        isRequired: mapping.applicability === "required",
       }));
 
     res.status(200).json({
@@ -117,8 +129,9 @@ export const getMyApplicableServices = async (req, res) => {
 };
 
 /**
- * Get service details by ID
- * GET /api/services/:id
+ * Get service (compliance item) details by ID
+ *
+ * @route   GET /api/services/:id
  */
 export const getServiceById = async (req, res) => {
   try {
@@ -148,16 +161,20 @@ export const getServiceById = async (req, res) => {
 };
 
 /**
- * Get service providers for a specific compliance item
- * GET /api/services/:id/providers
- * Query params: sortBy (rating, price, customers), search, limit, page
+ * Get service providers offering a specific compliance item
+ *
+ * @route   GET /api/services/:id/providers
+ * @query   {string} sortBy   rating | price | customers
+ * @query   {string} search   Text search
+ * @query   {number} limit    Results per page (default: 20)
+ * @query   {number} page     Page number (default: 1)
  */
 export const getServiceProviders = async (req, res) => {
   try {
     const { id } = req.params;
     const { sortBy = "rating", search, limit = 20, page = 1 } = req.query;
 
-    // Check if compliance item exists
+    // Validate compliance item
     const complianceItem = await ComplianceItem.findById(id);
     if (!complianceItem) {
       return res.status(404).json({
@@ -188,24 +205,27 @@ export const getServiceProviders = async (req, res) => {
     }
 
     // Pagination
-    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const parsedLimit = parseInt(limit);
+    const parsedPage = parseInt(page);
+    const skip = (parsedPage - 1) * parsedLimit;
 
     const [providers, total] = await Promise.all([
       ServiceProvider.find(query)
         .populate("userId", "name phone email")
         .populate("complianceItemsOffered", "name code")
         .sort(sortOptions)
-        .limit(parseInt(limit))
+        .limit(parsedLimit)
         .skip(skip)
         .lean(),
       ServiceProvider.countDocuments(query),
     ]);
 
-    // Add pricing info for this specific compliance item
+    // Attach pricing for this compliance item
     const providersWithPricing = providers.map((provider) => {
       const pricing = provider.pricingPerItem?.find(
-        (p) => p.complianceItemId.toString() === id
+        (item) => item.complianceItemId.toString() === id
       );
+
       return {
         ...provider,
         priceForThisItem: pricing?.price || 0,
@@ -218,9 +238,9 @@ export const getServiceProviders = async (req, res) => {
       data: providersWithPricing,
       pagination: {
         total,
-        page: parseInt(page),
-        limit: parseInt(limit),
-        totalPages: Math.ceil(total / parseInt(limit)),
+        page: parsedPage,
+        limit: parsedLimit,
+        totalPages: Math.ceil(total / parsedLimit),
       },
     });
   } catch (error) {
@@ -234,8 +254,9 @@ export const getServiceProviders = async (req, res) => {
 };
 
 /**
- * Get provider details
- * GET /api/services/providers/:providerId
+ * Get service provider details by ID
+ *
+ * @route   GET /api/services/providers/:providerId
  */
 export const getProviderById = async (req, res) => {
   try {

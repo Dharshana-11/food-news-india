@@ -1,25 +1,39 @@
 import mongoose from "mongoose";
 
 /**
+ * ServiceBooking Schema
+ * -----------------------------------------------------------------------------
+ * Represents a compliance service booking created by a Business Owner
+ * and fulfilled by a Service Provider.
+ *
+ * Tracks pricing, lifecycle status, documents, progress timeline,
+ * and post-completion customer feedback.
+ *
  * @typedef {Object} ServiceBooking
- * @property {string} bookingId - Unique booking identifier
- * @property {mongoose.Types.ObjectId} businessOwnerId - Who booked the service
- * @property {mongoose.Types.ObjectId} complianceItemId - ComplianceItem being serviced
- * @property {mongoose.Types.ObjectId} providerId - ServiceProvider fulfilling it
- * @property {number} agreedPrice - Final agreed price
- * @property {string} status - Current booking status
- * @property {Date} bookedAt - When booking was created
- * @property {Date} expectedCompletionDate - Estimated completion
- * @property {Date} actualCompletionDate - When it was actually completed
- * @property {Object[]} timeline - Progress tracking
- * @property {Object[]} documents - Uploaded documents
- * @property {Object} rating - Customer rating after completion
+ * @property {string} bookingId - Human-readable unique booking identifier
+ * @property {mongoose.Types.ObjectId} businessOwnerId - User who booked the service
+ * @property {mongoose.Types.ObjectId} complianceItemId - Compliance item being serviced
+ * @property {mongoose.Types.ObjectId} providerId - Assigned service provider
+ * @property {number} agreedPrice - Final agreed service price
+ * @property {number} estimatedDays - Estimated completion time in days
+ * @property {string} status - Current booking lifecycle status
+ * @property {Date} bookedAt - Booking creation timestamp
+ * @property {Date} expectedCompletionDate - Estimated completion date
+ * @property {Date|null} actualCompletionDate - Actual completion date
+ * @property {Array<Object>} timeline - Progress updates
+ * @property {Array<Object>} documents - Uploaded documents
+ * @property {Object} rating - Customer feedback after completion
+ * @property {string} cancellationReason - Reason for cancellation or rejection
+ * @property {string} notes - Internal or user notes
  * @property {Date} createdAt
  * @property {Date} updatedAt
  */
 
 const serviceBookingSchema = new mongoose.Schema(
   {
+    /**
+     * Public booking identifier
+     */
     bookingId: {
       type: String,
       required: true,
@@ -27,6 +41,9 @@ const serviceBookingSchema = new mongoose.Schema(
       index: true,
     },
 
+    /**
+     * Business owner who created the booking
+     */
     businessOwnerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Users",
@@ -35,8 +52,8 @@ const serviceBookingSchema = new mongoose.Schema(
     },
 
     /**
-     * Reference to ComplianceItem instead of Service
-     * E.g., FSSAI License, Trade License, GST Registration
+     * Compliance item being serviced
+     * (e.g., FSSAI License, GST Registration, Trade License)
      */
     complianceItemId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -45,6 +62,9 @@ const serviceBookingSchema = new mongoose.Schema(
       index: true,
     },
 
+    /**
+     * Assigned service provider
+     */
     providerId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "ServiceProvider",
@@ -64,15 +84,18 @@ const serviceBookingSchema = new mongoose.Schema(
       min: 1,
     },
 
+    /**
+     * Booking lifecycle status
+     */
     status: {
       type: String,
       enum: [
-        "pending", // Just created
+        "pending", // Booking created
         "accepted", // Provider accepted
         "in_progress", // Work started
         "documents_submitted", // Awaiting review
         "completed", // Successfully completed
-        "cancelled", // Cancelled by user
+        "cancelled", // Cancelled by business owner
         "rejected", // Rejected by provider
       ],
       default: "pending",
@@ -94,7 +117,9 @@ const serviceBookingSchema = new mongoose.Schema(
       default: null,
     },
 
-    // Progress tracking
+    /**
+     * Progress tracking timeline
+     */
     timeline: [
       {
         status: {
@@ -116,7 +141,9 @@ const serviceBookingSchema = new mongoose.Schema(
       },
     ],
 
-    // Document management (certificates, licenses, etc.)
+    /**
+     * Uploaded documents (certificates, licenses, etc.)
+     */
     documents: [
       {
         name: {
@@ -142,7 +169,9 @@ const serviceBookingSchema = new mongoose.Schema(
       },
     ],
 
-    // Customer rating (after completion)
+    /**
+     * Customer rating after completion
+     */
     rating: {
       score: {
         type: Number,
@@ -158,7 +187,9 @@ const serviceBookingSchema = new mongoose.Schema(
       },
     },
 
-    // Cancellation/rejection reason
+    /**
+     * Cancellation / rejection context
+     */
     cancellationReason: {
       type: String,
       trim: true,
@@ -174,7 +205,9 @@ const serviceBookingSchema = new mongoose.Schema(
   }
 );
 
-// Generate unique booking ID
+/**
+ * Auto-generate bookingId if not provided
+ */
 serviceBookingSchema.pre("validate", function (next) {
   if (!this.bookingId) {
     const timestamp = Date.now().toString(36);
@@ -184,7 +217,9 @@ serviceBookingSchema.pre("validate", function (next) {
   next();
 });
 
-// Compound indexes for queries
+/**
+ * Query optimization indexes
+ */
 serviceBookingSchema.index({ businessOwnerId: 1, status: 1, bookedAt: -1 });
 serviceBookingSchema.index({ providerId: 1, status: 1, bookedAt: -1 });
 serviceBookingSchema.index({ status: 1, bookedAt: -1 });

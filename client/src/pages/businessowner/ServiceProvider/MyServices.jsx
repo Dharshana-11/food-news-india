@@ -23,16 +23,28 @@ import "./MyServices.css";
 
 const { Title, Text } = Typography;
 
+/**
+ * MyServices
+ * -----------------------------------------------------------------------------
+ * Displays all booked compliance services for a Business Owner.
+ * - Supports search by service or provider
+ * - Separates ongoing and completed services
+ * - Provides quick navigation actions
+ */
 const MyServices = () => {
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchBookings();
   }, []);
 
+  /**
+   * Fetch bookings for the current user
+   */
   const fetchBookings = async () => {
     try {
       setLoading(true);
@@ -49,6 +61,9 @@ const MyServices = () => {
     }
   };
 
+  /**
+   * Resolve AntD tag color for booking status
+   */
   const getStatusColor = (status) => {
     const colors = {
       pending: "orange",
@@ -62,6 +77,9 @@ const MyServices = () => {
     return colors[status] || "default";
   };
 
+  /**
+   * Human-readable status text
+   */
   const getStatusText = (status) => {
     const texts = {
       pending: "Pending",
@@ -75,20 +93,25 @@ const MyServices = () => {
     return texts[status] || status;
   };
 
+  /**
+   * Search filtering
+   */
   const filteredBookings = bookings.filter((booking) => {
     const serviceName = booking.complianceItemId?.name?.toLowerCase() || "";
     const providerName = booking.providerId?.companyName?.toLowerCase() || "";
     const search = searchTerm.toLowerCase();
+
     return serviceName.includes(search) || providerName.includes(search);
   });
 
-  const ongoingServices = filteredBookings.filter((b) =>
+  const ongoingServices = filteredBookings.filter((booking) =>
     ["pending", "accepted", "in_progress", "documents_submitted"].includes(
-      b.status
+      booking.status
     )
   );
+
   const completedServices = filteredBookings.filter(
-    (b) => b.status === "completed"
+    (booking) => booking.status === "completed"
   );
 
   if (loading) {

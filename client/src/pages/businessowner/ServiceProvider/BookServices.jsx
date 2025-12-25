@@ -16,16 +16,30 @@ import "./BookServices.css";
 
 const { Title, Text } = Typography;
 
+/**
+ * BookServices
+ * -----------------------------------------------------------------------------
+ * Displays all available compliance services for a Business Owner
+ * and allows navigation to the booking flow.
+ *
+ * - Fetches active services
+ * - Supports name-based search
+ * - Category-based icons for visual clarity
+ */
 const BookServices = () => {
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchServices();
   }, []);
 
+  /**
+   * Fetch available compliance services
+   */
   const fetchServices = async () => {
     try {
       setLoading(true);
@@ -43,10 +57,16 @@ const BookServices = () => {
     }
   };
 
+  /**
+   * Search filtering
+   */
   const filteredServices = services.filter((service) =>
     service.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  /**
+   * Resolve icon based on service category
+   */
   const getServiceIcon = (category) => {
     const icons = {
       license: <SafetyCertificateOutlined />,
@@ -58,6 +78,7 @@ const BookServices = () => {
       audit: <AuditOutlined />,
       other: <FileTextOutlined />,
     };
+
     return icons[category] || <FileTextOutlined />;
   };
 

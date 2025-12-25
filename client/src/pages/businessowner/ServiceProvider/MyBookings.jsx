@@ -23,20 +23,34 @@ import "./MyBookings.css";
 
 const { Title, Text } = Typography;
 
+/**
+ * MyBookings
+ * -----------------------------------------------------------------------------
+ * Displays all bookings for the current Business Owner.
+ *
+ * - Fetches bookings and booking statistics
+ * - Supports search by service or provider
+ * - Separates ongoing and completed bookings
+ */
 const MyBookings = () => {
   const [bookings, setBookings] = useState([]);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchData();
   }, []);
 
+  /**
+   * Fetch bookings and booking statistics
+   */
   const fetchData = async () => {
     try {
       setLoading(true);
+
       const [bookingsRes, statsRes] = await Promise.all([
         bookingService.getMyBookings({
           sortBy: "bookedAt",
@@ -44,6 +58,7 @@ const MyBookings = () => {
         }),
         bookingService.getBookingStats(),
       ]);
+
       setBookings(bookingsRes.data || []);
       setStats(statsRes.data || {});
     } catch (error) {
@@ -54,6 +69,9 @@ const MyBookings = () => {
     }
   };
 
+  /**
+   * Resolve tag color based on booking status
+   */
   const getStatusColor = (status) => {
     const colors = {
       pending: "orange",
@@ -67,6 +85,9 @@ const MyBookings = () => {
     return colors[status] || "default";
   };
 
+  /**
+   * Human-readable booking status
+   */
   const getStatusText = (status) => {
     const texts = {
       pending: "Pending",
@@ -80,20 +101,25 @@ const MyBookings = () => {
     return texts[status] || status;
   };
 
+  /**
+   * Search filtering
+   */
   const filteredBookings = bookings.filter((booking) => {
     const serviceName = booking.complianceItemId?.name?.toLowerCase() || "";
     const providerName = booking.providerId?.companyName?.toLowerCase() || "";
     const search = searchTerm.toLowerCase();
+
     return serviceName.includes(search) || providerName.includes(search);
   });
 
-  const ongoingBookings = filteredBookings.filter((b) =>
+  const ongoingBookings = filteredBookings.filter((booking) =>
     ["pending", "accepted", "in_progress", "documents_submitted"].includes(
-      b.status
+      booking.status
     )
   );
+
   const completedBookings = filteredBookings.filter(
-    (b) => b.status === "completed"
+    (booking) => booking.status === "completed"
   );
 
   if (loading) {
@@ -156,7 +182,7 @@ const MyBookings = () => {
           </div>
         )}
 
-        {/* Ongoing */}
+        {/* Ongoing Bookings */}
         <div className="my-bookings-section">
           <Title level={5}>Ongoing Services</Title>
 
@@ -212,7 +238,7 @@ const MyBookings = () => {
           )}
         </div>
 
-        {/* Completed */}
+        {/* Completed Bookings */}
         <div className="my-bookings-section">
           <Title level={5}>Completed Services</Title>
 

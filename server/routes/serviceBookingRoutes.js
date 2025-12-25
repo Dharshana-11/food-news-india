@@ -6,50 +6,88 @@ import ROLES from "../utils/constants/roles.js";
 
 const router = express.Router();
 
-// All routes require authentication
+/**
+ * Service Booking Routes
+ * -----------------------------------------------------------------------------
+ * All routes:
+ * - Require authentication
+ * - Enforce role-based access per endpoint
+ */
+
+// Authentication middleware (global)
 router.use(verifySession);
 
-// Create booking (Business Owner)
+/**
+ * Create a new booking
+ * POST /api/bookings
+ * Access: Business Owner
+ */
 router.post(
   "/",
   authorizeRoles(ROLES.BUSINESS_OWNER),
   serviceBookingController.createBooking
 );
 
-// 🔹 STATIC ROUTES FIRST
+/**
+ * Booking statistics
+ * GET /api/bookings/stats
+ * Access: Business Owner, Service Provider
+ */
 router.get(
   "/stats",
   authorizeRoles(ROLES.BUSINESS_OWNER, ROLES.SERVICE_PROVIDER),
   serviceBookingController.getBookingStats
 );
 
-// 🔹 COLLECTION ROUTE
+/**
+ * Get bookings for current user
+ * GET /api/bookings
+ * Access: Business Owner, Service Provider
+ */
 router.get(
   "/",
   authorizeRoles(ROLES.BUSINESS_OWNER, ROLES.SERVICE_PROVIDER),
   serviceBookingController.getMyBookings
 );
 
-// 🔹 SEMI-DYNAMIC
+/**
+ * Update booking status
+ * PATCH /api/bookings/:id/status
+ * Access: Business Owner, Service Provider
+ */
 router.patch(
   "/:id/status",
   authorizeRoles(ROLES.BUSINESS_OWNER, ROLES.SERVICE_PROVIDER),
   serviceBookingController.updateBookingStatus
 );
 
+/**
+ * Cancel a booking
+ * PATCH /api/bookings/:id/cancel
+ * Access: Business Owner only
+ */
 router.patch(
   "/:id/cancel",
   authorizeRoles(ROLES.BUSINESS_OWNER),
   serviceBookingController.cancelBooking
 );
 
+/**
+ * Add rating to completed booking
+ * POST /api/bookings/:id/rating
+ * Access: Business Owner only
+ */
 router.post(
   "/:id/rating",
   authorizeRoles(ROLES.BUSINESS_OWNER),
   serviceBookingController.addRating
 );
 
-// 🔹 FULLY DYNAMIC — ALWAYS LAST
+/**
+ * Get booking details by ID
+ * GET /api/bookings/:id
+ * Access: Business Owner, Service Provider, Admin, Super Admin
+ */
 router.get(
   "/:id",
   authorizeRoles(

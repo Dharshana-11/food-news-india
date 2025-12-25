@@ -1,25 +1,41 @@
 import mongoose from "mongoose";
 
 /**
+ * ServiceProvider Schema
+ * -----------------------------------------------------------------------------
+ * Represents a verified service provider who offers compliance-related services
+ * (e.g., FSSAI, GST, Trade License) to business owners.
+ *
+ * One-to-one relationship with User (role: service_provider).
+ *
  * @typedef {Object} ServiceProvider
- * @property {mongoose.Types.ObjectId} userId - Reference to User (role: service_provider)
- * @property {string} companyName - Business/Company name
- * @property {string} description - About the service provider
- * @property {string} logo - Logo URL or path
- * @property {mongoose.Types.ObjectId[]} complianceItemsOffered - ComplianceItems they can help with
- * @property {string} location - City/Region
- * @property {number} rating - Average rating (0-5)
- * @property {number} totalCustomers - Number of unique customers served
+ * @property {mongoose.Types.ObjectId} userId - Reference to Users collection
+ * @property {string} companyName - Registered business/company name
+ * @property {string} description - Description of services offered
+ * @property {string} logo - Logo URL or storage path
+ * @property {mongoose.Types.ObjectId[]} complianceItemsOffered - Supported compliance items
+ * @property {Array<Object>} pricingPerItem - Item-wise pricing configuration
+ * @property {string} location - Operating city/region
+ * @property {number} rating - Average customer rating (0–5)
+ * @property {number} totalCustomers - Unique customers served
  * @property {number} completedBookings - Successfully completed bookings
- * @property {Object[]} pricingPerItem - Custom pricing for each compliance item
- * @property {string} status - Account status
- * @property {Date} verifiedAt - When provider was verified
+ * @property {string} status - Provider account status
+ * @property {Date|null} verifiedAt - Verification timestamp
+ * @property {mongoose.Types.ObjectId} verifiedBy - Admin who verified the provider
+ * @property {string[]} specializations - Areas of expertise
+ * @property {string} contactEmail - Business contact email
+ * @property {string} contactPhone - Business contact phone number
+ * @property {string} businessRegistration - Business registration document reference
+ * @property {string} gstNumber - GST identification number
  * @property {Date} createdAt
  * @property {Date} updatedAt
  */
 
 const serviceProviderSchema = new mongoose.Schema(
   {
+    /**
+     * Linked user account (must have role: service_provider)
+     */
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Users",
@@ -47,8 +63,7 @@ const serviceProviderSchema = new mongoose.Schema(
     },
 
     /**
-     * ComplianceItems this provider can help with
-     * E.g., ["FSSAI_LICENSE_ID", "TRADE_LICENSE_ID", "GST_REG_ID"]
+     * Compliance items this provider can assist with
      */
     complianceItemsOffered: [
       {
@@ -58,8 +73,7 @@ const serviceProviderSchema = new mongoose.Schema(
     ],
 
     /**
-     * Custom pricing for each compliance item
-     * Allows provider to set different rates for different services
+     * Custom pricing per compliance item
      */
     pricingPerItem: [
       {
@@ -124,8 +138,13 @@ const serviceProviderSchema = new mongoose.Schema(
       ref: "Users",
     },
 
-    // Additional metadata
-    specializations: [String],
+    /**
+     * Additional metadata
+     */
+    specializations: {
+      type: [String],
+      default: [],
+    },
 
     contactEmail: {
       type: String,
@@ -138,7 +157,9 @@ const serviceProviderSchema = new mongoose.Schema(
       trim: true,
     },
 
-    // Business documents for verification
+    /**
+     * Business verification details
+     */
     businessRegistration: {
       type: String,
       default: "",
@@ -155,14 +176,18 @@ const serviceProviderSchema = new mongoose.Schema(
   }
 );
 
-// Text search
+/**
+ * Text search index
+ */
 serviceProviderSchema.index({
   companyName: "text",
   description: "text",
   specializations: "text",
 });
 
-// Compound indexes
+/**
+ * Query optimization indexes
+ */
 serviceProviderSchema.index({ status: 1, rating: -1 });
 serviceProviderSchema.index({ status: 1, completedBookings: -1 });
 

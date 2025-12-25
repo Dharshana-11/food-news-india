@@ -21,11 +21,22 @@ import "./ServiceProviders.css";
 
 const { Title, Text } = Typography;
 
+/**
+ * ServiceProviders
+ * -----------------------------------------------------------------------------
+ * Displays all service providers for a selected compliance service.
+ *
+ * - Fetches service details + providers
+ * - Supports search by provider name
+ * - Highlights top-rated providers
+ * - Navigates to booking flow on selection
+ */
 const ServiceProviders = () => {
   const [service, setService] = useState(null);
   const [providers, setProviders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+
   const { serviceId } = useParams();
   const navigate = useNavigate();
 
@@ -35,9 +46,13 @@ const ServiceProviders = () => {
     }
   }, [serviceId]);
 
+  /**
+   * Fetch service details and providers
+   */
   const fetchData = async () => {
     try {
       setLoading(true);
+
       const [serviceRes, providersRes] = await Promise.all([
         myServiceServices.getServiceById(serviceId),
         myServiceServices.getServiceProviders(serviceId, {
@@ -45,6 +60,7 @@ const ServiceProviders = () => {
           limit: 50,
         }),
       ]);
+
       setService(serviceRes.data);
       setProviders(providersRes.data || []);
     } catch (error) {
@@ -55,12 +71,17 @@ const ServiceProviders = () => {
     }
   };
 
+  /**
+   * Search filtering
+   */
   const filteredProviders = providers.filter((provider) =>
     provider.companyName?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const topRated = filteredProviders.filter((p) => p.rating >= 4.5);
-  const others = filteredProviders.filter((p) => p.rating < 4.5);
+  const topRated = filteredProviders.filter(
+    (provider) => provider.rating >= 4.5
+  );
+  const others = filteredProviders.filter((provider) => provider.rating < 4.5);
 
   if (loading) {
     return (
@@ -96,7 +117,7 @@ const ServiceProviders = () => {
           className="service-providers-search"
         />
 
-        {/* Top Rated */}
+        {/* Top Rated Providers */}
         {topRated.length > 0 && (
           <div className="service-providers-section">
             <div className="service-providers-section-title highlight">
@@ -151,7 +172,7 @@ const ServiceProviders = () => {
           </div>
         )}
 
-        {/* Others */}
+        {/* Other Providers */}
         {others.length > 0 && (
           <div className="service-providers-section">
             <div className="service-providers-section-title">
