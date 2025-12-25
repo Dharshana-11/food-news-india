@@ -1,9 +1,27 @@
 import { useState, useEffect } from "react";
-import { Card, Input, Tag, Spin, message, Empty } from "antd";
-import { SearchOutlined, ArrowRightOutlined } from "@ant-design/icons";
+import {
+  Card,
+  Input,
+  Tag,
+  Spin,
+  message,
+  Empty,
+  Typography,
+  Space,
+  Button,
+  Divider,
+} from "antd";
+import {
+  SearchOutlined,
+  ArrowRightOutlined,
+  FileAddOutlined,
+  ProfileOutlined,
+} from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import bookingService from "../../../services/bookingService";
 import "./MyServices.css";
+
+const { Title, Text } = Typography;
 
 const MyServices = () => {
   const [bookings, setBookings] = useState([]);
@@ -75,7 +93,7 @@ const MyServices = () => {
 
   if (loading) {
     return (
-      <div className="services-loader-wrapper">
+      <div className="my-services-loader">
         <Spin size="large" />
       </div>
     );
@@ -86,152 +104,156 @@ const MyServices = () => {
       <div className="my-services-container">
         {/* Header */}
         <div className="my-services-header">
-          <h2>My Services</h2>
+          <Title level={3}>My Services</Title>
+          <Text type="secondary">
+            Track, manage, and review your booked compliance services
+          </Text>
         </div>
 
         {/* Search */}
         <Input
-          placeholder="Search services here"
+          allowClear
+          size="large"
           prefix={<SearchOutlined />}
+          placeholder="Search by service or provider"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          size="large"
           className="my-services-search"
         />
 
         {/* Quick Actions */}
-        <Card className="quick-actions-card">
-          <div className="quick-actions-grid">
-            <div
-              className="action-item"
+        <Card className="my-services-quick-actions">
+          <div className="my-services-quick-actions-row">
+            <Button
+              type="primary"
+              icon={<FileAddOutlined />}
               onClick={() => navigate("/business-owner/services/book")}
             >
-              <div className="action-icon book">📋</div>
-              <span>Book Services</span>
-            </div>
+              Book Services
+            </Button>
 
-            <div
-              className="action-item"
+            <Button
+              icon={<ProfileOutlined />}
               onClick={() => navigate("/business-owner/services/bookings")}
             >
-              <div className="action-icon bookings">📑</div>
-              <span>My Bookings</span>
-            </div>
-
-            {/* <div
-              className="action-item"
-              onClick={() => navigate("/business-owner/services/track")}
-            >
-              <div className="action-icon track">📦</div>
-              <span>Track Services</span>
-            </div> */}
+              My Bookings
+            </Button>
           </div>
         </Card>
 
         {/* Ongoing Services */}
-        <div className="services-section">
-          <h3 className="section-title">Ongoing Services</h3>
+        <div className="my-services-section">
+          <Title level={4}>Ongoing Services</Title>
+
           {ongoingServices.length === 0 ? (
-            <Empty description="No ongoing services" className="empty-state" />
+            <Empty description="No ongoing services" />
           ) : (
-            <div className="services-list">
+            <Space
+              direction="vertical"
+              size="middle"
+              className="my-services-list"
+            >
               {ongoingServices.map((booking) => (
                 <Card
                   key={booking._id}
-                  className="service-card"
+                  hoverable
+                  className="my-services-card"
                   onClick={() =>
                     navigate(`/business-owner/services/${booking._id}`)
                   }
-                  hoverable
                 >
-                  <div className="service-card-content">
-                    <div className="service-icon">🏛️</div>
+                  <div className="my-services-card-content">
+                    <div className="my-services-card-main">
+                      <Space direction="vertical" size={4}>
+                        <Space>
+                          <Text strong className="my-services-name">
+                            {booking.complianceItemId?.name}
+                          </Text>
+                          <Tag color={getStatusColor(booking.status)}>
+                            {getStatusText(booking.status)}
+                          </Tag>
+                        </Space>
 
-                    <div className="service-info">
-                      <div className="service-header">
-                        <span className="service-name">
-                          {booking.complianceItemId?.name}
-                        </span>
-                        <Tag color={getStatusColor(booking.status)}>
-                          {getStatusText(booking.status)}
-                        </Tag>
-                      </div>
+                        <Text type="secondary">
+                          by {booking.providerId?.companyName}
+                        </Text>
 
-                      <div className="service-provider">
-                        by {booking.providerId?.companyName}
-                      </div>
-
-                      <div className="service-footer">
-                        <span className="service-date">
-                          Booked:{" "}
-                          {new Date(booking.bookedAt).toLocaleDateString()}
-                        </span>
-                        <span className="service-price">
-                          ₹{booking.agreedPrice}
-                        </span>
-                      </div>
+                        <Space size="large" className="my-services-meta">
+                          <Text type="secondary">
+                            Booked:{" "}
+                            {new Date(booking.bookedAt).toLocaleDateString()}
+                          </Text>
+                          <Text strong className="my-services-price">
+                            ₹{booking.agreedPrice}
+                          </Text>
+                        </Space>
+                      </Space>
                     </div>
 
-                    <ArrowRightOutlined className="arrow-icon" />
+                    <ArrowRightOutlined className="my-services-arrow" />
                   </div>
                 </Card>
               ))}
-            </div>
+            </Space>
           )}
         </div>
 
+        <Divider />
+
         {/* Completed Services */}
-        <div className="services-section">
-          <h3 className="section-title">Completed Services</h3>
+        <div className="my-services-section">
+          <Title level={4}>Completed Services</Title>
+
           {completedServices.length === 0 ? (
-            <Empty
-              description="No completed services"
-              className="empty-state"
-            />
+            <Empty description="No completed services" />
           ) : (
-            <div className="services-list">
+            <Space
+              direction="vertical"
+              size="middle"
+              className="my-services-list"
+            >
               {completedServices.map((booking) => (
                 <Card
                   key={booking._id}
-                  className="service-card completed"
+                  hoverable
+                  className="my-services-card my-services-card-completed"
                   onClick={() =>
                     navigate(`/business-owner/services/${booking._id}`)
                   }
-                  hoverable
                 >
-                  <div className="service-card-content">
-                    <div className="service-icon">🏛️</div>
+                  <div className="my-services-card-content">
+                    <div className="my-services-card-main">
+                      <Space direction="vertical" size={4}>
+                        <Space>
+                          <Text strong className="my-services-name">
+                            {booking.complianceItemId?.name}
+                          </Text>
+                          <Tag color="green">Completed</Tag>
+                        </Space>
 
-                    <div className="service-info">
-                      <div className="service-header">
-                        <span className="service-name">
-                          {booking.serviceId?.name}
-                        </span>
-                        <Tag color="green">Completed</Tag>
-                      </div>
+                        <Text type="secondary">
+                          by {booking.providerId?.companyName}
+                        </Text>
 
-                      <div className="service-provider">
-                        by {booking.providerId?.companyName}
-                      </div>
-
-                      <div className="service-footer">
-                        <span className="service-date">
-                          Completed:{" "}
-                          {new Date(
-                            booking.actualCompletionDate
-                          ).toLocaleDateString()}
-                        </span>
-                        <span className="service-price">
-                          ₹{booking.agreedPrice}
-                        </span>
-                      </div>
+                        <Space size="large" className="my-services-meta">
+                          <Text type="secondary">
+                            Completed:{" "}
+                            {new Date(
+                              booking.actualCompletionDate
+                            ).toLocaleDateString()}
+                          </Text>
+                          <Text strong className="my-services-price">
+                            ₹{booking.agreedPrice}
+                          </Text>
+                        </Space>
+                      </Space>
                     </div>
 
-                    <ArrowRightOutlined className="arrow-icon" />
+                    <ArrowRightOutlined className="my-services-arrow" />
                   </div>
                 </Card>
               ))}
-            </div>
+            </Space>
           )}
         </div>
       </div>

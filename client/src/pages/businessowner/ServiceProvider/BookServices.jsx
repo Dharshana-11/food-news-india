@@ -1,9 +1,20 @@
 import { useState, useEffect } from "react";
-import { Card, Input, Spin, message, Empty } from "antd";
-import { SearchOutlined, ArrowLeftOutlined } from "@ant-design/icons";
+import { Card, Input, Spin, message, Empty, Typography } from "antd";
+import {
+  SearchOutlined,
+  ArrowLeftOutlined,
+  FileTextOutlined,
+  SafetyCertificateOutlined,
+  AuditOutlined,
+  ExperimentOutlined,
+  BookOutlined,
+  SolutionOutlined,
+} from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import myServicesService from "../../../services/myServicesService";
 import "./BookServices.css";
+
+const { Title, Text } = Typography;
 
 const BookServices = () => {
   const [services, setServices] = useState([]);
@@ -38,16 +49,16 @@ const BookServices = () => {
 
   const getServiceIcon = (category) => {
     const icons = {
-      license: "🏛️",
-      certificate: "📜",
-      hygiene: "🧼",
-      training: "📚",
-      compliance: "✅",
-      testing: "🧪",
-      audit: "🔍",
-      other: "📋",
+      license: <SafetyCertificateOutlined />,
+      certificate: <FileTextOutlined />,
+      hygiene: <SolutionOutlined />,
+      training: <BookOutlined />,
+      compliance: <SafetyCertificateOutlined />,
+      testing: <ExperimentOutlined />,
+      audit: <AuditOutlined />,
+      other: <FileTextOutlined />,
     };
-    return icons[category] || "📋";
+    return icons[category] || <FileTextOutlined />;
   };
 
   if (loading) {
@@ -64,43 +75,49 @@ const BookServices = () => {
         {/* Header */}
         <div className="book-services-header">
           <ArrowLeftOutlined
-            className="back-icon"
+            className="book-services-back"
             onClick={() => navigate(-1)}
           />
-          <h2>Book Services</h2>
+          <div>
+            <Title level={3}>Book Services</Title>
+            <Text type="secondary">
+              Choose a compliance service to continue
+            </Text>
+          </div>
         </div>
 
         {/* Search */}
         <Input
-          placeholder="Search services & service providers here"
+          allowClear
+          size="large"
           prefix={<SearchOutlined />}
+          placeholder="Search services"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          size="large"
           className="book-services-search"
         />
 
-        {/* Available Services */}
-        <div className="available-services-section">
-          <h3>Available Services</h3>
+        {/* Services */}
+        <div className="book-services-section">
+          <Title level={4}>Available Services</Title>
 
           {filteredServices.length === 0 ? (
             <Empty description="No services found" />
           ) : (
-            <div className="services-grid">
+            <div className="book-services-grid">
               {filteredServices.map((service) => (
                 <Card
                   key={service._id}
-                  className="service-type-card"
                   hoverable
+                  className="book-services-card"
                   onClick={() =>
                     navigate(`/business-owner/services/book/${service._id}`)
                   }
                 >
-                  <div className="service-type-icon">
+                  <div className="book-services-card-icon">
                     {getServiceIcon(service.category)}
                   </div>
-                  <div className="service-type-name">{service.name}</div>
+                  <div className="book-services-card-name">{service.name}</div>
                 </Card>
               ))}
             </div>

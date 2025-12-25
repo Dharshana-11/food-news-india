@@ -9,13 +9,14 @@ import {
   Input,
   Space,
   Divider,
+  Typography,
 } from "antd";
 import {
   ArrowLeftOutlined,
   StarFilled,
   CheckCircleOutlined,
   EnvironmentOutlined,
-  PhoneOutlined,
+  FileTextOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import myServiceServices from "../../../services/myServicesService";
@@ -23,6 +24,7 @@ import bookingService from "../../../services/bookingService";
 import "./ProviderDetails.css";
 
 const { TextArea } = Input;
+const { Title, Text } = Typography;
 
 const ProviderDetails = () => {
   const [service, setService] = useState(null);
@@ -93,7 +95,7 @@ const ProviderDetails = () => {
   if (!provider) {
     return (
       <div className="provider-details-error">
-        <p>Provider not found</p>
+        <Text>Provider not found</Text>
         <Button onClick={() => navigate(-1)}>Go Back</Button>
       </div>
     );
@@ -103,111 +105,93 @@ const ProviderDetails = () => {
     <div className="provider-details-page">
       <div className="provider-details-container">
         {/* Header */}
-        <div className="details-header">
+        <div className="provider-details-header">
           <ArrowLeftOutlined
-            className="back-icon"
+            className="provider-details-back"
             onClick={() => navigate(-1)}
           />
-          <h2>{provider.companyName}</h2>
+          <Title level={4}>{provider.companyName}</Title>
         </div>
-        {/* Provider Info Card */}
-        <Card className="provider-info-card">
-          <div className="provider-banner">
-            <div className="provider-logo">
-              <div className="logo-circle">
-                {provider.companyName?.charAt(0).toUpperCase()}
-              </div>
-            </div>
-          </div>
 
-          <div className="provider-main-info">
-            <div className="company-name">{provider.companyName}</div>
-
-            <div className="rating-row">
-              <span className="rating-score">
-                {provider.rating?.toFixed(1) || "0.0"}
-              </span>
-              <StarFilled className="star" />
+        {/* Provider Card */}
+        <Card className="provider-details-card">
+          <div className="provider-details-card-header">
+            <div className="provider-details-avatar">
+              {provider.companyName?.charAt(0).toUpperCase()}
             </div>
 
-            <Space direction="vertical" size={8} style={{ width: "100%" }}>
-              <div className="info-item">
-                <CheckCircleOutlined className="icon verified" />
-                <span>Verified Service Partner</span>
-              </div>
+            <div className="provider-details-main">
+              <Text strong className="provider-details-name">
+                {provider.companyName}
+              </Text>
 
-              <div className="info-item">
-                <EnvironmentOutlined className="icon" />
-                <span>{provider.location}</span>
-              </div>
+              <Space size="small" className="provider-details-rating">
+                <StarFilled />
+                <span>{provider.rating?.toFixed(1) || "0.0"}</span>
+                <Tag color="green">Verified</Tag>
+              </Space>
 
-              <div className="info-item">
-                <CheckCircleOutlined className="icon" />
-                <span>₹{provider.priceForThisItem}</span>
-              </div>
-            </Space>
+              <Space direction="vertical" size={6}>
+                <div className="provider-details-info">
+                  <EnvironmentOutlined />
+                  <span>{provider.location}</span>
+                </div>
+
+                <div className="provider-details-info">
+                  <CheckCircleOutlined />
+                  <span>Verified Service Partner</span>
+                </div>
+              </Space>
+            </div>
+
+            <div className="provider-details-price">
+              ₹{provider.priceForThisItem}
+            </div>
           </div>
         </Card>
-        {/* Why Choose Card */}
-        <Card className="why-choose-card" title="Why you should choose us?">
-          <Space direction="vertical" size={12} style={{ width: "100%" }}>
-            <div className="benefit-item">
-              ✓{" "}
+
+        {/* Why Choose */}
+        <Card className="provider-details-section">
+          <Title level={5}>Why choose this provider</Title>
+
+          <Space direction="vertical" size={8}>
+            <Text>
+              <CheckCircleOutlined />{" "}
               {provider.description || "Expert service with quality guarantee"}
-            </div>
-            <div className="benefit-item">
-              ✓ {provider.totalCustomers}+ Happy Customers
-            </div>
-            <div className="benefit-item">
-              ✓ {provider.completedBookings}+ Successful Completions
-            </div>
+            </Text>
+            <Text>
+              <CheckCircleOutlined /> {provider.totalCustomers}+ happy customers
+            </Text>
+            <Text>
+              <CheckCircleOutlined /> {provider.completedBookings}+ successful
+              completions
+            </Text>
           </Space>
         </Card>
-        Required Documents
-        {/* {service?.requiredDocuments && service.requiredDocuments.length > 0 && (
-          <Card className="documents-card" title="Required Documents">
-            <Space direction="vertical" size={8} style={{ width: "100%" }}>
-              {service.requiredDocuments.map((doc, index) => (
-                <div key={index} className="document-item">
-                  <CheckCircleOutlined className="check-icon" />
-                  <span>{doc}</span>
-                  <Tag color="green">✓</Tag>
-                </div>
-              ))}
-            </Space>
 
-            <div className="vault-action">
-              <Button
-                type="link"
-                icon={<span>📁</span>}
-                onClick={() => navigate("/business-owner/documents")}
-              >
-                Attach from Vault
-              </Button>
-            </div>
-          </Card>
-        )} */}
-        <Card className="documents-card" title="Documents">
-          <p style={{ color: "#666", margin: 0 }}>
+        {/* Documents */}
+        <Card className="provider-details-section">
+          <Title level={5}>Documents</Title>
+          <Text type="secondary">
             Required documents will be requested by the service provider after
             booking.
-          </p>
+          </Text>
         </Card>
-        {/* Book Button */}
-        <div className="book-action">
-          <Button
-            type="primary"
-            size="large"
-            block
-            onClick={() => setBookingModal(true)}
-            className="book-button"
-          >
-            Book Now
-          </Button>
-        </div>
       </div>
 
-      {/* Booking Confirmation Modal */}
+      {/* Sticky CTA */}
+      <div className="provider-details-cta">
+        <Button
+          type="primary"
+          size="large"
+          block
+          onClick={() => setBookingModal(true)}
+        >
+          Book Now
+        </Button>
+      </div>
+
+      {/* Booking Modal */}
       <Modal
         title="Confirm Booking"
         open={bookingModal}
@@ -226,28 +210,25 @@ const ProviderDetails = () => {
           </Button>,
         ]}
       >
-        <Space direction="vertical" size={16} style={{ width: "100%" }}>
-          <div>
+        <Space direction="vertical" size={12} style={{ width: "100%" }}>
+          <Text>
             <strong>Service:</strong> {service?.name}
-          </div>
-          <div>
+          </Text>
+          <Text>
             <strong>Provider:</strong> {provider.companyName}
-          </div>
-          <div>
+          </Text>
+          <Text>
             <strong>Price:</strong> ₹{provider.priceForThisItem}
-          </div>
+          </Text>
+
           <Divider />
-          <div>
-            <div style={{ marginBottom: 8 }}>
-              <strong>Additional Notes (Optional):</strong>
-            </div>
-            <TextArea
-              rows={4}
-              placeholder="Add any special requirements or notes..."
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-            />
-          </div>
+
+          <TextArea
+            rows={4}
+            placeholder="Additional notes (optional)"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+          />
         </Space>
       </Modal>
     </div>

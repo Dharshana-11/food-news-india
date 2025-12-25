@@ -454,7 +454,15 @@ export const addRating = async (req, res) => {
   try {
     const { id } = req.params;
     const { score, comment } = req.body;
-    const userId = req.user._id;
+
+    // 🔹 Resolve Mongo user from Firebase session
+    const user = await User.findOne({ uid: req.user.uid });
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "User not found",
+      });
+    }
 
     const booking = await ServiceBooking.findById(id);
 
@@ -465,15 +473,15 @@ export const addRating = async (req, res) => {
       });
     }
 
-    // Only business owner can rate
-    if (booking.businessOwnerId.toString() !== userId) {
+    // 🔹 Ownership check (FIXED)
+    if (booking.businessOwnerId.toString() !== user._id.toString()) {
       return res.status(403).json({
         success: false,
         message: "Only the booking owner can rate",
       });
     }
 
-    // Can only rate completed bookings
+    // 🔹 Status check
     if (booking.status !== "completed") {
       return res.status(400).json({
         success: false,
@@ -481,7 +489,7 @@ export const addRating = async (req, res) => {
       });
     }
 
-    // Check if already rated
+    // 🔹 Already rated check
     if (booking.rating?.score) {
       return res.status(400).json({
         success: false,
@@ -497,7 +505,7 @@ export const addRating = async (req, res) => {
 
     await booking.save();
 
-    // Update provider's average rating
+    // 🔹 Recalculate provider rating
     const allRatings = await ServiceBooking.find({
       providerId: booking.providerId,
       "rating.score": { $exists: true },

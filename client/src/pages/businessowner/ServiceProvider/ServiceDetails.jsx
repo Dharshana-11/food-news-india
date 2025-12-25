@@ -12,6 +12,7 @@ import {
   Input,
   Space,
   Divider,
+  Typography,
 } from "antd";
 import {
   ArrowLeftOutlined,
@@ -20,12 +21,14 @@ import {
   CloseCircleOutlined,
   PhoneOutlined,
   MessageOutlined,
+  FileTextOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import bookingService from "../../../services/bookingService";
 import "./ServiceDetails.css";
 
 const { TextArea } = Input;
+const { Title, Text } = Typography;
 
 const ServiceDetails = () => {
   const [booking, setBooking] = useState(null);
@@ -100,13 +103,13 @@ const ServiceDetails = () => {
 
   const getStatusIcon = (status) => {
     const icons = {
-      pending: <ClockCircleOutlined style={{ color: "#ff9800" }} />,
-      accepted: <CheckCircleOutlined style={{ color: "#2196f3" }} />,
-      in_progress: <ClockCircleOutlined style={{ color: "#2196f3" }} />,
-      documents_submitted: <CheckCircleOutlined style={{ color: "#9c27b0" }} />,
-      completed: <CheckCircleOutlined style={{ color: "#4caf50" }} />,
-      cancelled: <CloseCircleOutlined style={{ color: "#f44336" }} />,
-      rejected: <CloseCircleOutlined style={{ color: "#f44336" }} />,
+      pending: <ClockCircleOutlined />,
+      accepted: <CheckCircleOutlined />,
+      in_progress: <ClockCircleOutlined />,
+      documents_submitted: <CheckCircleOutlined />,
+      completed: <CheckCircleOutlined />,
+      cancelled: <CloseCircleOutlined />,
+      rejected: <CloseCircleOutlined />,
     };
     return icons[status] || <ClockCircleOutlined />;
   };
@@ -163,94 +166,76 @@ const ServiceDetails = () => {
     <div className="service-details-page">
       <div className="service-details-container">
         {/* Header */}
-        <div className="details-header">
+        <div className="service-details-header">
           <ArrowLeftOutlined
-            className="back-icon"
+            className="service-details-back"
             onClick={() => navigate(-1)}
           />
-          <h2>Service Details</h2>
+          <Title level={4}>Service Details</Title>
         </div>
 
-        {/* Service Info Card */}
-        <Card className="service-info-card">
-          <div className="service-header-row">
-            <div className="service-title-section">
-              <div className="service-icon">🏛️</div>
-              <div>
-                <div className="service-name">
-                  {booking.complianceItemId?.name}
-                </div>
-                <div className="service-id">
-                  Booking ID: {booking.bookingId}
-                </div>
-              </div>
+        {/* Service Info */}
+        <Card className="service-details-card">
+          <div className="service-details-top">
+            <div>
+              <Text strong className="service-details-name">
+                {booking.complianceItemId?.name}
+              </Text>
+              <Text type="secondary" className="service-details-id">
+                Booking ID: {booking.bookingId}
+              </Text>
             </div>
-            <Tag color={getStatusColor(booking.status)} className="status-tag">
+
+            <Tag color={getStatusColor(booking.status)}>
               {getStatusText(booking.status)}
             </Tag>
           </div>
 
-          <Divider style={{ margin: "16px 0" }} />
+          <Divider />
 
-          <Space direction="vertical" size={12} style={{ width: "100%" }}>
-            <div className="info-row">
-              <span className="info-label">Service Provider:</span>
-              <span className="info-value">
-                {booking.providerId?.companyName}
-              </span>
+          <Space direction="vertical" size={10}>
+            <div className="service-details-row">
+              <span>Service Provider</span>
+              <strong>{booking.providerId?.companyName}</strong>
             </div>
 
-            <div className="info-row">
-              <span className="info-label">Booked On:</span>
-              <span className="info-value">
-                {new Date(booking.bookedAt).toLocaleDateString("en-IN", {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-                })}
-              </span>
+            <div className="service-details-row">
+              <span>Booked On</span>
+              <strong>
+                {new Date(booking.bookedAt).toLocaleDateString("en-IN")}
+              </strong>
             </div>
 
-            <div className="info-row">
-              <span className="info-label">Expected Completion:</span>
-              <span className="info-value">
+            <div className="service-details-row">
+              <span>Expected Completion</span>
+              <strong>
                 {new Date(booking.expectedCompletionDate).toLocaleDateString(
-                  "en-IN",
-                  {
-                    day: "numeric",
-                    month: "short",
-                    year: "numeric",
-                  }
+                  "en-IN"
                 )}
-              </span>
+              </strong>
             </div>
 
             {booking.actualCompletionDate && (
-              <div className="info-row">
-                <span className="info-label">Completed On:</span>
-                <span className="info-value">
+              <div className="service-details-row">
+                <span>Completed On</span>
+                <strong>
                   {new Date(booking.actualCompletionDate).toLocaleDateString(
-                    "en-IN",
-                    {
-                      day: "numeric",
-                      month: "short",
-                      year: "numeric",
-                    }
+                    "en-IN"
                   )}
-                </span>
+                </strong>
               </div>
             )}
 
-            <div className="info-row price-row">
-              <span className="info-label">Total Amount:</span>
-              <span className="info-value price">₹{booking.agreedPrice}</span>
+            <div className="service-details-row price">
+              <span>Total Amount</span>
+              <strong>₹{booking.agreedPrice}</strong>
             </div>
           </Space>
         </Card>
 
-        {/* Progress Tracker */}
-        <Card title="Progress Tracker" className="progress-card">
-          {booking.timeline && booking.timeline.length > 0 ? (
+        {/* Timeline */}
+        <Card title="Progress Tracker" className="service-details-card">
+          {booking.timeline?.length ? (
             <Timeline>
               {booking.timeline.map((event, index) => (
                 <Timeline.Item
@@ -258,17 +243,12 @@ const ServiceDetails = () => {
                   dot={getStatusIcon(event.status)}
                   color={getStatusColor(event.status)}
                 >
-                  <div className="timeline-item">
+                  <div className="service-details-timeline">
                     <div className="timeline-status">
                       {getStatusText(event.status)}
                     </div>
                     <div className="timeline-date">
-                      {new Date(event.timestamp).toLocaleString("en-IN", {
-                        day: "numeric",
-                        month: "short",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
+                      {new Date(event.timestamp).toLocaleString("en-IN")}
                     </div>
                     {event.message && (
                       <div className="timeline-message">{event.message}</div>
@@ -278,21 +258,18 @@ const ServiceDetails = () => {
               ))}
             </Timeline>
           ) : (
-            <Empty
-              description="No progress updates yet"
-              style={{ margin: "20px 0" }}
-            />
+            <Empty description="No progress updates yet" />
           )}
         </Card>
 
-        {/* Documents (if any) */}
-        {booking.documents && booking.documents.length > 0 && (
-          <Card title="Deliverables" className="documents-card">
-            <Space direction="vertical" size={12} style={{ width: "100%" }}>
+        {/* Documents */}
+        {booking.documents?.length > 0 && (
+          <Card title="Deliverables" className="service-details-card">
+            <Space direction="vertical" size={10}>
               {booking.documents.map((doc, index) => (
-                <div key={index} className="document-item">
-                  <span className="doc-icon">📄</span>
-                  <span className="doc-name">{doc.name}</span>
+                <div key={index} className="service-details-doc">
+                  <FileTextOutlined />
+                  <span>{doc.name}</span>
                   <Button type="link" size="small">
                     Download
                   </Button>
@@ -302,52 +279,37 @@ const ServiceDetails = () => {
           </Card>
         )}
 
-        {/* Support Section */}
-        <Card className="support-card">
-          <div className="support-header">Support</div>
-          <Space direction="vertical" size={12} style={{ width: "100%" }}>
-            <Button block icon={<PhoneOutlined />} className="support-button">
-              Chat with service provider
-            </Button>
+        {/* Support */}
+        <Card className="service-details-card">
+          <Title level={5}>Support</Title>
 
-            <Button block icon={<MessageOutlined />} className="support-button">
-              Raise Support Ticket
-            </Button>
-          </Space>
+          <div className="service-details-support-actions">
+            <Button icon={<PhoneOutlined />}>Chat with service provider</Button>
+
+            <Button icon={<MessageOutlined />}>Raise Support Ticket</Button>
+          </div>
         </Card>
 
-        {/* Action Buttons */}
-        <div className="action-buttons">
+        {/* Actions */}
+        <div className="service-details-actions">
           {canCancel && (
-            <Button
-              danger
-              size="large"
-              block
-              onClick={handleCancelBooking}
-              className="action-button"
-            >
+            <Button danger block onClick={handleCancelBooking}>
               Cancel Booking
             </Button>
           )}
 
           {canRate && (
-            <Button
-              type="primary"
-              size="large"
-              block
-              onClick={() => setRatingModal(true)}
-              className="action-button"
-            >
+            <Button type="primary" block onClick={() => setRatingModal(true)}>
               Rate Service
             </Button>
           )}
 
           {booking.rating?.score && (
-            <Card className="rating-display-card">
-              <div className="rating-header">Your Rating</div>
+            <Card className="service-details-card">
+              <Title level={5}>Your Rating</Title>
               <Rate disabled value={booking.rating.score} />
               {booking.rating.comment && (
-                <div className="rating-comment">{booking.rating.comment}</div>
+                <Text type="secondary">{booking.rating.comment}</Text>
               )}
             </Card>
           )}
@@ -373,29 +335,14 @@ const ServiceDetails = () => {
           </Button>,
         ]}
       >
-        <Space direction="vertical" size={16} style={{ width: "100%" }}>
-          <div>
-            <div style={{ marginBottom: 12, fontWeight: 500 }}>
-              How was your experience?
-            </div>
-            <Rate
-              value={rating}
-              onChange={setRating}
-              style={{ fontSize: 32 }}
-            />
-          </div>
-
-          <div>
-            <div style={{ marginBottom: 8, fontWeight: 500 }}>
-              Comments (Optional):
-            </div>
-            <TextArea
-              rows={4}
-              placeholder="Share your experience..."
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-            />
-          </div>
+        <Space direction="vertical" size={12} style={{ width: "100%" }}>
+          <Rate value={rating} onChange={setRating} />
+          <TextArea
+            rows={4}
+            placeholder="Share your experience..."
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+          />
         </Space>
       </Modal>
     </div>

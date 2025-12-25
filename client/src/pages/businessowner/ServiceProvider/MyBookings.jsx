@@ -1,15 +1,27 @@
 import { useState, useEffect } from "react";
-import { Card, Input, Tag, Spin, message, Empty, Space } from "antd";
+import {
+  Card,
+  Input,
+  Tag,
+  Spin,
+  message,
+  Empty,
+  Space,
+  Typography,
+} from "antd";
 import {
   SearchOutlined,
   ArrowLeftOutlined,
   ClockCircleOutlined,
   CheckCircleOutlined,
   SyncOutlined,
+  StarFilled,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import bookingService from "../../../services/bookingService";
 import "./MyBookings.css";
+
+const { Title, Text } = Typography;
 
 const MyBookings = () => {
   const [bookings, setBookings] = useState([]);
@@ -86,7 +98,7 @@ const MyBookings = () => {
 
   if (loading) {
     return (
-      <div className="bookings-loader">
+      <div className="my-bookings-loader">
         <Spin size="large" />
       </div>
     );
@@ -94,158 +106,148 @@ const MyBookings = () => {
 
   return (
     <div className="my-bookings-page">
-      <div className="bookings-container">
+      <div className="my-bookings-container">
         {/* Header */}
-        <div className="bookings-header">
+        <div className="my-bookings-header">
           <ArrowLeftOutlined
-            className="back-icon"
+            className="my-bookings-back"
             onClick={() => navigate("/business-owner/services")}
           />
-          <h2>My Bookings</h2>
+          <Title level={4}>My Bookings</Title>
         </div>
 
         {/* Search */}
         <Input
-          placeholder="Search services here"
+          allowClear
+          size="large"
           prefix={<SearchOutlined />}
+          placeholder="Search by service or provider"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          size="large"
-          className="bookings-search"
+          className="my-bookings-search"
         />
 
-        {/* Quick Stats */}
+        {/* Stats */}
         {stats && (
-          <div className="quick-stats">
-            <div className="stat-item completed">
-              <CheckCircleOutlined className="stat-icon" />
-              <div className="stat-info">
-                <div className="stat-value">{stats.completed || 0}</div>
-                <div className="stat-label">Completed</div>
+          <div className="my-bookings-stats">
+            <div className="my-bookings-stat completed">
+              <CheckCircleOutlined />
+              <div>
+                <div className="value">{stats.completed || 0}</div>
+                <div className="label">Completed</div>
               </div>
             </div>
 
-            <div className="stat-item in-progress">
-              <SyncOutlined className="stat-icon" spin />
-              <div className="stat-info">
-                <div className="stat-value">{stats.in_progress || 0}</div>
-                <div className="stat-label">In Progress</div>
+            <div className="my-bookings-stat in-progress">
+              <SyncOutlined spin />
+              <div>
+                <div className="value">{stats.in_progress || 0}</div>
+                <div className="label">In Progress</div>
               </div>
             </div>
 
-            <div className="stat-item pending">
-              <ClockCircleOutlined className="stat-icon" />
-              <div className="stat-info">
-                <div className="stat-value">{stats.pending || 0}</div>
-                <div className="stat-label">Pending</div>
+            <div className="my-bookings-stat pending">
+              <ClockCircleOutlined />
+              <div>
+                <div className="value">{stats.pending || 0}</div>
+                <div className="label">Pending</div>
               </div>
             </div>
           </div>
         )}
 
-        {/* Ongoing Services */}
-        <div className="bookings-section">
-          <h3>Ongoing Services</h3>
+        {/* Ongoing */}
+        <div className="my-bookings-section">
+          <Title level={5}>Ongoing Services</Title>
+
           {ongoingBookings.length === 0 ? (
-            <Empty description="No ongoing services" className="empty-state" />
+            <Empty description="No ongoing services" />
           ) : (
-            <div className="bookings-list">
+            <Space
+              direction="vertical"
+              size="middle"
+              className="my-bookings-list"
+            >
               {ongoingBookings.map((booking) => (
                 <Card
                   key={booking._id}
-                  className="booking-card"
                   hoverable
+                  className="my-bookings-card"
                   onClick={() =>
                     navigate(`/business-owner/services/${booking._id}`)
                   }
                 >
-                  <div className="booking-content">
-                    <div className="booking-icon">🏛️</div>
-
-                    <div className="booking-info">
-                      <div className="booking-header">
-                        <span className="booking-name">
-                          {booking.complianceItemId?.name}
-                        </span>
+                  <div className="my-bookings-card-content">
+                    <div className="my-bookings-main">
+                      <div className="my-bookings-title">
+                        <Text strong>{booking.complianceItemId?.name}</Text>
                         <Tag color={getStatusColor(booking.status)}>
                           {getStatusText(booking.status)}
                         </Tag>
                       </div>
 
-                      <div className="booking-provider">
+                      <Text type="secondary">
                         by {booking.providerId?.companyName}
-                        <span className="rating">
-                          ⭐ {booking.providerId?.rating?.toFixed(1)}
-                        </span>
-                      </div>
+                      </Text>
 
-                      <div className="booking-dates">
+                      <div className="my-bookings-meta">
+                        <span>
+                          <StarFilled />{" "}
+                          {booking.providerId?.rating?.toFixed(1)}
+                        </span>
                         <span>
                           Booked:{" "}
                           {new Date(booking.bookedAt).toLocaleDateString()}
                         </span>
-                        <span>
-                          Expected:{" "}
-                          {new Date(
-                            booking.expectedCompletionDate
-                          ).toLocaleDateString()}
-                        </span>
                       </div>
+                    </div>
 
-                      <div className="booking-footer">
-                        <span className="booking-price">
-                          ₹{booking.agreedPrice}
-                        </span>
-                      </div>
+                    <div className="my-bookings-price">
+                      ₹{booking.agreedPrice}
                     </div>
                   </div>
                 </Card>
               ))}
-            </div>
+            </Space>
           )}
         </div>
 
-        {/* Completed Services */}
-        <div className="bookings-section">
-          <h3>Completed Services</h3>
+        {/* Completed */}
+        <div className="my-bookings-section">
+          <Title level={5}>Completed Services</Title>
+
           {completedBookings.length === 0 ? (
-            <Empty
-              description="No completed services"
-              className="empty-state"
-            />
+            <Empty description="No completed services" />
           ) : (
-            <div className="bookings-list">
+            <Space
+              direction="vertical"
+              size="middle"
+              className="my-bookings-list"
+            >
               {completedBookings.map((booking) => (
                 <Card
                   key={booking._id}
-                  className="booking-card completed"
                   hoverable
+                  className="my-bookings-card completed"
                   onClick={() =>
                     navigate(`/business-owner/services/${booking._id}`)
                   }
                 >
-                  <div className="booking-content">
-                    <div className="booking-icon">🏛️</div>
-
-                    <div className="booking-info">
-                      <div className="booking-header">
-                        <span className="booking-name">
-                          {booking.complianceItemId?.name}
-                        </span>
+                  <div className="my-bookings-card-content">
+                    <div className="my-bookings-main">
+                      <div className="my-bookings-title">
+                        <Text strong>{booking.complianceItemId?.name}</Text>
                         <Tag color="green">Completed</Tag>
                       </div>
 
-                      <div className="booking-provider">
+                      <Text type="secondary">
                         by {booking.providerId?.companyName}
-                        <span className="rating">
-                          ⭐ {booking.providerId?.rating?.toFixed(1)}
-                        </span>
-                      </div>
+                      </Text>
 
-                      <div className="booking-dates">
+                      <div className="my-bookings-meta">
                         <span>
-                          Booked:{" "}
-                          {new Date(booking.bookedAt).toLocaleDateString()}
+                          <StarFilled />{" "}
+                          {booking.providerId?.rating?.toFixed(1)}
                         </span>
                         <span>
                           Completed:{" "}
@@ -254,17 +256,15 @@ const MyBookings = () => {
                           ).toLocaleDateString()}
                         </span>
                       </div>
+                    </div>
 
-                      <div className="booking-footer">
-                        <span className="booking-price">
-                          ₹{booking.agreedPrice}
-                        </span>
-                      </div>
+                    <div className="my-bookings-price">
+                      ₹{booking.agreedPrice}
                     </div>
                   </div>
                 </Card>
               ))}
-            </div>
+            </Space>
           )}
         </div>
       </div>

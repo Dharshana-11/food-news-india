@@ -1,5 +1,14 @@
 import { useState, useEffect } from "react";
-import { Card, Input, Tag, Spin, message, Empty, Badge } from "antd";
+import {
+  Card,
+  Input,
+  Spin,
+  message,
+  Empty,
+  Typography,
+  Space,
+  Tag,
+} from "antd";
 import {
   SearchOutlined,
   ArrowLeftOutlined,
@@ -9,6 +18,8 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import myServiceServices from "../../../services/myServicesService";
 import "./ServiceProviders.css";
+
+const { Title, Text } = Typography;
 
 const ServiceProviders = () => {
   const [service, setService] = useState(null);
@@ -48,13 +59,12 @@ const ServiceProviders = () => {
     provider.companyName?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Separate top rated and others
   const topRated = filteredProviders.filter((p) => p.rating >= 4.5);
   const others = filteredProviders.filter((p) => p.rating < 4.5);
 
   if (loading) {
     return (
-      <div className="providers-loader">
+      <div className="service-providers-loader">
         <Spin size="large" />
       </div>
     );
@@ -62,131 +72,136 @@ const ServiceProviders = () => {
 
   return (
     <div className="service-providers-page">
-      <div className="providers-container">
+      <div className="service-providers-container">
         {/* Header */}
-        <div className="providers-header">
+        <div className="service-providers-header">
           <ArrowLeftOutlined
-            className="back-icon"
+            className="service-providers-back"
             onClick={() => navigate(-1)}
           />
-          <h2>{service?.name}</h2>
+          <div>
+            <Title level={3}>{service?.name}</Title>
+            <Text type="secondary">Choose a verified service provider</Text>
+          </div>
         </div>
 
         {/* Search */}
         <Input
-          placeholder="Search service providers here"
+          allowClear
+          size="large"
           prefix={<SearchOutlined />}
+          placeholder="Search service providers"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          size="large"
-          className="providers-search"
+          className="service-providers-search"
         />
 
-        {/* Top Rated Section */}
+        {/* Top Rated */}
         {topRated.length > 0 && (
-          <>
-            <div className="section-header">
-              <TrophyOutlined className="trophy-icon" />
-              <span>Top of the day</span>
+          <div className="service-providers-section">
+            <div className="service-providers-section-title highlight">
+              <TrophyOutlined />
+              <span>Top Rated</span>
             </div>
 
-            <div className="providers-list">
+            <Space
+              direction="vertical"
+              size="middle"
+              className="service-providers-list"
+            >
               {topRated.map((provider) => (
                 <Card
                   key={provider._id}
-                  className="provider-card top-rated"
                   hoverable
+                  className="service-providers-card top-rated"
                   onClick={() =>
                     navigate(
                       `/business-owner/services/book/${serviceId}/${provider._id}`
                     )
                   }
                 >
-                  <div className="provider-content">
-                    <div className="provider-avatar">
+                  <div className="service-providers-card-content">
+                    <div className="service-providers-avatar">
                       {provider.companyName?.charAt(0).toUpperCase()}
                     </div>
 
-                    <div className="provider-info">
-                      <div className="provider-name">
+                    <div className="service-providers-info">
+                      <div className="service-providers-name">
                         {provider.companyName}
                       </div>
 
-                      <div className="provider-rating">
-                        <span className="rating-value">
-                          {provider.rating?.toFixed(1) || "0.0"}
-                        </span>
-                        <StarFilled className="star-icon" />
-                      </div>
+                      <Space size="small" className="service-providers-rating">
+                        <StarFilled />
+                        <span>{provider.rating?.toFixed(1) || "0.0"}</span>
+                        <Tag color="gold">Top</Tag>
+                      </Space>
 
-                      <div className="provider-meta">
-                        <span className="customers">
-                          {provider.totalCustomers}+ Happy Customers
-                        </span>
-                      </div>
+                      <Text type="secondary" className="service-providers-meta">
+                        {provider.totalCustomers}+ happy customers
+                      </Text>
+                    </div>
 
-                      <div className="provider-price">
-                        ₹{provider.priceForThisItem || 0}
-                      </div>
+                    <div className="service-providers-price">
+                      ₹{provider.priceForThisItem || 0}
                     </div>
                   </div>
                 </Card>
               ))}
-            </div>
-          </>
+            </Space>
+          </div>
         )}
 
-        {/* Others Section */}
+        {/* Others */}
         {others.length > 0 && (
-          <>
-            <div className="section-header">
-              <span>Others</span>
+          <div className="service-providers-section">
+            <div className="service-providers-section-title">
+              <span>Other Providers</span>
             </div>
 
-            <div className="providers-list">
+            <Space
+              direction="vertical"
+              size="middle"
+              className="service-providers-list"
+            >
               {others.map((provider) => (
                 <Card
                   key={provider._id}
-                  className="provider-card"
                   hoverable
+                  className="service-providers-card"
                   onClick={() =>
                     navigate(
                       `/business-owner/services/book/${serviceId}/${provider._id}`
                     )
                   }
                 >
-                  <div className="provider-content">
-                    <div className="provider-avatar">
+                  <div className="service-providers-card-content">
+                    <div className="service-providers-avatar">
                       {provider.companyName?.charAt(0).toUpperCase()}
                     </div>
 
-                    <div className="provider-info">
-                      <div className="provider-name">
+                    <div className="service-providers-info">
+                      <div className="service-providers-name">
                         {provider.companyName}
                       </div>
 
-                      <div className="provider-rating">
-                        <span className="rating-value">
-                          {provider.rating?.toFixed(1) || "0.0"}
-                        </span>
-                        <StarFilled className="star-icon" />
-                      </div>
+                      <Space size="small" className="service-providers-rating">
+                        <StarFilled />
+                        <span>{provider.rating?.toFixed(1) || "0.0"}</span>
+                      </Space>
 
-                      <div className="provider-meta">
-                        <span className="customers">
-                          {provider.totalCustomers}+ Happy Customers
-                        </span>
-                      </div>
+                      <Text type="secondary" className="service-providers-meta">
+                        {provider.totalCustomers}+ happy customers
+                      </Text>
+                    </div>
 
-                      <div className="provider-price">
-                        ₹{provider.priceForThisItem || 0}
-                      </div>
+                    <div className="service-providers-price">
+                      ₹{provider.priceForThisItem || 0}
                     </div>
                   </div>
                 </Card>
               ))}
-            </div>
-          </>
+            </Space>
+          </div>
         )}
 
         {filteredProviders.length === 0 && (
