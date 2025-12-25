@@ -1,0 +1,507 @@
+/* =========================================================
+   My Services – Mobile First, Clean Typography & Spacing
+   ========================================================= */
+
+/* Page */
+.my-services-page {
+  min-height: 100vh;
+  background: #f5f6fa;
+  padding: 16px;
+  font-family: "Inter", sans-serif;
+}
+
+.my-services-container {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* =========================================================
+   Header
+   ========================================================= */
+
+.my-services-header {
+  margin-bottom: 20px;
+}
+
+.my-services-header h3 {
+  font-family: "Poppins", sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--color-primary-blue);
+  letter-spacing: -0.02em;
+}
+
+.my-services-header .ant-typography-secondary {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #6b7280;
+}
+
+/* =========================================================
+   Search
+   ========================================================= */
+
+.my-services-search {
+  margin-bottom: 20px;
+}
+
+.my-services-search .ant-input-affix-wrapper {
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+.my-services-search .ant-input-affix-wrapper:hover,
+.my-services-search .ant-input-affix-wrapper:focus-within {
+  border-color: var(--color-primary-blue);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+}
+
+.my-services-search .ant-input {
+  font-size: 15px;
+  padding: 12px 0;
+}
+
+.my-services-search .anticon-search {
+  font-size: 18px;
+  color: #9ca3af;
+}
+
+/* =========================================================
+   Loader
+   ========================================================= */
+
+.my-services-loader {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* =========================================================
+   Quick Actions - Mobile First (Stacked Buttons)
+   ========================================================= */
+
+.my-services-quick-actions {
+  margin-bottom: 24px;
+  border-radius: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+}
+
+.my-services-quick-actions .ant-card-body {
+  padding: 16px;
+}
+
+.my-services-quick-actions-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.my-services-quick-actions-row .ant-btn {
+  width: 100%;
+  height: 48px;
+  font-size: 15px;
+  font-weight: 500;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.my-services-quick-actions-row .ant-btn-primary {
+  background: var(--color-primary-blue);
+  border-color: var(--color-primary-blue);
+}
+
+.my-services-quick-actions-row .ant-btn-primary:hover {
+  background: var(--color-primary-blue);
+  border-color: var(--color-primary-blue);
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+}
+
+.my-services-quick-actions-row .ant-btn:not(.ant-btn-primary):hover {
+  border-color: var(--color-primary-blue);
+  color: var(--color-primary-blue);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.my-services-quick-actions-row .anticon {
+  font-size: 16px;
+}
+
+/* =========================================================
+   Sections
+   ========================================================= */
+
+.my-services-section {
+  margin-bottom: 32px;
+}
+
+.my-services-section h4 {
+  font-family: "Poppins", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--color-primary-blue);
+  letter-spacing: -0.01em;
+}
+
+.my-services-list {
+  width: 100%;
+}
+
+/* =========================================================
+   Cards - Mobile First (Vertical Stack)
+   ========================================================= */
+
+.my-services-card {
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  background: #ffffff;
+}
+
+.my-services-card .ant-card-body {
+  padding: 16px;
+}
+
+.my-services-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  border-color: #d1d5db;
+}
+
+.my-services-card-completed {
+  background: linear-gradient(135deg, #f9fffe 0%, #f0fdf9 100%);
+  border-color: #d1fae5;
+}
+
+.my-services-card-completed:hover {
+  border-color: #a7f3d0;
+}
+
+/* Card Content Layout - Mobile: Vertical Stack */
+.my-services-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.my-services-card-main {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Mobile: Tag on top, title below */
+.my-services-card-main > .ant-space {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.my-services-card-main > .ant-space > .ant-space:first-child {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+}
+
+/* =========================================================
+   Typography inside card
+   ========================================================= */
+
+.my-services-name {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #1f2937;
+  letter-spacing: -0.01em;
+}
+
+.my-services-card .ant-tag {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: none;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.my-services-card .ant-typography-secondary {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #6b7280;
+}
+
+.my-services-meta {
+  margin-top: 4px;
+  font-size: 13px;
+  flex-wrap: wrap;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.my-services-price {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-primary-orange);
+  letter-spacing: -0.01em;
+}
+
+/* =========================================================
+   Arrow - Mobile: Bottom Right
+   ========================================================= */
+
+.my-services-arrow {
+  font-size: 18px;
+  color: #d1d5db;
+  align-self: flex-end;
+  flex-shrink: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.my-services-card:hover .my-services-arrow {
+  transform: translateX(4px);
+  color: var(--color-primary-orange);
+}
+
+/* =========================================================
+   Divider
+   ========================================================= */
+
+.ant-divider {
+  margin: 28px 0;
+  border-color: #e5e7eb;
+}
+
+/* =========================================================
+   Empty State
+   ========================================================= */
+
+.my-services-section .ant-empty {
+  margin: 32px 0;
+  padding: 24px;
+}
+
+.my-services-section .ant-empty-description {
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+/* =========================================================
+   Tablet (768px - 1024px)
+   ========================================================= */
+
+@media (min-width: 768px) {
+  .my-services-page {
+    padding-top: 24px;
+  }
+
+  .my-services-container {
+    max-width: 720px;
+  }
+
+  .my-services-header {
+    margin-bottom: 24px;
+  }
+
+  .my-services-header h3 {
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+
+  .my-services-header .ant-typography-secondary {
+    font-size: 15px;
+  }
+
+  .my-services-search {
+    margin-bottom: 24px;
+  }
+
+  .my-services-search .ant-input {
+    font-size: 16px;
+    padding: 14px 0;
+  }
+
+  /* Tablet: Buttons side by side */
+  .my-services-quick-actions {
+    margin-bottom: 28px;
+  }
+
+  .my-services-quick-actions .ant-card-body {
+    padding: 20px;
+  }
+
+  .my-services-quick-actions-row {
+    flex-direction: row;
+    gap: 16px;
+  }
+
+  .my-services-quick-actions-row .ant-btn {
+    height: 48px;
+    font-size: 15px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .my-services-section {
+    margin-bottom: 36px;
+  }
+
+  .my-services-section h4 {
+    font-size: 20px;
+    margin-bottom: 18px;
+  }
+
+  /* Tablet: Card layout changes to horizontal */
+  .my-services-card .ant-card-body {
+    padding: 20px;
+  }
+
+  .my-services-card-content {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .my-services-card-main {
+    flex: 1;
+    min-width: 0;
+  }
+
+  /* Tablet: Normal card structure (tag and title inline) */
+  .my-services-card-main > .ant-space {
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .my-services-card-main > .ant-space > .ant-space:first-child {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .my-services-meta {
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    margin-top: 8px;
+  }
+
+  .my-services-arrow {
+    align-self: auto;
+    margin-top: 2px;
+  }
+
+  .my-services-name {
+    font-size: 17px;
+  }
+
+  .my-services-card .ant-tag {
+    font-size: 12px;
+    padding: 4px 12px;
+  }
+
+  .my-services-card .ant-typography-secondary {
+    font-size: 14px;
+  }
+
+  .my-services-meta {
+    font-size: 14px;
+  }
+
+  .my-services-price {
+    font-size: 17px;
+  }
+
+  .my-services-arrow {
+    font-size: 20px;
+  }
+}
+
+/* =========================================================
+   Desktop (1024px and up) - UNTOUCHED
+   ========================================================= */
+
+@media (min-width: 1024px) {
+  .my-services-page {
+    padding-top: 24px;
+  }
+
+  .my-services-container {
+    max-width: 960px;
+  }
+
+  .my-services-header {
+    margin-bottom: 28px;
+  }
+
+  .my-services-header h3 {
+    font-size: 32px;
+  }
+
+  .my-services-search .ant-input-affix-wrapper {
+    max-width: 480px;
+  }
+
+  .my-services-quick-actions .ant-card-body {
+    padding: 24px;
+  }
+
+  .my-services-quick-actions-row .ant-btn {
+    height: 52px;
+    font-size: 16px;
+  }
+
+  .my-services-card .ant-card-body {
+    padding: 24px;
+  }
+
+  .my-services-name {
+    font-size: 18px;
+  }
+
+  .my-services-price {
+    font-size: 18px;
+  }
+}
+
+/* =========================================================
+   Large Desktop (1440px and up) - UNTOUCHED
+   ========================================================= */
+
+@media (min-width: 1440px) {
+  .my-services-page {
+    padding-top: 24px;
+  }
+  .my-services-container {
+    max-width: 1200px;
+  }
+
+  .my-services-header h3 {
+    font-size: 36px;
+  }
+
+  .my-services-section h4 {
+    font-size: 22px;
+  }
+}

@@ -102,4 +102,13 @@ export const ROUTES = {
   BUSINESS_OWNER_MY_AGENTS: "/business-owner/agents",
   BUSINESS_OWNER_AGENT_DETAILS: "/business-owner/agents/:relationId",
   BUSINESS_OWNER_ADD_AGENT: "/business-owner/add-agent",
+
+  // Business Owner – Services
+  BUSINESS_OWNER_SERVICES: "/business-owner/services",
+  BUSINESS_OWNER_BOOK_SERVICES: "/business-owner/services/book",
+  BUSINESS_OWNER_SERVICE_PROVIDERS: "/business-owner/services/book/:serviceId",
+  BUSINESS_OWNER_PROVIDER_DETAILS:
+    "/business-owner/services/book/:serviceId/:providerId",
+  BUSINESS_OWNER_MY_BOOKINGS: "/business-owner/services/bookings",
+  BUSINESS_OWNER_SERVICE_DETAILS: "/business-owner/services/:bookingId",
 };

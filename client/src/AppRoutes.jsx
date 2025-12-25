@@ -45,6 +45,13 @@ import AddAgent from "./pages/BusinessOwner/Agents/AddAgent";
 import AdminLogin from "./pages/auth/AdminLogin";
 import Login from "./pages/auth/Login";
 
+import MyServices from "./pages/BusinessOwner/ServiceProvider/MyServices";
+import BookServices from "./pages/BusinessOwner/ServiceProvider/BookServices";
+import ServiceProviders from "./pages/BusinessOwner/ServiceProvider/ServiceProviders";
+import ProviderDetails from "./pages/BusinessOwner/ServiceProvider/ProviderDetails";
+import MyBookings from "./pages/BusinessOwner/ServiceProvider/MyBookings";
+import ServiceDetails from "./pages/BusinessOwner/ServiceProvider/ServiceDetails";
+
 const AppRoutes = () => {
   const { currentUser, loading } = useAuth();
 
@@ -220,6 +227,55 @@ const AppRoutes = () => {
         <Route
           path={ROUTES.BUSINESS_OWNER_AGENT_DETAILS}
           element={<ViewMyAgent />}
+        />
+      </Route>
+      {/* BUSINESS OWNER (LAYOUT GROUP) */}
+      <Route
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.BUSINESS_OWNER]}>
+            <KYCGuard userRole={ROLES.BUSINESS_OWNER}>
+              <AppLayout role={ROLES.BUSINESS_OWNER} />
+            </KYCGuard>
+          </ProtectedRoute>
+        }
+      >
+        {/* EXISTING ROUTES */}
+        <Route
+          path={ROUTES.BUSINESS_OWNER_DASHBOARD}
+          element={<BusinessOwnerDashboard />}
+        />
+        <Route
+          path={ROUTES.BUSINESS_OWNER_DOCUMENT_VAULT}
+          element={<DocumentVault />}
+        />
+        <Route path={ROUTES.BUSINESS_OWNER_MY_AGENTS} element={<MyAgents />} />
+        <Route path={ROUTES.BUSINESS_OWNER_ADD_AGENT} element={<AddAgent />} />
+        <Route
+          path={ROUTES.BUSINESS_OWNER_AGENT_DETAILS}
+          element={<ViewMyAgent />}
+        />
+
+        {/* 🔥 NEW: SERVICES MODULE */}
+        <Route path={ROUTES.BUSINESS_OWNER_SERVICES} element={<MyServices />} />
+        <Route
+          path={ROUTES.BUSINESS_OWNER_BOOK_SERVICES}
+          element={<BookServices />}
+        />
+        <Route
+          path={ROUTES.BUSINESS_OWNER_SERVICE_PROVIDERS}
+          element={<ServiceProviders />}
+        />
+        <Route
+          path={ROUTES.BUSINESS_OWNER_PROVIDER_DETAILS}
+          element={<ProviderDetails />}
+        />
+        <Route
+          path={ROUTES.BUSINESS_OWNER_MY_BOOKINGS}
+          element={<MyBookings />}
+        />
+        <Route
+          path={ROUTES.BUSINESS_OWNER_SERVICE_DETAILS}
+          element={<ServiceDetails />}
         />
       </Route>
     </Routes>

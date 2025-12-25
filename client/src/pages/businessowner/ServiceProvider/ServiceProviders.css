@@ -1,0 +1,474 @@
+/* =========================================================
+   Service Providers – Mobile First, Clean Typography & Spacing
+   ========================================================= */
+
+/* Page */
+.service-providers-page {
+  min-height: 100vh;
+  background: #f5f6fa;
+  padding: 16px;
+  font-family: "Inter", sans-serif;
+}
+
+.service-providers-container {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* =========================================================
+   Loader
+   ========================================================= */
+
+.service-providers-loader {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* =========================================================
+   Header
+   ========================================================= */
+
+.service-providers-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.service-providers-back {
+  font-size: 20px;
+  margin-top: 6px;
+  cursor: pointer;
+  color: var(--color-primary-blue);
+  transition: all 0.3s ease;
+  padding: 4px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.service-providers-back:hover {
+  background: rgba(59, 130, 246, 0.1);
+  transform: translateX(-2px);
+}
+
+.service-providers-back:active {
+  transform: translateX(-4px);
+}
+
+.service-providers-header > div {
+  flex: 1;
+}
+
+.service-providers-header h3 {
+  font-family: "Poppins", sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--color-primary-blue);
+  letter-spacing: -0.02em;
+}
+
+.service-providers-header .ant-typography-secondary {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #6b7280;
+}
+
+/* =========================================================
+   Search
+   ========================================================= */
+
+.service-providers-search {
+  margin-bottom: 24px;
+}
+
+.service-providers-search .ant-input-affix-wrapper {
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+.service-providers-search .ant-input-affix-wrapper:hover,
+.service-providers-search .ant-input-affix-wrapper:focus-within {
+  border-color: var(--color-primary-blue);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+}
+
+.service-providers-search .ant-input {
+  font-size: 15px;
+  padding: 12px 0;
+}
+
+.service-providers-search .anticon-search {
+  font-size: 18px;
+  color: #9ca3af;
+}
+
+/* =========================================================
+   Sections
+   ========================================================= */
+
+.service-providers-section {
+  margin-bottom: 32px;
+}
+
+.service-providers-section-title {
+  font-family: "Poppins", sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-primary-blue);
+  letter-spacing: -0.01em;
+}
+
+.service-providers-section-title .anticon {
+  font-size: 18px;
+}
+
+.service-providers-section-title.highlight {
+  color: #b45309;
+}
+
+.service-providers-section-title.highlight .anticon {
+  color: #f59e0b;
+}
+
+/* =========================================================
+   Cards
+   ========================================================= */
+
+.service-providers-list {
+  width: 100%;
+}
+
+.service-providers-card {
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  background: #ffffff;
+}
+
+.service-providers-card .ant-card-body {
+  padding: 18px;
+}
+
+.service-providers-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  border-color: #d1d5db;
+}
+
+.service-providers-card:active {
+  transform: translateY(-1px);
+}
+
+.service-providers-card.top-rated {
+  border: 2px solid #fde68a;
+  /* background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); */
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.15);
+}
+
+.service-providers-card.top-rated:hover {
+  border-color: #fcd34d;
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.25);
+}
+
+.service-providers-card.top-rated .service-providers-avatar {
+  box-shadow: 0 4px 12px rgba(251, 146, 60, 0.2);
+}
+
+/* Card Layout */
+.service-providers-card-content {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Avatar */
+.service-providers-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--color-primary-orange);
+  /* color: var(--color-primary-orange); */
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 20px;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(251, 146, 60, 0.15);
+  transition: all 0.3s ease;
+}
+
+.service-providers-card:hover .service-providers-avatar {
+  transform: scale(1.05);
+}
+
+/* Info */
+.service-providers-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.service-providers-name {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #1f2937;
+  letter-spacing: -0.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.service-providers-rating {
+  font-size: 13px;
+  color: #f59e0b;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+.service-providers-rating .anticon {
+  font-size: 14px;
+}
+
+.service-providers-rating .ant-tag {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: none;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin: 0;
+}
+
+.service-providers-meta {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* Price */
+.service-providers-price {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--color-primary-orange);
+  white-space: nowrap;
+  flex-shrink: 0;
+  letter-spacing: -0.01em;
+}
+
+/* =========================================================
+   Empty State
+   ========================================================= */
+
+.service-providers-page .ant-empty {
+  margin: 48px 0;
+  padding: 24px;
+}
+
+.service-providers-page .ant-empty-description {
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+/* =========================================================
+   Tablet (768px - 1024px)
+   ========================================================= */
+
+@media (min-width: 768px) {
+  .service-providers-page {
+    padding: 24px;
+  }
+
+  .service-providers-container {
+    max-width: 720px;
+  }
+
+  .service-providers-header {
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .service-providers-back {
+    font-size: 22px;
+    margin-top: 8px;
+  }
+
+  .service-providers-header h3 {
+    font-size: 28px;
+    margin-bottom: 6px;
+  }
+
+  .service-providers-header .ant-typography-secondary {
+    font-size: 15px;
+  }
+
+  .service-providers-search {
+    margin-bottom: 28px;
+  }
+
+  .service-providers-search .ant-input {
+    font-size: 16px;
+    padding: 14px 0;
+  }
+
+  .service-providers-section {
+    margin-bottom: 36px;
+  }
+
+  .service-providers-section-title {
+    font-size: 19px;
+    margin-bottom: 16px;
+    gap: 10px;
+  }
+
+  .service-providers-section-title .anticon {
+    font-size: 20px;
+  }
+
+  .service-providers-card .ant-card-body {
+    padding: 20px;
+  }
+
+  .service-providers-card-content {
+    gap: 16px;
+  }
+
+  .service-providers-avatar {
+    width: 56px;
+    height: 56px;
+    font-size: 22px;
+  }
+
+  .service-providers-info {
+    gap: 6px;
+  }
+
+  .service-providers-name {
+    font-size: 17px;
+  }
+
+  .service-providers-rating {
+    font-size: 14px;
+  }
+
+  .service-providers-rating .anticon {
+    font-size: 15px;
+  }
+
+  .service-providers-rating .ant-tag {
+    font-size: 11px;
+  }
+
+  .service-providers-meta {
+    font-size: 14px;
+  }
+
+  .service-providers-price {
+    font-size: 18px;
+  }
+}
+
+/* =========================================================
+   Desktop (1024px and up)
+   ========================================================= */
+
+@media (min-width: 1024px) {
+  .service-providers-page {
+    padding: 32px 40px;
+  }
+
+  .service-providers-container {
+    max-width: 960px;
+  }
+
+  .service-providers-header {
+    margin-bottom: 28px;
+  }
+
+  .service-providers-back {
+    font-size: 24px;
+  }
+
+  .service-providers-header h3 {
+    font-size: 32px;
+  }
+
+  .service-providers-search .ant-input-affix-wrapper {
+    max-width: 480px;
+  }
+
+  .service-providers-section-title {
+    font-size: 20px;
+    margin-bottom: 18px;
+  }
+
+  .service-providers-card .ant-card-body {
+    padding: 24px;
+  }
+
+  .service-providers-card-content {
+    gap: 20px;
+  }
+
+  .service-providers-avatar {
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+  }
+
+  .service-providers-name {
+    font-size: 18px;
+  }
+
+  .service-providers-rating {
+    font-size: 15px;
+  }
+
+  .service-providers-price {
+    font-size: 20px;
+  }
+}
+
+/* =========================================================
+   Large Desktop (1440px and up)
+   ========================================================= */
+
+@media (min-width: 1440px) {
+  .service-providers-container {
+    max-width: 1200px;
+  }
+
+  .service-providers-header h3 {
+    font-size: 36px;
+  }
+
+  .service-providers-section-title {
+    font-size: 22px;
+  }
+
+  .service-providers-card .ant-card-body {
+    padding: 28px;
+  }
+
+  .service-providers-avatar {
+    width: 64px;
+    height: 64px;
+    font-size: 26px;
+  }
+}

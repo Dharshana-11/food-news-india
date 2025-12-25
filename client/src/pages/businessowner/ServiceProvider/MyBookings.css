@@ -1,0 +1,564 @@
+/* =========================================================
+   My Bookings – Mobile First, Clean Typography & Spacing
+   ========================================================= */
+
+/* Page */
+.my-bookings-page {
+  min-height: 100vh;
+  background: #f5f6fa;
+  padding: 16px;
+  font-family: "Inter", sans-serif;
+}
+
+.my-bookings-container {
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+/* =========================================================
+   Loader
+   ========================================================= */
+
+.my-bookings-loader {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* =========================================================
+   Header
+   ========================================================= */
+
+.my-bookings-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.my-bookings-back {
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--color-primary-blue);
+  transition: all 0.3s ease;
+  padding: 4px;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.my-bookings-back:hover {
+  background: rgba(59, 130, 246, 0.1);
+  transform: translateX(-2px);
+}
+
+.my-bookings-back:active {
+  transform: translateX(-4px);
+}
+
+.my-bookings-header h4 {
+  font-family: "Poppins", sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--color-primary-blue);
+  letter-spacing: -0.02em;
+}
+
+/* =========================================================
+   Search
+   ========================================================= */
+
+.my-bookings-search {
+  margin-bottom: 24px;
+}
+
+.my-bookings-search .ant-input-affix-wrapper {
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+.my-bookings-search .ant-input-affix-wrapper:hover,
+.my-bookings-search .ant-input-affix-wrapper:focus-within {
+  border-color: var(--color-primary-blue);
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+}
+
+.my-bookings-search .ant-input {
+  font-size: 15px;
+  padding: 12px 0;
+}
+
+.my-bookings-search .anticon-search {
+  font-size: 18px;
+  color: #9ca3af;
+}
+
+/* =========================================================
+   Stats - Mobile: Vertical Stack
+   ========================================================= */
+
+.my-bookings-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.my-bookings-stat {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 18px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+.my-bookings-stat:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.my-bookings-stat.completed {
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border-color: #bbf7d0;
+}
+
+.my-bookings-stat.in-progress {
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+  border-color: #bfdbfe;
+}
+
+.my-bookings-stat.pending {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  border-color: #fde68a;
+}
+
+.my-bookings-stat > .anticon {
+  font-size: 32px;
+  flex-shrink: 0;
+}
+
+.my-bookings-stat.completed > .anticon {
+  color: #22c55e;
+}
+
+.my-bookings-stat.in-progress > .anticon {
+  color: #3b82f6;
+}
+
+.my-bookings-stat.pending > .anticon {
+  color: #f59e0b;
+}
+
+.my-bookings-stat > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.my-bookings-stat .value {
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 4px;
+  color: #1f2937;
+  letter-spacing: -0.02em;
+}
+
+.my-bookings-stat .label {
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1;
+  font-weight: 500;
+}
+
+/* =========================================================
+   Sections
+   ========================================================= */
+
+.my-bookings-section {
+  margin-bottom: 32px;
+}
+
+.my-bookings-section h5 {
+  font-family: "Poppins", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--color-primary-blue);
+  letter-spacing: -0.01em;
+}
+
+.my-bookings-list {
+  width: 100%;
+}
+
+/* =========================================================
+   Cards - Mobile: Vertical Stack
+   ========================================================= */
+
+.my-bookings-card {
+  border-radius: 16px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  background: #ffffff;
+}
+
+.my-bookings-card .ant-card-body {
+  padding: 16px;
+}
+
+.my-bookings-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  border-color: #d1d5db;
+}
+
+.my-bookings-card:active {
+  transform: translateY(-1px);
+}
+
+.my-bookings-card.completed {
+  background: linear-gradient(135deg, #f9fffe 0%, #f0fdf9 100%);
+  border-color: #d1fae5;
+}
+
+.my-bookings-card.completed:hover {
+  border-color: #a7f3d0;
+}
+
+/* Card Content - Mobile: Vertical Layout */
+.my-bookings-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.my-bookings-main {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Mobile: Tag above title */
+.my-bookings-title {
+  display: flex;
+  /* flex-direction: column-reverse; */
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.my-bookings-title .ant-typography {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #1f2937;
+  letter-spacing: -0.01em;
+}
+
+.my-bookings-title .ant-tag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: none;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin: 0;
+}
+
+.my-bookings-card .ant-typography-secondary {
+  font-size: 13px;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+/* Mobile: Meta stacked vertically */
+.my-bookings-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  margin-top: 4px;
+}
+
+.my-bookings-meta span {
+  font-size: 13px;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.my-bookings-meta .anticon {
+  font-size: 13px;
+  color: #f59e0b;
+}
+
+/* Mobile: Price at bottom */
+.my-bookings-price {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-primary-orange);
+  letter-spacing: -0.01em;
+  padding-top: 8px;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* =========================================================
+   Empty State
+   ========================================================= */
+
+.my-bookings-section .ant-empty {
+  margin: 32px 0;
+  padding: 24px;
+}
+
+.my-bookings-section .ant-empty-description {
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+/* =========================================================
+   Tablet (768px - 1024px)
+   ========================================================= */
+
+@media (min-width: 768px) {
+  .my-bookings-page {
+    padding: 24px;
+  }
+
+  .my-bookings-container {
+    max-width: 720px;
+  }
+
+  .my-bookings-header {
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .my-bookings-back {
+    font-size: 22px;
+  }
+
+  .my-bookings-header h4 {
+    font-size: 28px;
+  }
+
+  .my-bookings-search {
+    margin-bottom: 28px;
+  }
+
+  .my-bookings-search .ant-input {
+    font-size: 16px;
+    padding: 14px 0;
+  }
+
+  /* Tablet: Stats in grid */
+  .my-bookings-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 32px;
+  }
+
+  .my-bookings-stat {
+    padding: 18px 16px;
+  }
+
+  .my-bookings-stat > .anticon {
+    font-size: 32px;
+  }
+
+  .my-bookings-stat .value {
+    font-size: 26px;
+  }
+
+  .my-bookings-stat .label {
+    font-size: 13px;
+  }
+
+  .my-bookings-section {
+    margin-bottom: 36px;
+  }
+
+  .my-bookings-section h5 {
+    font-size: 20px;
+    margin-bottom: 18px;
+  }
+
+  /* Tablet: Card horizontal layout */
+  .my-bookings-card .ant-card-body {
+    padding: 20px;
+  }
+
+  .my-bookings-card-content {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .my-bookings-main {
+    flex: 1;
+    min-width: 0;
+    gap: 6px;
+  }
+
+  /* Tablet: Tag and title inline */
+  .my-bookings-title {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 2px;
+  }
+
+  .my-bookings-title .ant-typography {
+    font-size: 17px;
+  }
+
+  .my-bookings-title .ant-tag {
+    font-size: 12px;
+    padding: 4px 12px;
+  }
+
+  .my-bookings-card .ant-typography-secondary {
+    font-size: 14px;
+  }
+
+  /* Tablet: Meta horizontal */
+  .my-bookings-meta {
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .my-bookings-meta span {
+    font-size: 14px;
+  }
+
+  .my-bookings-meta .anticon {
+    font-size: 14px;
+  }
+
+  /* Tablet: Price on right */
+  .my-bookings-price {
+    font-size: 20px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    align-self: center;
+    padding-top: 0;
+    border-top: none;
+  }
+}
+
+/* =========================================================
+   Desktop (1024px and up) - UNTOUCHED
+   ========================================================= */
+
+@media (min-width: 1024px) {
+  .my-bookings-page {
+    padding: 32px 40px;
+  }
+
+  .my-bookings-container {
+    max-width: 960px;
+  }
+
+  .my-bookings-header {
+    margin-bottom: 28px;
+  }
+
+  .my-bookings-back {
+    font-size: 24px;
+  }
+
+  .my-bookings-header h4 {
+    font-size: 32px;
+  }
+
+  .my-bookings-search .ant-input-affix-wrapper {
+    max-width: 480px;
+  }
+
+  .my-bookings-stats {
+    gap: 16px;
+  }
+
+  .my-bookings-stat {
+    padding: 20px 18px;
+  }
+
+  .my-bookings-stat > .anticon {
+    font-size: 36px;
+  }
+
+  .my-bookings-stat .value {
+    font-size: 28px;
+  }
+
+  .my-bookings-stat .label {
+    font-size: 14px;
+  }
+
+  .my-bookings-section h5 {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+
+  .my-bookings-card .ant-card-body {
+    padding: 24px;
+  }
+
+  .my-bookings-card-content {
+    gap: 20px;
+  }
+
+  .my-bookings-title .ant-typography {
+    font-size: 18px;
+  }
+
+  .my-bookings-price {
+    font-size: 22px;
+  }
+}
+
+/* =========================================================
+   Large Desktop (1440px and up) - UNTOUCHED
+   ========================================================= */
+
+@media (min-width: 1440px) {
+  .my-bookings-container {
+    max-width: 1200px;
+  }
+
+  .my-bookings-header h4 {
+    font-size: 36px;
+  }
+
+  .my-bookings-section h5 {
+    font-size: 24px;
+  }
+
+  .my-bookings-stat {
+    padding: 24px 20px;
+  }
+
+  .my-bookings-stat > .anticon {
+    font-size: 40px;
+  }
+
+  .my-bookings-stat .value {
+    font-size: 30px;
+  }
+}
