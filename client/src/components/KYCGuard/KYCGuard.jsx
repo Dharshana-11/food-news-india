@@ -24,7 +24,6 @@ import ROLES from "../../constants/roles.js";
 import { useAuth } from "../../context/AuthContext";
 
 const KYCGuard = ({ children }) => {
-  console.log("KYCGuard mounted");
   const { currentUser } = useAuth();
   const userRole = currentUser?.role;
 
