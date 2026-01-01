@@ -47,4 +47,7 @@ export const ENDPOINTS = {
   BOOKING_UPDATE_STATUS: (id) => `/bookings/${id}/status`,
   BOOKING_CANCEL: (id) => `/bookings/${id}/cancel`,
   BOOKING_RATE: (id) => `/bookings/${id}/rating`,
+
+  //Compliance Score
+  MY_COMPLIANCE_SCORE: "/compliance-score/me",
 };

@@ -37,6 +37,7 @@ import documentVaultRoutes from "./routes/documentVaultRoutes.js";
 import agentRoutes from "./routes/agentRoutes.js";
 import serviceRoutes from "./routes/serviceRoutes.js";
 import serviceBookingRoutes from "./routes/serviceBookingRoutes.js";
+import complianceScoreRoutes from "./routes/complianceScoreRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -91,6 +92,8 @@ app.use("/api/agents", agentRoutes);
 
 app.use("/api/services", serviceRoutes);
 app.use("/api/bookings", serviceBookingRoutes);
+app.use("/api/compliance-score", complianceScoreRoutes);
+
 /**
  * Server Startup
  * ------------------------------------------------------------

@@ -23,6 +23,7 @@ import {
 } from "antd";
 import dayjs from "dayjs";
 import { getKYCProfile, updateBusinessProfile } from "../../services/kyc";
+import { getAllBusinessTypes } from "../../services/businessTypeService";
 import "./BusinessProfileForm.css";
 
 const { Title, Text } = Typography;
@@ -36,10 +37,12 @@ const { Title, Text } = Typography;
 const BusinessProfileForm = ({ onUpdate }) => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [businessTypes, setBusinessTypes] = useState([]);
   const [form] = Form.useForm();
 
   useEffect(() => {
     loadProfile();
+    loadBusinessTypes();
   }, []);
 
   /**
@@ -69,6 +72,15 @@ const BusinessProfileForm = ({ onUpdate }) => {
       message.error("Failed to load profile");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadBusinessTypes = async () => {
+    try {
+      const res = await getAllBusinessTypes(1, 100, "", "active");
+      setBusinessTypes(res.data || []);
+    } catch (err) {
+      message.error("Failed to load business types");
     }
   };
 
@@ -166,15 +178,18 @@ const BusinessProfileForm = ({ onUpdate }) => {
           </Col>
         </Row>
 
-        {/* FSSAI Category */}
-        <Form.Item label="FSSAI Category" name="fssaiCategory">
-          <Select size="large" allowClear placeholder="Select category">
-            <Select.Option value="manufacturer">Manufacturer</Select.Option>
-            <Select.Option value="distributor">Distributor</Select.Option>
-            <Select.Option value="retailer">Retailer</Select.Option>
-            <Select.Option value="restaurant">Restaurant/Hotel</Select.Option>
-            <Select.Option value="importer">Importer</Select.Option>
-            <Select.Option value="transporter">Transporter</Select.Option>
+        {/* Business Type Category */}
+        <Form.Item
+          label="Business Type"
+          name="businessTypeId"
+          rules={[{ required: true, message: "Business type is required" }]}
+        >
+          <Select size="large" placeholder="Select business type">
+            {businessTypes.map((type) => (
+              <Select.Option key={type._id} value={type._id}>
+                {type.name}
+              </Select.Option>
+            ))}
           </Select>
         </Form.Item>
 

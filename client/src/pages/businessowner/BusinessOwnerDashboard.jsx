@@ -24,6 +24,7 @@ import {
 } from "../../services/documentVaultService";
 import agentService from "../../services/myAgentService";
 import myServicesService from "../../services/myServicesService";
+import complianceScoreService from "../../services/complianceScoreService";
 
 // Constants
 import ROLES from "../../constants/roles";
@@ -52,6 +53,14 @@ const BusinessOwnerDashboard = () => {
     activeAgents: 0,
   });
 
+  const [compliance, setCompliance] = useState({
+    score: 0,
+    totalRequired: 0,
+    fulfilled: 0,
+    missing: 0,
+    missingItems: [],
+  });
+
   const [recentBookings, setRecentBookings] = useState([]);
   const [myServices, setMyServices] = useState([]);
 
@@ -65,18 +74,25 @@ const BusinessOwnerDashboard = () => {
       setError(null);
 
       // Fetch all data in parallel
-      const [bookingsRes, docsStatsRes, docsListRes, agentsRes, servicesRes] =
-        await Promise.allSettled([
-          bookingService.getMyBookings({
-            limit: 3,
-            sortBy: "bookedAt",
-            sortOrder: "desc",
-          }),
-          getDocumentStats(),
-          getMyDocuments({ expiry: "expiring_soon" }),
-          agentService.getMyAgents(),
-          myServicesService.getServices({ limit: 3 }),
-        ]);
+      const [
+        bookingsRes,
+        docsStatsRes,
+        docsListRes,
+        agentsRes,
+        servicesRes,
+        complianceRes,
+      ] = await Promise.allSettled([
+        bookingService.getMyBookings({
+          limit: 2,
+          sortBy: "bookedAt",
+          sortOrder: "desc",
+        }),
+        getDocumentStats(),
+        getMyDocuments({ expiry: "expiring_soon" }),
+        agentService.getMyAgents(),
+        myServicesService.getServices({ limit: 2 }),
+        complianceScoreService.getMyComplianceScore(),
+      ]);
 
       const newStats = { ...stats };
 
@@ -116,6 +132,23 @@ const BusinessOwnerDashboard = () => {
       if (servicesRes.status === "fulfilled" && servicesRes.value?.success) {
         setMyServices(servicesRes.value.data || []);
         newStats.totalServices = servicesRes.value.pagination?.total || 0;
+      }
+
+      // Process Compliance Score
+      if (
+        complianceRes.status === "fulfilled" &&
+        complianceRes.value?.data?.success
+      ) {
+        setCompliance(complianceRes.value.data.data);
+      }
+
+      // Process Agents
+      if (agentsRes.status === "fulfilled" && agentsRes.value?.success) {
+        const agents = agentsRes.value.agents || [];
+
+        newStats.activeAgents = agents.filter(
+          (agent) => agent.status === "active"
+        ).length;
       }
 
       setStats(newStats);
@@ -215,29 +248,25 @@ const BusinessOwnerDashboard = () => {
             title="Available Services"
             value={stats.totalServices}
             icon={<ShoppingOutlined />}
-            bgColor="var(--color-primary-orange)"
-            iconBg="var(--color-bg-orange)"
+            onClick={() => navigate(ROUTES.BUSINESS_OWNER_MY_SERVICES)}
           />
           <StatCard
             title="Active Bookings"
             value={stats.activeBookings}
             icon={<ClockCircleOutlined />}
-            bgColor="var(--color-primary-orange)"
-            iconBg="var(--color-bg-orange)"
+            onClick={() => navigate(ROUTES.BUSINESS_OWNER_MY_BOOKINGS)}
           />
           <StatCard
             title="Total Documents"
             value={stats.totalDocuments}
             icon={<FileTextOutlined />}
-            bgColor="var(--color-primary-orange)"
-            iconBg="var(--color-bg-orange)"
+            onClick={() => navigate(ROUTES.BUSINESS_OWNER_DOCUMENT_VAULT)}
           />
           <StatCard
             title="Active Agents"
             value={stats.activeAgents}
             icon={<TeamOutlined />}
-            bgColor="var(--color-primary-orange)"
-            iconBg="var(--color-bg-orange)"
+            onClick={() => navigate(ROUTES.BUSINESS_OWNER_MY_AGENTS)}
           />
         </div>
 
@@ -289,7 +318,19 @@ const BusinessOwnerDashboard = () => {
               {recentBookings.length > 0 ? (
                 <div className="bo-bookings-list">
                   {recentBookings.map((booking) => (
-                    <Card key={booking._id} className="bo-booking-card">
+                    <Card
+                      key={booking._id}
+                      className="bo-booking-card"
+                      hoverable
+                      onClick={() =>
+                        navigate(
+                          ROUTES.BUSINESS_OWNER_SERVICE_DETAILS.replace(
+                            ":bookingId",
+                            booking._id
+                          )
+                        )
+                      }
+                    >
                       <div className="bo-booking-header">
                         <h3>{booking.complianceItemId?.name || "Service"}</h3>
                         <Tag color={getStatusColor(booking.status)}>
@@ -330,6 +371,45 @@ const BusinessOwnerDashboard = () => {
                 </Card>
               )}
             </section>
+            <Card style={{ padding: "10px" }}>
+              {/* My Services */}
+              {myServices.length > 0 && (
+                <div className="bo-panel-section">
+                  <div className="bo-section-header">
+                    <h2 className="bo-section-title">My Services</h2>
+                    <Button
+                      type="link"
+                      onClick={() =>
+                        navigate(ROUTES.BUSINESS_OWNER_MY_SERVICES)
+                      }
+                    >
+                      View All
+                    </Button>
+                  </div>
+
+                  {myServices.slice(0, 2).map((service) => (
+                    <div
+                      key={service._id}
+                      className="bo-my-service-item"
+                      onClick={() =>
+                        navigate(
+                          ROUTES.BUSINESS_OWNER_SERVICE_PROVIDERS.replace(
+                            ":serviceId",
+                            service._id
+                          )
+                        )
+                      }
+                    >
+                      <div>
+                        <h4>{service.name}</h4>
+                        <p>{service.category?.name || "Service"}</p>
+                      </div>
+                      <ArrowRightOutlined />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </Card>
           </div>
 
           {/* Right Column */}
@@ -393,32 +473,67 @@ const BusinessOwnerDashboard = () => {
               {/* Divider */}
               <div className="bo-panel-divider" />
 
-              {/* My Services */}
-              {myServices.length > 0 && (
-                <div className="bo-panel-section">
-                  <div className="bo-section-header">
-                    <h2 className="bo-section-title">My Services</h2>
-                    <Button
-                      type="link"
-                      onClick={() =>
-                        navigate(ROUTES.BUSINESS_OWNER_MY_SERVICES)
-                      }
-                    >
-                      View All
-                    </Button>
+              {/* Compliance Score */}
+              <div className="bo-panel-section">
+                <div className="bo-section-header">
+                  <h2 className="bo-section-title">Compliance Score</h2>
+                  <Button
+                    type="link"
+                    onClick={() =>
+                      navigate(ROUTES.BUSINESS_OWNER_DOCUMENT_VAULT)
+                    }
+                  >
+                    Fix Issues
+                  </Button>
+                </div>
+
+                <div className="bo-compliance-score">
+                  <Progress
+                    type="circle"
+                    percent={compliance.score}
+                    strokeColor={
+                      compliance.score >= 80
+                        ? "#52c41a"
+                        : compliance.score >= 50
+                          ? "#faad14"
+                          : "#ff4d4f"
+                    }
+                  />
+
+                  <div className="bo-compliance-meta">
+                    <p>
+                      <strong>{compliance.fulfilled}</strong> /{" "}
+                      <strong>{compliance.totalRequired}</strong> mandatory
+                      documents
+                    </p>
+
+                    {compliance.missing > 0 ? (
+                      <Tag color="red" className="bo-compliance-tag">
+                        {compliance.missing} mandatory document
+                        {compliance.missing > 1 ? "s" : ""} missing
+                      </Tag>
+                    ) : (
+                      <Tag color="green" style={{ textAlign: "center" }}>
+                        Fully Compliant
+                      </Tag>
+                    )}
                   </div>
 
-                  {myServices.slice(0, 3).map((service) => (
-                    <div key={service._id} className="bo-my-service-item">
-                      <div>
-                        <h4>{service.name}</h4>
-                        <p>{service.category?.name || "Service"}</p>
-                      </div>
-                      <ArrowRightOutlined />
+                  {compliance.missing > 0 && (
+                    <div className="bo-missing-compliance">
+                      <p className="bo-missing-title">
+                        Missing mandatory documents:
+                      </p>
+
+                      <ul className="bo-missing-list">
+                        {compliance.missingItems.map((item) => (
+                          <li key={item._id}>{item.name}</li>
+                        ))}
+                      </ul>
                     </div>
-                  ))}
+                  )}
                 </div>
-              )}
+              </div>
             </Card>
           </div>
         </div>
