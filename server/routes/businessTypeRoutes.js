@@ -14,14 +14,8 @@ const router = express.Router();
 /**
  * @route   GET /api/business-types
  * @desc    Get all business types
- * @access  Super Admin only
  */
-router.get(
-  "/",
-  verifySession,
-  authorizeRoles(ROLES.SUPER_ADMIN),
-  getAllBusinessTypes,
-);
+router.get("/", verifySession, getAllBusinessTypes);
 
 /**
  * @route   POST /api/business-types
@@ -32,7 +26,7 @@ router.post(
   "/",
   verifySession,
   authorizeRoles(ROLES.SUPER_ADMIN),
-  createBusinessType,
+  createBusinessType
 );
 
 /**
@@ -44,7 +38,7 @@ router.put(
   "/:id",
   verifySession,
   authorizeRoles(ROLES.SUPER_ADMIN),
-  updateBusinessType,
+  updateBusinessType
 );
 
 /**
@@ -56,7 +50,7 @@ router.delete(
   "/:id",
   verifySession,
   authorizeRoles(ROLES.SUPER_ADMIN),
-  deleteBusinessType,
+  deleteBusinessType
 );
 
 export default router;

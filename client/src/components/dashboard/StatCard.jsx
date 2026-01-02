@@ -32,6 +32,7 @@ const StatCard = ({
   bgColor = "var(--color-primary-orange)", // default
   textColor = "#162247", // default
   iconBg = "rgba(255, 108, 31, 0.12)", // default
+  onClick,
 }) => {
   return (
     <div>
@@ -39,6 +40,8 @@ const StatCard = ({
       <Card
         variant={false}
         className="stat-card-container"
+        onClick={onClick}
+        hoverable={!!onClick}
         style={{
           "--stat-bg": bgColor,
           "--stat-text": textColor,
