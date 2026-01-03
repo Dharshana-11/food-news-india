@@ -17,9 +17,12 @@ npm-debug.log*
 .vscode/
 .idea/
 
+
 # Build folders
 client/build/
 server/dist/
 
 #Firebase Admin SDK 
 server/food-news-india-firebase-adminsdk-fbsvc-e584928337.json
+
+server/uploads/documents
