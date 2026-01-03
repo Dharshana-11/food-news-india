@@ -21,8 +21,8 @@ const router = express.Router();
 router.get(
   "/",
   verifySession,
-  authorizeRoles(ROLES.SUPER_ADMIN, ROLES.ADMIN),
-  getAllComplianceItems,
+  // authorizeRoles(ROLES.SUPER_ADMIN, ROLES.ADMIN),
+  getAllComplianceItems
 );
 
 /**
@@ -34,7 +34,7 @@ router.post(
   "/",
   verifySession,
   authorizeRoles(ROLES.SUPER_ADMIN, ROLES.ADMIN),
-  addComplianceItem,
+  addComplianceItem
 );
 
 /**
@@ -46,7 +46,7 @@ router.put(
   "/:id",
   verifySession,
   authorizeRoles(ROLES.SUPER_ADMIN, ROLES.ADMIN),
-  updateComplianceItem,
+  updateComplianceItem
 );
 
 /**
@@ -58,7 +58,7 @@ router.delete(
   "/:id",
   verifySession,
   authorizeRoles(ROLES.SUPER_ADMIN, ROLES.ADMIN),
-  deleteComplianceItem,
+  deleteComplianceItem
 );
 
 export default router;

@@ -1,10 +1,11 @@
 import Document from "../models/Document.js";
 import KYCDocument from "../models/KYCDocument.js";
 import ComplianceItem from "../models/ComplianceItem.js";
-import BusinessProfile from "../models/BusinessProfile.js";
 import User from "../models/User.js";
+import { checkAndUpdateUserVerification } from "../services/kycService.js";
 import { unlinkSync } from "fs";
 import { join } from "path";
+import KYCProfile from "../models/KYCProfile.js";
 
 /**
  * Validate referenced model exists
@@ -317,57 +318,3 @@ export const reviewDocument = async (req, res) => {
     res.status(500).json({ error: "Failed to review document" });
   }
 };
-
-/**
- * Helper: Check if all user's KYC docs are approved, then verify user
- */
-async function checkAndUpdateUserVerification(userId, userRole) {
-  try {
-    // Get all required KYC documents for user's role
-    const requiredKycDocs = await KYCDocument.find({
-      applicableRoles: userRole,
-      status: "active",
-    });
-
-    if (requiredKycDocs.length === 0) return;
-
-    // Get all user's uploaded documents
-    const uploadedDocs = await Document.find({
-      uploadedForUser: userId,
-      kycDocumentId: { $ne: null },
-      status: { $nin: ["trash"] },
-    });
-
-    // Check if each required KYC doc has at least one approved document
-    const allApproved = requiredKycDocs.every((requiredDoc) => {
-      return uploadedDocs.some(
-        (uploadedDoc) =>
-          uploadedDoc.kycDocumentId.toString() === requiredDoc._id.toString() &&
-          uploadedDoc.status === "approved"
-      );
-    });
-
-    if (allApproved) {
-      // Update BusinessProfile to verified
-      await BusinessProfile.findOneAndUpdate(
-        { userId },
-        {
-          kycStatus: "verified",
-          verifiedAt: new Date(),
-          kycProgress: 100,
-        }
-      );
-
-      // Update User model to verified
-      await User.findByIdAndUpdate(userId, {
-        isVerified: true,
-      });
-
-      console.log(` User ${userId} fully verified!`);
-    } else {
-      console.log(` User ${userId} still has pending/rejected documents`);
-    }
-  } catch (error) {
-    console.error("Error checking user verification:", error);
-  }
-}

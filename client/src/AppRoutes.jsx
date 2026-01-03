@@ -52,6 +52,8 @@ import ProviderDetails from "./pages/BusinessOwner/ServiceProvider/ProviderDetai
 import MyBookings from "./pages/BusinessOwner/ServiceProvider/MyBookings";
 import ServiceDetails from "./pages/BusinessOwner/ServiceProvider/ServiceDetails";
 
+import AgentDashboard from "./pages/Agent/AgentDashboard";
+
 const AppRoutes = () => {
   const { currentUser, loading } = useAuth();
 
@@ -201,8 +203,6 @@ const AppRoutes = () => {
         />
       </Route>
 
-      {/* BUSINESS OWNER KYC (NO LAYOUT) */}
-
       {/* BUSINESS OWNER (LAYOUT GROUP) */}
       <Route
         element={
@@ -255,7 +255,7 @@ const AppRoutes = () => {
           element={<ViewMyAgent />}
         />
 
-        {/* 🔥 NEW: SERVICES MODULE */}
+        {/* NEW: SERVICES MODULE */}
         <Route path={ROUTES.BUSINESS_OWNER_SERVICES} element={<MyServices />} />
         <Route
           path={ROUTES.BUSINESS_OWNER_BOOK_SERVICES}
@@ -277,6 +277,20 @@ const AppRoutes = () => {
           path={ROUTES.BUSINESS_OWNER_SERVICE_DETAILS}
           element={<ServiceDetails />}
         />
+      </Route>
+
+      {/* AGENT */}
+      <Route
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.AGENT]}>
+            <KYCGuard>
+              <AppLayout role={ROLES.AGENT} />
+            </KYCGuard>
+          </ProtectedRoute>
+        }
+      >
+        <Route path={ROUTES.AGENT_KYC} element={<KYCVerification />} />
+        <Route path={ROUTES.AGENT_DASHBOARD} element={<AgentDashboard />} />
       </Route>
     </Routes>
   );

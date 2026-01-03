@@ -23,6 +23,9 @@ import KYCProgress from "../KYCVerification/KYCProgress.jsx";
 import KYCDocumentCard from "../KYCVerification/KYCDocumentCard.jsx";
 import KYCCompletion from "../KYCVerification/KYCCompletion.jsx";
 import KYCFooter from "../KYCVerification/KYCFooter.jsx";
+import { useAuth } from "../../context/AuthContext";
+import ROLES from "../../constants/roles";
+import AgentProfileForm from "../../components/BusinessProfileForm/AgentProfileForm";
 
 import "./KYCVerification.css";
 
@@ -35,12 +38,15 @@ const KYCVerification = () => {
   // STATE
   // -----------------------------
   const [currentStep, setCurrentStep] = useState(0);
-  const [profile, setProfile] = useState(null);
+  const [kycProfile, setKycProfile] = useState(null);
+  const [roleProfile, setRoleProfile] = useState(null);
   const [requirements, setRequirements] = useState([]);
   const [uploadedFiles, setUploadedFiles] = useState({});
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
   const [showProfileForm, setShowProfileForm] = useState(false);
+  const { currentUser } = useAuth();
+  const role = currentUser?.role;
 
   // -----------------------------
   // LIFECYCLE
@@ -49,6 +55,22 @@ const KYCVerification = () => {
     fetchData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const ROLE_PROFILE_CONFIG = {
+    [ROLES.BUSINESS_OWNER]: {
+      isComplete: (profile) => !!profile?.businessName,
+      Form: BusinessProfileForm,
+    },
+    [ROLES.AGENT]: {
+      isComplete: (profile) =>
+        !!profile?.experience && !!profile?.city && !!profile?.state,
+      Form: AgentProfileForm,
+    },
+    [ROLES.SERVICE_PROVIDER]: {
+      isComplete: () => true, // later ServiceProviderProfileForm
+      Form: null,
+    },
+  };
 
   // -----------------------------
   // HELPERS
@@ -67,7 +89,8 @@ const KYCVerification = () => {
         getKYCRequirements(),
       ]);
 
-      setProfile(profileRes.profile);
+      setKycProfile(profileRes.kycProfile);
+      setRoleProfile(profileRes.roleProfile);
       setRequirements(reqRes.requirements);
 
       // Build uploaded file map
@@ -169,30 +192,39 @@ const KYCVerification = () => {
   /**
    * Redirect to business owner dashboard.
    */
-  const handleGoToDashboard = () => navigate(ROUTES.BUSINESS_OWNER_DASHBOARD);
+  const DASHBOARD_BY_ROLE = {
+    [ROLES.BUSINESS_OWNER]: ROUTES.BUSINESS_OWNER_DASHBOARD,
+    [ROLES.AGENT]: ROUTES.AGENT_DASHBOARD,
+    [ROLES.SERVICE_PROVIDER]: ROUTES.SERVICE_PROVIDER_DASHBOARD,
+  };
+
+  const handleGoToDashboard = () =>
+    navigate(DASHBOARD_BY_ROLE[role] || ROUTES.LANDING_PAGE);
 
   // -----------------------------
   // RENDERING
   // -----------------------------
 
-  if (loading) {
-    return (
-      <div className="kyc-container">
-        <div className="kyc-loading">
-          <Spin size="large" tip="Loading KYC data..." />
-        </div>
-      </div>
-      // </AppLayout>
-    );
-  }
+  // if (loading) {
+  //   return (
+  //     <div className="kyc-container">
+  //       <div className="kyc-loading">
+  //         <Spin size="large" tip="Loading KYC data..." />
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
-  // Show business profile form if profile not filled yet
-  if (!profile?.businessName) {
+  const profileConfig = ROLE_PROFILE_CONFIG[role];
+  const isProfileComplete = profileConfig?.isComplete(roleProfile);
+
+  if (profileConfig && !isProfileComplete) {
+    const ProfileForm = profileConfig.Form;
+
     return (
-      // <AppLayout role={ROLES.BUSINESS_OWNER}>
       <div className="kyc-container">
         <div className="no-result-padding">
-          <BusinessProfileForm onUpdate={fetchData} />
+          <ProfileForm onUpdate={fetchData} />
         </div>
       </div>
     );

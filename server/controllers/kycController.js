@@ -2,7 +2,11 @@ import Document from "../models/Document.js";
 import BusinessProfile from "../models/BusinessProfile.js";
 import KYCDocument from "../models/KYCDocument.js";
 import User from "../models/User.js";
+import AgentProfile from "../models/AgentProfile.js";
+import KYCProfile from "../models/KYCProfile.js";
+import { checkAndUpdateUserVerification } from "../services/kycService.js";
 import path from "path";
+import ROLES from "../utils/constants/roles.js";
 
 /**
  * @desc Get KYC requirements for the logged-in user
@@ -68,30 +72,42 @@ export const getKYCRequirements = async (req, res) => {
  */
 export const getKYCProfile = async (req, res) => {
   try {
-    const userId = req.user.uid;
+    const user = await User.findOne({ uid: req.user.uid });
+    if (!user) return res.status(404).json({ error: "User not found" });
 
-    const user = await User.findOne({ uid: userId });
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
+    // 🔹 1. Get or create KYC profile
+    let kycProfile = await KYCProfile.findOne({ userId: user._id });
 
-    let profile = await BusinessProfile.findOne({ userId: user._id }).populate(
-      "businessTypeId",
-      "name code"
-    );
-
-    if (!profile) {
-      profile = await BusinessProfile.create({
+    if (!kycProfile) {
+      kycProfile = await KYCProfile.create({
         userId: user._id,
-        kycStatus: "pending",
-        kycProgress: 0,
+        role: user.role,
       });
     }
 
-    return res.json({ profile });
-  } catch (error) {
-    console.error("Error fetching KYC profile:", error);
-    return res.status(500).json({ error: "Failed to fetch KYC profile" });
+    // 🔹 2. Get role-specific profile
+    let roleProfile = null;
+
+    switch (user.role) {
+      case ROLES.BUSINESS_OWNER:
+        roleProfile = await BusinessProfile.findOne({ userId: user._id });
+        break;
+
+      case ROLES.AGENT:
+        roleProfile = await AgentProfile.findOne({ userId: user._id });
+        break;
+
+      default:
+        roleProfile = null;
+    }
+
+    return res.json({
+      kycProfile,
+      roleProfile,
+    });
+  } catch (err) {
+    console.error("Error fetching KYC profile:", err);
+    res.status(500).json({ error: "Failed to fetch KYC profile" });
   }
 };
 
@@ -213,11 +229,10 @@ export const updateBusinessProfile = async (req, res) => {
       }
     });
 
-    const profile = await BusinessProfile.findOneAndUpdate(
-      { userId: user._id },
-      { $set: filteredUpdates },
-      { new: true, upsert: true }
-    ).populate("businessTypeId", "name code");
+    const kycProfile = await KYCProfile.findOne({ userId: user._id });
+    if (!kycProfile) {
+      return res.status(404).json({ error: "KYC profile not found" });
+    }
 
     await updateKYCProgress(user._id);
 
@@ -238,31 +253,36 @@ export const updateBusinessProfile = async (req, res) => {
  */
 export const submitKYCForReview = async (req, res) => {
   try {
-    const userId = req.user.uid;
-
-    const user = await User.findOne({ uid: userId });
+    const user = await User.findOne({ uid: req.user.uid });
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const profile = await BusinessProfile.findOne({ userId: user._id });
-    if (!profile) {
-      return res.status(404).json({ error: "Profile not found" });
+    // 1️. Fetch KYCProfile (single source of truth)
+    const kycProfile = await KYCProfile.findOne({ userId: user._id });
+    if (!kycProfile) {
+      return res.status(404).json({ error: "KYC profile not found" });
     }
 
+    // 2️. Fetch required KYC documents for this role
     const requiredDocs = await KYCDocument.find({
       applicableRoles: user.role,
       status: "active",
     });
 
+    // 3️. Fetch user's uploaded KYC docs
     const uploadedDocs = await Document.find({
       uploadedForUser: user._id,
       kycDocumentId: { $ne: null },
       status: { $ne: "trash" },
-    }).distinct("kycDocumentId");
+    });
 
-    const allUploaded = requiredDocs.every((doc) =>
-      uploadedDocs.some((id) => id.equals(doc._id))
+    // 4️. Ensure every required document has at least ONE uploaded version
+    const allUploaded = requiredDocs.every((requiredDoc) =>
+      uploadedDocs.some(
+        (uploadedDoc) =>
+          uploadedDoc.kycDocumentId.toString() === requiredDoc._id.toString()
+      )
     );
 
     if (!allUploaded) {
@@ -271,12 +291,17 @@ export const submitKYCForReview = async (req, res) => {
       });
     }
 
-    profile.kycStatus = "in_review";
-    await profile.save();
+    // 5️. Move KYC into review state
+    kycProfile.kycStatus = "in_review";
+    await kycProfile.save();
+
+    // 6️. SAFETY: Re-check full verification
+    // (handles cases where admin already approved docs)
+    await checkAndUpdateUserVerification(user._id, user.role);
 
     return res.json({
       message: "KYC submitted for review successfully",
-      profile,
+      kycProfile,
     });
   } catch (error) {
     console.error("Error submitting KYC:", error);
@@ -314,7 +339,7 @@ async function updateKYCProgress(userId) {
       (uniqueKycDocIds.size / requiredDocs.length) * 100
     );
 
-    await BusinessProfile.findOneAndUpdate(
+    await KYCProfile.findOneAndUpdate(
       { userId },
       { kycProgress: progress },
       { upsert: true }
@@ -325,3 +350,61 @@ async function updateKYCProgress(userId) {
     console.error("Error updating KYC progress:", error);
   }
 }
+
+export const getAgentProfile = async (req, res) => {
+  try {
+    const user = await User.findOne({ uid: req.user.uid });
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    let profile = await AgentProfile.findOne({ userId: user._id });
+
+    if (!profile) {
+      profile = await AgentProfile.create({
+        userId: user._id,
+      });
+    }
+
+    return res.json({ profile });
+  } catch (error) {
+    console.error("Error fetching agent profile:", error);
+    return res.status(500).json({ error: "Failed to fetch agent profile" });
+  }
+};
+
+export const updateAgentProfile = async (req, res) => {
+  try {
+    const user = await User.findOne({ uid: req.user.uid });
+    if (!user) return res.status(404).json({ error: "User not found" });
+
+    const allowedFields = [
+      "experience",
+      "specialization",
+      "city",
+      "state",
+      "languages",
+      "bio",
+      "commissionRate",
+    ];
+
+    const updates = {};
+    allowedFields.forEach((field) => {
+      if (req.body[field] !== undefined) {
+        updates[field] = req.body[field];
+      }
+    });
+
+    const profile = await AgentProfile.findOneAndUpdate(
+      { userId: user._id },
+      { $set: updates },
+      { new: true, upsert: true }
+    );
+
+    return res.json({
+      message: "Agent profile updated successfully",
+      profile,
+    });
+  } catch (error) {
+    console.error("Error updating agent profile:", error);
+    return res.status(500).json({ error: "Failed to update agent profile" });
+  }
+};

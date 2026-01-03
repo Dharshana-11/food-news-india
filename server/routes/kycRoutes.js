@@ -8,6 +8,10 @@ import {
 } from "../controllers/kycController.js";
 import upload from "../middleware/uploadMiddleware.js";
 import { verifySession } from "../middleware/sessionMiddleware.js";
+import {
+  updateAgentProfile,
+  getAgentProfile,
+} from "../controllers/kycController.js";
 
 const router = express.Router();
 
@@ -48,5 +52,17 @@ router.put("/profile", updateBusinessProfile);
  * Submit KYC for admin review
  */
 router.post("/submit", submitKYCForReview);
+
+/**
+ * GET /api/kyc/agent-profile
+ * Get agent profile
+ */
+router.get("/agent-profile", getAgentProfile);
+
+/**
+ * PUT /api/kyc/agent-profile
+ * Update agent profile
+ */
+router.put("/agent-profile", updateAgentProfile);
 
 export default router;
