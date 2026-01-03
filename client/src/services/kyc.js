@@ -10,11 +10,16 @@ export const getKYCRequirements = async () => {
 };
 
 /**
- * Get user's business profile
+ * Get KYC profile and role-specific profile
+ *
+ * @returns {{
+ *   kycProfile: Object,
+ *   roleProfile: Object | null
+ * }}
  */
 export const getKYCProfile = async () => {
   const response = await api.get(`${KYC_API}/profile`);
-  return response.data;
+  return response.data; // { kycProfile, roleProfile }
 };
 
 /**
@@ -28,7 +33,7 @@ export const uploadKYCDocument = async (
   file,
   kycDocumentCode,
   validFrom = null,
-  validUntil = null,
+  validUntil = null
 ) => {
   // --- Safety: ensure inputs exist (won't break your existing flows) ---
   if (!file) throw new Error("File is required for KYC upload.");
@@ -62,6 +67,11 @@ export const updateBusinessProfile = async (profileData) => {
   const response = await api.put(`${KYC_API}/profile`, profileData);
   return response.data;
 };
+
+export const getAgentProfile = () => api.get(`${KYC_API}/agent-profile`);
+
+export const updateAgentProfile = (payload) =>
+  api.put(`${KYC_API}/agent-profile`, payload);
 
 /**
  * Submit KYC for review

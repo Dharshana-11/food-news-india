@@ -46,8 +46,10 @@ const KYCGuard = ({ children }) => {
   ];
 
   useEffect(() => {
-    checkKYCStatus();
-  }, []);
+    if (currentUser?.role) {
+      checkKYCStatus();
+    }
+  }, [currentUser?.role, location.pathname]);
 
   const checkKYCStatus = async () => {
     try {
@@ -61,8 +63,8 @@ const KYCGuard = ({ children }) => {
         return;
       }
 
-      const { profile } = await getKYCProfile();
-      setKycStatus(profile.kycStatus);
+      const { kycProfile } = await getKYCProfile();
+      setKycStatus(kycProfile?.kycStatus || "pending");
     } catch (error) {
       console.error("Error checking KYC status:", error);
       setKycStatus("pending"); // Assume pending on error

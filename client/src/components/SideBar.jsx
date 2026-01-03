@@ -24,8 +24,10 @@ import {
   NotificationOutlined,
   MessageOutlined,
   BellOutlined,
+  ShopOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
+import { message } from "antd";
 
 import { useAuth } from "../context/AuthContext";
 import ROLES from "../constants/roles";
@@ -54,6 +56,8 @@ const SideBar = ({ role, isOpen, onClose }) => {
   const [kycVerified, setKycVerified] = useState(true);
   const [checkingKYC, setCheckingKYC] = useState(true);
 
+  const ALWAYS_ENABLED_KEYS = ["logout"];
+
   const rolesRequiringKYC = [
     ROLES.BUSINESS_OWNER,
     ROLES.AGENT,
@@ -75,8 +79,8 @@ const SideBar = ({ role, isOpen, onClose }) => {
   const checkKYCStatus = async () => {
     try {
       setCheckingKYC(true);
-      const { profile } = await getKYCProfile();
-      setKycVerified(profile.kycStatus === "verified");
+      const { kycProfile } = await getKYCProfile();
+      setKycVerified(kycProfile?.kycStatus === "verified");
     } catch (err) {
       console.error("KYC Error:", err);
       setKycVerified(false);
@@ -94,17 +98,6 @@ const SideBar = ({ role, isOpen, onClose }) => {
    * @param {string} param0.key - Menu key clicked
    */
   const handleMenuClick = async ({ key }) => {
-    if (isKYCPage(key)) {
-      navigate(key);
-      onClose?.();
-      return;
-    }
-
-    if (!kycVerified && rolesRequiringKYC.includes(role)) {
-      alert("Please complete KYC to access this feature.");
-      return;
-    }
-
     if (key === "logout") {
       try {
         await logout();
@@ -112,6 +105,17 @@ const SideBar = ({ role, isOpen, onClose }) => {
       } catch (error) {
         console.error("Logout failed:", error);
       }
+      return;
+    }
+
+    if (isKYCPage(key)) {
+      navigate(key);
+      onClose?.();
+      return;
+    }
+
+    if (!kycVerified && rolesRequiringKYC.includes(role)) {
+      message.warning("Please complete KYC to access this feature.");
       return;
     }
 
@@ -256,6 +260,78 @@ const SideBar = ({ role, isOpen, onClose }) => {
     ];
   }
 
+  if (role === ROLES.AGENT) {
+    items = [
+      {
+        key: ROUTES.AGENT_DASHBOARD,
+        icon: <DashboardOutlined />,
+        label: "Dashboard",
+      },
+
+      !kycVerified && {
+        key: ROUTES.AGENT_KYC,
+        icon: <FileSearchOutlined />,
+        label: "KYC Verification ⚠️",
+      },
+
+      {
+        key: ROUTES.AGENT_MY_BUSINESSES,
+        icon: <ShopOutlined />,
+        label: "My Businesses",
+      },
+
+      {
+        key: ROUTES.AGENT_DOCUMENT_VAULT,
+        icon: <FileTextOutlined />,
+        label: "Document Vault",
+      },
+
+      {
+        key: ROUTES.AGENT_MY_REQUESTS,
+        icon: <HistoryOutlined />,
+        label: "My Requests",
+      },
+
+      {
+        key: ROUTES.AGENT_SERVICES,
+        icon: <AppstoreOutlined />,
+        label: "Services",
+      },
+
+      {
+        key: ROUTES.AGENT_MESSAGES,
+        icon: <MessageOutlined />,
+        label: "Messages / Chat",
+      },
+
+      {
+        key: ROUTES.AGENT_NOTIFICATIONS,
+        icon: <BellOutlined />,
+        label: "Notifications",
+      },
+
+      {
+        key: ROUTES.AGENT_PROFILE,
+        icon: <UserOutlined />,
+        label: "My Profile",
+      },
+
+      {
+        key: ROUTES.AGENT_PAYMENTS,
+        icon: <FileTextOutlined />,
+        label: "Payments & Wallet",
+      },
+
+      {
+        key: ROUTES.AGENT_HELP_SUPPORT,
+        icon: <CustomerServiceOutlined />,
+        label: "Help & Support",
+      },
+
+      { key: "logout", icon: <LogoutOutlined />, label: "Log Out" },
+    ];
+  }
+
   // ---------------- ACTIVE MENU HIGHLIGHT ----------------
   const selectedKey = location.pathname.startsWith("/tickets/")
     ? ROUTES.SUPER_ADMIN_TICKETS
@@ -327,10 +403,10 @@ const SideBar = ({ role, isOpen, onClose }) => {
           items={items.filter(Boolean).map((item) => ({
             ...item,
             disabled:
+              !ALWAYS_ENABLED_KEYS.includes(item.key) &&
               !isKYCPage(item.key) &&
               rolesRequiringKYC.includes(role) &&
-              !kycVerified &&
-              item.key !== ROUTES.BUSINESS_OWNER_KYC,
+              !kycVerified,
           }))}
           onClick={handleMenuClick}
         />

@@ -89,6 +89,15 @@ export const ROUTES = {
   ========================================================= */
   AGENT_DASHBOARD: "/agent/dashboard",
   AGENT_KYC: "/agent/kyc-verification",
+  AGENT_MY_BUSINESSES: "/agent/my-businesses",
+  AGENT_DOCUMENT_VAULT: "/agent/documents",
+  AGENT_MY_REQUESTS: "/agent/requests",
+  AGENT_SERVICES: "/agent/services",
+  AGENT_MESSAGES: "/agent/messages",
+  AGENT_NOTIFICATIONS: "/agent/notifications",
+  AGENT_PROFILE: "/agent/profile",
+  AGENT_PAYMENTS: "/agent/payments",
+  AGENT_HELP_SUPPORT: "/agent/help",
 
   /* =========================================================
      SERVICE PROVIDER ROUTES
