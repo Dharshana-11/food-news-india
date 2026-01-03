@@ -1,6 +1,8 @@
 /**
- * Indian States & Union Territories
- * Used in Agent & Business profile forms
+ * List of Indian States and Union Territories
+ * -----------------------------------------------------------------------------
+ * Used in AgentProfileForm and BusinessProfileForm
+ * -----------------------------------------------------------------------------
  */
 const INDIAN_STATES = [
   "Andhra Pradesh",
@@ -31,6 +33,8 @@ const INDIAN_STATES = [
   "Uttar Pradesh",
   "Uttarakhand",
   "West Bengal",
+
+  // Union Territories
   "Andaman and Nicobar Islands",
   "Chandigarh",
   "Dadra and Nagar Haveli and Daman and Diu",
@@ -41,4 +45,4 @@ const INDIAN_STATES = [
   "Puducherry",
 ];
 
-export default INDIAN_STATES;
+export default Object.freeze(INDIAN_STATES);

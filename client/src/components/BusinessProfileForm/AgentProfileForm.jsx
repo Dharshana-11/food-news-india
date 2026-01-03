@@ -1,10 +1,10 @@
 /**
  * AgentProfileForm.jsx
- * ------------------------------------------------------------
- * Form to display and update the agent profile.
+ * -----------------------------------------------------------------------------
+ * Form to view and update agent profile details.
  * Used before KYC document submission.
  * Mirrors BusinessProfileForm styling and UX.
- * ------------------------------------------------------------
+ * -----------------------------------------------------------------------------
  */
 
 import React, { useEffect, useState } from "react";
@@ -21,11 +21,12 @@ import {
   message,
   Spin,
 } from "antd";
+
 import { getKYCProfile, updateAgentProfile } from "../../services/kyc";
-import "./BusinessProfileForm.css";
 import { getAllComplianceItems } from "../../services/complianceItemService";
 import LANGUAGES from "../../constants/languages";
 import INDIAN_STATES from "../../constants/indianStates";
+import "./BusinessProfileForm.css";
 
 const { Title, Text } = Typography;
 
@@ -33,6 +34,7 @@ const AgentProfileForm = ({ onUpdate }) => {
   const [complianceItems, setComplianceItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -42,65 +44,58 @@ const AgentProfileForm = ({ onUpdate }) => {
   }, []);
 
   /**
-   * Load existing agent profile
+   * Load existing agent profile (if any)
    */
   const loadProfile = async () => {
     try {
       const { profile } = await getKYCProfile();
 
-      if (profile) {
-        form.setFieldsValue({
-          experience: profile.experience,
-          specialization: profile.specialization,
-          city: profile.city,
-          state: profile.state,
-          languages: profile.languages,
-          bio: profile.bio,
-          commissionRate: profile.commissionRate,
-        });
-      }
-    } catch (err) {
+      if (!profile) return;
+
+      form.setFieldsValue({
+        experience: profile.experience,
+        specialization: profile.specialization,
+        city: profile.city,
+        state: profile.state,
+        languages: profile.languages,
+        bio: profile.bio,
+        monthlyCommission: profile.monthlyCommission,
+      });
+    } catch (error) {
       message.error("Failed to load agent profile");
     } finally {
       setLoading(false);
     }
   };
 
+  /**
+   * Load active compliance items for specialization dropdown
+   */
   const loadComplianceItems = async () => {
     try {
       const items = await getAllComplianceItems(0, "");
-      // Optional: filter only active items
       const activeItems = items.filter((item) => item.status === "active");
       setComplianceItems(activeItems);
-    } catch (err) {
+    } catch (error) {
       message.error("Failed to load compliance items");
     }
   };
 
   /**
-   * Submit agent profile
+   * Handle agent profile form submission
    */
   const handleSubmit = async (values) => {
     try {
       setSaving(true);
       await updateAgentProfile(values);
-      message.success("Profile updated successfully!");
+      message.success("Profile updated successfully");
       onUpdate?.();
-    } catch (err) {
+    } catch (error) {
       message.error("Failed to update profile");
     } finally {
       setSaving(false);
     }
   };
-
-  if (loading) {
-    return (
-      <div style={{ padding: "3rem", textAlign: "center" }}>
-        <Spin size="large" />
-        <div style={{ marginTop: 12 }}>Loading...</div>
-      </div>
-    );
-  }
 
   return (
     <Card
@@ -136,12 +131,12 @@ const AgentProfileForm = ({ onUpdate }) => {
           />
         </Form.Item>
 
-        {/* Commission Rate */}
+        {/* Monthly Commission */}
         <Form.Item
           label="Monthly Commission (₹)"
-          name="commissionRate"
+          name="monthlyCommission"
           rules={[
-            { required: true, message: "Commission rate is required" },
+            { required: true, message: "Monthly Commission is required" },
             { type: "number", min: 0, message: "Must be a positive amount" },
           ]}
         >
@@ -152,9 +147,9 @@ const AgentProfileForm = ({ onUpdate }) => {
             style={{ width: "100%" }}
             placeholder="Eg: 7500"
             formatter={(value) =>
-              `₹ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+              value ? `₹ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",") : ""
             }
-            parser={(value) => value.replace(/[₹,\s]/g, "")}
+            parser={(value) => value?.replace(/[₹,\s]/g, "")}
           />
         </Form.Item>
 
@@ -163,7 +158,10 @@ const AgentProfileForm = ({ onUpdate }) => {
           label="Specialization"
           name="specialization"
           rules={[
-            { required: true, message: "Select at least one specialization" },
+            {
+              required: true,
+              message: "Select at least one specialization",
+            },
           ]}
         >
           <Select
@@ -178,9 +176,9 @@ const AgentProfileForm = ({ onUpdate }) => {
           />
         </Form.Item>
 
-        {/* City + State */}
+        {/* City / State */}
         <Row gutter={16}>
-          <Col xs={24} sm={24} md={12}>
+          <Col xs={24} md={12}>
             <Form.Item
               label="City"
               name="city"
@@ -190,7 +188,7 @@ const AgentProfileForm = ({ onUpdate }) => {
             </Form.Item>
           </Col>
 
-          <Col xs={24} sm={24} md={12}>
+          <Col xs={24} md={12}>
             <Form.Item
               label="State"
               name="state"
@@ -242,7 +240,6 @@ const AgentProfileForm = ({ onUpdate }) => {
           />
         </Form.Item>
 
-        {/* Submit */}
         <Button
           type="primary"
           htmlType="submit"
@@ -251,7 +248,7 @@ const AgentProfileForm = ({ onUpdate }) => {
           block
           className="business-form-submit-btn"
         >
-          {saving ? "Saving..." : "Save Agent Profile"}
+          Save Agent Profile
         </Button>
       </Form>
     </Card>

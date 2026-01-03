@@ -1,6 +1,8 @@
 /**
  * Supported languages for agents
+ * -----------------------------------------------------------------------------
  * Used in AgentProfileForm and future filters/search
+ * -----------------------------------------------------------------------------
  */
 const LANGUAGES = [
   "English",

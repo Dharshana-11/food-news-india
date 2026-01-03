@@ -54,7 +54,7 @@ const agentProfileSchema = new Schema(
     /**
      * Monthly commission charged per business (₹).
      */
-    commissionRate: {
+    monthlyCommission: {
       type: Number,
       default: 7500,
       min: 0,

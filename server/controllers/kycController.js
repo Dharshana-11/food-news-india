@@ -350,11 +350,16 @@ async function updateKYCProgress(userId) {
     console.error("Error updating KYC progress:", error);
   }
 }
-
+/**
+ * GET agent profile for the logged-in user
+ * - Creates an empty profile if it does not exist
+ */
 export const getAgentProfile = async (req, res) => {
   try {
     const user = await User.findOne({ uid: req.user.uid });
-    if (!user) return res.status(404).json({ error: "User not found" });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
 
     let profile = await AgentProfile.findOne({ userId: user._id });
 
@@ -371,11 +376,21 @@ export const getAgentProfile = async (req, res) => {
   }
 };
 
+/**
+ * UPDATE agent profile for the logged-in user
+ * - Only whitelisted fields can be updated
+ * - Creates profile if it does not exist
+ */
 export const updateAgentProfile = async (req, res) => {
   try {
     const user = await User.findOne({ uid: req.user.uid });
-    if (!user) return res.status(404).json({ error: "User not found" });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
 
+    /**
+     * Fields that are safe to update from client input
+     */
     const allowedFields = [
       "experience",
       "specialization",
@@ -383,20 +398,38 @@ export const updateAgentProfile = async (req, res) => {
       "state",
       "languages",
       "bio",
-      "commissionRate",
+      "monthlyCommission",
     ];
 
     const updates = {};
-    allowedFields.forEach((field) => {
+    for (const field of allowedFields) {
       if (req.body[field] !== undefined) {
         updates[field] = req.body[field];
       }
-    });
+    }
+
+    if (
+      updates.monthlyCommission !== undefined &&
+      (updates.monthlyCommission < 0 || updates.monthlyCommission > 100)
+    ) {
+      return res.status(400).json({ error: "Invalid monthly commission" });
+    }
+
+    if (updates.experience !== undefined && updates.experience < 0) {
+      return res.status(400).json({ error: "Experience cannot be negative" });
+    }
+
+    if (updates.languages !== undefined && !Array.isArray(updates.languages)) {
+      return res.status(400).json({ error: "Languages must be an array" });
+    }
 
     const profile = await AgentProfile.findOneAndUpdate(
       { userId: user._id },
       { $set: updates },
-      { new: true, upsert: true }
+      {
+        new: true,
+        upsert: true,
+      }
     );
 
     return res.json({

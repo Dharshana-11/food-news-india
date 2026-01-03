@@ -201,20 +201,6 @@ const KYCVerification = () => {
   const handleGoToDashboard = () =>
     navigate(DASHBOARD_BY_ROLE[role] || ROUTES.LANDING_PAGE);
 
-  // -----------------------------
-  // RENDERING
-  // -----------------------------
-
-  // if (loading) {
-  //   return (
-  //     <div className="kyc-container">
-  //       <div className="kyc-loading">
-  //         <Spin size="large" tip="Loading KYC data..." />
-  //       </div>
-  //     </div>
-  //   );
-  // }
-
   const profileConfig = ROLE_PROFILE_CONFIG[role];
   const isProfileComplete = profileConfig?.isComplete(roleProfile);
 
