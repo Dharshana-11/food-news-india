@@ -39,6 +39,7 @@ import serviceRoutes from "./routes/serviceRoutes.js";
 import serviceBookingRoutes from "./routes/serviceBookingRoutes.js";
 import complianceScoreRoutes from "./routes/complianceScoreRoutes.js";
 import agentInviteRoutes from "./routes/agentInviteRoutes.js";
+import agentBusinessRoutes from "./routes/agentBusinessRoutes.js";
 
 // Load environment variables
 dotenv.config();
