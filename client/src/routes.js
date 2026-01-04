@@ -91,7 +91,7 @@ export const ROUTES = {
   AGENT_KYC: "/agent/kyc-verification",
   AGENT_MY_BUSINESSES: "/agent/my-businesses",
   AGENT_DOCUMENT_VAULT: "/agent/documents",
-  AGENT_MY_REQUESTS: "/agent/requests",
+  AGENT_MY_REQUESTS: "/agent/my-requests",
   AGENT_SERVICES: "/agent/services",
   AGENT_MESSAGES: "/agent/messages",
   AGENT_NOTIFICATIONS: "/agent/notifications",

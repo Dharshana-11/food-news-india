@@ -78,7 +78,7 @@ const AddAgent = ({ onBack }) => {
      ========================================================================= */
   const handleInvite = (agent) => {
     setSelectedAgent(agent);
-    setCommissionAmount(agent.commissionRate);
+    setCommissionAmount(agent.monthlyCommission);
     setInviteError("");
     setAgreePermissions(false);
   };
@@ -265,7 +265,7 @@ const AddAgent = ({ onBack }) => {
                   {/* Footer */}
                   <div className="agent-footer">
                     <span className="agent-commission">
-                      ₹{agent.commissionRate}
+                      ₹{agent.monthlyCommission}
                     </span>
 
                     <div className="add-agent-footer-actions">

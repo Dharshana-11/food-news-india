@@ -126,7 +126,7 @@ const MyAgents = () => {
           </div>
 
           <div className="my-agents-price">
-            ₹{agent.agreedCommission ?? agent.commissionRate ?? 0}
+            ₹{agent.agreedCommission ?? agent.monthlyCommission ?? 0}
             <span className="per-month"> per month</span>
           </div>
         </div>
