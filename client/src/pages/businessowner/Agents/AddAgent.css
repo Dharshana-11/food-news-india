@@ -271,6 +271,11 @@
   gap: 12px;
 }
 
+.add-agent-footer-actions {
+  display: flex;
+  gap: 8px; /* works for both row & column */
+}
+
 .agent-commission {
   font-weight: 700;
   color: #ff6b35;
@@ -553,6 +558,14 @@
 
   .agent-commission {
     font-size: 16px;
+  }
+
+  .add-agent-footer-actions {
+    flex-direction: column;
+  }
+
+  .add-agent-footer-actions .ant-btn {
+    width: 100%;
   }
 }
 

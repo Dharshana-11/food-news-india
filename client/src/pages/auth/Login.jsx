@@ -34,7 +34,7 @@ import {
   Typography,
   Image,
   message,
-  Select,
+  Space,
   Radio,
 } from "antd";
 import { UserOutlined, PhoneOutlined, SafetyOutlined } from "@ant-design/icons";
@@ -272,13 +272,19 @@ const Login = () => {
                     },
                   ]}
                 >
-                  <Input
-                    addonBefore="+91"
-                    placeholder="Enter mobile number"
-                    maxLength={10}
-                    size="large"
-                    className="login-input"
-                  />
+                  <Space.Compact style={{ width: "100%" }}>
+                    <Input
+                      value="+91"
+                      disabled
+                      style={{ width: "80px", textAlign: "center" }}
+                    />
+                    <Input
+                      placeholder="Enter mobile number"
+                      maxLength={10}
+                      size="large"
+                      className="login-input"
+                    />
+                  </Space.Compact>
                 </Form.Item>
 
                 <Button
@@ -291,12 +297,6 @@ const Login = () => {
                 >
                   Send OTP
                 </Button>
-
-                {/* <div className="login-footer-links">
-                  <Text style={{ fontSize: 13, color: "#888" }}>
-                    New users will be guided to create an account
-                  </Text>
-                </div> */}
               </Form>
             )}
 

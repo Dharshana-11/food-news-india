@@ -268,7 +268,7 @@ const AddAgent = ({ onBack }) => {
                       ₹{agent.commissionRate}
                     </span>
 
-                    <div className="agent-footer-actions">
+                    <div className="add-agent-footer-actions">
                       <Button
                         type="primary"
                         size="small"
