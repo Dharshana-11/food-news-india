@@ -45,7 +45,7 @@ export const getAvailableAgents = async (req, res) => {
     if (city) profileFilter.city = { $regex: city, $options: "i" };
     if (minRating) profileFilter.rating = { $gte: Number(minRating) };
     if (maxCommission)
-      profileFilter.commissionRate = { $lte: Number(maxCommission) };
+      profileFilter.monthlyCommission = { $lte: Number(maxCommission) };
 
     /** ---------------- Fetch Agents ---------------- */
     const agents = await Users.find(userFilter)
@@ -100,7 +100,7 @@ export const getAvailableAgents = async (req, res) => {
           rating: profile.rating || 0,
           totalReviews: profile.totalReviews || 0,
           businessesManaged: profile.businessesManaged || 0,
-          commissionRate: profile.commissionRate || 7500,
+          monthlyCommission: profile.monthlyCommission,
           experience: profile.experience || 0,
           specialization: profile.specialization || [],
           city: profile.city || "",
@@ -332,7 +332,12 @@ export const inviteAgent = async (req, res) => {
       isAvailable: true,
     });
 
-    if (!agentProfile || agentProfile.commissionRate <= 0) {
+    if (
+      !agentProfile ||
+      agentProfile.monthlyCommission === undefined ||
+      agentProfile.monthlyCommission === null ||
+      Number(agentProfile.monthlyCommission) <= 0
+    ) {
       return res.status(400).json({
         message: "Agent commission is not set or invalid",
       });
@@ -350,7 +355,7 @@ export const inviteAgent = async (req, res) => {
       businessOwnerId,
       agentId,
       status: "pending",
-      agreedCommission: agentProfile.commissionRate,
+      agreedCommission: agentProfile.monthlyCommission,
       permissions: permissions || defaultPermissions,
       invitedAt: new Date(),
       pendingExpiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),

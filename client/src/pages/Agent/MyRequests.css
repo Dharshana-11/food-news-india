@@ -1,0 +1,500 @@
+/*
+ * MyRequests.css
+ * ============================================================================
+ * Mobile-First Responsive Styles for Agent Invitations Page
+ * Uses existing project colors and design system
+ */
+
+/* ================================================
+   CONTAINER & LAYOUT
+   ================================================ */
+
+.my-requests-container {
+  padding: 1rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+/* ================================================
+   HEADER - NO BACKGROUND
+   ================================================ */
+
+.my-requests-header {
+  margin-bottom: 1.5rem;
+}
+
+.my-requests-header button {
+  margin-bottom: 0.5rem;
+  color: var(--color-primary-blue);
+  font-size: 1.125rem;
+}
+
+.my-requests-header button:hover {
+  color: var(--color-primary-orange);
+}
+
+.my-requests-header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-primary-blue);
+  margin: 0 0 0.5rem;
+  line-height: 1.3;
+}
+
+.my-requests-header p {
+  color: var(--color-text-medium);
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+/* ================================================
+   EMPTY STATE
+   ================================================ */
+
+.my-requests-empty {
+  margin-top: 3.75rem;
+  padding: 1.25rem;
+}
+
+/* ================================================
+   INVITES LIST - MOBILE FIRST
+   ================================================ */
+
+.invites-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* ================================================
+   INVITE CARD
+   ================================================ */
+
+.invite-card {
+  border-radius: 12px;
+  border: 1px solid var(--color-border);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.invite-card:hover {
+  box-shadow: 0 4px 16px rgba(22, 34, 71, 0.12);
+  transform: translateY(-2px);
+}
+
+.invite-card .ant-card-body {
+  padding: 1rem;
+}
+
+.invite-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+/* ================================================
+   INVITE HEADER
+   ================================================ */
+
+.invite-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.invite-avatar {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border-radius: 50%;
+  background: var(--gradient-orange);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: white;
+  box-shadow: 0 2px 8px rgba(255, 108, 31, 0.3);
+}
+
+.invite-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.invite-business-name {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-primary-blue);
+  margin-bottom: 0.125rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.4;
+  font-family: "Poppins";
+}
+
+.invite-owner-name {
+  font-size: 0.75rem;
+  color: var(--color-text-medium);
+  line-height: 1.4;
+}
+
+.invite-status-tag {
+  align-self: flex-start;
+  border-radius: 6px;
+  font-size: 0.6875rem;
+  padding: 2px 8px;
+  margin: 0;
+  font-weight: 600;
+}
+
+/* ================================================
+   INVITE DETAILS
+   ================================================ */
+
+.invite-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.invite-detail-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--color-text-dark);
+  line-height: 1.4;
+}
+
+.invite-detail-item .anticon {
+  font-size: 0.875rem;
+  color: var(--color-primary-orange);
+  min-width: 0.875rem;
+  flex-shrink: 0;
+}
+
+.invite-detail-item span {
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ================================================
+   INVITE ACTIONS
+   ================================================ */
+
+.invite-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+.invite-actions-right {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.invite-actions-right button {
+  flex: 1;
+}
+
+.invite-actions > button:first-child {
+  width: 100%;
+}
+
+/* ================================================
+   MODALS
+   ================================================ */
+
+/* Details Modal */
+.details-modal-content {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.details-section {
+  margin-bottom: 0.5rem;
+}
+
+.details-section h4 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-primary-blue);
+  margin-bottom: 0.625rem;
+  line-height: 1.4;
+}
+
+.details-section p {
+  font-size: 0.8125rem;
+  margin-bottom: 0.5rem;
+  line-height: 1.5;
+  color: var(--color-text-dark);
+}
+
+.details-section strong {
+  color: var(--color-primary-blue);
+  font-weight: 500;
+}
+
+.details-permissions {
+  margin-top: 0.5rem;
+}
+
+.details-permissions ul {
+  margin: 0.5rem 0 0;
+  padding-left: 1.25rem;
+}
+
+.details-permissions li {
+  font-size: 0.8125rem;
+  margin-bottom: 0.25rem;
+  color: var(--color-text-dark);
+  line-height: 1.5;
+}
+
+/* Reject Modal */
+.reject-modal-content p {
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+  color: var(--color-text-dark);
+}
+
+.reject-modal-content strong {
+  color: var(--color-primary-blue);
+}
+
+.reject-modal-content .ant-input {
+  font-size: 0.8125rem;
+}
+
+/* ================================================
+   RESPONSIVE BREAKPOINTS
+   ================================================ */
+
+/* Tablet: 640px+ */
+@media (min-width: 640px) {
+  .my-requests-container {
+    padding: 1.25rem;
+  }
+
+  .my-requests-header {
+    margin-bottom: 2rem;
+  }
+
+  .my-requests-header h2 {
+    font-size: 1.75rem;
+  }
+
+  .my-requests-header p {
+    font-size: 0.9375rem;
+  }
+
+  .invites-list {
+    gap: 1rem;
+  }
+
+  .invite-card .ant-card-body {
+    padding: 1.125rem;
+  }
+
+  .invite-card-body {
+    gap: 1rem;
+  }
+
+  .invite-header {
+    padding-bottom: 0.875rem;
+  }
+
+  .invite-avatar {
+    width: 50px;
+    height: 50px;
+    min-width: 50px;
+    font-size: 1.25rem;
+  }
+
+  .invite-business-name {
+    font-size: 1rem;
+  }
+
+  .invite-owner-name {
+    font-size: 0.8125rem;
+  }
+
+  .invite-detail-item {
+    font-size: 0.875rem;
+  }
+
+  .invite-detail-item .anticon {
+    font-size: 1rem;
+    min-width: 1rem;
+  }
+
+  .invite-actions {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 0.75rem;
+  }
+
+  .invite-actions > button:first-child {
+    width: auto;
+  }
+
+  .details-section h4 {
+    font-size: 0.9375rem;
+  }
+
+  .details-section p {
+    font-size: 0.875rem;
+  }
+
+  .details-permissions li {
+    font-size: 0.875rem;
+  }
+}
+
+/* Desktop: 1024px+ */
+@media (min-width: 1024px) {
+  .my-requests-header h2 {
+    font-size: 2rem;
+  }
+
+  .invites-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .invite-card .ant-card-body {
+    padding: 1.25rem;
+  }
+
+  .invite-card-body {
+    gap: 1.125rem;
+  }
+
+  .invite-header {
+    padding-bottom: 1rem;
+  }
+
+  .invite-avatar {
+    width: 56px;
+    height: 56px;
+    min-width: 56px;
+    font-size: 1.375rem;
+  }
+
+  .invite-business-name {
+    font-size: 1.0625rem;
+  }
+
+  .details-modal-content {
+    max-height: 70vh;
+  }
+
+  .details-section {
+    margin-bottom: 0.75rem;
+  }
+
+  .details-section h4 {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+  }
+}
+
+/* Large Desktop: 1280px+ */
+@media (min-width: 1280px) {
+  .invites-list {
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .invite-card .ant-card-body {
+    padding: 1.5rem;
+  }
+}
+
+/* Extra Large Desktop: 1536px+ */
+@media (min-width: 1536px) {
+  .my-requests-container {
+    padding: 2rem;
+  }
+
+  .invites-list {
+    gap: 1.75rem;
+  }
+}
+
+/* ================================================
+   ANT DESIGN OVERRIDES
+   ================================================ */
+
+/* Button sizing consistency */
+.invite-actions .ant-btn-sm {
+  height: 32px;
+  padding: 4px 12px;
+  font-size: 0.8125rem;
+}
+
+/* Modal responsive width */
+.ant-modal {
+  max-width: calc(100vw - 32px);
+  margin: 16px;
+}
+
+@media (min-width: 640px) {
+  .ant-modal {
+    max-width: 520px;
+    margin: 0 auto;
+  }
+}
+
+/* Tag styling */
+.ant-tag {
+  border-radius: 6px;
+  border: none;
+}
+
+/* Divider in modals */
+.details-modal-content .ant-divider {
+  margin: 1rem 0;
+}
+
+/* ================================================
+   LOADING STATES
+   ================================================ */
+
+.invite-card .ant-btn-loading {
+  opacity: 0.6;
+}
+
+/* ================================================
+   ACCESSIBILITY & TOUCH TARGETS
+   ================================================ */
+
+/* Focus states */
+.invite-card:focus-within {
+  outline: 2px solid var(--color-primary-orange);
+  outline-offset: 2px;
+}
+
+.invite-actions button:focus-visible {
+  outline: 2px solid var(--color-primary-orange);
+  outline-offset: 2px;
+}
+
+/* Improve touch targets on mobile */
+@media (max-width: 639px) {
+  .invite-actions button {
+    min-height: 40px;
+  }
+}

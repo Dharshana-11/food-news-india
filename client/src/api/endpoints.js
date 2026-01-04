@@ -50,4 +50,9 @@ export const ENDPOINTS = {
 
   //Compliance Score
   MY_COMPLIANCE_SCORE: "/compliance-score/me",
+
+  // ========== AGENT INVITES ==========
+  AGENT_INVITES: "/agent-invites",
+  AGENT_INVITE_ACCEPT: (relationId) => `/agent-invites/${relationId}/accept`,
+  AGENT_INVITE_REJECT: (relationId) => `/agent-invites/${relationId}/reject`,
 };
