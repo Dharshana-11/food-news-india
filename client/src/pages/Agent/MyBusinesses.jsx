@@ -31,8 +31,8 @@ import {
   WarningOutlined,
   EnvironmentOutlined,
 } from "@ant-design/icons";
-import agentBusinessService from "../../../services/agentBusinessService";
-import { ROUTES } from "../../../routes";
+import agentBusinessService from "../../services/agentBusinessService";
+import { ROUTES } from "../../routes";
 import "./MyBusinesses.css";
 
 const MyBusinesses = () => {

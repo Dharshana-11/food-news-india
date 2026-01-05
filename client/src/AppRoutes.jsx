@@ -54,6 +54,8 @@ import ServiceDetails from "./pages/BusinessOwner/ServiceProvider/ServiceDetails
 
 import AgentDashboard from "./pages/Agent/AgentDashboard";
 import MyRequests from "./pages/Agent/MyRequests";
+import MyBusinesses from "./pages/Agent/MyBusinesses";
+import AgentBusinessWorkspace from "./pages/Agent/AgentBusinessWorkSpace";
 
 const AppRoutes = () => {
   const { currentUser, loading } = useAuth();
@@ -293,6 +295,11 @@ const AppRoutes = () => {
         <Route path={ROUTES.AGENT_KYC} element={<KYCVerification />} />
         <Route path={ROUTES.AGENT_DASHBOARD} element={<AgentDashboard />} />
         <Route path={ROUTES.AGENT_MY_REQUESTS} element={<MyRequests />} />
+        <Route path={ROUTES.AGENT_MY_BUSINESSES} element={<MyBusinesses />} />
+        <Route
+          path={ROUTES.AGENT_BUSINESS_WORKSPACE}
+          element={<AgentBusinessWorkspace />}
+        />
       </Route>
     </Routes>
   );

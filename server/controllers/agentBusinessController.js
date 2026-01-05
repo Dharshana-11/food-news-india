@@ -9,7 +9,7 @@ import BusinessAgentRelation from "../models/BusinessAgentRelation.js";
 import Users from "../models/User.js";
 import BusinessProfile from "../models/BusinessProfile.js";
 import Document from "../models/Document.js";
-import Booking from "../models/Booking.js";
+import Booking from "../models/ServiceBooking.js";
 
 /**
  * GET /api/agent/businesses

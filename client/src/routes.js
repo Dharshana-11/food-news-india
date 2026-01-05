@@ -90,6 +90,7 @@ export const ROUTES = {
   AGENT_DASHBOARD: "/agent/dashboard",
   AGENT_KYC: "/agent/kyc-verification",
   AGENT_MY_BUSINESSES: "/agent/my-businesses",
+  AGENT_BUSINESS_WORKSPACE: "/agent/my-businesses/:relationId",
   AGENT_DOCUMENT_VAULT: "/agent/documents",
   AGENT_MY_REQUESTS: "/agent/my-requests",
   AGENT_SERVICES: "/agent/services",
