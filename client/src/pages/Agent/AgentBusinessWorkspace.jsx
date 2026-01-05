@@ -36,6 +36,7 @@ import {
 
 import agentBusinessService from "../../services/agentBusinessService";
 import StatCard from "../../components/dashboard/StatCard";
+import ComplianceScoreCard from "../../components/dashboard/ComplianceScoreCard";
 import { ROUTES } from "../../routes";
 import "./AgentBusinessWorkspace.css";
 
@@ -172,30 +173,32 @@ const AgentBusinessWorkspace = () => {
         </div>
       </div>
 
-      {/* Stats Grid */}
       <Row gutter={[16, 16]} className="agent-workspace-stats">
-        <Col xs={12} sm={12} lg={6}>
+        <Col xs={24} sm={24} lg={12} xl={6}>
           <StatCard
             title="Total Documents"
             value={documentStats.total}
             icon={<FileTextOutlined />}
           />
         </Col>
-        <Col xs={12} sm={12} lg={6}>
+
+        <Col xs={24} sm={24} lg={12} xl={6}>
           <StatCard
             title="Pending Docs"
             value={documentStats.pending}
             icon={<ClockCircleOutlined />}
           />
         </Col>
-        <Col xs={12} sm={12} lg={6}>
+
+        <Col xs={24} sm={24} lg={12} xl={6}>
           <StatCard
             title="Active Bookings"
             value={bookingStats.active}
             icon={<ShoppingOutlined />}
           />
         </Col>
-        <Col xs={12} sm={12} lg={6}>
+
+        <Col xs={24} sm={24} lg={12} xl={6}>
           <StatCard
             title="Compliance"
             value={`${complianceScore}%`}
@@ -378,57 +381,14 @@ const AgentBusinessWorkspace = () => {
             <div className="panel-divider" />
 
             {/* Compliance Score */}
-            {/* Compliance Status */}
-            <div className="panel-section">
-              <h3 className="section-title">Compliance Status</h3>
-
-              {/* Score Row */}
-              <div className="compliance-score-row">
-                <Progress
-                  type="circle"
-                  percent={complianceScore}
-                  strokeColor={
-                    complianceScore >= 80
-                      ? "#52c41a"
-                      : complianceScore >= 50
-                        ? "#faad14"
-                        : "#ff4d4f"
-                  }
-                />
-
-                <div className="compliance-summary">
-                  <p className="compliance-text">
-                    <strong>{complianceMeta.fulfilled}</strong> /{" "}
-                    <strong>{complianceMeta.totalRequired}</strong> mandatory
-                    items fulfilled
-                  </p>
-
-                  {complianceMeta.missing > 0 ? (
-                    <Tag color="red">
-                      {complianceMeta.missing} mandatory item
-                      {complianceMeta.missing > 1 ? "s" : ""} missing
-                    </Tag>
-                  ) : (
-                    <Tag color="green">Fully Compliant</Tag>
-                  )}
-                </div>
-              </div>
-
-              {/* Missing Items */}
-              {complianceMeta.missing > 0 && (
-                <div className="missing-compliance">
-                  <p className="missing-title">Missing mandatory documents</p>
-                  <ul className="missing-list">
-                    {complianceMeta.missingItems.map((item) => (
-                      <li key={item._id}>
-                        <strong>{item.name}</strong>
-                        {item.code && <span> ({item.code})</span>}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
+            <ComplianceScoreCard
+              title="Compliance Status"
+              score={complianceScore}
+              fulfilled={complianceMeta.fulfilled}
+              totalRequired={complianceMeta.totalRequired}
+              missing={complianceMeta.missing}
+              missingItems={complianceMeta.missingItems}
+            />
           </Card>
         </div>
       </div>

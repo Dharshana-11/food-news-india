@@ -16,6 +16,12 @@
   width: 100%;
 }
 
+.my-requests-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
 /* ================================================
    HEADER - NO BACKGROUND
    ================================================ */

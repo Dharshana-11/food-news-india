@@ -30,6 +30,7 @@ import {
   ClockCircleOutlined,
   WarningOutlined,
   EnvironmentOutlined,
+  ShoppingOutlined,
 } from "@ant-design/icons";
 import agentBusinessService from "../../services/agentBusinessService";
 import { ROUTES } from "../../routes";
@@ -76,22 +77,10 @@ const MyBusinesses = () => {
     return "#ff4d4f";
   };
 
-  const formatDate = (dateString) => {
-    if (!dateString) return "N/A";
-    return new Date(dateString).toLocaleDateString("en-IN", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
-  };
-
-  /* =========================================================================
-     Loading State
-     ========================================================================= */
   if (loading) {
     return (
       <div className="my-businesses-loading">
-        <Spin size="large" tip="Loading businesses..." />
+        <Spin size="large" />
       </div>
     );
   }
@@ -110,29 +99,60 @@ const MyBusinesses = () => {
       {/* Summary Stats */}
       {businesses.length > 0 && (
         <Row gutter={[16, 16]} className="my-businesses-stats">
-          <Col xs={12} sm={8}>
-            <Card className="stat-card">
-              <div className="stat-value">{businesses.length}</div>
-              <div className="stat-label">Active Businesses</div>
+          <Col xs={24} sm={12} md={8}>
+            <Card className="my-businesses-stat-card my-businesses-stat-blue">
+              <div className="my-businesses-stat-content">
+                <div className="my-businesses-stat-icon-wrapper">
+                  <ShopOutlined className="my-businesses-stat-icon" />
+                </div>
+                <div className="my-businesses-stat-text-group">
+                  <div className="my-businesses-stat-label">
+                    Active Businesses
+                  </div>
+                  <div className="my-businesses-stat-value">
+                    {businesses.length}
+                  </div>
+                </div>
+              </div>
             </Card>
           </Col>
-          <Col xs={12} sm={8}>
-            <Card className="stat-card">
-              <div className="stat-value">
-                {businesses.reduce((sum, b) => sum + b.activeBookings, 0)}
+
+          <Col xs={24} sm={12} md={8}>
+            <Card className="my-businesses-stat-card my-businesses-stat-green">
+              <div className="my-businesses-stat-content">
+                <div className="my-businesses-stat-icon-wrapper">
+                  <ShoppingOutlined className="my-businesses-stat-icon" />
+                </div>
+                <div className="my-businesses-stat-text-group">
+                  <div className="my-businesses-stat-label">
+                    Active Bookings
+                  </div>
+                  <div className="my-businesses-stat-value">
+                    {businesses.reduce((sum, b) => sum + b.activeBookings, 0)}
+                  </div>
+                </div>
               </div>
-              <div className="stat-label">Active Bookings</div>
             </Card>
           </Col>
-          <Col xs={12} sm={8}>
-            <Card className="stat-card">
-              <div className="stat-value">
-                {businesses.reduce(
-                  (sum, b) => sum + b.documentStats.pending,
-                  0
-                )}
+
+          <Col xs={24} sm={12} md={8}>
+            <Card className="my-businesses-stat-card my-businesses-stat-orange">
+              <div className="my-businesses-stat-content">
+                <div className="my-businesses-stat-icon-wrapper">
+                  <FileTextOutlined className="my-businesses-stat-icon" />
+                </div>
+                <div className="my-businesses-stat-text-group">
+                  <div className="my-businesses-stat-label">
+                    Pending Documents
+                  </div>
+                  <div className="my-businesses-stat-value">
+                    {businesses.reduce(
+                      (sum, b) => sum + b.documentStats.pending,
+                      0
+                    )}
+                  </div>
+                </div>
               </div>
-              <div className="stat-label">Pending Documents</div>
             </Card>
           </Col>
         </Row>
@@ -145,17 +165,17 @@ const MyBusinesses = () => {
             image={Empty.PRESENTED_IMAGE_SIMPLE}
             description="No businesses assigned yet"
           >
-            <p className="empty-hint">
+            <p className="my-businesses-empty-hint">
               You will see businesses here once a business owner invites you.
             </p>
           </Empty>
         </Card>
       ) : (
-        <div className="businesses-list">
+        <div className="my-businesses-list">
           {businesses.map((business) => (
             <Card
               key={business.relationId}
-              className="business-card"
+              className="my-businesses-card"
               hoverable
               onClick={() =>
                 navigate(
@@ -167,15 +187,17 @@ const MyBusinesses = () => {
               }
             >
               {/* Header */}
-              <div className="business-card-header">
-                <div className="business-icon">
+              <div className="my-businesses-card-header">
+                <div className="my-businesses-business-icon">
                   <ShopOutlined />
                 </div>
-                <div className="business-info">
+                <div className="my-businesses-business-info">
                   <h3>{business.businessName}</h3>
-                  <div className="business-owner">{business.ownerName}</div>
+                  <div className="my-businesses-business-owner">
+                    {business.ownerName}
+                  </div>
                   {(business.city || business.state) && (
-                    <div className="business-location">
+                    <div className="my-businesses-business-location">
                       <EnvironmentOutlined />
                       {business.city}
                       {business.state && `, ${business.state}`}
@@ -185,9 +207,11 @@ const MyBusinesses = () => {
               </div>
 
               {/* Compliance Score */}
-              <div className="business-compliance">
-                <div className="compliance-label">Compliance Score</div>
-                <div className="compliance-row">
+              <div className="my-businesses-compliance">
+                <div className="my-businesses-compliance-label">
+                  Compliance Score
+                </div>
+                <div className="my-businesses-compliance-row">
                   <Progress
                     percent={business.complianceScore}
                     strokeColor={getComplianceColor(business.complianceScore)}
@@ -195,15 +219,16 @@ const MyBusinesses = () => {
                     size="small"
                   />
                   <span
-                    className="compliance-percent"
+                    className="my-businesses-compliance-percent"
                     style={{
                       color: getComplianceColor(business.complianceScore),
                     }}
                   >
                     {business.complianceScore}%
                   </span>
+
                   {business.complianceMeta && (
-                    <div className="compliance-meta-text">
+                    <div className="my-businesses-compliance-meta-text">
                       {business.complianceMeta.fulfilled} /{" "}
                       {business.complianceMeta.totalRequired} mandatory items
                       fulfilled
@@ -213,57 +238,59 @@ const MyBusinesses = () => {
               </div>
 
               {/* Stats Grid */}
-              <div className="business-stats">
-                <div className="stat-item">
+              <div className="my-businesses-stats-grid">
+                <div className="my-businesses-stat-item">
                   <FileTextOutlined />
-                  <div className="stat-content">
-                    <div className="stat-number">
+                  <div className="my-businesses-stat-content">
+                    <div className="my-businesses-stat-number">
                       {business.documentStats.total}
                     </div>
-                    <div className="stat-text">Total Documents</div>
+                    <div className="my-businesses-stat-text">
+                      Total Documents
+                    </div>
                   </div>
                 </div>
 
-                <div className="stat-item">
+                <div className="my-businesses-stat-item">
                   <CheckCircleOutlined style={{ color: "#52c41a" }} />
-                  <div className="stat-content">
-                    <div className="stat-number">
+                  <div className="my-businesses-stat-content">
+                    <div className="my-businesses-stat-number">
                       {business.documentStats.approved}
                     </div>
-                    <div className="stat-text">Approved</div>
+                    <div className="my-businesses-stat-text">Approved</div>
                   </div>
                 </div>
 
-                <div className="stat-item">
+                <div className="my-businesses-stat-item">
                   <ClockCircleOutlined style={{ color: "#faad14" }} />
-                  <div className="stat-content">
-                    <div className="stat-number">
+                  <div className="my-businesses-stat-content">
+                    <div className="my-businesses-stat-number">
                       {business.documentStats.pending}
                     </div>
-                    <div className="stat-text">Pending</div>
+                    <div className="my-businesses-stat-text">Pending</div>
                   </div>
                 </div>
 
                 {business.documentStats.expired > 0 && (
-                  <div className="stat-item">
+                  <div className="my-businesses-stat-item">
                     <WarningOutlined style={{ color: "#ff4d4f" }} />
-                    <div className="stat-content">
-                      <div className="stat-number">
+                    <div className="my-businesses-stat-content">
+                      <div className="my-businesses-stat-number">
                         {business.documentStats.expired}
                       </div>
-                      <div className="stat-text">Expired</div>
+                      <div className="my-businesses-stat-text">Expired</div>
                     </div>
                   </div>
                 )}
               </div>
 
               {/* Footer */}
-              <div className="business-card-footer">
-                <div className="business-meta">
+              <div className="my-businesses-card-footer">
+                <div className="my-businesses-business-meta">
                   <Tag color="blue">
                     {business.activeBookings} Active Bookings
                   </Tag>
-                  <span className="commission-text">
+                  <span className="my-businesses-commission-text">
                     ₹{business.agreedCommission}/month
                   </span>
                 </div>
