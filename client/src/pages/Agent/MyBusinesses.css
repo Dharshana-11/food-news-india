@@ -1,0 +1,485 @@
+/**
+ * MyBusinesses.css
+ * ============================================================================
+ * Mobile-First, Fully Responsive Styles for Agent My Businesses Page
+ */
+
+/* ============================================
+   Container & Loading - Mobile First
+============================================ */
+.my-businesses-container {
+  padding: 1rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.my-businesses-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+/* ============================================
+   Header - Mobile First
+============================================ */
+.my-businesses-header {
+  margin-bottom: 1.5rem;
+}
+
+.my-businesses-header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-primary-blue);
+  margin: 0 0 0.5rem;
+  line-height: 1.3;
+}
+
+.my-businesses-header p {
+  color: var(--color-text-medium);
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+/* ============================================
+   Summary Stats - Mobile First
+============================================ */
+.my-businesses-stats {
+  margin-bottom: 1.5rem;
+}
+
+.my-businesses-stat-card {
+  border-radius: 12px;
+}
+
+.my-businesses-stat-card .ant-card-body {
+  padding: 1rem;
+}
+
+.my-businesses-stat-content {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.my-businesses-stat-icon-wrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.my-businesses-stat-icon {
+  font-size: 1.25rem;
+  color: #ffffff;
+}
+
+.my-businesses-stat-text-group {
+  flex: 1;
+  min-width: 0;
+}
+
+.my-businesses-stat-label {
+  font-size: 0.75rem;
+  color: var(--color-text-medium);
+  line-height: 1.3;
+  margin-bottom: 0.25rem;
+  font-family: "Poppins";
+}
+
+.my-businesses-stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-primary-blue);
+  line-height: 1.2;
+}
+.my-businesses-stat-icon-wrapper {
+  color: inherit;
+}
+
+.my-businesses-stat-label {
+  font-size: 0.75rem;
+  color: var(--color-text-medium);
+  line-height: 1.3;
+  margin-bottom: 0.25rem;
+  font-family: "Poppins";
+}
+
+.my-businesses-stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-primary-blue);
+  line-height: 1.2;
+}
+
+.my-businesses-stat-icon-wrapper {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.my-businesses-stat-icon {
+  color: inherit;
+}
+
+.my-businesses-stat-blue .my-businesses-stat-icon-wrapper {
+  background: #e6f0ff; /* light blue */
+  color: var(--color-primary-blue);
+}
+
+.my-businesses-stat-green .my-businesses-stat-icon-wrapper {
+  background: #edf7ed; /* light green */
+  color: #389e0d;
+}
+
+.my-businesses-stat-orange .my-businesses-stat-icon-wrapper {
+  background: #fff3e0; /* light orange */
+  color: #d46b08;
+}
+
+/* ============================================
+   Business List - Mobile First
+============================================ */
+.my-businesses-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ============================================
+   Business Card - Mobile First
+============================================ */
+.my-businesses-card {
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  border: 1px solid var(--color-border);
+}
+
+.my-businesses-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-color: var(--color-primary-orange);
+}
+
+.my-businesses-card .ant-card-body {
+  padding: 1.4rem;
+}
+
+/* ============================================
+   Business Card Header - Mobile First
+============================================ */
+.my-businesses-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.my-businesses-business-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ff9f43 0%, #ff6c1f 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.my-businesses-business-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.my-businesses-business-info h3 {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-primary-blue);
+  margin: 0 0 0.25rem;
+  line-height: 1.4;
+  word-wrap: break-word;
+}
+
+.my-businesses-business-owner {
+  font-size: 0.8125rem;
+  color: var(--color-text-medium);
+  margin-bottom: 0.25rem;
+}
+
+.my-businesses-business-location {
+  font-size: 0.75rem;
+  color: var(--color-text-light);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.my-businesses-business-location .anticon {
+  font-size: 0.75rem;
+}
+
+/* ============================================
+   Compliance Section - Mobile First
+============================================ */
+.my-businesses-compliance {
+  padding: 0.75rem;
+  background: var(--color-bg-light);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.my-businesses-compliance-label {
+  font-size: 0.75rem;
+  color: var(--color-text-medium);
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.my-businesses-compliance-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.my-businesses-compliance-row .ant-progress {
+  flex: 1;
+  min-width: 0;
+}
+
+.my-businesses-compliance-percent {
+  font-size: 0.875rem;
+  font-weight: 600;
+  min-width: 36px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   Stats Grid - Mobile First
+============================================ */
+.my-businesses-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* mobile: 1 per row */
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.my-businesses-stat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: var(--color-bg-light);
+  border-radius: 8px;
+}
+
+.my-businesses-stat-item .anticon {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.my-businesses-stat-item .my-businesses-stat-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.my-businesses-stat-number {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-primary-blue);
+  line-height: 1.2;
+}
+
+.my-businesses-stat-text {
+  font-size: 0.6875rem;
+  color: var(--color-text-medium);
+  margin-top: 0.125rem;
+}
+
+/* ============================================
+   Business Card Footer - Mobile First
+============================================ */
+.my-businesses-card-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--color-border);
+}
+
+.my-businesses-business-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.my-businesses-commission-text {
+  font-size: 0.8125rem;
+  color: var(--color-text-medium);
+  font-weight: 500;
+}
+
+.my-businesses-card-footer .ant-btn {
+  width: 100%;
+}
+
+/* ============================================
+   Empty State - Mobile First
+============================================ */
+.my-businesses-empty-hint {
+  font-size: 0.875rem;
+  color: var(--color-text-medium);
+  margin-top: 0.5rem;
+  line-height: 1.5;
+}
+
+/* ============================================
+   RESPONSIVE BREAKPOINTS
+   All styles above are mobile-first defaults
+   Breakpoints below progressively enhance
+============================================ */
+
+/* Small Mobile: 375px+ */
+@media (min-width: 375px) {
+  .my-businesses-business-icon {
+    width: 56px;
+    height: 56px;
+    font-size: 1.375rem;
+  }
+
+  .my-businesses-business-info h3 {
+    font-size: 1rem;
+  }
+}
+
+/* Tablet: 640px+ */
+@media (min-width: 640px) {
+  .my-businesses-container {
+    padding: 1.25rem;
+  }
+
+  .my-businesses-header h2 {
+    font-size: 1.75rem;
+  }
+
+  .my-businesses-header p {
+    font-size: 0.9375rem;
+  }
+
+  .my-businesses-stat-icon-wrapper {
+    width: 56px;
+    height: 56px;
+  }
+
+  .my-businesses-stat-icon {
+    font-size: 1.5rem;
+  }
+
+  .my-businesses-stat-label {
+    font-size: 1rem;
+  }
+
+  .my-businesses-stat-value {
+    font-size: 1.75rem;
+  }
+
+  .my-businesses-card .ant-card-body {
+    padding: 1.25rem;
+  }
+
+  .my-businesses-business-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+  }
+
+  .my-businesses-business-info h3 {
+    font-size: 1.0625rem;
+  }
+
+  .my-businesses-business-owner {
+    font-size: 0.875rem;
+  }
+
+  .my-businesses-stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.875rem;
+  }
+
+  .my-businesses-card-footer {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .my-businesses-card-footer .ant-btn {
+    width: auto;
+  }
+}
+
+/* Desktop: 1024px+ */
+@media (min-width: 1024px) {
+  .my-businesses-container {
+    padding: 1.5rem 2rem;
+  }
+
+  .my-businesses-header {
+    margin-bottom: 2rem;
+  }
+
+  .my-businesses-header h2 {
+    font-size: 2rem;
+  }
+
+  .my-businesses-stats {
+    margin-bottom: 2rem;
+  }
+
+  .my-businesses-stat-value {
+    font-size: 2rem;
+  }
+
+  .my-businesses-list {
+    gap: 1.25rem;
+  }
+
+  .my-businesses-card .ant-card-body {
+    padding: 1.5rem;
+  }
+
+  .my-businesses-stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Large Desktop: 1280px+ */
+@media (min-width: 1280px) {
+  .my-businesses-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+}
+
+/* Extra Large Desktop: 1536px+ */
+@media (min-width: 1536px) {
+  .my-businesses-container {
+    padding: 2rem;
+  }
+}

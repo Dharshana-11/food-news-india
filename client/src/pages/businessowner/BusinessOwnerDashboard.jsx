@@ -15,6 +15,7 @@ import {
 // Components
 import StatCard from "../../components/dashboard/StatCard";
 import KYCGuard from "../../components/KYCGuard/KYCGuard";
+import ComplianceScoreCard from "../../components/dashboard/ComplianceScoreCard";
 
 // Services
 import bookingService from "../../services/bookingService";
@@ -474,66 +475,16 @@ const BusinessOwnerDashboard = () => {
               <div className="bo-panel-divider" />
 
               {/* Compliance Score */}
-              <div className="bo-panel-section">
-                <div className="bo-section-header">
-                  <h2 className="bo-section-title">Compliance Score</h2>
-                  <Button
-                    type="link"
-                    onClick={() =>
-                      navigate(ROUTES.BUSINESS_OWNER_DOCUMENT_VAULT)
-                    }
-                  >
-                    Fix Issues
-                  </Button>
-                </div>
-
-                <div className="bo-compliance-score">
-                  <Progress
-                    type="circle"
-                    percent={compliance.score}
-                    strokeColor={
-                      compliance.score >= 80
-                        ? "#52c41a"
-                        : compliance.score >= 50
-                          ? "#faad14"
-                          : "#ff4d4f"
-                    }
-                  />
-
-                  <div className="bo-compliance-meta">
-                    <p>
-                      <strong>{compliance.fulfilled}</strong> /{" "}
-                      <strong>{compliance.totalRequired}</strong> mandatory
-                      documents
-                    </p>
-
-                    {compliance.missing > 0 ? (
-                      <Tag color="red" className="bo-compliance-tag">
-                        {compliance.missing} mandatory document
-                        {compliance.missing > 1 ? "s" : ""} missing
-                      </Tag>
-                    ) : (
-                      <Tag color="green" style={{ textAlign: "center" }}>
-                        Fully Compliant
-                      </Tag>
-                    )}
-                  </div>
-
-                  {compliance.missing > 0 && (
-                    <div className="bo-missing-compliance">
-                      <p className="bo-missing-title">
-                        Missing mandatory documents:
-                      </p>
-
-                      <ul className="bo-missing-list">
-                        {compliance.missingItems.map((item) => (
-                          <li key={item._id}>{item.name}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              </div>
+              <ComplianceScoreCard
+                score={compliance.score}
+                totalRequired={compliance.totalRequired}
+                fulfilled={compliance.fulfilled}
+                missing={compliance.missing}
+                missingItems={compliance.missingItems}
+                onFixIssues={() =>
+                  navigate(ROUTES.BUSINESS_OWNER_DOCUMENT_VAULT)
+                }
+              />
             </Card>
           </div>
         </div>

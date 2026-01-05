@@ -39,6 +39,7 @@ import serviceRoutes from "./routes/serviceRoutes.js";
 import serviceBookingRoutes from "./routes/serviceBookingRoutes.js";
 import complianceScoreRoutes from "./routes/complianceScoreRoutes.js";
 import agentInviteRoutes from "./routes/agentInviteRoutes.js";
+import agentBusinessRoutes from "./routes/agentBusinessRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -89,12 +90,14 @@ app.use("/api/documents", documentRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/kyc", kycRoutes); // Register KYC routes
 app.use("/api/business-owner/documents", documentVaultRoutes);
-app.use("/api/agents", agentRoutes);
 
 app.use("/api/services", serviceRoutes);
 app.use("/api/bookings", serviceBookingRoutes);
 app.use("/api/compliance-score", complianceScoreRoutes);
+
+app.use("/api/agents", agentRoutes);
 app.use("/api/agent-invites", agentInviteRoutes);
+app.use("/api/agent/businesses", agentBusinessRoutes);
 
 /**
  * Server Startup

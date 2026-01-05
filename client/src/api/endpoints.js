@@ -55,4 +55,7 @@ export const ENDPOINTS = {
   AGENT_INVITES: "/agent-invites",
   AGENT_INVITE_ACCEPT: (relationId) => `/agent-invites/${relationId}/accept`,
   AGENT_INVITE_REJECT: (relationId) => `/agent-invites/${relationId}/reject`,
+  AGENT_MY_BUSINESSES: "/agent/businesses",
+  AGENT_BUSINESS_WORKSPACE: (relationId) =>
+    `/agent/businesses/${relationId}/workspace`,
 };
