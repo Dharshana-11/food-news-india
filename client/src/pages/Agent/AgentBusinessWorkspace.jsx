@@ -141,8 +141,15 @@ const AgentBusinessWorkspace = () => {
     );
   }
 
-  const { business, documentStats, bookingStats, recentBookings, permissions } =
-    workspace;
+  const {
+    business,
+    documentStats,
+    bookingStats,
+    recentBookings,
+    permissions,
+    complianceScore,
+    complianceMeta,
+  } = workspace;
 
   /* =========================================================================
      Render
@@ -191,7 +198,7 @@ const AgentBusinessWorkspace = () => {
         <Col xs={12} sm={12} lg={6}>
           <StatCard
             title="Compliance"
-            value={`${documentStats.complianceScore}%`}
+            value={`${complianceScore}%`}
             icon={<CheckCircleOutlined />}
           />
         </Col>
@@ -371,36 +378,56 @@ const AgentBusinessWorkspace = () => {
             <div className="panel-divider" />
 
             {/* Compliance Score */}
+            {/* Compliance Status */}
             <div className="panel-section">
               <h3 className="section-title">Compliance Status</h3>
 
-              <div className="compliance-score">
+              {/* Score Row */}
+              <div className="compliance-score-row">
                 <Progress
                   type="circle"
-                  percent={documentStats.complianceScore}
+                  percent={complianceScore}
                   strokeColor={
-                    documentStats.complianceScore >= 80
+                    complianceScore >= 80
                       ? "#52c41a"
-                      : documentStats.complianceScore >= 50
+                      : complianceScore >= 50
                         ? "#faad14"
                         : "#ff4d4f"
                   }
                 />
 
-                <div className="compliance-meta">
-                  <p>
-                    <strong>{documentStats.approved}</strong> /{" "}
-                    <strong>{documentStats.total}</strong> documents approved
+                <div className="compliance-summary">
+                  <p className="compliance-text">
+                    <strong>{complianceMeta.fulfilled}</strong> /{" "}
+                    <strong>{complianceMeta.totalRequired}</strong> mandatory
+                    items fulfilled
                   </p>
 
-                  {documentStats.pending > 0 && (
-                    <Tag color="orange" className="compliance-tag">
-                      {documentStats.pending} pending document
-                      {documentStats.pending > 1 ? "s" : ""}
+                  {complianceMeta.missing > 0 ? (
+                    <Tag color="red">
+                      {complianceMeta.missing} mandatory item
+                      {complianceMeta.missing > 1 ? "s" : ""} missing
                     </Tag>
+                  ) : (
+                    <Tag color="green">Fully Compliant</Tag>
                   )}
                 </div>
               </div>
+
+              {/* Missing Items */}
+              {complianceMeta.missing > 0 && (
+                <div className="missing-compliance">
+                  <p className="missing-title">Missing mandatory documents</p>
+                  <ul className="missing-list">
+                    {complianceMeta.missingItems.map((item) => (
+                      <li key={item._id}>
+                        <strong>{item.name}</strong>
+                        {item.code && <span> ({item.code})</span>}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           </Card>
         </div>

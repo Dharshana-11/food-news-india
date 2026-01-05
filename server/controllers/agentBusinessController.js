@@ -10,6 +10,7 @@ import Users from "../models/User.js";
 import BusinessProfile from "../models/BusinessProfile.js";
 import Document from "../models/Document.js";
 import Booking from "../models/ServiceBooking.js";
+import { calculateComplianceScoreForBusiness } from "../services/complianceScoreService.js";
 
 /**
  * GET /api/agent/businesses
@@ -18,7 +19,6 @@ import Booking from "../models/ServiceBooking.js";
  */
 export const getMyBusinesses = async (req, res) => {
   try {
-    // Get agent's MongoDB _id from uid
     const agent = await Users.findOne({ uid: req.user.uid }).select("_id");
 
     if (!agent) {
@@ -28,7 +28,6 @@ export const getMyBusinesses = async (req, res) => {
       });
     }
 
-    // Find all active relations for this agent
     const relations = await BusinessAgentRelation.find({
       agentId: agent._id,
       status: "active",
@@ -40,12 +39,11 @@ export const getMyBusinesses = async (req, res) => {
       .sort({ acceptedAt: -1 })
       .lean();
 
-    // Enrich with business profile and stats
     const businesses = await Promise.all(
       relations.map(async (relation) => {
         const businessOwner = relation.businessOwnerId;
 
-        // Fetch business profile
+        // Business profile
         const businessProfile = await BusinessProfile.findOne({
           userId: businessOwner._id,
         })
@@ -53,31 +51,33 @@ export const getMyBusinesses = async (req, res) => {
           .populate("businessTypeId", "name")
           .lean();
 
-        // Get document stats for this business
+        // Document stats (overview only)
         const [totalDocs, pendingDocs, approvedDocs, expiredDocs] =
           await Promise.all([
             Document.countDocuments({
-              uploadedBy: businessOwner._id,
-              isDeleted: false,
+              uploadedForUser: businessOwner._id,
+              status: { $ne: "trash" },
             }),
             Document.countDocuments({
-              uploadedBy: businessOwner._id,
-              verificationStatus: "pending",
-              isDeleted: false,
+              uploadedForUser: businessOwner._id,
+              status: "pending",
             }),
             Document.countDocuments({
-              uploadedBy: businessOwner._id,
-              verificationStatus: "approved",
-              isDeleted: false,
+              uploadedForUser: businessOwner._id,
+              status: "approved",
             }),
             Document.countDocuments({
-              uploadedBy: businessOwner._id,
-              expiryDate: { $lt: new Date() },
-              isDeleted: false,
+              uploadedForUser: businessOwner._id,
+              $or: [{ status: "expired" }, { validUntil: { $lt: new Date() } }],
             }),
           ]);
 
-        // Get active bookings count
+        // Compliance score (shared logic)
+        const compliance = await calculateComplianceScoreForBusiness(
+          businessOwner._id
+        );
+
+        // Active bookings
         const activeBookings = await Booking.countDocuments({
           businessOwnerId: businessOwner._id,
           status: {
@@ -85,13 +85,10 @@ export const getMyBusinesses = async (req, res) => {
           },
         });
 
-        // Calculate compliance score (simplified)
-        const complianceScore =
-          totalDocs > 0 ? Math.round((approvedDocs / totalDocs) * 100) : 0;
-
         return {
           relationId: relation._id,
           businessOwnerId: businessOwner._id,
+
           businessName: businessProfile?.businessName || "N/A",
           ownerName: businessOwner.name || "N/A",
           email: businessOwner.email,
@@ -101,17 +98,26 @@ export const getMyBusinesses = async (req, res) => {
           registeredAddress: businessProfile?.registeredAddress || "N/A",
           businessType: businessProfile?.businessTypeId?.name || "N/A",
 
-          // Stats
+          // Document overview (informational)
           documentStats: {
             total: totalDocs,
             pending: pendingDocs,
             approved: approvedDocs,
             expired: expiredDocs,
           },
-          activeBookings,
-          complianceScore,
 
-          // Relation details
+          // Compliance (authoritative)
+          complianceScore: compliance.score,
+          complianceMeta: {
+            totalRequired: compliance.totalRequired,
+            fulfilled: compliance.fulfilled,
+            missing: compliance.missing,
+            missingItems: compliance.missingItems,
+          },
+
+          activeBookings,
+
+          // Relation
           agreedCommission: relation.agreedCommission,
           permissions: relation.permissions,
           acceptedAt: relation.acceptedAt,
@@ -119,14 +125,14 @@ export const getMyBusinesses = async (req, res) => {
       })
     );
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       businesses,
       count: businesses.length,
     });
   } catch (error) {
     console.error("Get my businesses error:", error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Failed to fetch businesses",
       error: error.message,
@@ -143,7 +149,6 @@ export const getBusinessWorkspace = async (req, res) => {
   try {
     const { relationId } = req.params;
 
-    // Get agent's MongoDB _id
     const agent = await Users.findOne({ uid: req.user.uid }).select("_id");
 
     if (!agent) {
@@ -153,7 +158,6 @@ export const getBusinessWorkspace = async (req, res) => {
       });
     }
 
-    // Verify relation ownership and active status
     const relation = await BusinessAgentRelation.findOne({
       _id: relationId,
       agentId: agent._id,
@@ -174,7 +178,6 @@ export const getBusinessWorkspace = async (req, res) => {
 
     const businessOwner = relation.businessOwnerId;
 
-    // Fetch business profile
     const businessProfile = await BusinessProfile.findOne({
       userId: businessOwner._id,
     })
@@ -182,31 +185,35 @@ export const getBusinessWorkspace = async (req, res) => {
       .populate("businessTypeId", "name")
       .lean();
 
-    // Get document overview
+    // Document overview (informational)
     const [totalDocs, pendingDocs, approvedDocs, expiredDocs] =
       await Promise.all([
         Document.countDocuments({
-          uploadedBy: businessOwner._id,
-          isDeleted: false,
+          uploadedForUser: businessOwner._id,
+          status: { $ne: "trash" },
         }),
         Document.countDocuments({
-          uploadedBy: businessOwner._id,
-          verificationStatus: "pending",
-          isDeleted: false,
+          uploadedForUser: businessOwner._id,
+          status: "pending",
         }),
         Document.countDocuments({
-          uploadedBy: businessOwner._id,
-          verificationStatus: "approved",
-          isDeleted: false,
+          uploadedForUser: businessOwner._id,
+          status: "approved",
         }),
         Document.countDocuments({
-          uploadedBy: businessOwner._id,
-          expiryDate: { $lt: new Date() },
-          isDeleted: false,
+          uploadedForUser: businessOwner._id,
+          $or: [
+            { status: "expired" },
+            { validUntil: { $lt: new Date() } },
+          ],
         }),
       ]);
 
-    // Get recent bookings (limit to 3)
+    // Compliance (shared logic)
+    const compliance = await calculateComplianceScoreForBusiness(
+      businessOwner._id
+    );
+
     const recentBookings = await Booking.find({
       businessOwnerId: businessOwner._id,
     })
@@ -216,7 +223,6 @@ export const getBusinessWorkspace = async (req, res) => {
       .limit(3)
       .lean();
 
-    // Get booking stats
     const [totalBookings, activeBookings, completedBookings] =
       await Promise.all([
         Booking.countDocuments({ businessOwnerId: businessOwner._id }),
@@ -232,11 +238,7 @@ export const getBusinessWorkspace = async (req, res) => {
         }),
       ]);
 
-    // Calculate compliance score
-    const complianceScore =
-      totalDocs > 0 ? Math.round((approvedDocs / totalDocs) * 100) : 0;
-
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       data: {
         business: {
@@ -257,7 +259,15 @@ export const getBusinessWorkspace = async (req, res) => {
           pending: pendingDocs,
           approved: approvedDocs,
           expired: expiredDocs,
-          complianceScore,
+        },
+
+        complianceScore: compliance.score,
+
+        complianceMeta: {
+          totalRequired: compliance.totalRequired,
+          fulfilled: compliance.fulfilled,
+          missing: compliance.missing,
+          missingItems: compliance.missingItems,
         },
 
         bookingStats: {
@@ -277,10 +287,11 @@ export const getBusinessWorkspace = async (req, res) => {
     });
   } catch (error) {
     console.error("Get business workspace error:", error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Failed to fetch business workspace",
       error: error.message,
     });
   }
 };
+

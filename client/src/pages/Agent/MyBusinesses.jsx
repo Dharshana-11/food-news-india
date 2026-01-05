@@ -146,8 +146,7 @@ const MyBusinesses = () => {
             description="No businesses assigned yet"
           >
             <p className="empty-hint">
-              You will see businesses here once a business owner accepts your
-              invitation
+              You will see businesses here once a business owner invites you.
             </p>
           </Empty>
         </Card>
@@ -203,6 +202,13 @@ const MyBusinesses = () => {
                   >
                     {business.complianceScore}%
                   </span>
+                  {business.complianceMeta && (
+                    <div className="compliance-meta-text">
+                      {business.complianceMeta.fulfilled} /{" "}
+                      {business.complianceMeta.totalRequired} mandatory items
+                      fulfilled
+                    </div>
+                  )}
                 </div>
               </div>
 
