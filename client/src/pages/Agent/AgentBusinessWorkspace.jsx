@@ -216,7 +216,14 @@ const AgentBusinessWorkspace = () => {
               <Card
                 className="action-card"
                 hoverable
-                onClick={() => navigate(ROUTES.BUSINESS_OWNER_DOCUMENT_VAULT)}
+                onClick={() =>
+                  navigate(
+                    ROUTES.AGENT_BUSINESS_DOCUMENTS.replace(
+                      ":relationId",
+                      relationId
+                    )
+                  )
+                }
               >
                 <div className="action-icon" style={{ background: "#ede9fe" }}>
                   <FolderOpenOutlined style={{ color: "#667eea" }} />
@@ -333,7 +340,14 @@ const AgentBusinessWorkspace = () => {
                 <h3 className="section-title">Document Overview</h3>
                 <Button
                   type="link"
-                  onClick={() => navigate(ROUTES.BUSINESS_OWNER_DOCUMENT_VAULT)}
+                  onClick={() =>
+                    navigate(
+                      ROUTES.AGENT_BUSINESS_DOCUMENTS.replace(
+                        ":relationId",
+                        relationId
+                      )
+                    )
+                  }
                 >
                   View Vault
                 </Button>

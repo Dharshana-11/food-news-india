@@ -50,7 +50,7 @@ router.get("/me", verifySession, async (req, res) => {
 });
 
 /**
- * ✏️ UPDATE Self Profile
+ * UPDATE Self Profile
  * @route PUT /users/me
  * @access Logged-in user
  */
@@ -66,7 +66,7 @@ router.put("/me", verifySession, checkDuplicateForUpdate, async (req, res) => {
 });
 
 /**
- * ❌ DELETE Self Account
+ * DELETE Self Account
  * @route DELETE /users/me
  * @access Logged-in user
  */
@@ -78,7 +78,7 @@ router.delete("/me", verifySession, async (req, res) => {
 // ====================== ADMIN & SUPER ADMIN ROUTES ======================
 
 /**
- * ➕ CREATE USER (Admin roles only)
+ * CREATE USER (Admin roles only)
  * @route POST /users/
  * @access Super Admin only
  */
@@ -119,7 +119,7 @@ router.get(
 );
 
 /**
- * ✏️ UPDATE USER By UID
+ * UPDATE USER By UID
  * @route PUT /users/:uid
  * @access Admin & Super Admin
  */
@@ -133,7 +133,7 @@ router.put(
 );
 
 /**
- * ✔️ VERIFY USER
+ * VERIFY USER
  * @route PATCH /users/:uid/verify
  * @access Super Admin only
  */

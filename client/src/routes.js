@@ -92,11 +92,12 @@ export const ROUTES = {
   AGENT_MY_BUSINESSES: "/agent/my-businesses",
   AGENT_BUSINESS_WORKSPACE: "/agent/my-businesses/:relationId",
   AGENT_DOCUMENT_VAULT: "/agent/documents",
+  AGENT_BUSINESS_DOCUMENTS: "/agent/documents/:relationId",
   AGENT_MY_REQUESTS: "/agent/my-requests",
   AGENT_SERVICES: "/agent/services",
   AGENT_MESSAGES: "/agent/messages",
   AGENT_NOTIFICATIONS: "/agent/notifications",
-  AGENT_PROFILE: "/agent/profile",
+  AGENT_PROFILE: "/agent/profile/:uid",
   AGENT_PAYMENTS: "/agent/payments",
   AGENT_HELP_SUPPORT: "/agent/help",
 

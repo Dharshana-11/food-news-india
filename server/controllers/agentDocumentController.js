@@ -52,7 +52,6 @@ export const getAgentDocumentOverview = async (req, res) => {
           .populate("businessTypeId", "name")
           .lean();
 
-        // ✅ TRASH-SAFE document stats
         const [totalDocs, pendingDocs, approvedDocs, expiredDocs] =
           await Promise.all([
             Document.countDocuments({
@@ -309,8 +308,7 @@ export const uploadDocumentForBusiness = async (req, res) => {
       });
     }
 
-    const { relationId, categoryType, categoryId, validFrom, validUntil } =
-      req.body;
+    const { relationId, categoryType, categoryId, validFrom } = req.body;
 
     // Verify relation and permissions
     const relation = await BusinessAgentRelation.findOne({
@@ -326,7 +324,7 @@ export const uploadDocumentForBusiness = async (req, res) => {
       });
     }
 
-    if (!relation.permissions.canUploadDocuments) {
+    if (!relation.permissions?.canUploadDocuments) {
       return res.status(403).json({
         success: false,
         message: "You don't have permission to upload documents",
@@ -341,7 +339,11 @@ export const uploadDocumentForBusiness = async (req, res) => {
       });
     }
 
+    // ============================
     // Validate category
+    // ============================
+    let complianceItem = null;
+
     if (categoryType === "kyc") {
       const kycDoc = await KYCDocument.findById(categoryId);
       if (!kycDoc) {
@@ -351,7 +353,7 @@ export const uploadDocumentForBusiness = async (req, res) => {
         });
       }
     } else if (categoryType === "compliance") {
-      const complianceItem = await ComplianceItem.findById(categoryId);
+      complianceItem = await ComplianceItem.findById(categoryId);
       if (!complianceItem) {
         return res.status(400).json({
           success: false,
@@ -365,10 +367,58 @@ export const uploadDocumentForBusiness = async (req, res) => {
       });
     }
 
+    // ============================
+    // Soft delete existing document (BO parity)
+    // ============================
+    let existingDocument;
+
+    if (categoryType === "kyc") {
+      existingDocument = await Document.findOne({
+        uploadedForUser: relation.businessOwnerId,
+        kycDocumentId: categoryId,
+        status: { $ne: "trash" },
+      });
+    }
+
+    if (categoryType === "compliance") {
+      existingDocument = await Document.findOne({
+        uploadedForUser: relation.businessOwnerId,
+        complianceItemId: categoryId,
+        status: { $ne: "trash" },
+      });
+    }
+
+    if (existingDocument) {
+      existingDocument.status = "trash";
+      await existingDocument.save();
+    }
+
+    // ============================
+    // Compliance validity handling
+    // ============================
+    let computedValidUntil = null;
+
+    if (categoryType === "compliance") {
+      if (!validFrom) {
+        return res.status(400).json({
+          success: false,
+          message: "validFrom is required for compliance documents",
+        });
+      }
+
+      const startDate = new Date(validFrom);
+      computedValidUntil = new Date(
+        startDate.getTime() + complianceItem.validityDays * 24 * 60 * 60 * 1000
+      );
+    }
+
+    // ============================
     // Create document
+    // ============================
     const documentData = {
       uploadedByUser: agent._id,
       uploadedForUser: relation.businessOwnerId,
+      status: "pending",
       file: {
         originalName: req.file.originalname,
         storedName: req.file.filename,
@@ -377,21 +427,14 @@ export const uploadDocumentForBusiness = async (req, res) => {
         fileType: req.file.mimetype.split("/")[1],
         storageProvider: "local",
       },
-      status: "pending",
     };
 
     if (categoryType === "kyc") {
       documentData.kycDocumentId = categoryId;
     } else {
       documentData.complianceItemId = categoryId;
-    }
-
-    if (validFrom) {
       documentData.validFrom = new Date(validFrom);
-    }
-
-    if (validUntil) {
-      documentData.validUntil = new Date(validUntil);
+      documentData.validUntil = computedValidUntil;
     }
 
     const document = await Document.create(documentData);
@@ -403,14 +446,14 @@ export const uploadDocumentForBusiness = async (req, res) => {
       { path: "uploadedByUser", select: "name email" },
     ]);
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: "Document uploaded successfully",
       document,
     });
   } catch (error) {
     console.error("Upload document error:", error);
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Failed to upload document",
       error: error.message,
@@ -473,6 +516,126 @@ export const getDocumentCategories = async (req, res) => {
       success: false,
       message: "Failed to fetch categories",
       error: error.message,
+    });
+  }
+};
+
+/**
+ * DELETE /api/agent/documents/:documentId
+ * ============================================================================
+ * Soft delete a document (move to trash)
+ */
+export const deleteAgentDocument = async (req, res) => {
+  try {
+    const { documentId } = req.params;
+
+    const agent = await Users.findOne({ uid: req.user.uid }).select("_id");
+    if (!agent) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Agent not found" });
+    }
+
+    const document = await Document.findById(documentId);
+    if (!document) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Document not found" });
+    }
+
+    // Verify agent → business relation
+    const relation = await BusinessAgentRelation.findOne({
+      agentId: agent._id,
+      businessOwnerId: document.uploadedForUser,
+      status: "active",
+    }).lean();
+
+    if (!relation) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized to delete this document",
+      });
+    }
+
+    if (!relation.permissions?.canUploadDocuments) {
+      return res.status(403).json({
+        success: false,
+        message: "You don't have permission to delete documents",
+      });
+    }
+
+    document.status = "trash";
+    await document.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Document moved to trash",
+    });
+  } catch (error) {
+    console.error("Delete agent document error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete document",
+    });
+  }
+};
+
+/**
+ * PATCH /api/agent/documents/:documentId/rename
+ * ============================================================================
+ * Rename document (original file name only)
+ */
+export const renameAgentDocument = async (req, res) => {
+  try {
+    const { documentId } = req.params;
+    const { originalName } = req.body;
+
+    if (!originalName || !originalName.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "File name is required",
+      });
+    }
+
+    const agent = await Users.findOne({ uid: req.user.uid }).select("_id");
+    if (!agent) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Agent not found" });
+    }
+
+    const document = await Document.findById(documentId);
+    if (!document) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Document not found" });
+    }
+
+    const relation = await BusinessAgentRelation.findOne({
+      agentId: agent._id,
+      businessOwnerId: document.uploadedForUser,
+      status: "active",
+    }).lean();
+
+    if (!relation || !relation.permissions?.canUploadDocuments) {
+      return res.status(403).json({
+        success: false,
+        message: "You don't have permission to rename documents",
+      });
+    }
+
+    document.file.originalName = originalName.trim();
+    await document.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Document renamed successfully",
+    });
+  } catch (error) {
+    console.error("Rename agent document error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to rename document",
     });
   }
 };

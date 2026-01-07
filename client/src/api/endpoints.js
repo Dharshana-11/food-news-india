@@ -58,4 +58,16 @@ export const ENDPOINTS = {
   AGENT_MY_BUSINESSES: "/agent/businesses",
   AGENT_BUSINESS_WORKSPACE: (relationId) =>
     `/agent/businesses/${relationId}/workspace`,
+
+  // Add these to your existing ENDPOINTS object:
+
+  // ========== AGENT DOCUMENTS ==========
+  AGENT_DOCUMENTS: "/agent/documents",
+  AGENT_BUSINESS_DOCUMENTS: (relationId) =>
+    `/agent/documents/business/${relationId}`,
+  AGENT_DOCUMENT_UPLOAD: "/agent/documents/upload",
+  AGENT_DOCUMENT_CATEGORIES: "/agent/documents/categories",
+  AGENT_DOCUMENT_DELETE: (documentId) => `/agent/documents/${documentId}`,
+  AGENT_DOCUMENT_RENAME: (documentId) =>
+    `/agent/documents/${documentId}/rename`,
 };

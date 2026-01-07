@@ -15,6 +15,8 @@ import {
   getBusinessDocuments,
   uploadDocumentForBusiness,
   getDocumentCategories,
+  deleteAgentDocument,
+  renameAgentDocument,
 } from "../controllers/agentDocumentController.js";
 
 const router = express.Router();
@@ -61,5 +63,15 @@ router.post("/upload", upload.single("file"), uploadDocumentForBusiness);
  * @access Agent only
  */
 router.get("/categories", getDocumentCategories);
+
+/**
+ * DELETE /api/agent/documents/:documentId
+ */
+router.delete("/:documentId", deleteAgentDocument);
+
+/**
+ * PATCH /api/agent/documents/:documentId/rename
+ */
+router.patch("/:documentId/rename", renameAgentDocument);
 
 export default router;
