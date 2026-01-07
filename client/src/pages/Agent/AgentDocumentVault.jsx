@@ -1,7 +1,14 @@
 /**
  * AgentDocumentVault.jsx
  * ============================================================================
- * Agent document vault overview showing all assigned businesses
+ * Agent Document Vault
+ *
+ * Displays an overview of all businesses assigned to the agent, including:
+ * - Compliance score and missing mandatory documents
+ * - Document statistics (total, approved, pending, expired)
+ * - Business location and ownership details
+ *
+ * Provides navigation into each business's document workspace.
  */
 
 import { useState, useEffect } from "react";
@@ -29,6 +36,10 @@ const AgentDocumentVault = () => {
     fetchOverview();
   }, []);
 
+  /**
+   * Fetch document overview for all businesses assigned to the agent.
+   * Handles loading state and error messaging.
+   */
   const fetchOverview = async () => {
     try {
       setLoading(true);
@@ -42,6 +53,12 @@ const AgentDocumentVault = () => {
     }
   };
 
+  /**
+   * Resolve compliance score color based on percentage.
+   *
+   * @param {number} score - Compliance score percentage
+   * @returns {string} Hex color value
+   */
   const getComplianceColor = (score) => {
     if (score >= 80) return "#52c41a";
     if (score >= 50) return "#faad14";

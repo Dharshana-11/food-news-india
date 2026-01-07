@@ -1,7 +1,16 @@
 /**
  * AgentBusinessDocuments.jsx
  * ============================================================================
- * Document vault for a specific business (reuses BO components)
+ * Agent Business Document Vault
+ *
+ * Displays and manages documents for a specific business assigned to an agent.
+ * Reuses Business Owner document vault components with permission-based actions.
+ *
+ * Features:
+ * - Document listing with search and filters
+ * - Status and expiry-based filtering
+ * - Document view, download, rename, and delete
+ * - Conditional document upload based on agent permissions
  */
 
 import { useState, useEffect } from "react";
@@ -36,6 +45,9 @@ const AgentBusinessDocuments = () => {
   const { relationId } = useParams();
   const navigate = useNavigate();
 
+  /* =========================================================================
+     State
+     ========================================================================= */
   const [loading, setLoading] = useState(true);
   const [documents, setDocuments] = useState([]);
   const [stats, setStats] = useState({});
@@ -49,10 +61,21 @@ const AgentBusinessDocuments = () => {
 
   const [uploadModalVisible, setUploadModalVisible] = useState(false);
 
+  /* =========================================================================
+     Effects
+     ========================================================================= */
   useEffect(() => {
     fetchDocuments();
   }, [relationId, categoryFilter, statusFilter, expiryFilter]);
 
+  /* =========================================================================
+     API Calls
+     ========================================================================= */
+
+  /**
+   * Fetch documents for the selected business relation
+   * applying active filters and search criteria.
+   */
   const fetchDocuments = async () => {
     try {
       setLoading(true);
@@ -80,16 +103,31 @@ const AgentBusinessDocuments = () => {
     }
   };
 
+  /* =========================================================================
+     Handlers
+     ========================================================================= */
+
+  /**
+   * Trigger document search with current filters.
+   */
   const handleSearch = () => {
     fetchDocuments();
   };
 
+  /**
+   * Refresh document list after successful upload.
+   */
   const handleUploadSuccess = () => {
     setUploadModalVisible(false);
     fetchDocuments();
     message.success("Document uploaded successfully");
   };
 
+  /**
+   * Open document in a new browser tab.
+   *
+   * @param {Object} doc - Document object
+   */
   const handleView = (doc) => {
     const url = agentDocumentService.getDocumentUrl(doc?.file?.filePath);
     if (!url) return message.error("Unable to load the file");
@@ -97,6 +135,11 @@ const AgentBusinessDocuments = () => {
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
+  /**
+   * Download document file.
+   *
+   * @param {Object} doc - Document object
+   */
   const handleDownload = (doc) => {
     if (!doc?.file?.filePath) {
       message.error("File not available");
@@ -111,6 +154,11 @@ const AgentBusinessDocuments = () => {
     document.body.removeChild(link);
   };
 
+  /**
+   * Soft delete a document after confirmation.
+   *
+   * @param {string} docId - Document ID
+   */
   const handleDelete = async (docId) => {
     Modal.confirm({
       title: "Delete document?",
@@ -130,6 +178,12 @@ const AgentBusinessDocuments = () => {
     });
   };
 
+  /**
+   * Rename a document.
+   *
+   * @param {string} docId - Document ID
+   * @param {string} newName - New file name
+   */
   const handleRename = async (docId, newName) => {
     try {
       await agentDocumentService.renameDocument(docId, {
@@ -142,6 +196,9 @@ const AgentBusinessDocuments = () => {
     }
   };
 
+  /* =========================================================================
+     Loading State
+     ========================================================================= */
   if (loading) {
     return (
       <div className="agent-business-doc-loading">
@@ -150,6 +207,9 @@ const AgentBusinessDocuments = () => {
     );
   }
 
+  /* =========================================================================
+     Render
+     ========================================================================= */
   return (
     <div className="agent-business-doc-container">
       {/* Header */}

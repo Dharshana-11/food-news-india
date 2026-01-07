@@ -1,7 +1,15 @@
 /**
  * UploadDocumentModal.jsx (Agent Version)
  * ============================================================================
- * Modal for agents to upload documents for businesses
+ * Upload Document Modal
+ *
+ * Modal component that allows agents to upload documents for an assigned
+ * business. Supports both KYC and Compliance document uploads with:
+ * - Category selection
+ * - File validation (type & size)
+ * - Compliance validity date handling
+ *
+ * Upload permissions and category availability are enforced via backend APIs.
  */
 
 import { useState, useEffect } from "react";
@@ -45,6 +53,11 @@ const UploadDocumentModal = ({ visible, onClose, onSuccess, relationId }) => {
   /* =========================================================================
      API
      ========================================================================= */
+
+  /**
+   * Fetch available document categories (KYC & Compliance)
+   * for the selected business relation.
+   */
   const fetchCategories = async () => {
     try {
       const response =
@@ -62,6 +75,16 @@ const UploadDocumentModal = ({ visible, onClose, onSuccess, relationId }) => {
   /* =========================================================================
      Upload Handler
      ========================================================================= */
+
+  /**
+   * Handle document upload submission.
+   *
+   * Validates:
+   * - File selection
+   * - Compliance validity date (if applicable)
+   *
+   * Submits multipart form data to the backend.
+   */
   const handleUpload = async (values) => {
     if (fileList.length === 0) {
       message.error("Please select a file to upload");
@@ -106,6 +129,17 @@ const UploadDocumentModal = ({ visible, onClose, onSuccess, relationId }) => {
   /* =========================================================================
      Upload Validation
      ========================================================================= */
+
+  /**
+   * Validate file before upload.
+   *
+   * Rules:
+   * - Only one file allowed
+   * - PDF or image formats only
+   * - Maximum size: 10MB
+   *
+   * Prevents auto-upload and manages local file state.
+   */
   const beforeUpload = (file) => {
     if (fileList.length > 0) {
       message.warning("Only one file allowed");
@@ -139,6 +173,9 @@ const UploadDocumentModal = ({ visible, onClose, onSuccess, relationId }) => {
     return false; // prevent auto upload
   };
 
+  /**
+   * Remove selected file from upload list.
+   */
   const handleRemove = () => {
     setFileList([]);
   };

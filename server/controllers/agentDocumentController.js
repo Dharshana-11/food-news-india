@@ -1,7 +1,15 @@
 /**
  * agentDocumentController.js
  * ============================================================================
- * Controller for agent to manage documents across assigned businesses
+ * Agent Document Controller
+ *
+ * Handles document-related operations performed by agents for their
+ * assigned businesses, including:
+ * - Business-level document overview
+ * - Business-specific document listing with filters
+ * - Document upload with permission enforcement
+ * - Category retrieval (KYC & Compliance)
+ * - Soft delete and rename actions
  */
 
 import BusinessAgentRelation from "../models/BusinessAgentRelation.js";
@@ -14,8 +22,14 @@ import { calculateComplianceScoreForBusiness } from "../services/complianceScore
 
 /**
  * GET /api/agent/documents
- * ============================================================================
- * List all businesses with document stats and compliance scores
+ * ----------------------------------------------------------------------------
+ * Fetch an overview of all active businesses assigned to the agent.
+ *
+ * Includes:
+ * - Business profile details
+ * - Document statistics (total, pending, approved, expired)
+ * - Compliance score and missing items
+ * - Agent permissions and assignment metadata
  */
 export const getAgentDocumentOverview = async (req, res) => {
   try {
@@ -128,8 +142,16 @@ export const getAgentDocumentOverview = async (req, res) => {
 
 /**
  * GET /api/agent/documents/business/:relationId
- * ============================================================================
- * Get documents for a specific business
+ * ----------------------------------------------------------------------------
+ * Fetch documents for a specific business assigned to the agent.
+ *
+ * Supports filtering by:
+ * - category (kyc | compliance)
+ * - status (pending | approved | expired)
+ * - expiry (expiring_soon | expired)
+ * - search text (category name or file name)
+ *
+ * Returns matching documents, stats, and agent permissions.
  */
 export const getBusinessDocuments = async (req, res) => {
   try {
@@ -167,7 +189,7 @@ export const getBusinessDocuments = async (req, res) => {
     const businessOwner = relation.businessOwnerId;
 
     /* --------------------------------------------------
-     * Base filter (TRASH SAFE)
+     * Base filter (trash-safe)
      * -------------------------------------------------- */
     const filter = {
       uploadedForUser: businessOwner._id,
@@ -239,7 +261,7 @@ export const getBusinessDocuments = async (req, res) => {
     }
 
     /* --------------------------------------------------
-     * Stats (MATCHES LIST)
+     * Stats (matches list)
      * -------------------------------------------------- */
     const [totalDocs, pendingDocs, approvedDocs, expiredDocs] =
       await Promise.all([
@@ -294,8 +316,17 @@ export const getBusinessDocuments = async (req, res) => {
 
 /**
  * POST /api/agent/documents/upload
- * ============================================================================
- * Upload document for a business (respects permissions)
+ * ----------------------------------------------------------------------------
+ * Upload a document for a business.
+ *
+ * Enforces:
+ * - Active agent-business relation
+ * - Upload permission check
+ * - Category validation (KYC or Compliance)
+ *
+ * Notes:
+ * - Existing documents of the same category are soft-deleted
+ * - Compliance documents require validFrom to compute expiry
  */
 export const uploadDocumentForBusiness = async (req, res) => {
   try {
@@ -463,8 +494,12 @@ export const uploadDocumentForBusiness = async (req, res) => {
 
 /**
  * GET /api/agent/documents/categories
- * ============================================================================
- * Get available document categories for a business
+ * ----------------------------------------------------------------------------
+ * Retrieve available document categories for agent uploads.
+ *
+ * Returns:
+ * - Active KYC document categories
+ * - Active compliance item categories
  */
 export const getDocumentCategories = async (req, res) => {
   try {
@@ -522,8 +557,12 @@ export const getDocumentCategories = async (req, res) => {
 
 /**
  * DELETE /api/agent/documents/:documentId
- * ============================================================================
- * Soft delete a document (move to trash)
+ * ----------------------------------------------------------------------------
+ * Soft delete a document by moving it to trash.
+ *
+ * Requires:
+ * - Active agent-business relation
+ * - Document upload/delete permission
  */
 export const deleteAgentDocument = async (req, res) => {
   try {
@@ -582,8 +621,12 @@ export const deleteAgentDocument = async (req, res) => {
 
 /**
  * PATCH /api/agent/documents/:documentId/rename
- * ============================================================================
- * Rename document (original file name only)
+ * ----------------------------------------------------------------------------
+ * Rename a document by updating the original file name only.
+ *
+ * Notes:
+ * - Stored file name and storage path remain unchanged
+ * - Requires active agent-business relation and permission
  */
 export const renameAgentDocument = async (req, res) => {
   try {
