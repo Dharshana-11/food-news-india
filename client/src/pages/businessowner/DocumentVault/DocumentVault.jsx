@@ -14,7 +14,7 @@ import {
   FilterOutlined,
   FolderOpenOutlined,
 } from "@ant-design/icons";
-import AppLayout from "../../../layouts/AppLayout.jsx";
+
 import ROLES from "../../../constants/roles.js";
 import KYCGuard from "../../../components/KYCGuard/KYCGuard.jsx";
 import DocumentCard from "./DocumentCard.jsx";

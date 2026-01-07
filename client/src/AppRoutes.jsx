@@ -55,7 +55,9 @@ import ServiceDetails from "./pages/BusinessOwner/ServiceProvider/ServiceDetails
 import AgentDashboard from "./pages/Agent/AgentDashboard";
 import MyRequests from "./pages/Agent/MyRequests";
 import MyBusinesses from "./pages/Agent/MyBusinesses";
-import AgentBusinessWorkspace from "./pages/Agent/AgentBusinessWorkSpace";
+import AgentBusinessWorkspace from "./pages/Agent/AgentBusinessWorkspace";
+import AgentDocumentVault from "./pages/Agent/AgentDocumentVault";
+import AgentBusinessDocuments from "./pages/Agent/AgentBusinessDocuments";
 
 const AppRoutes = () => {
   const { currentUser, loading } = useAuth();
@@ -299,6 +301,14 @@ const AppRoutes = () => {
         <Route
           path={ROUTES.AGENT_BUSINESS_WORKSPACE}
           element={<AgentBusinessWorkspace />}
+        />
+        <Route
+          path={ROUTES.AGENT_DOCUMENT_VAULT}
+          element={<AgentDocumentVault />}
+        />
+        <Route
+          path={ROUTES.AGENT_BUSINESS_DOCUMENTS}
+          element={<AgentBusinessDocuments />}
         />
       </Route>
     </Routes>

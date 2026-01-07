@@ -1,14 +1,16 @@
 /**
  * AgentBusinessWorkspace.jsx
  * ============================================================================
- * Lite dashboard for agents to manage a specific business
- * Restricted version inspired by BusinessOwnerDashboard
+ * Agent Business Workspace
+ *
+ * Lightweight dashboard for agents to manage a specific assigned business.
+ * This is a restricted version inspired by the Business Owner dashboard.
  *
  * Features:
- * - Document overview
- * - Recent bookings
- * - Compliance status
- * - Permission-based actions
+ * - Document overview and status
+ * - Recent bookings summary
+ * - Compliance score and missing documents
+ * - Permission-based quick actions
  */
 
 import { useState, useEffect } from "react";
@@ -63,6 +65,11 @@ const AgentBusinessWorkspace = () => {
   /* =========================================================================
      API Calls
      ========================================================================= */
+
+  /**
+   * Fetch workspace data for the selected business.
+   * Handles loading and error states.
+   */
   const fetchWorkspace = async () => {
     try {
       setLoading(true);
@@ -81,6 +88,13 @@ const AgentBusinessWorkspace = () => {
   /* =========================================================================
      Helpers
      ========================================================================= */
+
+  /**
+   * Get tag color based on booking status.
+   *
+   * @param {string} status - Booking status
+   * @returns {string} Ant Design tag color
+   */
   const getStatusColor = (status) => {
     const colors = {
       pending: "orange",
@@ -94,6 +108,12 @@ const AgentBusinessWorkspace = () => {
     return colors[status] || "default";
   };
 
+  /**
+   * Convert booking status to a user-friendly label.
+   *
+   * @param {string} status - Booking status
+   * @returns {string} Display label
+   */
   const getStatusLabel = (status) => {
     const labels = {
       in_progress: "In Progress",
@@ -102,6 +122,12 @@ const AgentBusinessWorkspace = () => {
     return labels[status] || status.charAt(0).toUpperCase() + status.slice(1);
   };
 
+  /**
+   * Format date into a readable Indian locale format.
+   *
+   * @param {string} dateString - ISO date string
+   * @returns {string} Formatted date
+   */
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
     return new Date(dateString).toLocaleDateString("en-IN", {
@@ -112,7 +138,7 @@ const AgentBusinessWorkspace = () => {
   };
 
   /* =========================================================================
-     Loading State
+     Loading & Error States
      ========================================================================= */
   if (loading) {
     return (
@@ -216,7 +242,14 @@ const AgentBusinessWorkspace = () => {
               <Card
                 className="action-card"
                 hoverable
-                onClick={() => navigate(ROUTES.BUSINESS_OWNER_DOCUMENT_VAULT)}
+                onClick={() =>
+                  navigate(
+                    ROUTES.AGENT_BUSINESS_DOCUMENTS.replace(
+                      ":relationId",
+                      relationId
+                    )
+                  )
+                }
               >
                 <div className="action-icon" style={{ background: "#ede9fe" }}>
                   <FolderOpenOutlined style={{ color: "#667eea" }} />
@@ -333,7 +366,14 @@ const AgentBusinessWorkspace = () => {
                 <h3 className="section-title">Document Overview</h3>
                 <Button
                   type="link"
-                  onClick={() => navigate(ROUTES.BUSINESS_OWNER_DOCUMENT_VAULT)}
+                  onClick={() =>
+                    navigate(
+                      ROUTES.AGENT_BUSINESS_DOCUMENTS.replace(
+                        ":relationId",
+                        relationId
+                      )
+                    )
+                  }
                 >
                   View Vault
                 </Button>
