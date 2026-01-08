@@ -176,7 +176,7 @@ export const getUserProfile = () => axios.get(`${API_URL}/api/users/me`);
  * await updateSelfProfile({ name: 'New Name', email: 'new@example.com' });
  */
 export const updateSelfProfile = async (data) => {
-  const res = await axios.put(`${API_URL}/api/users/me`, data);
+  const res = await axios.patch(`${API_URL}/api/users/me`, data);
   return res;
 };
 

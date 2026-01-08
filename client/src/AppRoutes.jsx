@@ -310,6 +310,7 @@ const AppRoutes = () => {
           path={ROUTES.AGENT_BUSINESS_DOCUMENTS}
           element={<AgentBusinessDocuments />}
         />
+        <Route path={ROUTES.AGENT_PROFILE} element={<ProfileSelf />} />
       </Route>
     </Routes>
   );
