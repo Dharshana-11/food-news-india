@@ -95,6 +95,12 @@ export const ROUTES = {
   AGENT_BUSINESS_DOCUMENTS: "/agent/documents/:relationId",
   AGENT_MY_REQUESTS: "/agent/my-requests",
   AGENT_SERVICES: "/agent/services",
+  AGENT_MY_SERVICES: "/agent/services",
+  AGENT_BOOK_SERVICES: "/agent/services/book",
+  AGENT_SERVICE_PROVIDERS: "/agent/services/book/:serviceId",
+  AGENT_PROVIDER_DETAILS: "/agent/services/book/:serviceId/:providerId",
+  AGENT_MY_BOOKINGS: "/agent/services/bookings",
+  AGENT_SERVICE_DETAILS: "/agent/services/:bookingId",
   AGENT_MESSAGES: "/agent/messages",
   AGENT_NOTIFICATIONS: "/agent/notifications",
   AGENT_PROFILE: "/agent/profile/",
@@ -118,8 +124,8 @@ export const ROUTES = {
   BUSINESS_OWNER_SERVICES: "/business-owner/services",
   BUSINESS_OWNER_BOOK_SERVICES: "/business-owner/services/book",
   BUSINESS_OWNER_SERVICE_PROVIDERS: "/business-owner/services/book/:serviceId",
-  BUSINESS_OWNER_PROVIDER_DETAILS:
-    "/business-owner/services/book/:serviceId/:providerId",
   BUSINESS_OWNER_MY_BOOKINGS: "/business-owner/services/bookings",
   BUSINESS_OWNER_SERVICE_DETAILS: "/business-owner/services/:bookingId",
+  BUSINESS_OWNER_PROVIDER_DETAILS:
+    "business-owner/services/book/:serviceId/:providerId",
 };

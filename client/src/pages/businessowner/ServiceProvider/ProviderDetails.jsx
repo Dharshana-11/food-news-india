@@ -18,14 +18,26 @@ import {
   EnvironmentOutlined,
   FileTextOutlined,
 } from "@ant-design/icons";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import myServiceServices from "../../../services/myServicesService";
 import bookingService from "../../../services/bookingService";
 import "./ProviderDetails.css";
+import { useAgentContext } from "../../../context/AgentContext";
+import { useAuth } from "../../../context/AuthContext";
+import ROLES from "../../../constants/roles";
 
 const { TextArea } = Input;
 const { Title, Text } = Typography;
 
+/**
+ * ProviderDetails
+ * -----------------------------------------------------------------------------
+ * Shows service provider details and handles booking.
+ *
+ * SUPPORTS BOTH:
+ * - Business Owner: businessOwnerId = current user
+ * - Agent: businessOwnerId from navigation state
+ */
 const ProviderDetails = () => {
   const [service, setService] = useState(null);
   const [provider, setProvider] = useState(null);
@@ -33,6 +45,10 @@ const ProviderDetails = () => {
   const [bookingModal, setBookingModal] = useState(false);
   const [notes, setNotes] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const { currentUser } = useAuth();
+  const role = currentUser?.role;
+
+  const { activeBusiness } = useAgentContext();
 
   const { serviceId, providerId } = useParams();
   const navigate = useNavigate();
@@ -65,20 +81,38 @@ const ProviderDetails = () => {
   const handleBooking = async () => {
     try {
       setSubmitting(true);
-      await bookingService.createBooking({
+
+      if (role === ROLES.AGENT && !activeBusiness) {
+        message.error("Please select a business before booking");
+        return;
+      }
+
+      const bookingData = {
         complianceItemId: serviceId,
         providerId,
         agreedPrice: provider.priceForThisItem,
         estimatedDays: provider.estimatedDaysForThisItem,
         notes,
-      });
+      };
+
+      console.log(role, activeBusiness, bookingData);
+      if (role === ROLES.AGENT) {
+        bookingData.businessOwnerId = activeBusiness;
+      }
+
+      await bookingService.createBooking(bookingData);
 
       message.success("Service booked successfully!");
       setBookingModal(false);
-      navigate("/business-owner/services/bookings");
+
+      navigate(
+        role === ROLES.AGENT
+          ? "/agent/services/bookings"
+          : "/business-owner/services/bookings"
+      );
     } catch (error) {
       console.error("Error creating booking:", error);
-      message.error("Failed to book service");
+      message.error(error.message || "Failed to book service");
     } finally {
       setSubmitting(false);
     }

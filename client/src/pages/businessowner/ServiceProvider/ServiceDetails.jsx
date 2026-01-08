@@ -87,10 +87,7 @@ const ServiceDetails = () => {
       okButtonProps: { danger: true },
       onOk: async () => {
         try {
-          await bookingService.cancelBooking(
-            bookingId,
-            "Cancelled by customer"
-          );
+          await bookingService.cancelBooking(bookingId);
           message.success("Booking cancelled successfully");
           fetchBookingDetails();
         } catch (error) {

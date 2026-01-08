@@ -16,8 +16,11 @@ import {
   TrophyOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "../../../context/AuthContext";
+import ROLES from "../../../constants/roles";
 import myServiceServices from "../../../services/myServicesService";
 import "./ServiceProviders.css";
+import { ROUTES } from "../../../routes";
 
 const { Title, Text } = Typography;
 
@@ -39,6 +42,8 @@ const ServiceProviders = () => {
 
   const { serviceId } = useParams();
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
+  const role = currentUser?.role;
 
   useEffect(() => {
     if (serviceId) {
@@ -91,6 +96,15 @@ const ServiceProviders = () => {
     );
   }
 
+  const goToProviderDetails = (providerId) => {
+    if (role === ROLES.AGENT) {
+      navigate(`/agent/services/book/${serviceId}/${providerId}`);
+    } else {
+      // default = business owner
+      navigate(`/business-owner/services/book/${serviceId}/${providerId}`);
+    }
+  };
+
   return (
     <div className="service-providers-page">
       <div className="service-providers-container">
@@ -135,11 +149,7 @@ const ServiceProviders = () => {
                   key={provider._id}
                   hoverable
                   className="service-providers-card top-rated"
-                  onClick={() =>
-                    navigate(
-                      `/business-owner/services/book/${serviceId}/${provider._id}`
-                    )
-                  }
+                  onClick={() => goToProviderDetails(provider._id)}
                 >
                   <div className="service-providers-card-content">
                     <div className="service-providers-avatar">
@@ -189,11 +199,7 @@ const ServiceProviders = () => {
                   key={provider._id}
                   hoverable
                   className="service-providers-card"
-                  onClick={() =>
-                    navigate(
-                      `/business-owner/services/book/${serviceId}/${provider._id}`
-                    )
-                  }
+                  onClick={() => goToProviderDetails(provider._id)}
                 >
                   <div className="service-providers-card-content">
                     <div className="service-providers-avatar">
