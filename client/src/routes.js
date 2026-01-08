@@ -97,7 +97,7 @@ export const ROUTES = {
   AGENT_SERVICES: "/agent/services",
   AGENT_MESSAGES: "/agent/messages",
   AGENT_NOTIFICATIONS: "/agent/notifications",
-  AGENT_PROFILE: "/agent/profile/:uid",
+  AGENT_PROFILE: "/agent/profile/",
   AGENT_PAYMENTS: "/agent/payments",
   AGENT_HELP_SUPPORT: "/agent/help",
 

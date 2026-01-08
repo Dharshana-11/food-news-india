@@ -1,6 +1,6 @@
 import User from "../models/User.js";
 import ROLES from "../utils/constants/roles.js";
-import firebaseAdmin from "../firebase/firebase.js";  
+import firebaseAdmin from "../firebase/firebase.js";
 import sendNotificationUtil from "../utils/sendNotification.js";
 
 /**
@@ -35,28 +35,28 @@ import sendNotificationUtil from "../utils/sendNotification.js";
  *   "isVerified": true
  * }
  */
-export const createUser = async (req, res)=>{
-  try{
-    const role=req.body.role;
+export const createUser = async (req, res) => {
+  try {
+    const role = req.body.role;
 
     //Create user in Firebase
     let firebaseUser;
-    if (role===ROLES.ADMIN || role===ROLES.SUPER_ADMIN){
-      firebaseUser=await firebaseAdmin.auth().createUser({
+    if (role === ROLES.ADMIN || role === ROLES.SUPER_ADMIN) {
+      firebaseUser = await firebaseAdmin.auth().createUser({
         email: req.body.email,
         password: req.body.password,
         displayName: req.body.name,
       });
     }
-    if (role!==ROLES.ADMIN && role!==ROLES.SUPER_ADMIN){
-      firebaseUser=await firebaseAdmin.auth().createUser({
+    if (role !== ROLES.ADMIN && role !== ROLES.SUPER_ADMIN) {
+      firebaseUser = await firebaseAdmin.auth().createUser({
         phoneNumber: req.body.phone,
         displayName: req.body.name,
       });
     }
 
     //Save user in MongoDB with firebase uid
-    const newUser=new User({
+    const newUser = new User({
       uid: firebaseUser.uid,
       name: req.body.name,
       email: req.body.email,
@@ -64,11 +64,11 @@ export const createUser = async (req, res)=>{
       role: req.body.role,
       isVerified: req.body.isVerified || false,
     });
-    const savedUser=await newUser.save(newUser); 
+    const savedUser = await newUser.save(newUser);
     //await is used because .save() returns a promise
     //savedUser - contains saved document
 
-    res.status(201).json({"User created":savedUser});
+    res.status(201).json({ "User created": savedUser });
 
     await sendNotificationUtil({
       event: "user_created",
@@ -76,14 +76,14 @@ export const createUser = async (req, res)=>{
         name: savedUser.name,
         role: savedUser.role,
         email: savedUser.email,
-        phone: savedUser.phone
+        phone: savedUser.phone,
       },
       target: {
-        roles: ["admin", "super_admin"]  // notify admins
-      }
+        roles: ["admin", "super_admin"], // notify admins
+      },
     });
-  } catch (err){
-    res.status(400).json({error:err.message});
+  } catch (err) {
+    res.status(400).json({ error: err.message });
   }
 };
 
@@ -103,8 +103,8 @@ export const createUser = async (req, res)=>{
  * @param {Object} res - Express response object
  * @returns {Object} Paginated list of users
  */
-export const getAllUsers = async (req,res)=>{
-  try{
+export const getAllUsers = async (req, res) => {
+  try {
     const {
       role,
       status,
@@ -118,7 +118,7 @@ export const getAllUsers = async (req,res)=>{
     } = req.query;
 
     // Building filters dynamically
-    const filters={};
+    const filters = {};
 
     // always exclude deleted accounts
     filters.isDeleted = false;
@@ -129,11 +129,11 @@ export const getAllUsers = async (req,res)=>{
       if (role && Object.values(ROLES).includes(role)) {
         filters.role = role;
       }
-    } else if(req.user.role===ROLES.BUSINESS_OWNER){
+    } else if (req.user.role === ROLES.BUSINESS_OWNER) {
       //Default filter restriction for business owner (applied when user does not provide a query param)
-      filters.role={$in:[ROLES.AGENT,ROLES.SERVICE_PROVIDER]}
-      if ((role) && [ROLES.AGENT,ROLES.SERVICE_PROVIDER].includes(role)){
-        filters.role = role
+      filters.role = { $in: [ROLES.AGENT, ROLES.SERVICE_PROVIDER] };
+      if (role && [ROLES.AGENT, ROLES.SERVICE_PROVIDER].includes(role)) {
+        filters.role = role;
       }
     } else if (req.user.role === ROLES.AGENT) {
       // AGENT can see only service providers
@@ -148,8 +148,8 @@ export const getAllUsers = async (req,res)=>{
       filters.uid = req.user.uid;
     }
 
-    if ((role) && (Object.values(ROLES).includes(role))){
-      filters.role=role;
+    if (role && Object.values(ROLES).includes(role)) {
+      filters.role = role;
     }
 
     if (status && ["pending", "verified", "invalid"].includes(status)) {
@@ -167,25 +167,29 @@ export const getAllUsers = async (req,res)=>{
     }
 
     //Building sort dynamically
-    const sort={}; //sort object where key = field name and value = 1 (ascending) or -1 (descending)
-    const sortOrder= (order === "desc" ? -1 : 1);
-    sort[sortBy]=sortOrder;
+    const sort = {}; //sort object where key = field name and value = 1 (ascending) or -1 (descending)
+    const sortOrder = order === "desc" ? -1 : 1;
+    sort[sortBy] = sortOrder;
 
     // Pagination calculation
     const skip = (parseInt(page) - 1) * parseInt(limit);
 
     // Total count for pagination
-    const totalUsers = await User.countDocuments(filters);  //total users matching the filters
+    const totalUsers = await User.countDocuments(filters); //total users matching the filters
 
     //Fetch Users
-    const users=await User.find(filters).sort(sort).skip(skip).limit(parseInt(limit));
+    const users = await User.find(filters)
+      .sort(sort)
+      .skip(skip)
+      .limit(parseInt(limit));
 
     return res.status(200).json({
       total: totalUsers,
       page: parseInt(page),
       limit: parseInt(limit),
-      users});
-  }catch(err){
+      users,
+    });
+  } catch (err) {
     return res.status(500).json({ error: err.message });
   }
 };
@@ -208,26 +212,26 @@ export const getAllUsers = async (req,res)=>{
  * @throws {403} If user doesn't have permission to update
  */
 export const updateUserById = async (req, res) => {
-  try{
-    const currentUserUid=req.userData.uid;
-    const { name, email, phone }=req.body;
+  try {
+    const currentUserUid = req.userData.uid;
+    const { name, email, phone } = req.body;
 
     // Building update object dynamically
-    let updateData={};
+    let updateData = {};
 
-    if(name) updateData.name=name;
-    if(email) updateData.email=email;
-    if(phone) updateData.phone=phone;
+    if (name) updateData.name = name;
+    if (email) updateData.email = email;
+    if (phone) updateData.phone = phone;
 
     //Update user in db
     const updatedUser = await User.findOneAndUpdate(
-        { uid : currentUserUid},
-        { $set: updateData },
-        { new: true } // returns updated document
-      );
+      { uid: currentUserUid },
+      { $set: updateData },
+      { new: true } // returns updated document
+    );
 
     return res.status(200).json({ message: "User updated", user: updatedUser });
-  }catch(err){
+  } catch (err) {
     return res.status(500).json({ error: err.message });
   }
 };
@@ -267,18 +271,16 @@ export const verifyUser = async (req, res) => {
     sendNotificationUtil({
       event: "user_verified",
       payload: {
-        name: user.name
+        name: user.name,
       },
       target: {
-        uid: user.uid
-      }
+        uid: user.uid,
+      },
     }).catch(console.error);
-
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
 };
-
 
 /**
  * Rejects a user's account (marks as unverified)
@@ -318,13 +320,76 @@ export const rejectUser = async (req, res) => {
       event: "user_rejected",
       payload: {
         name: user.name,
-        reason: user.rejectionReason
+        reason: user.rejectionReason,
       },
       target: {
-        uid: user.uid
-      }
+        uid: user.uid,
+      },
     }).catch(console.error);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+};
 
+/**
+ * Get current logged-in user's profile
+ * @route GET /api/users/me
+ * @access Logged-in user
+ */
+export const getMyProfile = async (req, res) => {
+  try {
+    const user = await User.findOne({ uid: req.user.uid });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    return res.status(200).json(user);
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+};
+
+/**
+ * Update current logged-in user's profile
+ * Rules:
+ * - name: everyone
+ * - email: ADMIN / SUPER_ADMIN only
+ * - phone: non-admin users only
+ */
+export const updateMyProfile = async (req, res) => {
+  try {
+    const role = req.user.role;
+    const updateData = {};
+
+    // name → everyone
+    if (req.body.name !== undefined) {
+      updateData.name = req.body.name;
+    }
+
+    // email → admin only
+    if (
+      req.body.email !== undefined &&
+      [ROLES.ADMIN, ROLES.SUPER_ADMIN].includes(role)
+    ) {
+      updateData.email = req.body.email;
+    }
+
+    // phone → non-admin only
+    if (
+      req.body.phone !== undefined &&
+      ![ROLES.ADMIN, ROLES.SUPER_ADMIN].includes(role)
+    ) {
+      updateData.phone = req.body.phone;
+    }
+
+    updateData.updatedBy = req.user.uid;
+
+    const updatedUser = await User.findOneAndUpdate(
+      { uid: req.user.uid },
+      { $set: updateData },
+      { new: true }
+    );
+
+    return res.status(200).json(updatedUser);
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }

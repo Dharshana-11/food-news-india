@@ -8,6 +8,8 @@ import {
   updateUserById,
   verifyUser,
   rejectUser,
+  getMyProfile,
+  updateMyProfile,
 } from "../controllers/userController.js";
 import validateRole from "../middleware/validateRole.js";
 import checkDuplicateUser from "../middleware/checkDuplicateUser.js";
@@ -27,7 +29,7 @@ const router = express.Router();
  *
  *  All routes require **verifySession** before accessing user data.
  *
- * ⚠️ Super Admin-only actions:
+ * Super Admin-only actions:
  * - Create user
  * - Verify / Reject user
  * - Delete user
@@ -43,27 +45,14 @@ const router = express.Router();
  * @route GET /users/me
  * @access Logged-in user
  */
-router.get("/me", verifySession, async (req, res) => {
-  const user = await User.findOne({ uid: req.user.uid });
-  if (!user) return res.status(404).json({ error: "User not found" });
-  res.status(200).json(user);
-});
+router.get("/me", verifySession, getMyProfile);
 
 /**
  * UPDATE Self Profile
  * @route PUT /users/me
  * @access Logged-in user
  */
-router.put("/me", verifySession, checkDuplicateForUpdate, async (req, res) => {
-  const updateData = { ...req.body };
-
-  const user = await User.findOneAndUpdate(
-    { uid: req.user.uid },
-    { $set: updateData },
-    { new: true }
-  );
-  res.status(200).json(user);
-});
+router.patch("/me", verifySession, updateMyProfile);
 
 /**
  * DELETE Self Account
@@ -71,8 +60,11 @@ router.put("/me", verifySession, checkDuplicateForUpdate, async (req, res) => {
  * @access Logged-in user
  */
 router.delete("/me", verifySession, async (req, res) => {
-  await User.findOneAndDelete({ uid: req.user.uid });
-  res.status(200).json({ message: "Account deleted successfully" });
+  await User.findOneAndUpdate(
+    { uid: req.user.uid },
+    { $set: { isDeleted: true } }
+  );
+  res.status(200).json({ message: "Account deactivated" });
 });
 
 // ====================== ADMIN & SUPER ADMIN ROUTES ======================
