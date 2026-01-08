@@ -2,6 +2,7 @@ import ServiceBooking from "../models/ServiceBooking.js";
 import ComplianceItem from "../models/ComplianceItem.js";
 import ServiceProvider from "../models/ServiceProvider.js";
 import User from "../models/User.js";
+import { getAgentBusinessOwnerIds } from "../services/agentBusinessAccess.service.js";
 import ROLES from "../utils/constants/roles.js";
 
 /**
@@ -9,12 +10,18 @@ import ROLES from "../utils/constants/roles.js";
  *
  * @route   POST /api/bookings
  * @body    { complianceItemId, providerId, agreedPrice?, estimatedDays?, notes? }
- * @access  Business Owner
+ * @access  Business Owner, Agent
  */
 export const createBooking = async (req, res) => {
   try {
-    const { complianceItemId, providerId, agreedPrice, estimatedDays, notes } =
-      req.body;
+    const {
+      complianceItemId,
+      providerId,
+      agreedPrice,
+      estimatedDays,
+      notes,
+      businessOwnerId: requestedBusinessOwnerId,
+    } = req.body;
 
     // Resolve Mongo user from Firebase session
     const user = await User.findOne({ uid: req.user.uid });
@@ -24,7 +31,31 @@ export const createBooking = async (req, res) => {
         .json({ success: false, message: "User not found" });
     }
 
-    const businessOwnerId = user._id;
+    let businessOwnerId;
+
+    // AGENT FLOW (authorization already done in middleware)
+    if (req.user.role === ROLES.AGENT) {
+      if (!requestedBusinessOwnerId) {
+        return res.status(400).json({
+          success: false,
+          message: "Business selection required for agents",
+        });
+      }
+
+      businessOwnerId = requestedBusinessOwnerId;
+    }
+
+    // BUSINESS OWNER FLOW
+    else if (req.user.role === ROLES.BUSINESS_OWNER) {
+      businessOwnerId = user._id;
+    }
+
+    if (!businessOwnerId) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized to create booking",
+      });
+    }
 
     // Fetch compliance item and provider
     const [complianceItem, provider] = await Promise.all([
@@ -33,15 +64,17 @@ export const createBooking = async (req, res) => {
     ]);
 
     if (!complianceItem || complianceItem.status !== "active") {
-      return res
-        .status(404)
-        .json({ success: false, message: "Service not found" });
+      return res.status(404).json({
+        success: false,
+        message: "Service not found",
+      });
     }
 
     if (!provider || provider.status !== "active") {
-      return res
-        .status(404)
-        .json({ success: false, message: "Provider not found" });
+      return res.status(404).json({
+        success: false,
+        message: "Provider not found",
+      });
     }
 
     // Resolve pricing
@@ -50,7 +83,7 @@ export const createBooking = async (req, res) => {
     );
 
     const finalPrice = agreedPrice ?? pricing?.price;
-    const finalDays = estimatedDays ?? pricing?.estimatedDays ?? 7;
+    const finalDays = estimatedDays ?? pricing?.estimatedDays;
 
     // Calculate expected completion date
     const expectedCompletionDate = new Date();
@@ -61,6 +94,7 @@ export const createBooking = async (req, res) => {
     // Create booking
     const booking = await ServiceBooking.create({
       businessOwnerId,
+      createdBy: user._id,
       complianceItemId,
       providerId,
       agreedPrice: finalPrice,
@@ -70,8 +104,11 @@ export const createBooking = async (req, res) => {
       timeline: [
         {
           status: "pending",
-          message: "Booking request submitted",
-          updatedBy: businessOwnerId,
+          message:
+            req.user.role === ROLES.AGENT
+              ? "Booking created by agent on behalf of business"
+              : "Booking request submitted",
+          updatedBy: user._id,
         },
       ],
     });
@@ -79,9 +116,10 @@ export const createBooking = async (req, res) => {
     res.status(201).json({ success: true, data: booking });
   } catch (error) {
     console.error("Error creating booking:", error);
-    res
-      .status(500)
-      .json({ success: false, message: "Failed to create booking" });
+    res.status(500).json({
+      success: false,
+      message: "Failed to create booking",
+    });
   }
 };
 
@@ -89,12 +127,13 @@ export const createBooking = async (req, res) => {
  * Get bookings for current user
  *
  * @route   GET /api/bookings
- * @query   { status, sortBy, sortOrder, limit, page }
+ * @query   { status, businessOwnerId?, sortBy, sortOrder, limit, page }
  */
 export const getMyBookings = async (req, res) => {
   try {
     const {
       status,
+      businessOwnerId: filterBusinessOwnerId,
       sortBy = "bookedAt",
       sortOrder = "desc",
       limit = 20,
@@ -106,37 +145,86 @@ export const getMyBookings = async (req, res) => {
 
     const query = {};
 
-    // Role-based filtering
-    if (userRole === ROLES.BUSINESS_OWNER) {
+    /**
+     * AGENT FLOW
+     */
+    if (userRole === ROLES.AGENT) {
+      const authorizedBusinessOwnerIds = await getAgentBusinessOwnerIds(userId);
+
+      if (authorizedBusinessOwnerIds.length === 0) {
+        return res.status(200).json({
+          success: true,
+          data: [],
+          pagination: {
+            total: 0,
+            page: 1,
+            limit: Number(limit),
+            totalPages: 0,
+          },
+        });
+      }
+
+      if (filterBusinessOwnerId) {
+        const isAllowed = authorizedBusinessOwnerIds.some(
+          (id) => id.toString() === filterBusinessOwnerId
+        );
+
+        if (!isAllowed) {
+          return res.status(403).json({
+            success: false,
+            message: "Not authorized to view this business",
+          });
+        }
+
+        query.businessOwnerId = filterBusinessOwnerId;
+      } else {
+        query.businessOwnerId = { $in: authorizedBusinessOwnerIds };
+      }
+    } else if (userRole === ROLES.BUSINESS_OWNER) {
+      /**
+       * BUSINESS OWNER FLOW
+       */
       query.businessOwnerId = userId;
     } else if (userRole === ROLES.SERVICE_PROVIDER) {
-      const provider = await ServiceProvider.findOne({ userId });
+      /**
+       * SERVICE PROVIDER FLOW
+       */
+      const provider = await ServiceProvider.findOne({ userId }).select("_id");
+
       if (!provider) {
         return res.status(404).json({
           success: false,
           message: "Service provider profile not found",
         });
       }
+
       query.providerId = provider._id;
     }
 
+    /**
+     * STATUS FILTER
+     */
     if (status) {
       query.status = status;
     }
 
+    /**
+     * PAGINATION & SORT
+     */
+    const parsedLimit = Number(limit);
+    const parsedPage = Number(page);
+    const skip = (parsedPage - 1) * parsedLimit;
+
     const sortOptions = {
       [sortBy]: sortOrder === "asc" ? 1 : -1,
     };
-
-    const parsedLimit = parseInt(limit);
-    const parsedPage = parseInt(page);
-    const skip = (parsedPage - 1) * parsedLimit;
 
     const [bookings, total] = await Promise.all([
       ServiceBooking.find(query)
         .populate("complianceItemId", "name code description validityDays")
         .populate("providerId", "companyName rating logo")
         .populate("businessOwnerId", "name phone")
+        .populate("createdBy", "name role")
         .sort(sortOptions)
         .limit(parsedLimit)
         .skip(skip)
@@ -163,7 +251,6 @@ export const getMyBookings = async (req, res) => {
     });
   }
 };
-
 /**
  * Get booking details by ID
  *
@@ -171,15 +258,14 @@ export const getMyBookings = async (req, res) => {
  */
 export const getBookingById = async (req, res) => {
   try {
-    const { id } = req.params;
-
-    const booking = await ServiceBooking.findById(id)
+    const booking = await ServiceBooking.findById(req.booking._id)
       .populate("complianceItemId")
       .populate({
         path: "providerId",
         select: "companyName rating logo userId",
       })
       .populate("businessOwnerId", "name phone email")
+      .populate("createdBy", "name role")
       .populate("timeline.updatedBy", "name")
       .populate("documents.uploadedBy", "name")
       .lean();
@@ -194,18 +280,22 @@ export const getBookingById = async (req, res) => {
     const userId = req.user._id.toString();
     const userRole = req.user.role;
 
-    const isOwner = booking.businessOwnerId._id.toString() === userId;
+    const isOwner = booking.businessOwnerId?._id?.toString() === userId;
     const isProvider = booking.providerId?.userId?.toString() === userId;
-    const isAdmin = ["admin", "super_admin"].includes(userRole);
+    const isAdmin = [ROLES.ADMIN, ROLES.SUPER_ADMIN].includes(userRole);
 
-    if (!isOwner && !isProvider && !isAdmin) {
+    // Final authorization check (agent already validated by middleware)
+    if (!isOwner && !isProvider && !isAdmin && userRole !== ROLES.AGENT) {
       return res.status(403).json({
         success: false,
         message: "Not authorized to view this booking",
       });
     }
 
-    res.status(200).json({ success: true, data: booking });
+    res.status(200).json({
+      success: true,
+      data: booking,
+    });
   } catch (error) {
     console.error("Error fetching booking:", error);
     res.status(500).json({
@@ -224,30 +314,35 @@ export const getBookingById = async (req, res) => {
  */
 export const updateBookingStatus = async (req, res) => {
   try {
-    const { id } = req.params;
     const { status, message } = req.body;
     const userId = req.user._id;
+    const userRole = req.user.role;
 
-    const booking = await ServiceBooking.findById(id);
-    if (!booking) {
-      return res.status(404).json({
-        success: false,
-        message: "Booking not found",
-      });
+    const booking = req.booking; // loaded by loadBooking middleware
+
+    /**
+     * OWNERSHIP / PROVIDER CHECK
+     * (Agent already validated by middleware)
+     */
+    const isOwner = booking.businessOwnerId.toString() === userId.toString();
+
+    let isProvider = false;
+    if (userRole === ROLES.SERVICE_PROVIDER) {
+      const provider = await ServiceProvider.findOne({ userId }).select("_id");
+      isProvider =
+        provider && booking.providerId.toString() === provider._id.toString();
     }
 
-    const isOwner = booking.businessOwnerId.toString() === userId.toString();
-    const provider = await ServiceProvider.findOne({ userId });
-    const isProvider =
-      provider && booking.providerId.toString() === provider._id.toString();
-
-    if (!isOwner && !isProvider) {
+    if (!isOwner && !isProvider && userRole !== ROLES.AGENT) {
       return res.status(403).json({
         success: false,
         message: "Not authorized to update this booking",
       });
     }
 
+    /**
+     * UPDATE STATUS
+     */
     booking.status = status;
     booking.timeline.push({
       status,
@@ -261,13 +356,19 @@ export const updateBookingStatus = async (req, res) => {
 
     await booking.save();
 
+    /**
+     * PROVIDER METRICS UPDATE
+     */
     if (status === "completed" && isProvider) {
       await ServiceProvider.findByIdAndUpdate(booking.providerId, {
         $inc: { completedBookings: 1 },
       });
     }
 
-    const updatedBooking = await ServiceBooking.findById(id)
+    /**
+     * RESPONSE
+     */
+    const updatedBooking = await ServiceBooking.findById(booking._id)
       .populate("complianceItemId", "name code")
       .populate("providerId", "companyName rating")
       .lean();
@@ -288,33 +389,36 @@ export const updateBookingStatus = async (req, res) => {
 };
 
 /**
- * Cancel a booking (business owner only)
+ * Cancel a booking
  *
  * @route   PATCH /api/bookings/:id/cancel
  * @body    { reason? }
+ * @access  Business Owner, Agent
  */
 export const cancelBooking = async (req, res) => {
   try {
-    const { id } = req.params;
     const { reason } = req.body;
+    const userId = req.user._id;
+    const userRole = req.user.role;
 
-    const userId = req.user._id.toString();
-    const booking = await ServiceBooking.findById(id);
+    const booking = req.booking; // loaded by loadBooking middleware
 
-    if (!booking) {
-      return res.status(404).json({
-        success: false,
-        message: "Booking not found",
-      });
-    }
+    /**
+     * OWNERSHIP CHECK
+     * (Agent already validated by middleware)
+     */
+    const isOwner = booking.businessOwnerId.toString() === userId.toString();
 
-    if (booking.businessOwnerId.toString() !== userId) {
+    if (!isOwner && userRole !== ROLES.AGENT) {
       return res.status(403).json({
         success: false,
-        message: "Only the booking owner can cancel",
+        message: "Only the business owner or authorized agent can cancel",
       });
     }
 
+    /**
+     * BUSINESS RULES
+     */
     if (booking.status === "completed") {
       return res.status(400).json({
         success: false,
@@ -322,12 +426,15 @@ export const cancelBooking = async (req, res) => {
       });
     }
 
+    /**
+     * CANCEL BOOKING
+     */
     booking.status = "cancelled";
     booking.cancellationReason = reason;
     booking.timeline.push({
       status: "cancelled",
-      message: reason || "Booking cancelled by customer",
-      updatedBy: booking.businessOwnerId,
+      message: reason || "Booking cancelled",
+      updatedBy: userId,
     });
 
     await booking.save();
@@ -351,35 +458,32 @@ export const cancelBooking = async (req, res) => {
  *
  * @route   POST /api/bookings/:id/rating
  * @body    { score, comment? }
+ * @access  Business Owner, Agent
  */
 export const addRating = async (req, res) => {
   try {
-    const { id } = req.params;
     const { score, comment } = req.body;
+    const userId = req.user._id;
+    const userRole = req.user.role;
 
-    const user = await User.findOne({ uid: req.user.uid });
-    if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: "User not found",
-      });
-    }
+    const booking = req.booking; // loaded by loadBooking middleware
 
-    const booking = await ServiceBooking.findById(id);
-    if (!booking) {
-      return res.status(404).json({
-        success: false,
-        message: "Booking not found",
-      });
-    }
+    /**
+     * OWNERSHIP CHECK
+     * (Agent already validated by middleware)
+     */
+    const isOwner = booking.businessOwnerId.toString() === userId.toString();
 
-    if (booking.businessOwnerId.toString() !== user._id.toString()) {
+    if (!isOwner && userRole !== ROLES.AGENT) {
       return res.status(403).json({
         success: false,
-        message: "Only the booking owner can rate",
+        message: "Only the business owner or authorized agent can rate",
       });
     }
 
+    /**
+     * BUSINESS RULES
+     */
     if (booking.status !== "completed") {
       return res.status(400).json({
         success: false,
@@ -394,14 +498,20 @@ export const addRating = async (req, res) => {
       });
     }
 
+    /**
+     * SAVE RATING
+     */
     booking.rating = {
-      score: parseInt(score),
+      score: Number(score),
       comment,
       ratedAt: new Date(),
     };
 
     await booking.save();
 
+    /**
+     * RECALCULATE PROVIDER RATING
+     */
     const allRatings = await ServiceBooking.find({
       providerId: booking.providerId,
       "rating.score": { $exists: true },
@@ -439,22 +549,72 @@ export const getBookingStats = async (req, res) => {
   try {
     const userId = req.user._id;
     const userRole = req.user.role;
+    const { businessOwnerId: filterBusinessOwnerId } = req.query;
 
     const matchQuery = {};
 
-    if (userRole === ROLES.BUSINESS_OWNER) {
+    /**
+     * AGENT FLOW
+     */
+    if (userRole === ROLES.AGENT) {
+      const authorizedBusinessOwnerIds = await getAgentBusinessOwnerIds(userId);
+
+      if (authorizedBusinessOwnerIds.length === 0) {
+        return res.status(200).json({
+          success: true,
+          data: {
+            total: 0,
+            pending: 0,
+            in_progress: 0,
+            completed: 0,
+            cancelled: 0,
+            totalRevenue: 0,
+          },
+        });
+      }
+
+      if (filterBusinessOwnerId) {
+        const isAllowed = authorizedBusinessOwnerIds.some(
+          (id) => id.toString() === filterBusinessOwnerId
+        );
+
+        if (!isAllowed) {
+          return res.status(403).json({
+            success: false,
+            message: "Not authorized for this business",
+          });
+        }
+
+        matchQuery.businessOwnerId = filterBusinessOwnerId;
+      } else {
+        matchQuery.businessOwnerId = { $in: authorizedBusinessOwnerIds };
+      }
+    } else if (userRole === ROLES.BUSINESS_OWNER) {
+
+    /**
+     * BUSINESS OWNER FLOW
+     */
       matchQuery.businessOwnerId = userId;
     } else if (userRole === ROLES.SERVICE_PROVIDER) {
-      const provider = await ServiceProvider.findOne({ userId });
+
+    /**
+     * SERVICE PROVIDER FLOW
+     */
+      const provider = await ServiceProvider.findOne({ userId }).select("_id");
+
       if (!provider) {
         return res.status(404).json({
           success: false,
           message: "Provider profile not found",
         });
       }
+
       matchQuery.providerId = provider._id;
     }
 
+    /**
+     * AGGREGATION
+     */
     const stats = await ServiceBooking.aggregate([
       { $match: matchQuery },
       {
@@ -466,6 +626,9 @@ export const getBookingStats = async (req, res) => {
       },
     ]);
 
+    /**
+     * NORMALIZE RESPONSE
+     */
     const statsMap = {
       total: 0,
       pending: 0,
@@ -478,6 +641,7 @@ export const getBookingStats = async (req, res) => {
     stats.forEach((stat) => {
       statsMap[stat._id] = stat.count;
       statsMap.total += stat.count;
+
       if (stat._id === "completed") {
         statsMap.totalRevenue = stat.totalValue;
       }

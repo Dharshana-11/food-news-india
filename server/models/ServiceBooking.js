@@ -51,6 +51,12 @@ const serviceBookingSchema = new mongoose.Schema(
       index: true,
     },
 
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Users",
+      required: true,
+    },
+
     /**
      * Compliance item being serviced
      * (e.g., FSSAI License, GST Registration, Trade License)
@@ -223,5 +229,6 @@ serviceBookingSchema.pre("validate", function (next) {
 serviceBookingSchema.index({ businessOwnerId: 1, status: 1, bookedAt: -1 });
 serviceBookingSchema.index({ providerId: 1, status: 1, bookedAt: -1 });
 serviceBookingSchema.index({ status: 1, bookedAt: -1 });
+serviceBookingSchema.index({ createdBy: 1, bookedAt: -1 });
 
 export default mongoose.model("ServiceBooking", serviceBookingSchema);
