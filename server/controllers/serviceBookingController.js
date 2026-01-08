@@ -2,7 +2,7 @@ import ServiceBooking from "../models/ServiceBooking.js";
 import ComplianceItem from "../models/ComplianceItem.js";
 import ServiceProvider from "../models/ServiceProvider.js";
 import User from "../models/User.js";
-import { getAgentBusinessOwnerIds } from "../services/agentBusinessAccess.service.js";
+import { getAgentBusinessOwnerIds } from "../services/agentBusinessAccessService.js";
 import ROLES from "../utils/constants/roles.js";
 
 /**
@@ -429,11 +429,20 @@ export const cancelBooking = async (req, res) => {
     /**
      * CANCEL BOOKING
      */
+    let cancelMessage = "Booking cancelled";
+
+    if (userRole === ROLES.AGENT) {
+      cancelMessage = "Booking cancelled by agent";
+    } else if (isOwner) {
+      cancelMessage = "Booking cancelled by business owner";
+    }
+
     booking.status = "cancelled";
-    booking.cancellationReason = reason;
+    booking.cancellationReason = reason || cancelMessage;
+
     booking.timeline.push({
       status: "cancelled",
-      message: reason || "Booking cancelled",
+      message: cancelMessage,
       updatedBy: userId,
     });
 
@@ -590,16 +599,14 @@ export const getBookingStats = async (req, res) => {
         matchQuery.businessOwnerId = { $in: authorizedBusinessOwnerIds };
       }
     } else if (userRole === ROLES.BUSINESS_OWNER) {
-
-    /**
-     * BUSINESS OWNER FLOW
-     */
+      /**
+       * BUSINESS OWNER FLOW
+       */
       matchQuery.businessOwnerId = userId;
     } else if (userRole === ROLES.SERVICE_PROVIDER) {
-
-    /**
-     * SERVICE PROVIDER FLOW
-     */
+      /**
+       * SERVICE PROVIDER FLOW
+       */
       const provider = await ServiceProvider.findOne({ userId }).select("_id");
 
       if (!provider) {

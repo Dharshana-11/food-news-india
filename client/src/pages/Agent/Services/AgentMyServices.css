@@ -1,0 +1,529 @@
+/**
+ * AgentMyServices.css
+ * ============================================================================
+ * Mobile-First, Fully Responsive Styles for Agent My Services Page
+ * Matches theme: MyBusinesses.css & AgentBusinessWorkspace.css
+ */
+
+/* ============================================
+   Container & Loading - Mobile First
+============================================ */
+.agent-my-services-page {
+  min-height: calc(100vh - 64px);
+}
+
+.agent-my-services-container {
+  padding: 1rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.agent-my-services-loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.agent-my-services-loading {
+  display: flex;
+  justify-content: center;
+  padding: 2.5rem;
+}
+
+/* ============================================
+   Header - Mobile First
+============================================ */
+.agent-my-services-header {
+  margin-bottom: 1.5rem;
+}
+
+.agent-my-services-header h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-primary-blue);
+  margin: 0 0 0.25rem;
+  line-height: 1.3;
+}
+
+.agent-my-services-header .ant-typography {
+  font-size: 0.875rem;
+  color: var(--color-text-medium);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* ============================================
+   Business Selector - Mobile First
+============================================ */
+.agent-my-services-business-selector {
+  /* background: linear-gradient(135deg, #ff9f43 0%, #ff6c1f 100%); */
+  /* border: 1px solid var(--color-primary-orange); */
+
+  /* border: none; */
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.ant-select-selector {
+  border: 1px solid var(--color-primary-orange);
+}
+
+.agent-my-services-business-selector .ant-card-body {
+  padding: 1.25rem;
+}
+
+.agent-my-services-business-selector .ant-typography {
+  color: var(--color-primary-blue);
+  font-size: 1rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.agent-my-services-business-selector .anticon {
+  color: var(--color-primary-orange);
+  font-size: 1.125rem;
+}
+
+/* Override Ant Design Select styling for white theme */
+.agent-my-services-business-selector .ant-select-selector {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border: 2px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.agent-my-services-business-selector .ant-select-arrow {
+  color: var(--color-primary-blue);
+}
+
+.business-option-meta {
+  color: var(--color-text-medium);
+}
+
+/* ============================================
+   Search - Mobile First
+============================================ */
+.agent-my-services-search {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.agent-my-services-search .ant-input {
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  font-size: 0.9375rem;
+}
+
+/* ============================================
+   Quick Actions - Mobile First
+============================================ */
+.agent-my-services-quick-actions {
+  margin-bottom: 1.5rem;
+  border-radius: 12px;
+}
+
+.agent-my-services-quick-actions .ant-card-body {
+  padding: 1rem;
+}
+
+.agent-my-services-quick-actions-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.agent-my-services-quick-actions-row .ant-btn {
+  flex: 1;
+  min-width: 0;
+  border-radius: 8px;
+  font-weight: 500;
+  height: auto;
+  padding: 0.625rem 1rem;
+}
+
+/* ============================================
+   Service Sections - Mobile First
+============================================ */
+.agent-my-services-section {
+  margin-bottom: 2rem;
+}
+
+.agent-my-services-section h4,
+.agent-my-services-section .ant-typography-h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-primary-blue);
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+/* ============================================
+   Service List - Mobile First
+============================================ */
+.agent-my-services-list {
+  width: 100%;
+}
+
+/* ============================================
+   Service Cards - Mobile First
+============================================ */
+.agent-my-services-card {
+  transition: all 0.3s ease;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.agent-my-services-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+  border-color: var(--color-primary-orange);
+}
+
+.agent-my-services-card .ant-card-body {
+  padding: 1.125rem;
+}
+
+.agent-my-services-card-completed {
+  opacity: 0.85;
+  border-color: #d9f7be;
+  background: linear-gradient(to bottom, #ffffff 0%, #f6ffed 100%);
+}
+
+.agent-my-services-card-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.agent-my-services-card-main {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ============================================
+   Service Name & Status - Mobile First
+============================================ */
+.agent-my-services-name {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-primary-blue);
+  line-height: 1.4;
+  word-wrap: break-word;
+}
+
+.agent-my-services-card-main .ant-space {
+  width: 100%;
+}
+
+.agent-my-services-card-main .ant-space-item:first-child {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* ============================================
+   Service Meta - Mobile First
+============================================ */
+.agent-my-services-meta {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.agent-my-services-meta .ant-typography {
+  font-size: 0.8125rem;
+  color: var(--color-text-medium);
+  margin: 0;
+}
+
+/* ============================================
+   Service Price - Mobile First
+============================================ */
+.agent-my-services-price {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--color-primary-orange);
+  flex-shrink: 0;
+}
+
+/* ============================================
+   Arrow Icon - Mobile First
+============================================ */
+.agent-my-services-arrow {
+  font-size: 1.125rem;
+  color: #8c8c8c;
+  transition:
+    transform 0.3s ease,
+    color 0.3s ease;
+  flex-shrink: 0;
+}
+
+.agent-my-services-card:hover .agent-my-services-arrow {
+  transform: translateX(4px);
+  color: var(--color-primary-orange);
+}
+
+/* ============================================
+   Alert - Mobile First
+============================================ */
+.agent-my-services-container .ant-alert {
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+}
+
+/* ============================================
+   Empty State - Mobile First
+============================================ */
+.agent-my-services-container .ant-empty {
+  padding: 2rem 1rem;
+}
+
+.agent-my-services-container .ant-empty-description {
+  font-size: 0.875rem;
+  color: var(--color-text-medium);
+  line-height: 1.5;
+}
+
+/* ============================================
+   RESPONSIVE BREAKPOINTS
+   All styles above are mobile-first defaults
+   Breakpoints below progressively enhance
+============================================ */
+
+/* Small Mobile: 375px+ */
+@media (min-width: 375px) {
+  .agent-my-services-name {
+    font-size: 1rem;
+  }
+
+  .agent-my-services-price {
+    font-size: 1.25rem;
+  }
+}
+
+/* Tablet: 640px+ */
+@media (min-width: 640px) {
+  .agent-my-services-container {
+    padding: 1.25rem;
+  }
+
+  .agent-my-services-header {
+    margin-bottom: 1.75rem;
+  }
+
+  .agent-my-services-header h3 {
+    font-size: 1.75rem;
+  }
+
+  .agent-my-services-header .ant-typography {
+    font-size: 0.9375rem;
+  }
+
+  .agent-my-services-business-selector {
+    margin-bottom: 1.75rem;
+  }
+
+  .agent-my-services-business-selector .ant-card-body {
+    padding: 1.5rem;
+  }
+
+  .agent-my-services-business-selector .ant-typography {
+    font-size: 1.0625rem;
+  }
+
+  .agent-my-services-search {
+    margin-bottom: 1.25rem;
+  }
+
+  .agent-my-services-quick-actions {
+    margin-bottom: 1.75rem;
+  }
+
+  .agent-my-services-quick-actions .ant-card-body {
+    padding: 1.25rem;
+  }
+
+  .agent-my-services-quick-actions-row {
+    flex-direction: row;
+    gap: 1rem;
+  }
+
+  .agent-my-services-quick-actions-row .ant-btn {
+    flex: 1;
+  }
+
+  .agent-my-services-section {
+    margin-bottom: 2.5rem;
+  }
+
+  .agent-my-services-section h4,
+  .agent-my-services-section .ant-typography-h4 {
+    font-size: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .agent-my-services-card .ant-card-body {
+    padding: 1.25rem;
+  }
+
+  .agent-my-services-card-content {
+    gap: 1.25rem;
+  }
+
+  .agent-my-services-name {
+    font-size: 1.0625rem;
+  }
+
+  .agent-my-services-meta {
+    margin-top: 0.875rem;
+    gap: 1rem;
+  }
+
+  .agent-my-services-meta .ant-typography {
+    font-size: 0.875rem;
+  }
+
+  .agent-my-services-price {
+    font-size: 1.375rem;
+  }
+
+  .agent-my-services-arrow {
+    font-size: 1.25rem;
+  }
+}
+
+/* Desktop: 1024px+ */
+@media (min-width: 1024px) {
+  .agent-my-services-container {
+    padding: 1.5rem 2rem;
+  }
+
+  .agent-my-services-header {
+    margin-bottom: 2rem;
+  }
+
+  .agent-my-services-header h3 {
+    font-size: 2rem;
+  }
+
+  .agent-my-services-business-selector {
+    margin-bottom: 2rem;
+  }
+
+  .agent-my-services-business-selector .ant-card-body {
+    padding: 1.75rem;
+  }
+
+  .agent-my-services-search {
+    margin-bottom: 1.5rem;
+  }
+
+  .agent-my-services-quick-actions {
+    margin-bottom: 2rem;
+  }
+
+  .agent-my-services-quick-actions .ant-card-body {
+    padding: 1.5rem;
+  }
+
+  .agent-my-services-section {
+    margin-bottom: 3rem;
+  }
+
+  .agent-my-services-section h4,
+  .agent-my-services-section .ant-typography-h4 {
+    font-size: 1.375rem;
+  }
+
+  .agent-my-services-card .ant-card-body {
+    padding: 1.5rem;
+  }
+
+  .agent-my-services-name {
+    font-size: 1.125rem;
+  }
+
+  .agent-my-services-meta {
+    margin-top: 1rem;
+  }
+
+  .agent-my-services-meta .ant-typography {
+    font-size: 0.9375rem;
+  }
+
+  .agent-my-services-price {
+    font-size: 1.5rem;
+  }
+}
+
+/* Large Desktop: 1280px+ */
+@media (min-width: 1280px) {
+  .agent-my-services-card .ant-card-body {
+    padding: 1.75rem;
+  }
+
+  .agent-my-services-card-content {
+    gap: 1.5rem;
+  }
+}
+
+/* Extra Large Desktop: 1536px+ */
+@media (min-width: 1536px) {
+  .agent-my-services-container {
+    padding: 2rem;
+  }
+}
+
+/* ============================================
+   Accessibility & Interactions
+============================================ */
+.agent-my-services-card:focus {
+  outline: 2px solid var(--color-primary-orange);
+  outline-offset: 2px;
+}
+
+/* Loading Animation */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.agent-my-services-loading .ant-spin {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* ============================================
+   Divider Styling
+============================================ */
+.agent-my-services-container .ant-divider {
+  margin: 2rem 0;
+  border-color: var(--color-border);
+}
+
+@media (min-width: 640px) {
+  .agent-my-services-container .ant-divider {
+    margin: 2.5rem 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .agent-my-services-container .ant-divider {
+    margin: 3rem 0;
+  }
+}

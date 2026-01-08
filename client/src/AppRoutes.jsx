@@ -58,6 +58,10 @@ import MyBusinesses from "./pages/Agent/MyBusinesses";
 import AgentBusinessWorkspace from "./pages/Agent/AgentBusinessWorkspace";
 import AgentDocumentVault from "./pages/Agent/AgentDocumentVault";
 import AgentBusinessDocuments from "./pages/Agent/AgentBusinessDocuments";
+import AgentMyBookings from "./pages/Agent/Services/AgentMyBookings";
+import AgentBookServices from "./pages/Agent/Services/AgentBookServices";
+import AgentMyServices from "./pages/Agent/Services/AgentMyServices";
+import { AgentProvider } from "./context/AgentContext";
 
 const AppRoutes = () => {
   const { currentUser, loading } = useAuth();
@@ -260,7 +264,6 @@ const AppRoutes = () => {
           element={<ViewMyAgent />}
         />
 
-        {/* NEW: SERVICES MODULE */}
         <Route path={ROUTES.BUSINESS_OWNER_SERVICES} element={<MyServices />} />
         <Route
           path={ROUTES.BUSINESS_OWNER_BOOK_SERVICES}
@@ -289,7 +292,9 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute allowedRoles={[ROLES.AGENT]}>
             <KYCGuard>
-              <AppLayout role={ROLES.AGENT} />
+              <AgentProvider>
+                <AppLayout role={ROLES.AGENT} />
+              </AgentProvider>
             </KYCGuard>
           </ProtectedRoute>
         }
@@ -310,6 +315,25 @@ const AppRoutes = () => {
           path={ROUTES.AGENT_BUSINESS_DOCUMENTS}
           element={<AgentBusinessDocuments />}
         />
+        <Route path={ROUTES.AGENT_MY_SERVICES} element={<AgentMyServices />} />
+        <Route
+          path={ROUTES.AGENT_BOOK_SERVICES}
+          element={<AgentBookServices />}
+        />
+        <Route
+          path={ROUTES.AGENT_SERVICE_PROVIDERS}
+          element={<ServiceProviders />}
+        />
+        <Route
+          path={ROUTES.AGENT_PROVIDER_DETAILS}
+          element={<ProviderDetails />}
+        />
+        <Route path={ROUTES.AGENT_MY_BOOKINGS} element={<AgentMyBookings />} />
+        <Route
+          path={ROUTES.AGENT_SERVICE_DETAILS}
+          element={<ServiceDetails />}
+        />
+
         <Route path={ROUTES.AGENT_PROFILE} element={<ProfileSelf />} />
       </Route>
     </Routes>

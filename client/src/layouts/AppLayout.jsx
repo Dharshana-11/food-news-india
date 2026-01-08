@@ -27,10 +27,14 @@ import { Outlet } from "react-router-dom";
 import { Layout } from "antd";
 import SideBar from "../components/SideBar";
 import Header from "../components/Header";
+import { useAuth } from "../context/AuthContext";
 
 const { Content } = Layout;
 
-const AppLayout = ({ children, role }) => {
+const AppLayout = ({ role: roleProp }) => {
+  const { currentUser } = useAuth();
+  const role = roleProp || currentUser?.role;
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   /** Toggle sidebar (mobile) */

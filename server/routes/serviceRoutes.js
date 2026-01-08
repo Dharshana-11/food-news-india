@@ -16,7 +16,7 @@ const router = express.Router();
 
 // Authentication & role guard
 router.use(verifySession);
-router.use(authorizeRoles(ROLES.BUSINESS_OWNER));
+router.use(authorizeRoles(ROLES.BUSINESS_OWNER, ROLES.AGENT));
 
 /**
  * Get all active compliance services
