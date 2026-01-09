@@ -4,7 +4,9 @@ import KYCDocument from "../models/KYCDocument.js";
 import User from "../models/User.js";
 import AgentProfile from "../models/AgentProfile.js";
 import KYCProfile from "../models/KYCProfile.js";
+import ServiceProvider from "../models/ServiceProvider.js";
 import { checkAndUpdateUserVerification } from "../services/kycService.js";
+import { validateServiceProviderProfileForKYC } from "../services/serviceProviderKYCService.js";
 import path from "path";
 import ROLES from "../utils/constants/roles.js";
 
@@ -95,6 +97,10 @@ export const getKYCProfile = async (req, res) => {
 
       case ROLES.AGENT:
         roleProfile = await AgentProfile.findOne({ userId: user._id });
+        break;
+
+      case ROLES.SERVICE_PROVIDER:
+        roleProfile = await ServiceProvider.findOne({ userId: user._id });
         break;
 
       default:
@@ -290,6 +296,9 @@ export const submitKYCForReview = async (req, res) => {
       });
     }
 
+    if (user.role === ROLES.SERVICE_PROVIDER) {
+      await validateServiceProviderProfileForKYC(user._id);
+    }
     // 5️. Move KYC into review state
     kycProfile.kycStatus = "in_review";
     await kycProfile.save();
@@ -442,4 +451,70 @@ export const updateAgentProfile = async (req, res) => {
     console.error("Error updating agent profile:", error);
     return res.status(500).json({ error: "Failed to update agent profile" });
   }
+};
+
+/**
+ * GET Service Provider Profile
+ * - Auto-creates draft profile
+ */
+export const getServiceProviderProfile = async (req, res) => {
+  const user = await User.findOne({ uid: req.user.uid });
+  if (!user) return res.status(404).json({ error: "User not found" });
+
+  let profile = await ServiceProvider.findOne({ userId: user._id });
+
+  if (!profile) {
+    profile = await ServiceProvider.create({
+      userId: user._id,
+      status: "pending",
+    });
+  }
+
+  res.json({ profile });
+};
+
+/**
+ * UPDATE Service Provider Profile
+ * - Disallowed if KYC is in review or verified
+ */
+export const updateServiceProviderProfile = async (req, res) => {
+  const user = await User.findOne({ uid: req.user.uid });
+  if (!user) return res.status(404).json({ error: "User not found" });
+
+  const kycProfile = await KYCProfile.findOne({ userId: user._id });
+
+  if (["in_review", "verified"].includes(kycProfile?.kycStatus)) {
+    return res.status(403).json({
+      error: "Profile cannot be modified after KYC submission",
+    });
+  }
+
+  const allowedFields = [
+    "companyName",
+    "description",
+    "location",
+    "specializations",
+    "contactEmail",
+    "contactPhone",
+    "gstNumber",
+    "businessRegistration",
+  ];
+
+  const updates = {};
+  for (const field of allowedFields) {
+    if (req.body[field] !== undefined) {
+      updates[field] = req.body[field];
+    }
+  }
+
+  const profile = await ServiceProvider.findOneAndUpdate(
+    { userId: user._id },
+    { $set: updates },
+    { new: true, upsert: true }
+  );
+
+  res.json({
+    message: "Service Provider profile updated",
+    profile,
+  });
 };

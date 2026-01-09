@@ -11,6 +11,8 @@ import { verifySession } from "../middleware/sessionMiddleware.js";
 import {
   updateAgentProfile,
   getAgentProfile,
+  getServiceProviderProfile,
+  updateServiceProviderProfile,
 } from "../controllers/kycController.js";
 
 const router = express.Router();
@@ -64,5 +66,17 @@ router.get("/agent-profile", getAgentProfile);
  * Update agent profile
  */
 router.put("/agent-profile", updateAgentProfile);
+
+/**
+ * GET /api/kyc/service-provider-profile
+ * Get service provider profile
+ */
+router.get("/service-provider-profile", getServiceProviderProfile);
+
+/**
+ * PUT /api/kyc/service-provider-profile
+ * Update service provider profile
+ */
+router.put("/service-provider-profile", updateServiceProviderProfile);
 
 export default router;

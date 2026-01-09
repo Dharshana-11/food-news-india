@@ -332,6 +332,66 @@ const SideBar = ({ role, isOpen, onClose }) => {
     ];
   }
 
+  if (role === ROLES.SERVICE_PROVIDER) {
+    items = [
+      {
+        key: ROUTES.SERVICE_PROVIDER_DASHBOARD,
+        icon: <DashboardOutlined />,
+        label: "Dashboard",
+      },
+
+      !kycVerified && {
+        key: ROUTES.SERVICE_PROVIDER_KYC,
+        icon: <FileSearchOutlined />,
+        label: "KYC Verification ⚠️",
+      },
+
+      {
+        key: ROUTES.SERVICE_PROVIDER_MY_SERVICES,
+        icon: <AppstoreOutlined />,
+        label: "My Services",
+      },
+
+      {
+        key: ROUTES.SERVICE_PROVIDER_SERVICE_REQUESTS,
+        icon: <HistoryOutlined />,
+        label: "Service Requests",
+      },
+
+      {
+        key: ROUTES.SERVICE_PROVIDER_MESSAGES,
+        icon: <MessageOutlined />,
+        label: "Messages / Chat",
+      },
+
+      {
+        key: ROUTES.SERVICE_PROVIDER_NOTIFICATIONS,
+        icon: <BellOutlined />,
+        label: "Notifications",
+      },
+
+      {
+        key: ROUTES.SERVICE_PROVIDER_PROFILE,
+        icon: <UserOutlined />,
+        label: "My Profile",
+      },
+
+      {
+        key: ROUTES.SERVICE_PROVIDER_PAYMENTS,
+        icon: <FileTextOutlined />,
+        label: "Payments & Wallet",
+      },
+
+      {
+        key: ROUTES.SERVICE_PROVIDER_HELP_SUPPORT,
+        icon: <CustomerServiceOutlined />,
+        label: "Help & Support",
+      },
+
+      { key: "logout", icon: <LogoutOutlined />, label: "Log Out" },
+    ];
+  }
+
   // ---------------- ACTIVE MENU HIGHLIGHT ----------------
   const selectedKey = location.pathname.startsWith("/tickets/")
     ? ROUTES.SUPER_ADMIN_TICKETS

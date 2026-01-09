@@ -80,3 +80,13 @@ export const submitKYCForReview = async () => {
   const response = await api.post(`${KYC_API}/submit`);
   return response.data;
 };
+
+export const getServiceProviderProfile = async () => {
+  const res = await api.get(`${KYC_API}/service-provider-profile`);
+  return res.data;
+};
+
+export const updateServiceProviderProfile = async (payload) => {
+  const res = await api.put(`${KYC_API}/service-provider-profile`, payload);
+  return res.data;
+};
