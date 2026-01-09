@@ -48,7 +48,11 @@ const ProviderDetails = () => {
   const { currentUser } = useAuth();
   const role = currentUser?.role;
 
-  const { activeBusiness } = useAgentContext();
+  let activeBusiness = null;
+
+  if (role === ROLES.AGENT) {
+    ({ activeBusiness } = useAgentContext());
+  }
 
   const { serviceId, providerId } = useParams();
   const navigate = useNavigate();

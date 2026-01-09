@@ -41,7 +41,11 @@ export async function checkAndUpdateUserVerification(userId, userRole) {
     { upsert: true }
   );
 
-  await User.findByIdAndUpdate(userId, { isVerified: true });
+  await User.findByIdAndUpdate(userId, {
+    status: "active",
+    isVerified: true,
+    verifiedAt: new Date(),
+  });
 
   console.log(`User ${userId} fully KYC verified`);
 }

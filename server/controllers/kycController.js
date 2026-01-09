@@ -201,10 +201,7 @@ export const uploadKYCDocument = async (req, res) => {
  */
 export const updateBusinessProfile = async (req, res) => {
   try {
-    const userId = req.user.uid;
-    const updates = req.body;
-
-    const user = await User.findOne({ uid: userId });
+    const user = await User.findOne({ uid: req.user.uid });
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -222,23 +219,25 @@ export const updateBusinessProfile = async (req, res) => {
       "panNumber",
     ];
 
-    const filteredUpdates = {};
+    const updates = {};
     allowedFields.forEach((field) => {
-      if (updates[field] !== undefined) {
-        filteredUpdates[field] = updates[field];
+      if (req.body[field] !== undefined) {
+        updates[field] = req.body[field];
       }
     });
 
-    const kycProfile = await KYCProfile.findOne({ userId: user._id });
-    if (!kycProfile) {
-      return res.status(404).json({ error: "KYC profile not found" });
-    }
+    const businessProfile = await BusinessProfile.findOneAndUpdate(
+      { userId: user._id },
+      { $set: updates },
+      { new: true, upsert: true }
+    );
 
+    // KYCProfile stays for status/progress ONLY
     await updateKYCProgress(user._id);
 
     return res.json({
-      message: "Profile updated successfully",
-      profile,
+      message: "Business profile updated successfully",
+      profile: businessProfile,
     });
   } catch (error) {
     console.error("Error updating business profile:", error);
@@ -410,9 +409,12 @@ export const updateAgentProfile = async (req, res) => {
 
     if (
       updates.monthlyCommission !== undefined &&
-      (updates.monthlyCommission < 0 || updates.monthlyCommission > 100)
+      (typeof updates.monthlyCommission !== "number" ||
+        updates.monthlyCommission < 0)
     ) {
-      return res.status(400).json({ error: "Invalid monthly commission" });
+      return res
+        .status(400)
+        .json({ error: "Monthly commission must be a valid number" });
     }
 
     if (updates.experience !== undefined && updates.experience < 0) {
