@@ -1,8 +1,10 @@
-/* ===== KYC WIZARD LAYOUT ===== */
+/* ===== KYC WIZARD LAYOUT - MOBILE FIRST ===== */
+
+/* Base Mobile Styles (320px+) */
 .kyc-container {
   max-width: 1000px;
   margin: 0 auto;
-  padding: 32px 24px;
+  padding: 20px 16px;
   min-height: 100vh;
   background: linear-gradient(135deg, #f5f7fa 0%, #f0f3f8 100%);
   color: #1f2d3d;
@@ -15,9 +17,9 @@
   padding: 0 !important;
 }
 
-/* Header */
+/* Header - Mobile First */
 .kyc-header {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   text-align: center;
 }
 
@@ -25,11 +27,12 @@
   margin-bottom: 8px !important;
   color: #1f2d3d;
   font-weight: 700;
+  font-size: 22px !important;
 }
 
-/* Card basics */
+/* Card basics - Mobile First */
 .kyc-card {
-  border-radius: 16px;
+  border-radius: 12px;
   background: #fff;
   box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
   border: none !important;
@@ -47,12 +50,14 @@
   align-items: center;
   min-height: 400px;
 }
+
 .kyc-card kyc-document-card {
   padding: 0px;
 }
-/* ---------- STEP (HORIZONTAL) ---------- */
+
+/* ---------- STEP (HORIZONTAL) - MOBILE FIRST ---------- */
 .kyc-stepper-card {
-  padding: 24px;
+  padding: 16px;
   background: linear-gradient(135deg, #ffffff 0%, #f8f9fd 100%);
 }
 
@@ -60,10 +65,20 @@
   --antd-wave-shadow-color: transparent;
 }
 
-/* Enhanced step icons */
+/* Mobile: Vertical Steps */
+.ant-steps {
+  display: flex !important;
+  flex-direction: column;
+}
+
+.ant-steps-item {
+  flex: 1 1 100%;
+}
+
+/* Enhanced step icons - Mobile First */
 .ant-steps-item-icon {
-  width: 40px !important;
-  height: 40px !important;
+  width: 32px !important;
+  height: 32px !important;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -89,6 +104,7 @@
   background: linear-gradient(135deg, #52c41a 0%, #73d13d 100%) !important;
   color: #fff !important;
 }
+
 .ant-steps-item-icon .anticon svg {
   color: white;
 }
@@ -103,10 +119,10 @@
   border-color: #d9e3f6 !important;
 }
 
-/* Step title */
+/* Step title - Mobile First */
 .ant-steps-item-title {
   font-weight: 600 !important;
-  font-size: 14px !important;
+  font-size: 12px !important;
   color: #1f2d3d !important;
   line-height: 1.4 !important;
 }
@@ -133,39 +149,28 @@
   background: linear-gradient(90deg, #52c41a 0%, #95de64 100%) !important;
 }
 
-/* Responsive steps */
-@media (max-width: 768px) {
-  .ant-steps {
-    display: flex !important;
-    flex-direction: column;
-  }
-
-  .ant-steps-item {
-    flex: 1 1 100%;
-  }
-}
-
-/* ---------- PROGRESS BAR ---------- */
+/* ---------- PROGRESS BAR - MOBILE FIRST ---------- */
 .kyc-progress-card {
-  padding: 20px 24px;
+  padding: 16px;
   margin-top: 10px;
   background: linear-gradient(135deg, #fff 0%, #f8f9fd 100%);
 }
 
 .kyc-progress-wrap {
   display: flex;
-  gap: 24px;
-  align-items: center;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
   width: 100%;
 }
 
 .kyc-progress-left {
-  min-width: 140px;
+  min-width: 100%;
 }
 
 .kyc-progress-label {
   font-weight: 700;
-  font-size: 16px;
+  font-size: 15px;
   color: #1f2d3d;
   display: block;
   margin-bottom: 4px;
@@ -177,6 +182,7 @@
 }
 
 .kyc-progress-right {
+  width: 100%;
   flex: 1;
 }
 
@@ -188,10 +194,10 @@
   border-radius: 10px !important;
 }
 
-/* ---------- DOCUMENT CARD ---------- */
+/* ---------- DOCUMENT CARD - MOBILE FIRST ---------- */
 .kyc-document-card {
-  padding: 28px;
-  border-radius: 16px;
+  padding: 20px;
+  border-radius: 12px;
   background: #fff;
 }
 
@@ -203,6 +209,7 @@
   margin-bottom: 12px !important;
   color: #1f2d3d;
   font-weight: 700;
+  font-size: 18px;
 }
 
 .doc-head .kyc-doc-sub {
@@ -210,11 +217,18 @@
   margin-bottom: 0;
   line-height: 1.6;
   color: #64748b;
+  font-size: 14px;
+}
+
+.doc-head .ant-space {
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 4px !important;
 }
 
 /* Upload status block */
 .kyc-upload-status {
-  padding: 20px;
+  padding: 16px;
   border-radius: 12px;
   background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
   border: 2px solid #e2e8f0;
@@ -242,7 +256,7 @@
   border: 1px solid #e8e8e8 !important;
 }
 
-/* File input */
+/* File input - Mobile First */
 .kyc-file-input-wrapper {
   margin: 0;
 }
@@ -257,8 +271,8 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  min-height: 160px;
-  padding: 32px;
+  min-height: 140px;
+  padding: 24px 16px;
   border-radius: 12px;
   border: 2px dashed #d0daf0;
   background: linear-gradient(135deg, #fafbff 0%, #f5f7fb 100%);
@@ -266,6 +280,7 @@
   cursor: pointer;
   color: #475569;
   font-weight: 600;
+  font-size: 14px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -303,21 +318,22 @@
 
 /* Reupload section */
 .kyc-reupload {
-  margin-top: 24px;
+  margin-top: 20px;
 }
 
 .kyc-reupload-card {
-  margin-bottom: 20px !important;
+  margin-bottom: 16px !important;
   border-radius: 10px !important;
 }
 
-/* Upload button */
+/* Upload button - Mobile First */
 .kyc-upload-btn {
   border-radius: 10px;
-  padding: 8px 24px;
-  height: 48px;
+  padding: 8px 20px;
+  height: 44px;
   font-weight: 600;
   font-size: 15px;
+  width: 100%;
   box-shadow: 0 4px 12px rgba(24, 144, 255, 0.2);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -327,30 +343,43 @@
   box-shadow: 0 6px 20px rgba(24, 144, 255, 0.3);
 }
 
-/* Completion screens */
+/* Completion screens - Mobile First */
 .kyc-completion {
   text-align: center;
-  padding: 40px 24px;
+  padding: 32px 16px;
 }
 
 .kyc-completion .ant-result-title {
   font-weight: 700 !important;
-  font-size: 28px !important;
+  font-size: 22px !important;
 }
 
 .kyc-completion .ant-result-subtitle {
-  font-size: 16px !important;
+  font-size: 15px !important;
   color: #64748b !important;
 }
 
 .kyc-completion .ant-result-icon {
-  margin-bottom: 32px !important;
+  margin-bottom: 24px !important;
 }
 
-/* Footer actions */
+/* Footer actions - Mobile First */
 .kyc-footer-actions {
-  padding: 20px 24px;
+  padding: 16px;
   background: linear-gradient(135deg, #fff 0%, #f8f9fd 100%);
+}
+
+.kyc-footer-actions .ant-space {
+  flex-direction: column;
+  width: 100%;
+}
+
+.kyc-footer-actions .ant-space > div {
+  width: 100%;
+}
+
+.kyc-footer-actions button {
+  width: 100%;
 }
 
 /* Secondary button style */
@@ -369,8 +398,8 @@
 }
 
 .kyc-submit-btn {
-  height: 48px !important;
-  font-size: 16px !important;
+  height: 44px !important;
+  font-size: 15px !important;
   border-radius: 10px !important;
   font-weight: 700 !important;
   box-shadow: 0 4px 16px rgba(24, 144, 255, 0.25) !important;
@@ -392,80 +421,13 @@
 
 /* Divider */
 .ant-divider {
-  margin: 20px 0 !important;
+  margin: 16px 0 !important;
   border-color: #f0f0f0 !important;
 }
 
 /* Result component enhancements */
 .ant-result-icon > .anticon {
-  font-size: 80px !important;
-}
-
-/* Responsive tweaks */
-@media (max-width: 768px) {
-  .kyc-container {
-    padding: 20px 16px;
-  }
-
-  .kyc-progress-wrap {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 12px;
-  }
-
-  .kyc-progress-left {
-    min-width: 100%;
-  }
-
-  .kyc-progress-right {
-    width: 100%;
-  }
-
-  .kyc-file-label {
-    min-height: 140px;
-    padding: 24px;
-    font-size: 14px;
-  }
-
-  .kyc-document-card {
-    padding: 20px;
-  }
-
-  .kyc-completion {
-    padding: 32px 16px;
-  }
-
-  .kyc-completion .ant-result-title {
-    font-size: 22px !important;
-  }
-
-  .kyc-footer-actions .ant-space {
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .kyc-footer-actions .ant-space > div {
-    width: 100%;
-  }
-
-  .kyc-footer-actions button {
-    width: 100%;
-  }
-}
-
-@media (max-width: 480px) {
-  .kyc-header h2 {
-    font-size: 22px !important;
-  }
-
-  .ant-steps-item-icon {
-    width: 32px !important;
-    height: 32px !important;
-  }
-
-  .ant-steps-item-title {
-    font-size: 12px !important;
-  }
+  font-size: 64px !important;
 }
 
 /* Animation for cards */
@@ -484,10 +446,257 @@
   animation: slideInUp 0.4s ease-out;
 }
 
-@media (max-width: 480px) {
+/* ===== TABLET BREAKPOINT (768px+) ===== */
+@media (min-width: 768px) {
+  .kyc-container {
+    padding: 28px 20px;
+  }
+
+  .kyc-header {
+    margin-bottom: 24px;
+  }
+
+  .kyc-header h2 {
+    font-size: 26px !important;
+  }
+
+  .kyc-card {
+    border-radius: 16px;
+  }
+
+  /* Horizontal steps on tablet+ */
+  .ant-steps {
+    flex-direction: row !important;
+  }
+
+  .ant-steps-item {
+    flex: 1 1 auto;
+  }
+
+  .kyc-stepper-card {
+    padding: 20px;
+  }
+
+  .ant-steps-item-icon {
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  .ant-steps-item-title {
+    font-size: 13px !important;
+  }
+
+  .kyc-progress-card {
+    padding: 18px 20px;
+  }
+
+  .kyc-progress-wrap {
+    flex-direction: row;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .kyc-progress-left {
+    min-width: 120px;
+  }
+
+  .kyc-progress-label {
+    font-size: 16px;
+  }
+
+  .kyc-progress-right {
+    width: auto;
+  }
+
+  .kyc-document-card {
+    padding: 24px;
+    border-radius: 16px;
+  }
+
+  .doc-head .kyc-doc-title {
+    font-size: 20px;
+  }
+
   .doc-head .ant-space {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 4px !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+
+  .kyc-upload-status {
+    padding: 18px;
+  }
+
+  .kyc-file-label {
+    min-height: 150px;
+    padding: 28px;
+    font-size: 15px;
+  }
+
+  .kyc-reupload {
+    margin-top: 22px;
+  }
+
+  .kyc-reupload-card {
+    margin-bottom: 18px !important;
+  }
+
+  .kyc-upload-btn {
+    height: 46px;
+    width: auto;
+    min-width: 140px;
+  }
+
+  .kyc-completion {
+    padding: 36px 20px;
+  }
+
+  .kyc-completion .ant-result-title {
+    font-size: 26px !important;
+  }
+
+  .kyc-completion .ant-result-subtitle {
+    font-size: 16px !important;
+  }
+
+  .kyc-completion .ant-result-icon {
+    margin-bottom: 28px !important;
+  }
+
+  .kyc-footer-actions {
+    padding: 18px 20px;
+  }
+
+  .kyc-footer-actions .ant-space {
+    flex-direction: row;
+    width: auto;
+  }
+
+  .kyc-footer-actions .ant-space > div {
+    width: auto;
+  }
+
+  .kyc-footer-actions button {
+    width: auto;
+  }
+
+  .kyc-submit-btn {
+    height: 46px !important;
+    font-size: 16px !important;
+  }
+
+  .ant-divider {
+    margin: 18px 0 !important;
+  }
+
+  .ant-result-icon > .anticon {
+    font-size: 72px !important;
+  }
+}
+
+/* ===== DESKTOP BREAKPOINT (1024px+) ===== */
+@media (min-width: 1024px) {
+  .kyc-container {
+    padding: 32px 24px;
+  }
+
+  .kyc-stepper-card {
+    padding: 24px;
+  }
+
+  .ant-steps-item-icon {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  .ant-steps-item-title {
+    font-size: 14px !important;
+  }
+
+  .kyc-progress-card {
+    padding: 20px 24px;
+  }
+
+  .kyc-progress-wrap {
+    gap: 24px;
+  }
+
+  .kyc-progress-left {
+    min-width: 140px;
+  }
+
+  .kyc-document-card {
+    padding: 28px;
+  }
+
+  .doc-head .kyc-doc-title {
+    font-size: 22px;
+  }
+
+  .doc-head .kyc-doc-sub {
+    font-size: 15px;
+  }
+
+  .kyc-upload-status {
+    padding: 20px;
+  }
+
+  .kyc-file-label {
+    min-height: 160px;
+    padding: 32px;
+    font-size: 16px;
+  }
+
+  .kyc-reupload {
+    margin-top: 24px;
+  }
+
+  .kyc-reupload-card {
+    margin-bottom: 20px !important;
+  }
+
+  .kyc-upload-btn {
+    height: 48px;
+    padding: 8px 24px;
+  }
+
+  .kyc-completion {
+    padding: 40px 24px;
+  }
+
+  .kyc-completion .ant-result-title {
+    font-size: 28px !important;
+  }
+
+  .kyc-completion .ant-result-subtitle {
+    font-size: 16px !important;
+  }
+
+  .kyc-completion .ant-result-icon {
+    margin-bottom: 32px !important;
+  }
+
+  .kyc-footer-actions {
+    padding: 20px 24px;
+  }
+
+  .kyc-submit-btn {
+    height: 48px !important;
+    font-size: 16px !important;
+  }
+
+  .ant-divider {
+    margin: 20px 0 !important;
+  }
+
+  .ant-result-icon > .anticon {
+    font-size: 80px !important;
+  }
+}
+
+/* ===== LARGE DESKTOP (1200px+) ===== */
+@media (min-width: 1200px) {
+  .kyc-header h2 {
+    font-size: 28px !important;
   }
 }

@@ -304,7 +304,7 @@ const AgentBusinessWorkspace = () => {
               <h3 className="section-title">Recent Bookings</h3>
               <Button
                 type="link"
-                onClick={() => navigate(ROUTES.BUSINESS_OWNER_MY_BOOKINGS)}
+                onClick={() => navigate(ROUTES.AGENT_MY_BOOKINGS)}
               >
                 View All
               </Button>
@@ -326,7 +326,7 @@ const AgentBusinessWorkspace = () => {
                     hoverable
                     onClick={() =>
                       navigate(
-                        ROUTES.BUSINESS_OWNER_SERVICE_DETAILS.replace(
+                        ROUTES.AGENT_SERVICE_DETAILS.replace(
                           ":bookingId",
                           booking._id
                         )
