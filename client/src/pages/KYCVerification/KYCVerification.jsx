@@ -26,6 +26,7 @@ import KYCFooter from "../KYCVerification/KYCFooter.jsx";
 import { useAuth } from "../../context/AuthContext";
 import ROLES from "../../constants/roles";
 import AgentProfileForm from "../../components/BusinessProfileForm/AgentProfileForm";
+import ServiceProviderProfileForm from "../../components/BusinessProfileForm/ServiceProviderProfileForm.jsx";
 
 import "./KYCVerification.css";
 
@@ -67,8 +68,12 @@ const KYCVerification = () => {
       Form: AgentProfileForm,
     },
     [ROLES.SERVICE_PROVIDER]: {
-      isComplete: () => true, // later ServiceProviderProfileForm
-      Form: null,
+      isComplete: (profile) =>
+        !!profile?.companyName &&
+        !!profile?.location &&
+        (!!profile?.contactEmail || !!profile?.contactPhone) &&
+        (!!profile?.gstNumber || !!profile?.businessRegistration),
+      Form: ServiceProviderProfileForm,
     },
   };
 

@@ -62,6 +62,7 @@ import AgentMyBookings from "./pages/Agent/Services/AgentMyBookings";
 import AgentBookServices from "./pages/Agent/Services/AgentBookServices";
 import AgentMyServices from "./pages/Agent/Services/AgentMyServices";
 import { AgentProvider } from "./context/AgentContext";
+import ServiceProviderDashboard from "./pages/ServiceProvider/ServiceProviderDashboard";
 
 const AppRoutes = () => {
   const { currentUser, loading } = useAuth();
@@ -335,6 +336,26 @@ const AppRoutes = () => {
         />
 
         <Route path={ROUTES.AGENT_PROFILE} element={<ProfileSelf />} />
+      </Route>
+
+      {/* SERVICE PROVIDER */}
+      <Route
+        element={
+          <ProtectedRoute allowedRoles={[ROLES.SERVICE_PROVIDER]}>
+            <KYCGuard>
+              <AppLayout role={ROLES.SERVICE_PROVIDER} />
+            </KYCGuard>
+          </ProtectedRoute>
+        }
+      >
+        <Route
+          path={ROUTES.SERVICE_PROVIDER_KYC}
+          element={<KYCVerification />}
+        />
+        <Route
+          path={ROUTES.SERVICE_PROVIDER_DASHBOARD}
+          element={<ServiceProviderDashboard />}
+        />
       </Route>
     </Routes>
   );
