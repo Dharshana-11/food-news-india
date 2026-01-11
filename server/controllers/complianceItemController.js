@@ -1,5 +1,21 @@
 import ComplianceItem from "../models/ComplianceItem.js";
 
+const normalizeServiceProviderRequirements = (requirements = []) => {
+  if (!Array.isArray(requirements)) return [];
+
+  return requirements
+    .filter((req) => req?.name)
+    .map((req) => ({
+      name: req.name.trim(),
+      description: req.description?.trim() || "",
+      required: typeof req.required === "boolean" ? req.required : true,
+      allowedFileTypes:
+        Array.isArray(req.allowedFileTypes) && req.allowedFileTypes.length
+          ? req.allowedFileTypes.map((t) => t.toLowerCase())
+          : ["pdf", "jpg", "jpeg", "png"],
+    }));
+};
+
 /**
  * @desc    Get all compliance items (with search, pagination, and status filter)
  * @route   GET /api/compliance-items
@@ -56,6 +72,7 @@ export const addComplianceItem = async (req, res) => {
       ruleExpression = "",
       status = "active",
       validityDays,
+      serviceProviderRequirements = [],
     } = req.body;
 
     name = name?.trim();
@@ -85,6 +102,9 @@ export const addComplianceItem = async (req, res) => {
       });
     }
 
+    const normalizedServiceProviderRequirements =
+      normalizeServiceProviderRequirements(serviceProviderRequirements);
+
     const complianceItem = new ComplianceItem({
       name,
       code,
@@ -92,6 +112,7 @@ export const addComplianceItem = async (req, res) => {
       ruleExpression,
       status,
       validityDays,
+      serviceProviderRequirements: normalizedServiceProviderRequirements,
     });
 
     await complianceItem.save();
@@ -137,6 +158,16 @@ export const updateComplianceItem = async (req, res) => {
       }
     }
 
+    if (
+      updates.serviceProviderRequirements !== undefined &&
+      updates.serviceProviderRequirements !== null
+    ) {
+      updates.serviceProviderRequirements =
+        normalizeServiceProviderRequirements(
+          updates.serviceProviderRequirements
+        );
+    }
+
     const complianceItem = await ComplianceItem.findByIdAndUpdate(id, updates, {
       new: true,
     });
@@ -170,7 +201,7 @@ export const deleteComplianceItem = async (req, res) => {
     const complianceItem = await ComplianceItem.findByIdAndUpdate(
       id,
       { status: "trash" },
-      { new: true },
+      { new: true }
     );
 
     if (!complianceItem) {

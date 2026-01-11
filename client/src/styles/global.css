@@ -2626,6 +2626,49 @@ body {
   color: var(--color-primary-blue);
 }
 
+/* =========================================
+   Service Provider Requirements (Modal)
+   ========================================= */
+
+.compliance-item-modal .sp-requirements-section {
+  margin-top: 24px;
+}
+
+.compliance-item-modal .sp-requirements-header {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 12px;
+  color: var(--color-text-dark);
+}
+
+.compliance-item-modal .sp-requirement-card {
+  background-color: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.compliance-item-modal .sp-requirement-card .ant-form-item {
+  margin-bottom: 14px;
+}
+
+.compliance-item-modal .sp-requirement-actions {
+  text-align: right;
+  margin-top: 4px;
+}
+
+.compliance-item-modal .sp-requirements-section .ant-btn-dashed {
+  border-radius: 8px;
+  border-color: var(--color-border);
+  color: var(--color-primary-blue);
+}
+
+.compliance-item-modal .sp-requirements-section .ant-btn-dashed:hover {
+  border-color: var(--color-primary-blue);
+  color: var(--color-primary-blue);
+}
+
 /* Responsive adjustments */
 @media (max-width: 480px) {
   .ticket-card {

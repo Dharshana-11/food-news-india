@@ -63,6 +63,7 @@ import AgentBookServices from "./pages/Agent/Services/AgentBookServices";
 import AgentMyServices from "./pages/Agent/Services/AgentMyServices";
 import { AgentProvider } from "./context/AgentContext";
 import ServiceProviderDashboard from "./pages/ServiceProvider/ServiceProviderDashboard";
+import ServiceApprovals from "./pages/ComplianceAndDocumentManagement/ServiceApprovals";
 
 const AppRoutes = () => {
   const { currentUser, loading } = useAuth();
@@ -173,6 +174,10 @@ const AppRoutes = () => {
           element={<KYCDocuments />}
         />
         <Route path={ROUTES.SUPER_ADMIN_DOCUMENTS} element={<Documents />} />
+        <Route
+          path={ROUTES.SUPER_ADMIN_SERVICES_APPROVAL}
+          element={<ServiceApprovals />}
+        />
 
         {/* NOTIFICATIONS */}
         <Route

@@ -24,8 +24,13 @@ const validateReferenceExists = async (model, id, label) => {
  */
 export const createDocument = async (req, res) => {
   try {
-    const { uploadedForUser, kycDocumentId, complianceItemId, validFrom } =
-      req.body;
+    const {
+      uploadedForUser,
+      kycDocumentId,
+      complianceItemId,
+      serviceProviderServiceId,
+      validFrom,
+    } = req.body;
 
     // Mandatory field: uploadedForUser
     if (!uploadedForUser) {
@@ -36,10 +41,17 @@ export const createDocument = async (req, res) => {
     }
 
     // Ensure exactly 1 document type
-    if (!!kycDocumentId === !!complianceItemId) {
+    const contextCount = [
+      kycDocumentId,
+      complianceItemId,
+      serviceProviderServiceId,
+    ].filter(Boolean).length;
+
+    if (contextCount !== 1) {
       return res.status(400).json({
         success: false,
-        message: "Document must be linked to exactly ONE: KYC or Compliance",
+        message:
+          "Document must be linked to exactly ONE: KYC, Compliance Item, or Service Provider Service",
       });
     }
 
@@ -95,6 +107,7 @@ export const createDocument = async (req, res) => {
       uploadedForUser,
       kycDocumentId,
       complianceItemId,
+      serviceProviderServiceId,
       validFrom: validFrom ? new Date(validFrom) : null,
       validUntil: computedValidUntil,
       file: fileMeta,
@@ -131,6 +144,7 @@ export const getAllDocuments = async (req, res) => {
       .populate("uploadedForUser", "name email role")
       .populate("kycDocumentId", "name code")
       .populate("complianceItemId", "name code validityDays")
+      .populate("serviceProviderServiceId")
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(Number(limit));
@@ -304,10 +318,12 @@ export const reviewDocument = async (req, res) => {
     }
 
     // Check if all KYC documents for this user are now approved
-    await checkAndUpdateUserVerification(
-      document.uploadedForUser._id,
-      document.uploadedForUser.role
-    );
+    if (document.kycDocumentId) {
+      await checkAndUpdateUserVerification(
+        document.uploadedForUser._id,
+        document.uploadedForUser.role
+      );
+    }
 
     res.json({
       message: `Document ${status} successfully`,

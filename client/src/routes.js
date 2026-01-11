@@ -68,6 +68,7 @@ export const ROUTES = {
   SUPER_ADMIN_COMPLIANCE_MAPPINGS: "/super-admin/compliance-mappings",
   SUPER_ADMIN_KYC_DOCUMENTS: "/super-admin/kyc-documents",
   SUPER_ADMIN_DOCUMENTS: "/super-admin/documents",
+  SUPER_ADMIN_SERVICES_APPROVAL: "/admin/service-approvals",
 
   /* =========================================================
      BUSINESS OWNER ROUTES

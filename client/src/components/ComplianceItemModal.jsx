@@ -1,6 +1,6 @@
 // src/components/ComplianceItemModal.js
 import React, { useEffect } from "react";
-import { Modal, Form, Input, Switch, Select, InputNumber } from "antd";
+import { Modal, Form, Input, Switch, Select, InputNumber, Button } from "antd";
 
 const { Option } = Select;
 
@@ -97,10 +97,6 @@ const ComplianceItemModal = ({
           />
         </Form.Item>
 
-        <Form.Item label="Required" name="required" valuePropName="checked">
-          <Switch />
-        </Form.Item>
-
         <Form.Item label="Rule Expression" name="ruleExpression">
           <Input placeholder="e.g., businessType=='Restaurant'" />
         </Form.Item>
@@ -115,6 +111,71 @@ const ComplianceItemModal = ({
             <Option value="inactive">Inactive</Option>
           </Select>
         </Form.Item>
+
+        <Form.List name="serviceProviderRequirements">
+          {(fields, { add, remove }) => (
+            <div className="sp-requirements-section">
+              <div className="sp-requirements-header">
+                Service Provider Authorization Documents
+              </div>
+
+              {fields.map(({ key, name, ...restField }) => (
+                <div key={key} className="sp-requirement-card">
+                  <Form.Item
+                    {...restField}
+                    label="Document Name"
+                    name={[name, "name"]}
+                    rules={[{ required: true, message: "Enter document name" }]}
+                  >
+                    <Input placeholder="e.g. FoSTaC Trainer Certificate" />
+                  </Form.Item>
+
+                  <Form.Item
+                    {...restField}
+                    label="Description"
+                    name={[name, "description"]}
+                  >
+                    <Input placeholder="Why this document is required" />
+                  </Form.Item>
+
+                  <Form.Item
+                    {...restField}
+                    label="Required"
+                    name={[name, "required"]}
+                    valuePropName="checked"
+                    initialValue={true}
+                  >
+                    <Switch />
+                  </Form.Item>
+
+                  <Form.Item
+                    {...restField}
+                    label="Allowed File Types"
+                    name={[name, "allowedFileTypes"]}
+                    initialValue={["pdf", "jpg", "jpeg", "png"]}
+                  >
+                    <Select mode="multiple" placeholder="Select file types">
+                      <Option value="pdf">PDF</Option>
+                      <Option value="jpg">JPG</Option>
+                      <Option value="jpeg">JPEG</Option>
+                      <Option value="png">PNG</Option>
+                    </Select>
+                  </Form.Item>
+
+                  <div className="sp-requirement-actions">
+                    <Button type="link" danger onClick={() => remove(name)}>
+                      Remove document
+                    </Button>
+                  </div>
+                </div>
+              ))}
+
+              <Button type="dashed" block onClick={() => add()}>
+                + Add required document
+              </Button>
+            </div>
+          )}
+        </Form.List>
       </Form>
     </Modal>
   );

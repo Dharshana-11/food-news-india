@@ -143,15 +143,12 @@ const ComplianceItems = () => {
       render: (text) => <span title={text}>{text || "-"}</span>,
     },
     {
-      title: "Required",
-      dataIndex: "required",
-      key: "required",
-      filters: [
-        { text: "Yes", value: true },
-        { text: "No", value: false },
-      ],
-      onFilter: (value, record) => record.required === value,
-      render: (val) => (val ? "Yes" : "No"),
+      title: "SP Docs",
+      key: "serviceProviderRequirements",
+      render: (_, record) =>
+        record.serviceProviderRequirements?.length
+          ? `${record.serviceProviderRequirements.length} doc(s)`
+          : "-",
     },
     {
       title: "Status",

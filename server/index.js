@@ -41,6 +41,7 @@ import complianceScoreRoutes from "./routes/complianceScoreRoutes.js";
 import agentInviteRoutes from "./routes/agentInviteRoutes.js";
 import agentBusinessRoutes from "./routes/agentBusinessRoutes.js";
 import agentDocumentRoutes from "./routes/agentDocumentRoutes.js";
+import serviceProviderServiceRoutes from "./routes/serviceProviderServiceRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -79,6 +80,8 @@ app.use("/api/session", sessionRoutes); // Session management routes
 app.use("/api/super-admin", superAdminRoutes); // Super Admin routes
 app.use("/api/tickets", ticketRoutes); // Ticket management routes
 app.use("/api/notifications", notificationRoutes);
+
+app.use("/api/admin/services", serviceProviderServiceRoutes);
 
 //User Routes
 app.use("/api/users", userRoutes);

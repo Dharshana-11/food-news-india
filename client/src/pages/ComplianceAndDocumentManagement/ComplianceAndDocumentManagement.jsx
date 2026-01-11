@@ -4,14 +4,13 @@ import BusinessTypeSummary from "./BusinessTypeSummary";
 import ComplianceMappingSummary from "./ComplianceMappingSummary";
 import KYCDocumentSummary from "./KYCDocumentSummary";
 import DocumentSummary from "./DocumentSummary";
-import AppLayout from "../../layouts/AppLayout";
-import ROLES from "../../constants/roles";
+import ServiceApprovalSummary from "./ServiceApprovalSummary";
 
 /**
  * ComplianceAndDocumentManagement Page
  *
  * Displays an overview of compliance items, business types, compliance mappings,
- * KYC documents, and uploaded documents for the Super Admin.
+ * KYC documents, uploaded documents, and service approvals for the Super Admin.
  */
 const ComplianceAndDocumentManagement = () => {
   return (
@@ -28,6 +27,7 @@ const ComplianceAndDocumentManagement = () => {
         <ComplianceMappingSummary />
         <KYCDocumentSummary />
         <DocumentSummary />
+        <ServiceApprovalSummary />
       </div>
     </div>
   );
