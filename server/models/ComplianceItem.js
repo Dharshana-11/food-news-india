@@ -1,17 +1,43 @@
 import mongoose from "mongoose";
 
 /**
- * @typedef {Object} ComplianceItem
- * @property {string} name - Name of the compliance item (e.g., "FSSAI License").
- * @property {string} code - Unique short code for the compliance item (e.g., "FSSAI").
- * @property {string} description - Detailed description of the compliance requirement.
- * @property {string} ruleExpression - (Future Use) Rule expression for dynamic compliance logic.
- * @property {number} validityDays - Validity duration (in days) of the compliance document.
- * @property {"active"|"inactive"|"trash"} status - Status of the compliance item.
- * @property {Date} createdAt - Timestamp when the record was created.
- * @property {Date} updatedAt - Timestamp when the record was last updated.
+ * @typedef {Object} ServiceProviderRequirement
+ * @property {string} name - Display name of the required document
+ * @property {string} description - Helper text explaining why it is required
+ * @property {boolean} required - Whether this document is mandatory
+ * @property {string[]} allowedFileTypes - Allowed file types (e.g., pdf, jpg, png)
  */
 
+const serviceProviderRequirementSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    description: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    required: {
+      type: Boolean,
+      default: true,
+    },
+
+    allowedFileTypes: {
+      type: [String],
+      default: ["pdf", "jpg", "jpeg", "png"],
+    },
+  },
+  { _id: false }
+);
+
+/**
+ * @typedef {Object} ComplianceItem
+ */
 const complianceItemSchema = new mongoose.Schema(
   {
     name: {
@@ -38,9 +64,6 @@ const complianceItemSchema = new mongoose.Schema(
 
     /**
      * FUTURE: RULE ENGINE SUPPORT
-     * Example:
-     *   businessType == "RESTAURANT"
-     *   employeeCount > 10
      */
     ruleExpression: {
       type: String,
@@ -49,17 +72,24 @@ const complianceItemSchema = new mongoose.Schema(
 
     /**
      * Validity period for compliance documents (in days).
-     * Example:
-     *   FSSAI = 365
-     *   GST = 365
-     *
-     * NOTE:
-     *   Some KYC documents do NOT use validity.
      */
     validityDays: {
       type: Number,
       required: true,
       min: 1,
+    },
+
+    /**
+     * Documents required for a Service Provider
+     * to be AUTHORIZED to offer this compliance as a service.
+     *
+     * NOTE:
+     * - These are definitions, not uploaded files
+     * - Actual documents will be stored in Document collection
+     */
+    serviceProviderRequirements: {
+      type: [serviceProviderRequirementSchema],
+      default: [],
     },
 
     status: {
@@ -68,7 +98,7 @@ const complianceItemSchema = new mongoose.Schema(
       default: "active",
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 export default mongoose.model("ComplianceItem", complianceItemSchema);

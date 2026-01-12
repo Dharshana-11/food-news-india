@@ -68,6 +68,7 @@ export const ROUTES = {
   SUPER_ADMIN_COMPLIANCE_MAPPINGS: "/super-admin/compliance-mappings",
   SUPER_ADMIN_KYC_DOCUMENTS: "/super-admin/kyc-documents",
   SUPER_ADMIN_DOCUMENTS: "/super-admin/documents",
+  SUPER_ADMIN_SERVICES_APPROVAL: "/admin/service-approvals",
 
   /* =========================================================
      BUSINESS OWNER ROUTES
@@ -112,6 +113,12 @@ export const ROUTES = {
   ========================================================= */
   SERVICE_PROVIDER_DASHBOARD: "/service-provider/dashboard",
   SERVICE_PROVIDER_KYC: "/service-provider/kyc-verification",
+  SERVICE_PROVIDER_DASHBOARD: "/service-provider/dashboard",
+  SERVICE_PROVIDER_KYC: "/service-provider/kyc-verification",
+  SERVICE_PROVIDER_MY_SERVICES: "/service-provider/my-services",
+  SERVICE_PROVIDER_SERVICE_DETAILS: "/service-provider/my-services/:id",
+  SERVICE_PROVIDER_ADD_SERVICE: "/service-provider/my-services/add",
+  SERVICE_PROVIDER_EDIT_SERVICE: "/service-provider/my-services/:id/edit",
 
   /* =========================================================
    BUSINESS OWNER – AGENTS

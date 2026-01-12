@@ -1,6 +1,15 @@
 // pages/Documents/DocumentReviewModal.jsx
 import { useState, useEffect } from "react";
-import { Modal, Button, Input, message, Radio, Space, Divider } from "antd";
+import {
+  Modal,
+  Button,
+  Input,
+  message,
+  Radio,
+  Space,
+  Divider,
+  Tag,
+} from "antd";
 import {
   CheckCircleOutlined,
   CloseCircleOutlined,
@@ -33,6 +42,38 @@ const DocumentReviewModal = ({ visible, document, onSuccess, onCancel }) => {
       setNotes("");
     }
   }, [document]);
+
+  /**
+   * Get document type tag
+   */
+  const getDocumentTypeTag = () => {
+    if (!document) return null;
+
+    if (document.kycDocumentId) {
+      return <Tag color="blue">KYC Document</Tag>;
+    } else if (document.complianceItemId) {
+      return <Tag color="purple">Compliance Document</Tag>;
+    } else if (document.serviceProviderServiceId) {
+      return <Tag color="orange">Service Authorization</Tag>;
+    }
+    return <Tag color="default">Unknown Type</Tag>;
+  };
+
+  /**
+   * Get document type name
+   */
+  const getDocumentTypeName = () => {
+    if (!document) return "N/A";
+
+    if (document.kycDocumentId) {
+      return `KYC: ${document.kycDocumentId?.name || "N/A"}`;
+    } else if (document.complianceItemId) {
+      return `Compliance: ${document.complianceItemId?.name || "N/A"}`;
+    } else if (document.serviceProviderServiceId) {
+      return "Service Authorization Document";
+    }
+    return "N/A";
+  };
 
   /**
    * Submit the review
@@ -105,6 +146,10 @@ const DocumentReviewModal = ({ visible, document, onSuccess, onCancel }) => {
         {/* Document Details */}
         <div className="document-details-section">
           <h4>Document Details</h4>
+
+          {/* Document Type Tag */}
+          <div style={{ marginBottom: "1rem" }}>{getDocumentTypeTag()}</div>
+
           <div className="detail-row">
             <span className="detail-label">File Name:</span>
             <span className="detail-value">
@@ -113,18 +158,26 @@ const DocumentReviewModal = ({ visible, document, onSuccess, onCancel }) => {
           </div>
           <div className="detail-row">
             <span className="detail-label">Document Type:</span>
-            <span className="detail-value">
-              {document.kycDocumentId
-                ? `KYC: ${document.kycDocumentId?.name}`
-                : `Compliance: ${document.complianceItemId?.name || "N/A"}`}
-            </span>
+            <span className="detail-value">{getDocumentTypeName()}</span>
           </div>
           <div className="detail-row">
             <span className="detail-label">Uploaded By:</span>
             <span className="detail-value">
               {document.uploadedByUser?.name || "N/A"}
+              {document.uploadedByUser?.email &&
+                ` (${document.uploadedByUser.email})`}
             </span>
           </div>
+          {document.uploadedForUser && (
+            <div className="detail-row">
+              <span className="detail-label">Uploaded For:</span>
+              <span className="detail-value">
+                {document.uploadedForUser?.name || "N/A"}
+                {document.uploadedForUser?.email &&
+                  ` (${document.uploadedForUser.email})`}
+              </span>
+            </div>
+          )}
           {document.validFrom && (
             <>
               <div className="detail-row">

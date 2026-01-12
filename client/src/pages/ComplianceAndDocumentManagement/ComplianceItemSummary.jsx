@@ -40,15 +40,6 @@ const ComplianceItemSummary = () => {
         </span>
       ),
     },
-
-    {
-      title: "Required",
-      dataIndex: "required",
-      key: "required",
-      width: "10%",
-      render: (val) => (val ? "Yes" : "No"),
-    },
-
     {
       title: "Status",
       dataIndex: "status",

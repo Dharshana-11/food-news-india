@@ -24,6 +24,34 @@ const DocumentCard = ({ doc, onView, onEdit, onDelete, onReview }) => {
   const isPending = doc.status === "pending";
   const file = doc.file || {};
 
+  /**
+   * Determine document type and return appropriate tag
+   */
+  const getDocumentTypeTag = () => {
+    if (doc.kycDocumentId) {
+      return <Tag color="blue">KYC</Tag>;
+    } else if (doc.complianceItemId) {
+      return <Tag color="purple">Compliance</Tag>;
+    } else if (doc.serviceProviderServiceId) {
+      return <Tag color="orange">Service Authorization</Tag>;
+    }
+    return <Tag color="default">Unknown</Tag>;
+  };
+
+  /**
+   * Get document type label for display
+   */
+  const getDocumentTypeLabel = () => {
+    if (doc.kycDocumentId) {
+      return doc.kycDocumentId.name || "KYC Document";
+    } else if (doc.complianceItemId) {
+      return doc.complianceItemId.name || "Compliance Document";
+    } else if (doc.serviceProviderServiceId) {
+      return "Service Authorization";
+    }
+    return "Document";
+  };
+
   return (
     <Card key={doc._id} className="doc-card" hoverable>
       {/* Header */}
@@ -31,13 +59,7 @@ const DocumentCard = ({ doc, onView, onEdit, onDelete, onReview }) => {
         <div className="doc-icon-wrapper">
           <FileOutlined />
         </div>
-        <div className="doc-type-badge">
-          {doc.kycDocumentId ? (
-            <Tag color="blue">KYC</Tag>
-          ) : (
-            <Tag color="purple">Compliance</Tag>
-          )}
-        </div>
+        <div className="doc-type-badge">{getDocumentTypeTag()}</div>
       </div>
 
       {/* Body */}
@@ -45,6 +67,16 @@ const DocumentCard = ({ doc, onView, onEdit, onDelete, onReview }) => {
         <h4 className="doc-filename" title={file.originalName || "-"}>
           {file.originalName || "-"}
         </h4>
+        <p
+          className="doc-document-type"
+          style={{
+            fontSize: "0.875rem",
+            color: "#6b7280",
+            marginTop: "0.25rem",
+          }}
+        >
+          {getDocumentTypeLabel()}
+        </p>
         <div className="doc-meta">
           <span className="doc-type">
             {file.fileType?.toUpperCase() || "-"}
@@ -58,6 +90,12 @@ const DocumentCard = ({ doc, onView, onEdit, onDelete, onReview }) => {
             By: <strong>{doc.uploadedByUser.name}</strong>
           </p>
         )}
+        {doc.uploadedForUser &&
+          doc.uploadedForUser._id !== doc.uploadedByUser?._id && (
+            <p className="doc-uploader">
+              For: <strong>{doc.uploadedForUser.name}</strong>
+            </p>
+          )}
         {doc.validUntil && (
           <p className="doc-validity">
             Valid until: {formatDate(doc.validUntil)}

@@ -18,6 +18,7 @@ const { Schema } = mongoose;
  * @property {mongoose.Types.ObjectId} uploadedForUser - Target user (Business Owner).
  * @property {mongoose.Types.ObjectId|null} kycDocumentId - Linked KYC doc (mutually exclusive).
  * @property {mongoose.Types.ObjectId|null} complianceItemId - Linked Compliance doc (mutually exclusive).
+ * @property {mongoose.Types.ObjectId|null} serviceProviderServiceId - Linked Service Provider ID (mutually exclusive).
  * @property {DocumentFile} file - File metadata.
  * @property {Date|null} validFrom - Start of document validity.
  * @property {Date|null} validUntil - End of document validity.
@@ -38,7 +39,9 @@ const DocumentSchema = new Schema(
     },
 
     /**
-     * The Business Owner for whom this document is uploaded.
+     * The user for whom this document is uploaded.
+     * - Business Owner (business compliance)
+     * - Service Provider (service authorization)
      */
     uploadedForUser: {
       type: Schema.Types.ObjectId,
@@ -47,7 +50,7 @@ const DocumentSchema = new Schema(
     },
 
     /**
-     * Exactly ONE of (kycDocumentId, complianceItemId) must be provided.
+     * KYC document reference
      */
     kycDocumentId: {
       type: Schema.Types.ObjectId,
@@ -55,9 +58,22 @@ const DocumentSchema = new Schema(
       default: null,
     },
 
+    /**
+     * Business compliance document reference
+     */
     complianceItemId: {
       type: Schema.Types.ObjectId,
       ref: "ComplianceItem",
+      default: null,
+    },
+
+    /**
+     * Service Provider authorization document reference
+     * (used when provider uploads docs to get a service approved)
+     */
+    serviceProviderServiceId: {
+      type: Schema.Types.ObjectId,
+      ref: "ServiceProviderService",
       default: null,
     },
 
@@ -82,7 +98,7 @@ const DocumentSchema = new Schema(
     },
 
     /**
-     * Validity dates mainly used for compliance documents.
+     * Validity dates (mainly for compliance documents)
      */
     validFrom: { type: Date, default: null },
     validUntil: { type: Date, default: null },
@@ -104,24 +120,27 @@ const DocumentSchema = new Schema(
       default: "",
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 /**
- * Ensures exactly one of:
- *  - kycDocumentId
- *  - complianceItemId
- * must exist. Prevents accidental dual linkage.
+ * Ensures document is linked to EXACTLY ONE context:
+ * - KYC
+ * - Business Compliance
+ * - Service Provider Authorization
  */
 DocumentSchema.pre("validate", function (next) {
-  const hasKYC = !!this.kycDocumentId;
-  const hasCompliance = !!this.complianceItemId;
+  const links = [
+    this.kycDocumentId,
+    this.complianceItemId,
+    this.serviceProviderServiceId,
+  ].filter(Boolean);
 
-  if (hasKYC === hasCompliance) {
+  if (links.length !== 1) {
     return next(
       new Error(
-        "Document must be linked to exactly one: KYC Document OR Compliance Item",
-      ),
+        "Document must be linked to exactly one: KYC, Compliance Item, or Service Provider Service"
+      )
     );
   }
 
