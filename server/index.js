@@ -44,6 +44,7 @@ import agentDocumentRoutes from "./routes/agentDocumentRoutes.js";
 import adminServiceRoutes from "./routes/adminServiceRoutes.js";
 import serviceProviderServiceRoutes from "./routes/serviceProviderServiceRoutes.js";
 import serviceProviderDocumentRoutes from "./routes/serviceProviderDocumentRoutes.js";
+import spBookingRoutes from "./routes/serviceProviderBookingRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -86,6 +87,7 @@ app.use("/api/notifications", notificationRoutes);
 // Service Provider Routes
 app.use("/api/service-provider/my-services", serviceProviderServiceRoutes);
 app.use("/api/service-provider/documents", serviceProviderDocumentRoutes);
+app.use("/api/service-provider/bookings", spBookingRoutes);
 
 // Admin Service Approval Routes
 app.use("/api/admin/services", adminServiceRoutes);
