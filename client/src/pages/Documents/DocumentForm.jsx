@@ -1,7 +1,16 @@
 // pages/Documents/DocumentForm.jsx
 import { useState, useEffect } from "react";
-import { Form, Select, DatePicker, Button, message, Upload, Input } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import {
+  Form,
+  Select,
+  DatePicker,
+  Button,
+  message,
+  Upload,
+  Input,
+  Alert,
+} from "antd";
+import { UploadOutlined, InfoCircleOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 import {
   createDocument,
@@ -14,7 +23,7 @@ import { getComplianceItemsForDropdown } from "../../services/complianceMappingS
 const { Option } = Select;
 
 /**
- * Form component for creating or editing a Document (KYC or Compliance)
+ * Form component for creating or editing a Document (KYC, Compliance, or Service Authorization)
  *
  * @param {Object} props
  * @param {Object|null} props.editingRecord - Existing document to edit
@@ -39,7 +48,15 @@ const DocumentForm = ({ editingRecord, onSuccess, onCancel }) => {
   // Populate form when editing
   useEffect(() => {
     if (editingRecord) {
-      const type = editingRecord.kycDocumentId ? "kyc" : "compliance";
+      let type = "kyc";
+      if (editingRecord.kycDocumentId) {
+        type = "kyc";
+      } else if (editingRecord.complianceItemId) {
+        type = "compliance";
+      } else if (editingRecord.serviceProviderServiceId) {
+        type = "service";
+      }
+
       setDocumentType(type);
 
       form.setFieldsValue({
@@ -83,7 +100,7 @@ const DocumentForm = ({ editingRecord, onSuccess, onCancel }) => {
       setUsers(usersRes.status === "fulfilled" ? usersRes.value : []);
       setKycDocuments(kycRes.status === "fulfilled" ? kycRes.value : []);
       setComplianceItems(
-        complianceRes.status === "fulfilled" ? complianceRes.value : [],
+        complianceRes.status === "fulfilled" ? complianceRes.value : []
       );
     } catch (error) {
       console.error("Failed to load dropdown data:", error);
@@ -108,15 +125,17 @@ const DocumentForm = ({ editingRecord, onSuccess, onCancel }) => {
 
       if (documentType === "kyc") {
         formData.append("kycDocumentId", values.kycDocumentId);
-      } else {
+      } else if (documentType === "compliance") {
         formData.append("complianceItemId", values.complianceItemId);
         if (values.validFrom) {
           formData.append(
             "validFrom",
-            dayjs(values.validFrom).format("YYYY-MM-DD"),
+            dayjs(values.validFrom).format("YYYY-MM-DD")
           );
         }
       }
+      // Note: Service Authorization documents are uploaded via Service Provider flow
+      // This form is for KYC and Compliance only
 
       if (editingRecord) {
         if (values.status) formData.append("status", values.status);
@@ -167,6 +186,9 @@ const DocumentForm = ({ editingRecord, onSuccess, onCancel }) => {
     maxCount: 1,
   };
 
+  // Check if document is Service Authorization type
+  const isServiceAuthDocument = editingRecord?.serviceProviderServiceId;
+
   return (
     <Form
       form={form}
@@ -175,6 +197,18 @@ const DocumentForm = ({ editingRecord, onSuccess, onCancel }) => {
       initialValues={{ documentType: "kyc" }}
       className="document-form"
     >
+      {/* Service Authorization Alert */}
+      {isServiceAuthDocument && (
+        <Alert
+          type="info"
+          message="Service Authorization Document"
+          description="This document was uploaded as part of a service provider's authorization. Only status and review notes can be edited here."
+          icon={<InfoCircleOutlined />}
+          showIcon
+          style={{ marginBottom: "1rem" }}
+        />
+      )}
+
       {/* Uploaded For User */}
       <Form.Item
         label="Upload For User (Optional)"
@@ -185,6 +219,7 @@ const DocumentForm = ({ editingRecord, onSuccess, onCancel }) => {
           placeholder="Select user"
           showSearch
           allowClear
+          disabled={!!editingRecord || isServiceAuthDocument}
           optionFilterProp="children"
           filterOption={(input, option) =>
             option.children.toLowerCase().includes(input.toLowerCase())
@@ -198,97 +233,125 @@ const DocumentForm = ({ editingRecord, onSuccess, onCancel }) => {
         </Select>
       </Form.Item>
 
-      {/* Document Type */}
-      <Form.Item
-        label="Document Type"
-        name="documentType"
-        rules={[{ required: true, message: "Please select document type" }]}
-      >
-        <Select
-          placeholder="Select document type"
-          onChange={(value) => {
-            setDocumentType(value);
-            form.setFieldsValue({
-              kycDocumentId: undefined,
-              complianceItemId: undefined,
-            });
-          }}
-        >
-          <Option value="kyc">KYC Document</Option>
-          <Option value="compliance">Compliance Document</Option>
-        </Select>
-      </Form.Item>
-
-      {/* Conditional Fields */}
-      {documentType === "kyc" ? (
+      {/* Document Type - Only show if not editing or not service auth */}
+      {!editingRecord && !isServiceAuthDocument && (
         <Form.Item
-          label="KYC Document"
-          name="kycDocumentId"
-          rules={[{ required: true, message: "Please select KYC document" }]}
+          label="Document Type"
+          name="documentType"
+          rules={[{ required: true, message: "Please select document type" }]}
         >
           <Select
-            placeholder="Select KYC document"
-            showSearch
-            optionFilterProp="children"
+            placeholder="Select document type"
+            onChange={(value) => {
+              setDocumentType(value);
+              form.setFieldsValue({
+                kycDocumentId: undefined,
+                complianceItemId: undefined,
+              });
+            }}
           >
-            {kycDocuments.map((doc) => (
-              <Option key={doc._id} value={doc._id}>
-                {doc.name} ({doc.code})
-              </Option>
-            ))}
+            <Option value="kyc">KYC Document</Option>
+            <Option value="compliance">Compliance Document</Option>
           </Select>
         </Form.Item>
-      ) : (
-        <>
-          <Form.Item
-            label="Compliance Item"
-            name="complianceItemId"
-            rules={[
-              { required: true, message: "Please select compliance item" },
-            ]}
-          >
-            <Select
-              placeholder="Select compliance item"
-              showSearch
-              optionFilterProp="children"
-            >
-              {complianceItems.map((item) => (
-                <Option key={item._id} value={item._id}>
-                  {item.name} ({item.code})
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
+      )}
 
-          <Form.Item
-            label="Valid From"
-            name="validFrom"
-            rules={[
-              { required: true, message: "Please select valid from date" },
-            ]}
-          >
-            <DatePicker style={{ width: "100%" }} format="YYYY-MM-DD" />
-          </Form.Item>
+      {/* Show document type info if editing service auth */}
+      {isServiceAuthDocument && (
+        <Form.Item label="Document Type">
+          <Input value="Service Authorization" disabled />
+        </Form.Item>
+      )}
+
+      {/* Conditional Fields - Only for KYC and Compliance */}
+      {!isServiceAuthDocument && (
+        <>
+          {documentType === "kyc" ? (
+            <Form.Item
+              label="KYC Document"
+              name="kycDocumentId"
+              rules={[
+                {
+                  required: !editingRecord,
+                  message: "Please select KYC document",
+                },
+              ]}
+            >
+              <Select
+                placeholder="Select KYC document"
+                showSearch
+                disabled={!!editingRecord}
+                optionFilterProp="children"
+              >
+                {kycDocuments.map((doc) => (
+                  <Option key={doc._id} value={doc._id}>
+                    {doc.name} ({doc.code})
+                  </Option>
+                ))}
+              </Select>
+            </Form.Item>
+          ) : documentType === "compliance" ? (
+            <>
+              <Form.Item
+                label="Compliance Item"
+                name="complianceItemId"
+                rules={[
+                  {
+                    required: !editingRecord,
+                    message: "Please select compliance item",
+                  },
+                ]}
+              >
+                <Select
+                  placeholder="Select compliance item"
+                  showSearch
+                  disabled={!!editingRecord}
+                  optionFilterProp="children"
+                >
+                  {complianceItems.map((item) => (
+                    <Option key={item._id} value={item._id}>
+                      {item.name} ({item.code})
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+
+              <Form.Item
+                label="Valid From"
+                name="validFrom"
+                rules={[
+                  {
+                    required: !editingRecord,
+                    message: "Please select valid from date",
+                  },
+                ]}
+              >
+                <DatePicker style={{ width: "100%" }} format="YYYY-MM-DD" />
+              </Form.Item>
+            </>
+          ) : null}
         </>
       )}
 
       {/* File Upload */}
-      <Form.Item
-        label="Upload File"
-        required={!editingRecord}
-        tooltip="PDF, JPG, PNG (Max 10MB)"
-      >
-        <Upload {...uploadProps} listType="picture">
-          <Button icon={<UploadOutlined />}>
-            {fileList.length === 0 ? "Select File" : "Change File"}
-          </Button>
-        </Upload>
-        {!editingRecord && fileList.length === 0 && (
-          <div style={{ color: "#ff4d4f", fontSize: 12, marginTop: 4 }}>
-            File is required
-          </div>
-        )}
-      </Form.Item>
+      {!isServiceAuthDocument && (
+        <Form.Item
+          label="Upload File"
+          required={!editingRecord}
+          tooltip="PDF, JPG, PNG (Max 10MB)"
+        >
+          <Upload {...uploadProps} listType="picture">
+            <Button icon={<UploadOutlined />}>
+              {fileList.length === 0 ? "Select File" : "Change File"}
+            </Button>
+          </Upload>
+          {!editingRecord && fileList.length === 0 && (
+            <div style={{ color: "#ff4d4f", fontSize: 12, marginTop: 4 }}>
+              File is required
+            </div>
+          )}
+        </Form.Item>
+      )}
 
       {/* Edit-only Fields */}
       {editingRecord && (
@@ -317,7 +380,9 @@ const DocumentForm = ({ editingRecord, onSuccess, onCancel }) => {
           type="primary"
           htmlType="submit"
           loading={loading}
-          disabled={!editingRecord && fileList.length === 0}
+          disabled={
+            !editingRecord && !isServiceAuthDocument && fileList.length === 0
+          }
         >
           {editingRecord ? "Update" : "Upload"}
         </Button>

@@ -150,6 +150,7 @@ const SideBar = ({ role, isOpen, onClose }) => {
           ROUTES.SUPER_ADMIN_COMPLIANCE_MAPPINGS,
           ROUTES.SUPER_ADMIN_KYC_DOCUMENTS,
           ROUTES.SUPER_ADMIN_DOCUMENTS,
+          ROUTES.SUPER_ADMIN_SERVICES_APPROVAL,
         ],
       },
       {

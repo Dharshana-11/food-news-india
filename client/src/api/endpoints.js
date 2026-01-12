@@ -70,4 +70,16 @@ export const ENDPOINTS = {
   AGENT_DOCUMENT_DELETE: (documentId) => `/agent/documents/${documentId}`,
   AGENT_DOCUMENT_RENAME: (documentId) =>
     `/agent/documents/${documentId}/rename`,
+
+  // SERVICE PROVIDER SERVICES
+  SP_MY_SERVICES: "/service-provider/my-services",
+  SP_SERVICE_DETAIL: (id) => `/service-provider/my-services/${id}`,
+  SP_SERVICE_CREATE: "/service-provider/my-services",
+  SP_SERVICE_UPDATE: (id) => `/service-provider/my-services/${id}`,
+  SP_SERVICE_DEACTIVATE: (id) =>
+    `/service-provider/my-services/${id}/deactivate`,
+  SP_SERVICE_ACTIVATE: (id) => `/service-provider/my-services/${id}/activate`,
+
+  // COMPLIANCE ITEMS
+  COMPLIANCE_ITEMS_ACTIVE: "/compliance-items?status=active",
 };

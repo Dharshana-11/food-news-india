@@ -12,6 +12,7 @@ import { ROUTES } from "../../routes";
  *
  * Displays a summarized table of the latest uploaded documents (limited to 5 items).
  * Allows navigating to the full document management page.
+ * Supports KYC, Compliance, and Service Authorization document types.
  */
 const DocumentSummary = () => {
   const [items, setItems] = useState([]); // Holds the fetched documents
@@ -31,9 +32,16 @@ const DocumentSummary = () => {
       key: "type",
       width: "25%",
       render: (_, record) => {
-        if (record.kycDocumentId) return "KYC";
-        if (record.complianceItemId) return "Compliance";
-        return "-"; // fallback if both types are missing
+        if (record.kycDocumentId) {
+          return <Tag color="blue">KYC</Tag>;
+        }
+        if (record.complianceItemId) {
+          return <Tag color="purple">Compliance</Tag>;
+        }
+        if (record.serviceProviderServiceId) {
+          return <Tag color="orange">Service Auth</Tag>;
+        }
+        return "-"; // fallback if all types are missing
       },
     },
     {

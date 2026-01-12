@@ -1,0 +1,108 @@
+/**
+ * ServiceProviderServiceDetails.css
+ * ============================================================================
+ * Mobile-First Responsive Styles
+ */
+
+.sp-service-details-container {
+  padding: 1rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.sp-service-details-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+/* Header */
+.sp-service-details-header {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.sp-service-details-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Info Card */
+.sp-service-details-info-card {
+  margin-bottom: 1.5rem;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.sp-service-details-title-row {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.sp-service-details-title-row h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-primary-blue);
+  margin: 0;
+}
+
+.sp-service-details-code {
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+  font-family: monospace;
+  margin-top: 0.25rem;
+}
+
+.sp-service-details-status-tag {
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  align-self: flex-start;
+}
+
+.sp-service-details-alert {
+  margin-top: 1.5rem;
+}
+
+.sp-service-details-req-alert {
+  margin-bottom: 1rem;
+}
+
+/* Responsive */
+@media (min-width: 640px) {
+  .sp-service-details-container {
+    padding: 1.25rem;
+  }
+
+  .sp-service-details-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .sp-service-details-title-row {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .sp-service-details-title-row h2 {
+    font-size: 1.75rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .sp-service-details-container {
+    padding: 1.5rem 2rem;
+  }
+
+  .sp-service-details-title-row h2 {
+    font-size: 2rem;
+  }
+}

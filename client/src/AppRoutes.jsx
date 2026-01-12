@@ -62,8 +62,11 @@ import AgentMyBookings from "./pages/Agent/Services/AgentMyBookings";
 import AgentBookServices from "./pages/Agent/Services/AgentBookServices";
 import AgentMyServices from "./pages/Agent/Services/AgentMyServices";
 import { AgentProvider } from "./context/AgentContext";
+
 import ServiceProviderDashboard from "./pages/ServiceProvider/ServiceProviderDashboard";
 import ServiceApprovals from "./pages/ComplianceAndDocumentManagement/ServiceApprovals";
+import ServiceProviderMyServices from "./pages/ServiceProvider/ServiceProviderMyServices";
+import ServiceProviderServiceDetails from "./pages/ServiceProvider/ServiceProviderServiceDetails";
 
 const AppRoutes = () => {
   const { currentUser, loading } = useAuth();
@@ -361,6 +364,22 @@ const AppRoutes = () => {
           path={ROUTES.SERVICE_PROVIDER_DASHBOARD}
           element={<ServiceProviderDashboard />}
         />
+        <Route
+          path={ROUTES.SERVICE_PROVIDER_MY_SERVICES}
+          element={<ServiceProviderMyServices />}
+        />
+        <Route
+          path={ROUTES.SERVICE_PROVIDER_SERVICE_DETAILS}
+          element={<ServiceProviderServiceDetails />}
+        />
+        {/* <Route
+          path={ROUTES.SERVICE_PROVIDER_ADD_SERVICE}
+          element={<ServiceProviderAddEditService />}
+        />
+        <Route
+          path={ROUTES.SERVICE_PROVIDER_EDIT_SERVICE}
+          element={<ServiceProviderAddEditService />}
+        /> */}
       </Route>
     </Routes>
   );

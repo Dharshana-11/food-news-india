@@ -50,7 +50,7 @@ export const updateComplianceItem = async (id, payload) => {
   try {
     const res = await api.put(
       `${SUPER_ADMIN_COMPLIANCE_ITEM_API}/${id}`,
-      payload,
+      payload
     );
     return res.data;
   } catch (err) {

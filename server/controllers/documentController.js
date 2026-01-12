@@ -32,8 +32,8 @@ export const createDocument = async (req, res) => {
       validFrom,
     } = req.body;
 
-    // Mandatory field: uploadedForUser
-    if (!uploadedForUser) {
+    // uploadedForUser is required ONLY for KYC & Compliance
+    if (!serviceProviderServiceId && !uploadedForUser) {
       return res.status(400).json({
         success: false,
         message: "uploadedForUser is required",
@@ -102,9 +102,11 @@ export const createDocument = async (req, res) => {
       storageProvider: "local",
     };
 
+    const resolvedUploadedForUser = uploadedForUser || req.user._id;
+
     const document = await Document.create({
       uploadedByUser: req.user._id,
-      uploadedForUser,
+      uploadedForUser: resolvedUploadedForUser,
       kycDocumentId,
       complianceItemId,
       serviceProviderServiceId,

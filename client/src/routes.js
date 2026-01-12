@@ -113,6 +113,12 @@ export const ROUTES = {
   ========================================================= */
   SERVICE_PROVIDER_DASHBOARD: "/service-provider/dashboard",
   SERVICE_PROVIDER_KYC: "/service-provider/kyc-verification",
+  SERVICE_PROVIDER_DASHBOARD: "/service-provider/dashboard",
+  SERVICE_PROVIDER_KYC: "/service-provider/kyc-verification",
+  SERVICE_PROVIDER_MY_SERVICES: "/service-provider/my-services",
+  SERVICE_PROVIDER_SERVICE_DETAILS: "/service-provider/my-services/:id",
+  SERVICE_PROVIDER_ADD_SERVICE: "/service-provider/my-services/add",
+  SERVICE_PROVIDER_EDIT_SERVICE: "/service-provider/my-services/:id/edit",
 
   /* =========================================================
    BUSINESS OWNER – AGENTS

@@ -1,0 +1,42 @@
+/**
+ * AddEditServiceModal.css
+ * ============================================================================
+ * Styles for Add/Edit Service Modal
+ */
+
+.add-edit-service-modal .ant-modal-body {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.add-edit-service-doc-card {
+  border-radius: 8px;
+}
+
+.add-edit-service-doc-card .ant-card-head {
+  min-height: auto;
+  padding: 0.75rem 1rem;
+}
+
+.add-edit-service-doc-card .ant-card-body {
+  padding: 1rem;
+}
+
+/* Scrollbar styling for modal body */
+.add-edit-service-modal .ant-modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.add-edit-service-modal .ant-modal-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.add-edit-service-modal .ant-modal-body::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.add-edit-service-modal .ant-modal-body::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}

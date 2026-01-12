@@ -65,7 +65,11 @@ const ServiceApprovals = () => {
           fetchServices();
         } catch (err) {
           console.error(err);
-          message.error("Failed to approve service");
+
+          const backendMessage =
+            err?.response?.data?.message || "Failed to approve service";
+
+          message.error(backendMessage);
         }
       },
     });
