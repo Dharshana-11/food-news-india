@@ -22,6 +22,7 @@ import {
   PhoneOutlined,
   MessageOutlined,
   FileTextOutlined,
+  DownloadOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import bookingService from "../../../services/bookingService";
@@ -128,13 +129,35 @@ const ServiceDetails = () => {
     const texts = {
       pending: "Request Submitted",
       accepted: "Accepted",
-      in_progress: "Documents Verified",
-      documents_submitted: "Application Submitted",
-      completed: "License Approved",
+      in_progress: "In Progress ",
+      documents_submitted: "Uploaded Deliverables",
+      completed: "Completed",
       cancelled: "Cancelled",
       rejected: "Rejected",
     };
     return texts[status] || status;
+  };
+
+  const handleDownload = (doc) => {
+    if (!doc?.url) {
+      message.error("File not available");
+      return;
+    }
+
+    const baseURL =
+      import.meta.env.VITE_API_URL?.replace(/\/$/, "") ||
+      "http://localhost:5000";
+
+    const fileUrl = `${baseURL}${doc.url}`;
+
+    const link = document.createElement("a");
+    link.href = fileUrl;
+    link.download = doc.name || "document";
+    link.target = "_blank";
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   if (loading) {
@@ -262,12 +285,18 @@ const ServiceDetails = () => {
         {/* Documents */}
         {booking.documents?.length > 0 && (
           <Card title="Deliverables" className="service-details-card">
-            <Space direction="vertical" size={10}>
+            <Space direction="vertical" size={12} style={{ width: "100%" }}>
               {booking.documents.map((doc, index) => (
                 <div key={index} className="service-details-doc">
-                  <FileTextOutlined />
-                  <span>{doc.name}</span>
-                  <Button type="link" size="small">
+                  <div className="service-details-doc-info">
+                    <FileTextOutlined />
+                    <span className="service-details-doc-name">{doc.name}</span>
+                  </div>
+                  <Button
+                    type="link"
+                    icon={<DownloadOutlined />}
+                    onClick={() => handleDownload(doc)}
+                  >
                     Download
                   </Button>
                 </div>

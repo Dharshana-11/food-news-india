@@ -1,9 +1,6 @@
 import ServiceBooking from "../models/ServiceBooking.js";
 import ServiceProvider from "../models/ServiceProvider.js";
 import Document from "../models/Document.js";
-import User from "../models/User.js";
-import ComplianceItem from "../models/ComplianceItem.js";
-import ROLES from "../utils/constants/roles.js";
 
 /**
  * ============================================================================
@@ -444,6 +441,15 @@ export const postServiceUpdate = async (req, res) => {
 
       if (status === "completed" && !booking.actualCompletionDate) {
         booking.actualCompletionDate = new Date();
+      }
+
+      if (status === "completed") {
+        await ServiceProvider.findByIdAndUpdate(booking.providerId, {
+          $inc: {
+            completedBookings: 1,
+            totalCustomers: 1,
+          },
+        });
       }
     }
 

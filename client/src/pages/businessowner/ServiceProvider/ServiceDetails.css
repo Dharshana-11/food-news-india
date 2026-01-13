@@ -230,18 +230,24 @@
 }
 
 /* =========================================================
-   Documents
+   Documents Section - Mobile First
    ========================================================= */
 
 .service-details-doc {
   display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px;
   background: #f9fafb;
   border-radius: 10px;
   border: 1px solid #e5e7eb;
   transition: all 0.2s ease;
+  margin-bottom: 12px;
+}
+
+.service-details-doc:last-child {
+  margin-bottom: 0;
 }
 
 .service-details-doc:hover {
@@ -249,24 +255,47 @@
   border-color: #d1d5db;
 }
 
+/* Mobile: Icon + filename in one row */
+.service-details-doc-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+}
+
 .service-details-doc .anticon {
-  font-size: 18px;
+  font-size: 20px;
   color: var(--color-primary-orange);
   flex-shrink: 0;
 }
 
-.service-details-doc span {
+.service-details-doc-name {
   flex: 1;
+  min-width: 0;
   font-size: 14px;
   font-weight: 500;
   color: #1f2937;
+  line-height: 1.4;
+  word-break: break-word;
 }
 
+/* Mobile: Button full width below */
 .service-details-doc .ant-btn {
-  padding: 0;
-  height: auto;
+  width: 100%;
+  height: 36px;
+  padding: 0 16px;
   font-size: 13px;
   font-weight: 500;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.service-details-doc .ant-btn .anticon {
+  font-size: 14px;
 }
 
 /* =========================================================
@@ -515,21 +544,43 @@
     padding: 12px 14px;
     font-size: 14px;
   }
-
+  /* =========================================================
+   Documents - Tablet (768px and up)
+   ========================================================= */
   .service-details-doc {
-    padding: 14px 16px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 18px;
+    margin-bottom: 14px;
+  }
+
+  .service-details-doc-info {
+    flex: 1;
+    min-width: 0;
+    gap: 12px;
   }
 
   .service-details-doc .anticon {
-    font-size: 20px;
+    font-size: 22px;
   }
 
-  .service-details-doc span {
+  .service-details-doc-name {
     font-size: 15px;
   }
 
+  /* Tablet: Button auto width on the right */
   .service-details-doc .ant-btn {
+    width: auto;
+    height: 38px;
+    padding: 0 20px;
     font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .service-details-doc .ant-btn .anticon {
+    font-size: 15px;
   }
 
   .service-details-card h5 {
@@ -623,6 +674,31 @@
   .service-details-actions .ant-btn {
     max-width: 400px;
     margin: 0 auto;
+  }
+  /* =========================================================
+   Documents - Desktop (1024px and up)
+   ========================================================= */
+  .service-details-doc {
+    padding: 18px 20px;
+    margin-bottom: 16px;
+  }
+
+  .service-details-doc .anticon {
+    font-size: 24px;
+  }
+
+  .service-details-doc-name {
+    font-size: 16px;
+  }
+
+  .service-details-doc .ant-btn {
+    height: 40px;
+    padding: 0 24px;
+    font-size: 15px;
+  }
+
+  .service-details-doc .ant-btn .anticon {
+    font-size: 16px;
   }
 }
 

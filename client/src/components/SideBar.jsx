@@ -25,6 +25,8 @@ import {
   MessageOutlined,
   BellOutlined,
   ShopOutlined,
+  InboxOutlined,
+  ShoppingCartOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import { message } from "antd";
@@ -352,13 +354,16 @@ const SideBar = ({ role, isOpen, onClose }) => {
         icon: <AppstoreOutlined />,
         label: "My Services",
       },
-
       {
-        key: ROUTES.SERVICE_PROVIDER_SERVICE_REQUESTS,
-        icon: <HistoryOutlined />,
-        label: "Service Requests",
+        key: ROUTES.SERVICE_PROVIDER_BOOKING_REQUESTS,
+        icon: <InboxOutlined />,
+        label: "Requests",
       },
-
+      {
+        key: ROUTES.SERVICE_PROVIDER_MY_BOOKINGS,
+        icon: <ShoppingCartOutlined />,
+        label: "My Bookings",
+      },
       {
         key: ROUTES.SERVICE_PROVIDER_MESSAGES,
         icon: <MessageOutlined />,
