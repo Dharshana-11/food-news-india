@@ -33,6 +33,7 @@ import {
   EyeOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
+import "./SPBookingDetails.css";
 import spBookingService from "../../services/serviceProviderBookingService";
 
 const { TextArea } = Input;
@@ -203,43 +204,41 @@ const SPBookingDetails = () => {
   const statusTransitions = getAvailableStatusTransitions(booking.status);
 
   return (
-    <div className="sp-booking-details-container">
-      {/* Header */}
-      <div className="sp-booking-details-header">
-        <Button
-          icon={<ArrowLeftOutlined />}
-          onClick={() => navigate(-1)}
-          className="sp-booking-details-back"
-        >
-          Back
-        </Button>
-        <div className="sp-booking-details-title-section">
-          <h2>Booking Details</h2>
-          <p>Booking ID: {booking.bookingId}</p>
-        </div>
-      </div>
-
-      {/* Service Info Card */}
-      <Card className="sp-booking-details-card">
-        <div className="sp-booking-details-top">
-          <div>
-            <h3>{booking.complianceItemId?.name}</h3>
-            <p className="sp-booking-details-code">
-              {booking.complianceItemId?.code}
-            </p>
+    <div className="sp-booking-details-page">
+      <div className="sp-booking-details-container">
+        {/* Header */}
+        <div className="sp-booking-details-header">
+          <Button
+            icon={<ArrowLeftOutlined />}
+            onClick={() => navigate(-1)}
+            className="sp-booking-details-back"
+          ></Button>
+          <div className="sp-booking-details-title-section">
+            <h2>Booking Details</h2>
+            <p>Booking ID: {booking.bookingId}</p>
           </div>
-          <Tag
-            color={getStatusColor(booking.status)}
-            className="sp-booking-details-status-tag"
-          >
-            {getStatusText(booking.status)}
-          </Tag>
         </div>
 
-        <Divider />
+        {/* Service Info Card */}
+        <Card className="sp-booking-details-card sp-booking-details-service-card">
+          <div className="sp-booking-details-top">
+            <div>
+              <h3>{booking.complianceItemId?.name}</h3>
+              <p className="sp-booking-details-code">
+                {booking.complianceItemId?.code}
+              </p>
+            </div>
+            <Tag
+              color={getStatusColor(booking.status)}
+              className="sp-booking-details-status-tag"
+            >
+              {getStatusText(booking.status)}
+            </Tag>
+          </div>
 
-        <Row gutter={[16, 16]}>
-          <Col xs={24} sm={12}>
+          <Divider />
+
+          <div className="sp-booking-details-info-grid">
             <div className="sp-booking-details-info-row">
               <span className="sp-booking-details-label">
                 <DollarOutlined /> Agreed Price
@@ -248,9 +247,7 @@ const SPBookingDetails = () => {
                 ₹{booking.agreedPrice}
               </strong>
             </div>
-          </Col>
 
-          <Col xs={24} sm={12}>
             <div className="sp-booking-details-info-row">
               <span className="sp-booking-details-label">
                 <CalendarOutlined /> Booked On
@@ -259,9 +256,7 @@ const SPBookingDetails = () => {
                 {new Date(booking.bookedAt).toLocaleDateString()}
               </strong>
             </div>
-          </Col>
 
-          <Col xs={24} sm={12}>
             <div className="sp-booking-details-info-row">
               <span className="sp-booking-details-label">
                 <CalendarOutlined /> Expected Completion
@@ -270,10 +265,8 @@ const SPBookingDetails = () => {
                 {new Date(booking.expectedCompletionDate).toLocaleDateString()}
               </strong>
             </div>
-          </Col>
 
-          {booking.actualCompletionDate && (
-            <Col xs={24} sm={12}>
+            {booking.actualCompletionDate && (
               <div className="sp-booking-details-info-row">
                 <span className="sp-booking-details-label">
                   <CheckCircleOutlined /> Completed On
@@ -282,452 +275,270 @@ const SPBookingDetails = () => {
                   {new Date(booking.actualCompletionDate).toLocaleDateString()}
                 </strong>
               </div>
-            </Col>
-          )}
-        </Row>
-      </Card>
-
-      {/* Business Owner Info */}
-      <Card
-        title="Business Owner Information"
-        className="sp-booking-details-card"
-      >
-        <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-          <div className="sp-booking-details-info-row">
-            <span className="sp-booking-details-label">
-              <UserOutlined /> Name
-            </span>
-            <strong className="sp-booking-details-value">
-              {booking.businessOwnerId?.name}
-            </strong>
+            )}
           </div>
+        </Card>
 
-          {booking.businessOwnerId?.phone && (
-            <div className="sp-booking-details-info-row">
-              <span className="sp-booking-details-label">
-                <PhoneOutlined /> Phone
-              </span>
-              <strong className="sp-booking-details-value">
-                {booking.businessOwnerId.phone}
-              </strong>
-            </div>
-          )}
-
-          {booking.businessOwnerId?.email && (
-            <div className="sp-booking-details-info-row">
-              <span className="sp-booking-details-label">
-                <MailOutlined /> Email
-              </span>
-              <strong className="sp-booking-details-value">
-                {booking.businessOwnerId.email}
-              </strong>
-            </div>
-          )}
-        </Space>
-      </Card>
-
-      {/* Timeline */}
-      <Card title="Progress Timeline" className="sp-booking-details-card">
-        {booking.timeline?.length > 0 ? (
-          <Timeline>
-            {booking.timeline.map((event, index) => (
-              <Timeline.Item
-                key={index}
-                dot={
-                  event.status === "completed" ? (
-                    <CheckCircleOutlined
-                      style={{ fontSize: "16px", color: "#52c41a" }}
-                    />
-                  ) : (
-                    <ClockCircleOutlined style={{ fontSize: "16px" }} />
-                  )
-                }
-                color={getStatusColor(event.status)}
-              >
-                <div className="sp-booking-timeline-item">
-                  <div className="sp-booking-timeline-status">
-                    {getStatusText(event.status)}
-                  </div>
-                  <div className="sp-booking-timeline-date">
-                    {new Date(event.timestamp).toLocaleString()}
-                  </div>
-                  {event.message && (
-                    <div className="sp-booking-timeline-message">
-                      {event.message}
-                    </div>
-                  )}
-                </div>
-              </Timeline.Item>
-            ))}
-          </Timeline>
-        ) : (
-          <Empty description="No updates yet" />
-        )}
-      </Card>
-
-      {/* Deliverables */}
-      <Card title="Uploaded Deliverables" className="sp-booking-details-card">
-        {booking.deliverables?.length > 0 ? (
+        {/* Business Owner Info */}
+        <Card
+          title="Business Owner Information"
+          className="sp-booking-details-card"
+        >
           <Space direction="vertical" size="middle" style={{ width: "100%" }}>
-            {booking.deliverables.map((doc, index) => (
-              <div key={index} className="sp-booking-deliverable">
-                <div className="sp-booking-deliverable-info">
-                  <FileTextOutlined />
-                  <div>
-                    <div className="sp-booking-deliverable-name">
-                      {doc.file?.originalName}
+            <div className="sp-booking-details-info-row">
+              <span className="sp-booking-details-label">
+                <UserOutlined /> Name
+              </span>
+              <strong className="sp-booking-details-value">
+                {booking.businessOwnerId?.name}
+              </strong>
+            </div>
+
+            {booking.businessOwnerId?.phone && (
+              <div className="sp-booking-details-info-row">
+                <span className="sp-booking-details-label">
+                  <PhoneOutlined /> Phone
+                </span>
+                <strong className="sp-booking-details-value">
+                  {booking.businessOwnerId.phone}
+                </strong>
+              </div>
+            )}
+
+            {booking.businessOwnerId?.email && (
+              <div className="sp-booking-details-info-row">
+                <span className="sp-booking-details-label">
+                  <MailOutlined /> Email
+                </span>
+                <strong className="sp-booking-details-value">
+                  {booking.businessOwnerId.email}
+                </strong>
+              </div>
+            )}
+          </Space>
+        </Card>
+
+        {/* Timeline */}
+        <Card title="Progress Timeline" className="sp-booking-details-card">
+          {booking.timeline?.length > 0 ? (
+            <Timeline>
+              {booking.timeline.map((event, index) => (
+                <Timeline.Item
+                  key={index}
+                  dot={
+                    event.status === "completed" ? (
+                      <CheckCircleOutlined
+                        style={{ fontSize: "16px", color: "#52c41a" }}
+                      />
+                    ) : (
+                      <ClockCircleOutlined style={{ fontSize: "16px" }} />
+                    )
+                  }
+                  color={getStatusColor(event.status)}
+                >
+                  <div className="sp-booking-timeline-item">
+                    <div className="sp-booking-timeline-status">
+                      {getStatusText(event.status)}
                     </div>
-                    <div className="sp-booking-deliverable-date">
-                      Uploaded: {new Date(doc.createdAt).toLocaleString()}
+                    <div className="sp-booking-timeline-date">
+                      {new Date(event.timestamp).toLocaleString()}
+                    </div>
+                    {event.message && (
+                      <div className="sp-booking-timeline-message">
+                        {event.message}
+                      </div>
+                    )}
+                  </div>
+                </Timeline.Item>
+              ))}
+            </Timeline>
+          ) : (
+            <Empty description="No updates yet" />
+          )}
+        </Card>
+
+        {/* Deliverables */}
+        <Card title="Uploaded Deliverables" className="sp-booking-details-card">
+          {booking.deliverables?.length > 0 ? (
+            <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+              {booking.deliverables.map((doc, index) => (
+                <div key={index} className="sp-booking-deliverable">
+                  <div className="sp-booking-deliverable-info">
+                    <FileTextOutlined />
+                    <div>
+                      <div className="sp-booking-deliverable-name">
+                        {doc.file?.originalName}
+                      </div>
+                      <div className="sp-booking-deliverable-date">
+                        Uploaded: {new Date(doc.createdAt).toLocaleString()}
+                      </div>
                     </div>
                   </div>
+                  <Button
+                    type="link"
+                    icon={<EyeOutlined />}
+                    onClick={() => viewDocument(doc.file?.filePath)}
+                  >
+                    View
+                  </Button>
                 </div>
-                <Button
-                  type="link"
-                  icon={<EyeOutlined />}
-                  onClick={() => viewDocument(doc.file?.filePath)}
-                >
-                  View
-                </Button>
-              </div>
-            ))}
-          </Space>
-        ) : (
-          <Empty description="No deliverables uploaded yet" />
-        )}
-      </Card>
+              ))}
+            </Space>
+          ) : (
+            <Empty description="No deliverables uploaded yet" />
+          )}
+        </Card>
 
-      {/* Action Buttons */}
-      {booking.status !== "completed" && booking.status !== "cancelled" && (
-        <div className="sp-booking-details-actions">
-          <Button
-            type="default"
-            size="large"
-            icon={<SendOutlined />}
-            onClick={() => setUpdateModal(true)}
-            block
-          >
-            Post Update
-          </Button>
-
-          {booking.status !== "rejected" && (
+        {/* Action Buttons */}
+        {booking.status !== "completed" && booking.status !== "cancelled" && (
+          <div className="sp-booking-details-actions">
             <Button
-              type="primary"
+              type="default"
               size="large"
-              icon={<UploadOutlined />}
-              onClick={() => setUploadModal(true)}
+              icon={<SendOutlined />}
+              onClick={() => setUpdateModal(true)}
               block
             >
-              Upload Deliverable
+              Post Update
             </Button>
-          )}
-        </div>
-      )}
 
-      {/* Post Update Modal */}
-      <Modal
-        title="Post Service Update"
-        open={updateModal}
-        onCancel={() => {
-          setUpdateModal(false);
-          setUpdateMessage("");
-          setUpdateStatus("");
-        }}
-        footer={[
-          <Button
-            key="cancel"
-            onClick={() => {
-              setUpdateModal(false);
-              setUpdateMessage("");
-              setUpdateStatus("");
-            }}
-          >
-            Cancel
-          </Button>,
-          <Button
-            key="submit"
-            type="primary"
-            loading={submitting}
-            onClick={handlePostUpdate}
-          >
-            Post Update
-          </Button>,
-        ]}
-      >
-        <Space direction="vertical" style={{ width: "100%" }} size="middle">
-          <div>
-            <label className="sp-booking-modal-label">Update Message *</label>
-            <TextArea
-              rows={4}
-              placeholder="Describe the progress or update..."
-              value={updateMessage}
-              onChange={(e) => setUpdateMessage(e.target.value)}
-            />
+            {booking.status !== "rejected" && (
+              <Button
+                type="primary"
+                size="large"
+                icon={<UploadOutlined />}
+                onClick={() => setUploadModal(true)}
+                block
+              >
+                Upload Deliverable
+              </Button>
+            )}
           </div>
+        )}
 
-          {statusTransitions.length > 0 && (
+        {/* Post Update Modal */}
+        <Modal
+          title="Post Service Update"
+          open={updateModal}
+          onCancel={() => {
+            setUpdateModal(false);
+            setUpdateMessage("");
+            setUpdateStatus("");
+          }}
+          footer={[
+            <Button
+              key="cancel"
+              onClick={() => {
+                setUpdateModal(false);
+                setUpdateMessage("");
+                setUpdateStatus("");
+              }}
+            >
+              Cancel
+            </Button>,
+            <Button
+              key="submit"
+              type="primary"
+              loading={submitting}
+              onClick={handlePostUpdate}
+            >
+              Post Update
+            </Button>,
+          ]}
+        >
+          <Space direction="vertical" style={{ width: "100%" }} size="middle">
             <div>
-              <label className="sp-booking-modal-label">
-                Change Status (Optional)
-              </label>
-              <Select
-                allowClear
-                placeholder="Keep current status"
-                value={updateStatus || undefined}
-                onChange={setUpdateStatus}
-                style={{ width: "100%" }}
-                options={statusTransitions}
+              <label className="sp-booking-modal-label">Update Message *</label>
+              <TextArea
+                rows={4}
+                placeholder="Describe the progress or update..."
+                value={updateMessage}
+                onChange={(e) => setUpdateMessage(e.target.value)}
               />
             </div>
-          )}
-        </Space>
-      </Modal>
 
-      {/* Upload Deliverable Modal */}
-      <Modal
-        title="Upload Deliverable"
-        open={uploadModal}
-        onCancel={() => {
-          setUploadModal(false);
-          setFileList([]);
-          setValidFrom(null);
-        }}
-        footer={[
-          <Button
-            key="cancel"
-            onClick={() => {
-              setUploadModal(false);
-              setFileList([]);
-              setValidFrom(null);
-            }}
-          >
-            Cancel
-          </Button>,
-          <Button
-            key="submit"
-            type="primary"
-            loading={submitting}
-            onClick={handleUploadDeliverables}
-            disabled={fileList.length === 0}
-          >
-            Upload
-          </Button>,
-        ]}
-      >
-        <Space direction="vertical" style={{ width: "100%" }} size="middle">
-          <div>
-            <label className="sp-booking-modal-label">Select File *</label>
-            <Upload
-              maxCount={1}
-              fileList={fileList}
-              onChange={({ fileList }) => setFileList(fileList)}
-              beforeUpload={() => false}
-              accept=".pdf,.jpg,.jpeg,.png"
+            {statusTransitions.length > 0 && (
+              <div>
+                <label className="sp-booking-modal-label">
+                  Change Status (Optional)
+                </label>
+                <Select
+                  allowClear
+                  placeholder="Keep current status"
+                  value={updateStatus || undefined}
+                  onChange={setUpdateStatus}
+                  style={{ width: "100%" }}
+                  options={statusTransitions}
+                />
+              </div>
+            )}
+          </Space>
+        </Modal>
+
+        {/* Upload Deliverable Modal */}
+        <Modal
+          title="Upload Deliverable"
+          open={uploadModal}
+          onCancel={() => {
+            setUploadModal(false);
+            setFileList([]);
+            setValidFrom(null);
+          }}
+          footer={[
+            <Button
+              key="cancel"
+              onClick={() => {
+                setUploadModal(false);
+                setFileList([]);
+                setValidFrom(null);
+              }}
             >
-              <Button icon={<UploadOutlined />} block>
-                Choose File
-              </Button>
-            </Upload>
-            <p className="sp-booking-modal-hint">
-              Supported formats: PDF, JPG, PNG (Max 5MB)
-            </p>
-          </div>
+              Cancel
+            </Button>,
+            <Button
+              key="submit"
+              type="primary"
+              loading={submitting}
+              onClick={handleUploadDeliverables}
+              disabled={fileList.length === 0}
+            >
+              Upload
+            </Button>,
+          ]}
+        >
+          <Space direction="vertical" style={{ width: "100%" }} size="middle">
+            <div>
+              <label className="sp-booking-modal-label">Select File *</label>
+              <Upload
+                maxCount={1}
+                fileList={fileList}
+                onChange={({ fileList }) => setFileList(fileList)}
+                beforeUpload={() => false}
+                accept=".pdf,.jpg,.jpeg,.png"
+              >
+                <Button icon={<UploadOutlined />} block>
+                  Choose File
+                </Button>
+              </Upload>
+              <p className="sp-booking-modal-hint">
+                Supported formats: PDF, JPG, PNG (Max 5MB)
+              </p>
+            </div>
 
-          <div>
-            <label className="sp-booking-modal-label">
-              Valid From (Optional)
-            </label>
-            <DatePicker
-              value={validFrom}
-              onChange={setValidFrom}
-              style={{ width: "100%" }}
-              format="DD/MM/YYYY"
-            />
-          </div>
-        </Space>
-      </Modal>
-
-      <style jsx>{`
-        .sp-booking-details-container {
-          padding: 1rem;
-          max-width: 1200px;
-          margin: 0 auto;
-        }
-
-        .sp-booking-details-loading,
-        .sp-booking-details-error {
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          min-height: 400px;
-          gap: 1rem;
-        }
-
-        .sp-booking-details-header {
-          margin-bottom: 1.5rem;
-        }
-
-        .sp-booking-details-back {
-          margin-bottom: 1rem;
-        }
-
-        .sp-booking-details-title-section h2 {
-          font-size: 1.5rem;
-          font-weight: 600;
-          color: var(--color-primary-blue);
-          margin: 0 0 0.25rem;
-        }
-
-        .sp-booking-details-title-section p {
-          color: var(--color-primary-blue);
-          margin: 0;
-          font-size: 0.875rem;
-        }
-
-        .sp-booking-details-card {
-          margin-bottom: 1.5rem;
-          border-radius: 12px;
-          padding: 10px;
-        }
-
-        .sp-booking-details-top {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-start;
-          gap: 1rem;
-        }
-
-        .sp-booking-details-top h3 {
-          font-size: 1.125rem;
-          font-weight: 600;
-          color: var(--color-primary-blue);
-          margin: 0 0 0.25rem;
-        }
-
-        .sp-booking-details-code {
-          color: #64748b;
-          margin: 0;
-          font-size: 0.875rem;
-        }
-
-        .sp-booking-details-status-tag {
-          font-size: 0.875rem;
-          padding: 0.25rem 0.75rem;
-        }
-
-        .sp-booking-details-info-row {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          gap: 0.5rem;
-        }
-
-        .sp-booking-details-label {
-          color: #64748b;
-          font-size: 0.875rem;
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-        }
-
-        .sp-booking-details-value {
-          color: #213547;
-          font-size: 0.9375rem;
-        }
-
-        .sp-booking-timeline-item {
-          padding-bottom: 0.5rem;
-        }
-
-        .sp-booking-timeline-status {
-          font-weight: 600;
-          color: var(--color-primary-blue);
-          margin-bottom: 0.25rem;
-        }
-
-        .sp-booking-timeline-date {
-          font-size: 0.75rem;
-          color: #94a3b8;
-          margin-bottom: 0.5rem;
-        }
-
-        .sp-booking-timeline-message {
-          font-size: 0.875rem;
-          color: #475569;
-        }
-
-        .sp-booking-deliverable {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 0.75rem;
-          background: #f8fafc;
-          border-radius: 8px;
-        }
-
-        .sp-booking-deliverable-info {
-          display: flex;
-          align-items: center;
-          gap: 0.75rem;
-          flex: 1;
-        }
-
-        .sp-booking-deliverable-name {
-          font-weight: 500;
-          color: var(--color-primary-orange);
-          font-size: 0.875rem;
-        }
-
-        .sp-booking-deliverable-date {
-          font-size: 0.75rem;
-          color: #64748b;
-        }
-
-        .sp-booking-details-actions {
-          display: flex;
-          flex-direction: column;
-          gap: 0.75rem;
-        }
-
-        .sp-booking-modal-label {
-          display: block;
-          font-weight: 500;
-          color: var(--color-primary-blue);
-          margin-bottom: 0.5rem;
-        }
-
-        .sp-booking-modal-hint {
-          font-size: 0.75rem;
-          color: #64748b;
-          margin-top: 0.5rem;
-          margin-bottom: 0;
-        }
-
-        @media (min-width: 640px) {
-          .sp-booking-details-container {
-            padding: 1.25rem;
-          }
-
-          .sp-booking-details-title-section h2 {
-            font-size: 1.75rem;
-          }
-
-          .sp-booking-details-actions {
-            flex-direction: row;
-          }
-        }
-
-        @media (min-width: 1024px) {
-          .sp-booking-details-container {
-            padding: 1.5rem 2rem;
-          }
-
-          .sp-booking-details-title-section h2 {
-            font-size: 2rem;
-          }
-        }
-      `}</style>
+            <div>
+              <label className="sp-booking-modal-label">
+                Valid From (Optional)
+              </label>
+              <DatePicker
+                value={validFrom}
+                onChange={setValidFrom}
+                style={{ width: "100%" }}
+                format="DD/MM/YYYY"
+              />
+            </div>
+          </Space>
+        </Modal>
+      </div>
     </div>
   );
 };

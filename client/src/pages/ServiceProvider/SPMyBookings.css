@@ -1,0 +1,608 @@
+/* =========================================================
+   SP My Bookings – Mobile First Responsive Design
+   ========================================================= */
+
+/* =========================================================
+   Container & Base Layout
+   ========================================================= */
+
+.sp-my-bookings-container {
+  padding: 20px;
+  max-width: 100%;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+.sp-my-bookings-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+}
+
+/* =========================================================
+   Header
+   ========================================================= */
+
+.sp-my-bookings-header {
+  margin-bottom: 20px;
+}
+
+.sp-my-bookings-header h2 {
+  font-family: "Poppins", sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-primary-blue);
+  margin: 0 0 6px;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+.sp-my-bookings-header p {
+  color: #64748b;
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   Stats Cards - Mobile: Stacked
+   ========================================================= */
+
+.sp-my-bookings-stats {
+  margin-bottom: 20px;
+}
+
+.sp-stat-card {
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  margin-bottom: 12px;
+  transition: all 0.2s ease;
+}
+
+.sp-stat-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.sp-stat-card:last-child {
+  margin-bottom: 0;
+}
+
+.sp-stat-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sp-stat-icon-wrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sp-stat-icon {
+  font-size: 20px;
+  color: inherit;
+}
+
+.sp-stat-text-group {
+  flex: 1;
+  min-width: 0;
+}
+
+.sp-stat-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #64748b;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.sp-stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-primary-blue);
+  line-height: 1.2;
+}
+
+/* Stat Colors */
+.sp-stat-blue .sp-stat-icon-wrapper {
+  background: #e6f0ff;
+  color: #1e3a8a;
+}
+
+.sp-stat-cyan .sp-stat-icon-wrapper {
+  background: #e0f7fa;
+  color: #006064;
+}
+
+.sp-stat-purple .sp-stat-icon-wrapper {
+  background: #f3e5f5;
+  color: #4a148c;
+}
+
+.sp-stat-green .sp-stat-icon-wrapper {
+  background: #edf7ed;
+  color: #1b5e20;
+}
+
+/* =========================================================
+   Tabs Card
+   ========================================================= */
+
+.sp-my-bookings-tabs-card {
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+}
+
+.sp-my-bookings-tabs-card .ant-card-body {
+  padding: 16px;
+}
+
+.sp-my-bookings-tabs-card .ant-tabs-nav {
+  margin-bottom: 16px;
+}
+
+.sp-my-bookings-tabs-card .ant-tabs-tab {
+  font-size: 14px;
+  font-weight: 500;
+  padding: 8px 12px;
+}
+
+/* =========================================================
+   Bookings List - Mobile: Stacked Cards
+   ========================================================= */
+
+.sp-bookings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sp-booking-card {
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.sp-booking-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transform: translateY(-1px);
+}
+
+.sp-booking-card .ant-card-body {
+  padding: 16px;
+}
+
+/* =========================================================
+   Booking Card Header - Mobile: Stacked
+   ========================================================= */
+
+.sp-booking-header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.sp-booking-info {
+  order: 1;
+}
+
+.sp-booking-info h3 {
+  font-family: "Poppins", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-primary-blue);
+  margin: 0 0 4px;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+.sp-booking-id {
+  font-size: 12px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.sp-booking-status {
+  order: 2;
+  align-self: flex-start;
+}
+
+.sp-booking-status .ant-tag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: none;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* =========================================================
+   Booking Details - Mobile: Stacked
+   ========================================================= */
+
+.sp-booking-details {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.sp-booking-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #475569;
+  line-height: 1.4;
+}
+
+.sp-booking-row .anticon {
+  font-size: 16px;
+  color: #64748b;
+  flex-shrink: 0;
+}
+
+.sp-booking-row strong {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+/* =========================================================
+   Booking Footer - Mobile: Stacked
+   ========================================================= */
+
+.sp-booking-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px dashed #e2e8f0;
+}
+
+.sp-booking-price {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--color-primary-orange);
+  letter-spacing: -0.01em;
+  order: 1;
+}
+
+.sp-booking-date {
+  font-size: 12px;
+  color: #64748b;
+  order: 2;
+}
+
+.sp-booking-actions {
+  order: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.sp-booking-actions .ant-btn {
+  width: 100%;
+  height: 40px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* =========================================================
+   Empty State
+   ========================================================= */
+
+.sp-bookings-empty {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.sp-bookings-empty .ant-empty-description {
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* =========================================================
+   Tablet (768px and up)
+   ========================================================= */
+
+@media (min-width: 768px) {
+  .sp-my-bookings-container {
+    max-width: 720px;
+  }
+
+  .sp-my-bookings-header {
+    margin-bottom: 24px;
+  }
+
+  .sp-my-bookings-header h2 {
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+
+  .sp-my-bookings-header p {
+    font-size: 14px;
+  }
+
+  /* Stats: 2 columns on tablet */
+  .sp-my-bookings-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .sp-stat-card {
+    margin-bottom: 0;
+  }
+
+  .sp-stat-icon-wrapper {
+    width: 52px;
+    height: 52px;
+  }
+
+  .sp-stat-icon {
+    font-size: 22px;
+  }
+
+  .sp-stat-label {
+    font-size: 13px;
+  }
+
+  .sp-stat-value {
+    font-size: 26px;
+  }
+
+  .sp-my-bookings-tabs-card .ant-card-body {
+    padding: 20px;
+  }
+
+  .sp-my-bookings-tabs-card .ant-tabs-nav {
+    margin-bottom: 20px;
+  }
+
+  .sp-my-bookings-tabs-card .ant-tabs-tab {
+    font-size: 15px;
+    padding: 10px 16px;
+  }
+
+  .sp-bookings-list {
+    gap: 16px;
+  }
+
+  .sp-booking-card .ant-card-body {
+    padding: 20px;
+  }
+
+  /* Tablet: Header side by side */
+  .sp-booking-header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .sp-booking-info {
+    flex: 1;
+    min-width: 0;
+    order: 1;
+  }
+
+  .sp-booking-info h3 {
+    font-size: 16px;
+    margin-bottom: 5px;
+  }
+
+  .sp-booking-id {
+    font-size: 13px;
+  }
+
+  .sp-booking-status {
+    order: 2;
+    flex-shrink: 0;
+  }
+
+  .sp-booking-status .ant-tag {
+    font-size: 12px;
+    padding: 5px 14px;
+  }
+
+  .sp-booking-details {
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .sp-booking-row {
+    font-size: 14px;
+  }
+
+  .sp-booking-row .anticon {
+    font-size: 17px;
+  }
+
+  /* Tablet: Footer side by side */
+  .sp-booking-footer {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 14px;
+  }
+
+  .sp-booking-price {
+    font-size: 20px;
+    order: 1;
+  }
+
+  .sp-booking-date {
+    font-size: 13px;
+    order: 2;
+  }
+
+  .sp-booking-actions {
+    order: 3;
+    flex-direction: row;
+    gap: 10px;
+    width: auto;
+  }
+
+  .sp-booking-actions .ant-btn {
+    width: auto;
+    padding: 0 20px;
+  }
+
+  .sp-bookings-empty {
+    padding: 60px 20px;
+  }
+
+  .sp-bookings-empty .ant-empty-description {
+    font-size: 15px;
+  }
+}
+
+/* =========================================================
+   Desktop (1024px and up)
+   ========================================================= */
+
+@media (min-width: 1024px) {
+  .sp-my-bookings-container {
+    max-width: 1200px;
+  }
+
+  .sp-my-bookings-header {
+    margin-bottom: 28px;
+  }
+
+  .sp-my-bookings-header h2 {
+    font-size: 28px;
+  }
+
+  .sp-my-bookings-header p {
+    font-size: 15px;
+  }
+
+  .sp-my-bookings-stats {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 28px;
+  }
+
+  .sp-stat-icon-wrapper {
+    width: 56px;
+    height: 56px;
+  }
+
+  .sp-stat-icon {
+    font-size: 24px;
+  }
+
+  .sp-stat-label {
+    font-size: 13px;
+  }
+
+  .sp-stat-value {
+    font-size: 28px;
+  }
+
+  .sp-my-bookings-tabs-card .ant-card-body {
+    padding: 24px;
+  }
+
+  .sp-my-bookings-tabs-card .ant-tabs-tab {
+    font-size: 16px;
+    padding: 12px 20px;
+  }
+
+  .sp-bookings-list {
+    gap: 20px;
+  }
+
+  .sp-booking-card .ant-card-body {
+    padding: 24px;
+  }
+
+  .sp-booking-info h3 {
+    font-size: 17px;
+  }
+
+  .sp-booking-id {
+    font-size: 14px;
+  }
+
+  .sp-booking-status .ant-tag {
+    font-size: 12px;
+    padding: 6px 16px;
+  }
+
+  .sp-booking-details {
+    gap: 14px;
+  }
+
+  .sp-booking-row {
+    font-size: 15px;
+  }
+
+  .sp-booking-row .anticon {
+    font-size: 18px;
+  }
+
+  .sp-booking-footer {
+    padding-top: 16px;
+  }
+
+  .sp-booking-price {
+    font-size: 22px;
+  }
+
+  .sp-booking-date {
+    font-size: 14px;
+  }
+
+  .sp-booking-actions .ant-btn {
+    height: 42px;
+    font-size: 15px;
+    padding: 0 24px;
+  }
+
+  .sp-bookings-empty {
+    padding: 80px 20px;
+  }
+}
+
+/* =========================================================
+   Large Desktop (1440px and up)
+   ========================================================= */
+
+@media (min-width: 1440px) {
+  .sp-my-bookings-container {
+    max-width: 1400px;
+  }
+
+  .sp-my-bookings-header h2 {
+    font-size: 32px;
+  }
+
+  .sp-stat-value {
+    font-size: 30px;
+  }
+
+  .sp-booking-info h3 {
+    font-size: 18px;
+  }
+}

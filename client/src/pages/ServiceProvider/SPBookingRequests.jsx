@@ -23,6 +23,7 @@ const { Search } = Input;
 const { TextArea } = Input;
 
 import spBookingService from "../../services/serviceProviderBookingService";
+import "./SPBookingRequests.css";
 
 const SPBookingRequests = () => {
   const [requests, setRequests] = useState([]);
@@ -225,132 +226,6 @@ const SPBookingRequests = () => {
           />
         </Space>
       </Modal>
-
-      <style jsx>{`
-        .sp-booking-requests-container {
-          padding: 1rem;
-          max-width: 1400px;
-          margin: 0 auto;
-        }
-
-        .sp-booking-requests-loading {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          min-height: 400px;
-        }
-
-        .sp-booking-requests-header {
-          margin-bottom: 1.5rem;
-        }
-
-        .sp-booking-requests-header h2 {
-          font-size: 1.5rem;
-          font-weight: 600;
-          color: var(--color-primary-blue);
-          margin: 0 0 0.5rem;
-        }
-
-        .sp-booking-requests-header p {
-          color: var(--color-primary-blue);
-          margin: 0;
-          font-size: 0.875rem;
-        }
-
-        .sp-booking-requests-search {
-          margin-bottom: 1.5rem;
-        }
-
-        .sp-booking-requests-list {
-          display: flex;
-          flex-direction: column;
-          gap: 1rem;
-        }
-
-        .sp-booking-request-card {
-          border-radius: 12px;
-          padding: 10px;
-        }
-
-        .sp-booking-request-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-start;
-          margin-bottom: 1rem;
-          gap: 0.75rem;
-        }
-
-        .sp-booking-request-info h3 {
-          font-size: 0.9375rem;
-          font-weight: 600;
-          color: var(--color-primary-blue);
-          margin: 0 0 0.25rem;
-        }
-
-        .sp-booking-request-id {
-          font-size: 0.75rem;
-          color: #94a3b8;
-        }
-
-        .sp-booking-request-details {
-          display: flex;
-          flex-direction: column;
-          gap: 0.75rem;
-          margin-bottom: 1rem;
-        }
-
-        .sp-booking-request-row {
-          display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          font-size: 0.875rem;
-          color: #475569;
-        }
-
-        .sp-booking-request-row.price {
-          padding-top: 0.75rem;
-          border-top: 1px dashed #e2e8f0;
-          justify-content: space-between;
-        }
-
-        .sp-booking-request-row.price strong {
-          color: var(--color-primary-blue);
-          font-size: 1rem;
-        }
-
-        .sp-booking-request-actions {
-          display: flex;
-          gap: 0.75rem;
-        }
-
-        .sp-booking-request-actions button {
-          flex: 1;
-        }
-
-        @media (min-width: 640px) {
-          .sp-booking-requests-container {
-            padding: 1.25rem;
-          }
-
-          .sp-booking-requests-header h2 {
-            font-size: 1.75rem;
-          }
-
-          .sp-booking-request-info h3 {
-            font-size: 1rem;
-          }
-        }
-
-        @media (min-width: 1024px) {
-          .sp-booking-requests-container {
-            padding: 1.5rem 2rem;
-          }
-
-          .sp-booking-requests-header h2 {
-            font-size: 2rem;
-          }
-        }
-      `}</style>
     </div>
   );
 };

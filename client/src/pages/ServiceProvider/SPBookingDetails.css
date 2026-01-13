@@ -1,0 +1,596 @@
+/* =========================================================
+   SP Booking Details – Mobile-First Responsive Design
+   ========================================================= */
+
+/* =========================================================
+   MOBILE BASE (320px+)
+   ========================================================= */
+/* Remove layout padding ONLY on Booking Details page */
+
+.sp-booking-details-container {
+  padding: 0.75rem;
+  max-width: 100%;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+.sp-booking-details-loading,
+.sp-booking-details-error {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+/* =========================================================
+   Header – Mobile First
+   ========================================================= */
+
+.sp-booking-details-header {
+  margin-bottom: 1rem;
+  top: 0;
+  z-index: 10;
+  padding: 0.5rem 0;
+}
+
+.sp-booking-details-back {
+  margin-bottom: 0.75rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  height: 36px;
+}
+
+.sp-booking-details-title-section h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-primary-blue);
+  margin: 0 0 0.25rem;
+  line-height: 1.3;
+}
+
+.sp-booking-details-title-section p {
+  color: #64748b;
+  margin: 0;
+  font-size: 0.813rem;
+}
+
+/* =========================================================
+   Cards – Mobile Optimized
+   ========================================================= */
+
+.sp-booking-details-card {
+  margin-bottom: 1rem;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e2e8f0;
+}
+
+/* Override Ant Design Card padding */
+.sp-booking-details-card.ant-card .ant-card-body {
+  padding: 1rem;
+}
+
+.sp-booking-details-card .ant-card-head {
+  padding: 0.75rem 1rem;
+  min-height: auto;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.sp-booking-details-card .ant-card-head-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-primary-blue);
+  padding: 0;
+}
+
+/* Special handling for service card without title */
+.sp-booking-details-service-card.ant-card .ant-card-body {
+  padding: 1rem;
+}
+
+/* =========================================================
+   Service Info Top Section
+   ========================================================= */
+
+.sp-booking-details-top {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.sp-booking-details-top h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-primary-blue);
+  margin: 0 0 0.25rem;
+  line-height: 1.4;
+}
+
+.sp-booking-details-code {
+  color: #64748b;
+  margin: 0;
+  font-size: 0.813rem;
+  line-height: 1.4;
+}
+
+.sp-booking-details-status-tag {
+  font-size: 0.813rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  font-weight: 500;
+  align-self: flex-start;
+}
+
+/* =========================================================
+   Info Grid & Rows – Mobile Stack
+   ========================================================= */
+
+.sp-booking-details-info-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.sp-booking-details-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.sp-booking-details-info-row:last-child {
+  border-bottom: none;
+}
+
+.sp-booking-details-label {
+  color: #64748b;
+  font-size: 0.813rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.sp-booking-details-label .anticon {
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+
+.sp-booking-details-value {
+  color: #213547;
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   Ant Design Divider Mobile
+   ========================================================= */
+
+.sp-booking-details-card .ant-divider {
+  margin: 0.75rem 0;
+}
+
+/* =========================================================
+   Space Component Override
+   ========================================================= */
+
+.sp-booking-details-card .ant-space {
+  width: 100%;
+}
+
+.sp-booking-details-card .ant-space-item {
+  width: 100%;
+}
+
+/* =========================================================
+   Timeline – Mobile Optimized
+   ========================================================= */
+
+.sp-booking-details-card .ant-timeline {
+  margin-top: 0.5rem;
+}
+
+.sp-booking-timeline-item {
+  padding-bottom: 0.5rem;
+}
+
+.sp-booking-timeline-status {
+  font-weight: 600;
+  color: var(--color-primary-blue);
+  margin-bottom: 0.25rem;
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.sp-booking-timeline-date {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin-bottom: 0.5rem;
+  line-height: 1.4;
+}
+
+.sp-booking-timeline-message {
+  font-size: 0.813rem;
+  color: #475569;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+/* =========================================================
+   Deliverables – Mobile Stack
+   ========================================================= */
+
+.sp-booking-deliverable {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.sp-booking-deliverable-info {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.sp-booking-deliverable-info .anticon {
+  font-size: 1.25rem;
+  color: var(--color-primary-orange);
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+.sp-booking-deliverable-name {
+  font-weight: 500;
+  color: var(--color-primary-blue);
+  font-size: 0.875rem;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.sp-booking-deliverable-date {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-top: 0.25rem;
+}
+
+.sp-booking-deliverable .ant-btn-link {
+  align-self: flex-start;
+  padding: 0;
+  height: auto;
+  font-size: 0.875rem;
+}
+
+/* =========================================================
+   Actions – Mobile Fixed Bottom
+   ========================================================= */
+
+.sp-booking-details-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  position: sticky;
+  bottom: 0;
+  background: #ffffff;
+  padding: 1rem 0.75rem;
+  margin: 0 -0.75rem;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.08);
+  z-index: 9;
+}
+
+.sp-booking-details-actions .ant-btn {
+  height: 44px;
+  font-size: 0.938rem;
+  font-weight: 500;
+  border-radius: 8px;
+}
+
+/* =========================================================
+   Modals – Mobile Optimized
+   ========================================================= */
+
+.sp-booking-modal-label {
+  display: block;
+  font-weight: 500;
+  color: var(--color-primary-blue);
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+}
+
+.sp-booking-modal-hint {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+  line-height: 1.4;
+}
+
+/* Modal adjustments for mobile */
+.ant-modal {
+  max-width: calc(100vw - 1rem);
+  margin: 0.5rem auto;
+}
+
+.ant-modal-body {
+  padding: 1rem;
+}
+
+.ant-modal-footer {
+  padding: 0.75rem 1rem;
+}
+
+.ant-modal-footer .ant-btn {
+  height: 40px;
+  font-size: 0.875rem;
+}
+
+/* =========================================================
+   Empty States
+   ========================================================= */
+
+.sp-booking-details-card .ant-empty {
+  padding: 1.5rem 0;
+}
+
+.sp-booking-details-card .ant-empty-description {
+  font-size: 0.875rem;
+  color: #94a3b8;
+}
+
+/* =========================================================
+   TABLET (640px+)
+   ========================================================= */
+
+@media (min-width: 640px) {
+  .sp-booking-details-container {
+    padding: 1rem;
+  }
+
+  .sp-booking-details-header {
+    margin-bottom: 1.25rem;
+  }
+
+  .sp-booking-details-back {
+    height: 40px;
+    font-size: 0.938rem;
+  }
+
+  .sp-booking-details-title-section h2 {
+    font-size: 1.5rem;
+  }
+
+  .sp-booking-details-title-section p {
+    font-size: 0.875rem;
+  }
+
+  .sp-booking-details-card.ant-card .ant-card-body {
+    padding: 1.25rem;
+  }
+
+  .sp-booking-details-card .ant-card-head {
+    padding: 0.875rem 1.25rem;
+  }
+
+  .sp-booking-details-card {
+    margin-bottom: 1.25rem;
+  }
+
+  .sp-booking-details-top {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .sp-booking-details-top h3 {
+    font-size: 1.125rem;
+  }
+
+  .sp-booking-details-status-tag {
+    align-self: auto;
+  }
+
+  /* Grid layout for info rows on tablet+ */
+  .sp-booking-details-info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0;
+  }
+
+  .sp-booking-details-info-row {
+    padding: 0.875rem 1rem 0.875rem 0;
+  }
+
+  .sp-booking-deliverable {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .sp-booking-details-actions {
+    flex-direction: row;
+    position: static;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+  }
+
+  .sp-booking-details-actions .ant-btn {
+    height: 48px;
+  }
+
+  .ant-modal {
+    max-width: 520px;
+  }
+}
+
+/* =========================================================
+   DESKTOP SMALL (768px+)
+   ========================================================= */
+
+@media (min-width: 768px) {
+  .sp-booking-details-container {
+    padding: 1.25rem 1.5rem;
+    max-width: 1200px;
+  }
+
+  .sp-booking-details-card.ant-card .ant-card-body {
+    padding: 1.5rem;
+  }
+
+  .sp-booking-details-card .ant-card-head {
+    padding: 1rem 1.5rem;
+  }
+
+  .sp-booking-details-card .ant-card-head-title {
+    font-size: 1.125rem;
+  }
+
+  .sp-booking-details-info-row {
+    padding: 0.875rem 1.25rem 0.875rem 0;
+  }
+
+  .sp-booking-details-label {
+    font-size: 0.875rem;
+  }
+
+  .sp-booking-details-value {
+    font-size: 0.938rem;
+  }
+}
+
+/* =========================================================
+   DESKTOP LARGE (1024px+)
+   ========================================================= */
+
+@media (min-width: 1024px) {
+  .sp-booking-details-container {
+    padding: 1rem;
+  }
+
+  .sp-booking-details-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .sp-booking-details-title-section h2 {
+    font-size: 1.75rem;
+  }
+
+  .sp-booking-details-card.ant-card .ant-card-body {
+    padding: 1.75rem;
+  }
+
+  .sp-booking-details-card {
+    margin-bottom: 1.5rem;
+  }
+
+  .sp-booking-details-card .ant-divider {
+    margin: 1rem 0;
+  }
+
+  .sp-booking-timeline-status {
+    font-size: 0.938rem;
+  }
+
+  .sp-booking-timeline-message {
+    font-size: 0.875rem;
+  }
+}
+
+/* =========================================================
+   DESKTOP XL (1280px+)
+   ========================================================= */
+
+@media (min-width: 1280px) {
+  .sp-booking-details-title-section h2 {
+    font-size: 2rem;
+  }
+
+  .sp-booking-details-card .ant-card-head-title {
+    font-size: 1.25rem;
+  }
+
+  .sp-booking-details-top h3 {
+    font-size: 1.25rem;
+  }
+}
+
+/* =========================================================
+   TOUCH TARGET OPTIMIZATION
+   ========================================================= */
+
+@media (max-width: 639px) {
+  .ant-btn {
+    min-height: 44px;
+    padding: 0 1rem;
+  }
+
+  .ant-timeline-item-tail {
+    left: 8px;
+  }
+
+  .ant-timeline-item-head {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* =========================================================
+   DARK MODE SUPPORT (Optional)
+   ========================================================= */
+
+@media (prefers-color-scheme: dark) {
+  .sp-booking-details-container {
+    background: #0f172a;
+  }
+
+  .sp-booking-details-card {
+    background: #1e293b;
+    border-color: #334155;
+  }
+
+  .sp-booking-details-title-section h2,
+  .sp-booking-details-top h3,
+  .sp-booking-details-card .ant-card-head-title,
+  .sp-booking-timeline-status {
+    color: #f1f5f9;
+  }
+
+  .sp-booking-details-code,
+  .sp-booking-details-label,
+  .sp-booking-timeline-date,
+  .sp-booking-deliverable-date {
+    color: #94a3b8;
+  }
+
+  .sp-booking-details-value,
+  .sp-booking-timeline-message {
+    color: #e2e8f0;
+  }
+
+  .sp-booking-deliverable {
+    background: #0f172a;
+    border-color: #334155;
+  }
+
+  .sp-booking-details-actions {
+    background: #1e293b;
+  }
+
+  .sp-booking-details-info-row {
+    border-bottom-color: #334155;
+  }
+}
