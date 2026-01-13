@@ -1,6 +1,6 @@
 import ComplianceItem from "../models/ComplianceItem.js";
 import ServiceProvider from "../models/ServiceProvider.js";
-import ServiceBooking from "../models/ServiceBooking.js";
+import ServiceProviderService from "../models/ServiceProviderService.js";
 import ComplianceRequirementMapping from "../models/ComplianceRequirementMapping.js";
 import BusinessProfile from "../models/BusinessProfile.js";
 
@@ -172,10 +172,9 @@ export const getServiceById = async (req, res) => {
 export const getServiceProviders = async (req, res) => {
   try {
     const { id } = req.params;
-    const { sortBy = "rating", search, limit = 20, page = 1 } = req.query;
 
-    // Validate compliance item
-    const complianceItem = await ComplianceItem.findById(id);
+    // 1️. Validate compliance item
+    const complianceItem = await ComplianceItem.findById(id).lean();
     if (!complianceItem) {
       return res.status(404).json({
         success: false,
@@ -183,72 +182,57 @@ export const getServiceProviders = async (req, res) => {
       });
     }
 
-    const query = {
+    // 2️. Fetch only approved provider-services
+    const approvedServices = await ServiceProviderService.find({
+      complianceItemId: id,
+      status: "approved",
+    })
+      .select("serviceProviderId price turnaroundDays")
+      .lean();
+
+    if (approvedServices.length === 0) {
+      return res.status(200).json({
+        success: true,
+        data: [],
+      });
+    }
+
+    const providerIds = approvedServices.map((s) => s.serviceProviderId);
+
+    // 3️. Fetch ONLY active providers
+    const providers = await ServiceProvider.find({
+      _id: { $in: providerIds },
       status: "active",
-      complianceItemsOffered: id,
-    };
+    })
+      .populate("userId", "name phone email")
+      .lean();
 
-    // Text search
-    if (search) {
-      query.$text = { $search: search };
-    }
+    // 4️. Merge provider + approved service data
+    const result = providers
+      .map((provider) => {
+        const service = approvedServices.find(
+          (s) => s.serviceProviderId.toString() === provider._id.toString()
+        );
 
-    // Sorting
-    const sortOptions = {};
-    if (sortBy === "rating") {
-      sortOptions.rating = -1;
-      sortOptions.completedBookings = -1;
-    } else if (sortBy === "price") {
-      sortOptions["pricingPerItem.price"] = 1;
-    } else if (sortBy === "customers") {
-      sortOptions.totalCustomers = -1;
-    }
+        if (!service) return null;
 
-    // Pagination
-    const parsedLimit = parseInt(limit);
-    const parsedPage = parseInt(page);
-    const skip = (parsedPage - 1) * parsedLimit;
-
-    const [providers, total] = await Promise.all([
-      ServiceProvider.find(query)
-        .populate("userId", "name phone email")
-        .populate("complianceItemsOffered", "name code")
-        .sort(sortOptions)
-        .limit(parsedLimit)
-        .skip(skip)
-        .lean(),
-      ServiceProvider.countDocuments(query),
-    ]);
-
-    // Attach pricing for this compliance item
-    const providersWithPricing = providers.map((provider) => {
-      const pricing = provider.pricingPerItem?.find(
-        (item) => item.complianceItemId.toString() === id
-      );
-
-      return {
-        ...provider,
-        priceForThisItem: pricing?.price || 0,
-        estimatedDaysForThisItem: pricing?.estimatedDays || 7,
-      };
-    });
+        return {
+          ...provider,
+          priceForThisItem: service.price ?? 0,
+          estimatedDaysForThisItem: service.turnaroundDays ?? 7,
+        };
+      })
+      .filter(Boolean); // remove any accidental nulls
 
     res.status(200).json({
       success: true,
-      data: providersWithPricing,
-      pagination: {
-        total,
-        page: parsedPage,
-        limit: parsedLimit,
-        totalPages: Math.ceil(total / parsedLimit),
-      },
+      data: result,
     });
   } catch (error) {
-    console.error("Error fetching providers:", error);
+    console.error("STRICT provider fetch failed:", error);
     res.status(500).json({
       success: false,
       message: "Failed to fetch service providers",
-      error: error.message,
     });
   }
 };

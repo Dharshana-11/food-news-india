@@ -119,6 +119,10 @@ export const ROUTES = {
   SERVICE_PROVIDER_SERVICE_DETAILS: "/service-provider/my-services/:id",
   SERVICE_PROVIDER_ADD_SERVICE: "/service-provider/my-services/add",
   SERVICE_PROVIDER_EDIT_SERVICE: "/service-provider/my-services/:id/edit",
+  // Bookings
+  SERVICE_PROVIDER_BOOKING_REQUESTS: "/service-provider/bookings/requests",
+  SERVICE_PROVIDER_MY_BOOKINGS: "/service-provider/bookings",
+  SERVICE_PROVIDER_BOOKING_DETAILS: "/service-provider/bookings/:id",
 
   /* =========================================================
    BUSINESS OWNER – AGENTS

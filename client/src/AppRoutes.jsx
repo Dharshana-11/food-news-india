@@ -51,6 +51,9 @@ import ServiceProviders from "./pages/BusinessOwner/ServiceProvider/ServiceProvi
 import ProviderDetails from "./pages/BusinessOwner/ServiceProvider/ProviderDetails";
 import MyBookings from "./pages/BusinessOwner/ServiceProvider/MyBookings";
 import ServiceDetails from "./pages/BusinessOwner/ServiceProvider/ServiceDetails";
+import SPBookingRequests from "./pages/ServiceProvider/SPBookingRequests";
+import SPMyBookings from "./pages/ServiceProvider/SPMyBookings";
+import SPBookingDetails from "./pages/ServiceProvider/SPBookingDetails";
 
 import AgentDashboard from "./pages/Agent/AgentDashboard";
 import MyRequests from "./pages/Agent/MyRequests";
@@ -372,14 +375,18 @@ const AppRoutes = () => {
           path={ROUTES.SERVICE_PROVIDER_SERVICE_DETAILS}
           element={<ServiceProviderServiceDetails />}
         />
-        {/* <Route
-          path={ROUTES.SERVICE_PROVIDER_ADD_SERVICE}
-          element={<ServiceProviderAddEditService />}
+        <Route
+          path={ROUTES.SERVICE_PROVIDER_BOOKING_REQUESTS}
+          element={<SPBookingRequests />}
         />
         <Route
-          path={ROUTES.SERVICE_PROVIDER_EDIT_SERVICE}
-          element={<ServiceProviderAddEditService />}
-        /> */}
+          path={ROUTES.SERVICE_PROVIDER_MY_BOOKINGS}
+          element={<SPMyBookings />}
+        />
+        <Route
+          path={ROUTES.SERVICE_PROVIDER_BOOKING_DETAILS}
+          element={<SPBookingDetails />}
+        />
       </Route>
     </Routes>
   );

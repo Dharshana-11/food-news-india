@@ -80,6 +80,16 @@ export const ENDPOINTS = {
     `/service-provider/my-services/${id}/deactivate`,
   SP_SERVICE_ACTIVATE: (id) => `/service-provider/my-services/${id}/activate`,
 
+  SP_BOOKING_REQUESTS: "/service-provider/bookings/requests",
+  SP_BOOKINGS_LIST: "/service-provider/bookings",
+  SP_BOOKING_DETAIL: (id) => `/service-provider/bookings/${id}`,
+  SP_BOOKING_ACCEPT: (id) => `/service-provider/bookings/${id}/accept`,
+  SP_BOOKING_REJECT: (id) => `/service-provider/bookings/${id}/reject`,
+  SP_BOOKING_UPDATE: (id) => `/service-provider/bookings/${id}/update`,
+  SP_BOOKING_DELIVERABLES: (id) =>
+    `/service-provider/bookings/${id}/deliverables`,
+  SP_BOOKING_STATS: "/service-provider/bookings/stats",
+
   // COMPLIANCE ITEMS
   COMPLIANCE_ITEMS_ACTIVE: "/compliance-items?status=active",
 };
