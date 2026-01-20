@@ -1,0 +1,1450 @@
+/*
+ * Service Provider Dashboard Styles
+ * Mobile-First, Fully Responsive, Production-Ready
+ * Uses existing CSS variables from global.css
+ * All classes prefixed with sp-dashboard to avoid CSS clashes
+ */
+
+/* ============================================
+   Container & Loading
+============================================ */
+.sp-dashboard {
+  padding: 1rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.sp-dashboard-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
+.sp-dashboard-error-alert {
+  margin-bottom: 1.5rem;
+}
+
+/* ============================================
+   Header
+============================================ */
+.sp-dashboard-header {
+  margin-bottom: 1.5rem;
+}
+
+.sp-dashboard-header h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-primary-blue);
+  margin: 0 0 0.5rem;
+  line-height: 1.3;
+}
+
+.sp-dashboard-header p {
+  color: var(--color-text-medium);
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+/* ============================================
+   Stats Grid - Mobile First
+============================================ */
+.sp-dashboard-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+/* ============================================
+   Section Layout
+============================================ */
+.sp-dashboard-section {
+  margin-bottom: 1.5rem;
+}
+
+.sp-dashboard-section-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-primary-blue);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.sp-dashboard-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  gap: 0.5rem;
+}
+
+.sp-dashboard-section-header .ant-btn-link {
+  padding: 0;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  height: auto;
+}
+
+/* ============================================
+   Two Column Layout - Mobile First
+============================================ */
+.sp-dashboard-two-column-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.sp-dashboard-column-left,
+.sp-dashboard-column-right {
+  width: 100%;
+}
+
+/* ============================================
+   Quick Actions Grid - Mobile First
+============================================ */
+.sp-dashboard-quick-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.sp-dashboard-action-card {
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 12px;
+}
+
+.sp-dashboard-action-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.sp-dashboard-action-card .ant-card-body {
+  padding: 1.25rem;
+}
+
+.sp-dashboard-action-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+  position: relative;
+}
+
+.sp-dashboard-action-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: var(--color-danger-red);
+  color: white;
+  font-size: 0.625rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 999px;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sp-dashboard-action-card h3 {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-primary-blue);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.sp-dashboard-action-arrow {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  color: var(--color-text-medium);
+  font-size: 0.875rem;
+  transition: transform 0.3s ease;
+}
+
+.sp-dashboard-action-card:hover .sp-dashboard-action-arrow {
+  transform: translateX(4px);
+}
+
+/* =========================================================
+   Booking Requests - Mobile First
+   ========================================================= */
+.sp-dashboard-requests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.sp-dashboard-request-card {
+  border-radius: 12px;
+  padding: 1rem;
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  transition: all 0.2s ease;
+}
+
+.sp-dashboard-request-card:hover {
+  border-color: var(--color-primary-orange);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.sp-dashboard-request-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.sp-dashboard-request-header h3 {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-primary-blue);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.sp-dashboard-request-business {
+  font-size: 0.8125rem;
+  color: var(--color-text-medium);
+  margin: 0.25rem 0 0.75rem;
+  line-height: 1.4;
+}
+
+.sp-dashboard-request-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--color-border);
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.sp-dashboard-request-price {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-primary-blue);
+}
+
+.sp-dashboard-request-date {
+  font-size: 0.75rem;
+  color: var(--color-text-medium);
+}
+
+/* =========================================================
+   Recent Bookings - Mobile First
+   ========================================================= */
+.sp-dashboard-bookings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.sp-dashboard-booking-card {
+  border-radius: 12px;
+  padding: 1rem;
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  transition: all 0.2s ease;
+}
+
+.sp-dashboard-booking-card:hover {
+  border-color: var(--color-primary-blue);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.sp-dashboard-booking-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.sp-dashboard-booking-header h3 {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-primary-blue);
+  margin: 0;
+  line-height: 1.4;
+  flex: 1;
+  min-width: 0;
+}
+
+.sp-dashboard-booking-business {
+  font-size: 0.8125rem;
+  color: var(--color-text-medium);
+  margin: 0 0 0.75rem;
+  line-height: 1.4;
+}
+
+.sp-dashboard-booking-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--color-border);
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.sp-dashboard-booking-price {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-primary-blue);
+}
+
+.sp-dashboard-booking-date {
+  font-size: 0.75rem;
+  color: var(--color-text-medium);
+}
+
+/* =========================================================
+   Right Panel Card - Mobile First
+   ========================================================= */
+.sp-dashboard-right-panel {
+  border-radius: 14px;
+  padding: 1rem;
+  background: #ffffff;
+}
+
+/* =========================================================
+   Panel Sections
+   ========================================================= */
+.sp-dashboard-panel-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.sp-dashboard-panel-divider {
+  height: 1px;
+  background: var(--color-border);
+  margin: 1.25rem 0;
+}
+
+/* =========================================================
+   Service Overview - Mobile First
+   ========================================================= */
+.sp-dashboard-service-overview {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sp-dashboard-service-progress-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.sp-dashboard-service-progress-row .ant-progress {
+  flex: 1;
+  min-width: 0;
+}
+
+.sp-dashboard-service-percent {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-primary-blue);
+  min-width: 36px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.sp-dashboard-service-meta {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+}
+
+.sp-dashboard-service-meta > div {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: var(--color-bg-light);
+  border-radius: 8px;
+  font-size: 0.75rem;
+  color: var(--color-text-medium);
+}
+
+.sp-dashboard-service-meta strong {
+  margin-left: auto;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-primary-blue);
+}
+
+.sp-dashboard-service-meta .anticon-check-circle {
+  color: var(--color-success-green);
+  font-size: 1rem;
+}
+
+.sp-dashboard-service-meta .anticon-clock-circle {
+  color: var(--color-warning-yellow);
+  font-size: 1rem;
+}
+
+.sp-dashboard-service-meta .anticon-warning {
+  color: var(--color-danger-red);
+  font-size: 1rem;
+}
+
+/* =========================================================
+   My Services List - Mobile First
+   ========================================================= */
+.sp-dashboard-my-service-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.875rem 1rem;
+  border-radius: 10px;
+  background: var(--color-bg-light);
+  cursor: pointer;
+  margin-bottom: 0.625rem;
+  gap: 0.75rem;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.sp-dashboard-my-service-item:hover {
+  background: #f0f6ff;
+  transform: translateY(-1px);
+}
+
+.sp-dashboard-my-service-item h4 {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-primary-blue);
+  line-height: 1.4;
+}
+
+.sp-dashboard-my-service-item p {
+  margin: 0.25rem 0 0;
+  font-size: 0.75rem;
+  color: var(--color-text-medium);
+  line-height: 1.4;
+}
+
+.sp-dashboard-service-status-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sp-dashboard-service-status-tag {
+  font-size: 0.6875rem;
+  margin: 0;
+}
+
+.sp-dashboard-my-service-item .anticon {
+  color: var(--color-text-light);
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   Action Items - Mobile First
+   ========================================================= */
+.sp-dashboard-action-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  border-radius: 10px;
+  margin-bottom: 0.625rem;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.sp-dashboard-action-item:hover {
+  transform: translateY(-1px);
+}
+
+.sp-dashboard-action-item > .anticon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.sp-dashboard-action-item > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.sp-dashboard-action-item strong {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-primary-blue);
+  line-height: 1.4;
+}
+
+.sp-dashboard-action-item p {
+  margin: 0.25rem 0 0;
+  font-size: 0.75rem;
+  color: var(--color-text-medium);
+  line-height: 1.4;
+}
+
+.sp-dashboard-action-item > .anticon-arrow-right {
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+  flex-shrink: 0;
+}
+
+/* Action Item Variants */
+.sp-dashboard-action-pending {
+  background: #fff7e6;
+  border: 1px solid #ffd591;
+  margin-top: 10px;
+}
+
+.sp-dashboard-action-pending > .anticon-clock-circle {
+  color: var(--color-warning-yellow);
+}
+
+.sp-dashboard-action-rejected {
+  background: #fff1f0;
+  border: 1px solid #ffccc7;
+}
+
+.sp-dashboard-action-rejected:hover {
+  background: #ffe8e6;
+}
+
+.sp-dashboard-action-rejected > .anticon-warning {
+  color: var(--color-danger-red);
+}
+
+.sp-dashboard-action-draft {
+  background: #f0f6ff;
+  border: 1px solid #bae0ff;
+}
+
+.sp-dashboard-action-draft:hover {
+  background: #e6f4ff;
+}
+
+.sp-dashboard-action-draft > .anticon-exclamation-circle {
+  color: #1677ff;
+}
+
+/* ============================================
+   RESPONSIVE BREAKPOINTS
+============================================ */
+
+/* Small Mobile: 375px+ */
+@media (min-width: 375px) {
+  .sp-dashboard-quick-actions {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Tablet: 640px+ */
+@media (min-width: 640px) {
+  .sp-dashboard {
+    padding: 1.25rem;
+  }
+
+  .sp-dashboard-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .sp-dashboard-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .sp-dashboard-quick-actions {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .sp-dashboard-action-icon {
+    width: 56px;
+    height: 56px;
+    font-size: 1.625rem;
+  }
+
+  .sp-dashboard-action-card h3 {
+    font-size: 1rem;
+  }
+
+  .sp-dashboard-service-meta {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+  }
+
+  .sp-dashboard-booking-card,
+  .sp-dashboard-request-card {
+    padding: 1.125rem;
+  }
+
+  .sp-dashboard-booking-header h3,
+  .sp-dashboard-request-header h3 {
+    font-size: 1rem;
+  }
+
+  .sp-dashboard-right-panel {
+    padding: 1.25rem;
+  }
+}
+
+/* Desktop: 1024px+ */
+@media (min-width: 1024px) {
+  .sp-dashboard {
+    padding: 1.5rem 2rem;
+  }
+
+  .sp-dashboard-header {
+    margin-bottom: 2rem;
+  }
+
+  .sp-dashboard-header h1 {
+    font-size: 2rem;
+  }
+
+  .sp-dashboard-header p {
+    font-size: 0.9375rem;
+  }
+
+  .sp-dashboard-stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+  }
+
+  .sp-dashboard-quick-actions {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+  }
+
+  .sp-dashboard-action-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 1.75rem;
+  }
+
+  .sp-dashboard-action-card .ant-card-body {
+    padding: 1.5rem;
+  }
+
+  .sp-dashboard-section {
+    margin-bottom: 2rem;
+  }
+
+  .sp-dashboard-section-title {
+    font-size: 1.25rem;
+  }
+
+  /* Two column layout for desktop */
+  .sp-dashboard-two-column-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .sp-dashboard-booking-card,
+  .sp-dashboard-request-card {
+    padding: 1.25rem;
+  }
+
+  .sp-dashboard-booking-header h3,
+  .sp-dashboard-request-header h3 {
+    font-size: 1.0625rem;
+  }
+
+  .sp-dashboard-booking-price,
+  .sp-dashboard-request-price {
+    font-size: 1.125rem;
+  }
+
+  .sp-dashboard-right-panel {
+    padding: 1.5rem;
+  }
+
+  .sp-dashboard-service-overview {
+    gap: 1.25rem;
+  }
+
+  .sp-dashboard-service-meta {
+    gap: 0.875rem;
+  }
+
+  .sp-dashboard-service-meta > div {
+    padding: 0.875rem;
+    font-size: 0.8125rem;
+  }
+
+  .sp-dashboard-my-service-item {
+    padding: 1rem 1.125rem;
+  }
+
+  .sp-dashboard-my-service-item h4 {
+    font-size: 0.9375rem;
+  }
+
+  .sp-dashboard-panel-divider {
+    margin: 1.5rem 0;
+  }
+
+  .sp-dashboard-action-item {
+    padding: 1rem 1.125rem;
+  }
+}
+
+/* Large Desktop: 1280px+ */
+@media (min-width: 1280px) {
+  .sp-dashboard-two-column-layout {
+    grid-template-columns: 1.5fr 1fr;
+  }
+
+  .sp-dashboard-service-meta > div {
+    padding: 1rem;
+  }
+}
+
+/* Extra Large Desktop: 1536px+ */
+@media (min-width: 1536px) {
+  .sp-dashboard {
+    padding: 2rem;
+  }
+
+  .sp-dashboard-stats-grid {
+    gap: 1.5rem;
+  }
+
+  .sp-dashboard-quick-actions {
+    gap: 1.5rem;
+  }
+}
+
+/* ============================================
+   Header
+============================================ */
+.sp-dashboard-header {
+  margin-bottom: 1.5rem;
+}
+
+.sp-dashboard-header h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-primary-blue);
+  margin: 0 0 0.5rem;
+  line-height: 1.3;
+}
+
+.sp-dashboard-header p {
+  color: var(--color-text-medium);
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+/* ============================================
+   Stats Grid - Mobile First
+============================================ */
+.sp-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+/* ============================================
+   Section Layout
+============================================ */
+.sp-section {
+  margin-bottom: 1.5rem;
+}
+
+.sp-section-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-primary-blue);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.sp-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  gap: 0.5rem;
+}
+
+.sp-section-header .ant-btn-link {
+  padding: 0;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  height: auto;
+}
+
+/* ============================================
+   Two Column Layout - Mobile First
+============================================ */
+.sp-two-column-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.sp-column-left,
+.sp-column-right {
+  width: 100%;
+}
+
+/* ============================================
+   Quick Actions Grid - Mobile First
+============================================ */
+.sp-quick-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.sp-action-card {
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 12px;
+}
+
+.sp-action-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.sp-action-card .ant-card-body {
+  padding: 1.25rem;
+}
+
+.sp-action-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+  position: relative;
+}
+
+.sp-action-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: var(--color-danger-red);
+  color: white;
+  font-size: 0.625rem;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 999px;
+  min-width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sp-action-card h3 {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-primary-blue);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.sp-action-arrow {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  color: var(--color-text-medium);
+  font-size: 0.875rem;
+  transition: transform 0.3s ease;
+}
+
+.sp-action-card:hover .sp-action-arrow {
+  transform: translateX(4px);
+}
+
+/* =========================================================
+   Booking Requests - Mobile First
+   ========================================================= */
+.sp-requests-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.sp-request-card {
+  border-radius: 12px;
+  padding: 1rem;
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  transition: all 0.2s ease;
+}
+
+.sp-request-card:hover {
+  border-color: var(--color-primary-orange);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.sp-request-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.sp-request-header h3 {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-primary-blue);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.sp-request-business {
+  font-size: 0.8125rem;
+  color: var(--color-text-medium);
+  margin: 0.25rem 0 0.75rem;
+  line-height: 1.4;
+}
+
+.sp-request-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--color-border);
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.sp-request-price {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-primary-blue);
+}
+
+.sp-request-date {
+  font-size: 0.75rem;
+  color: var(--color-text-medium);
+}
+
+/* =========================================================
+   Recent Bookings - Mobile First
+   ========================================================= */
+.sp-bookings-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.sp-booking-card {
+  border-radius: 12px;
+  padding: 1rem;
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  transition: all 0.2s ease;
+}
+
+.sp-booking-card:hover {
+  border-color: var(--color-primary-blue);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.sp-booking-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.sp-booking-header h3 {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-primary-blue);
+  margin: 0;
+  line-height: 1.4;
+  flex: 1;
+  min-width: 0;
+}
+
+.sp-booking-business {
+  font-size: 0.8125rem;
+  color: var(--color-text-medium);
+  margin: 0 0 0.75rem;
+  line-height: 1.4;
+}
+
+.sp-booking-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.75rem;
+  border-top: 1px dashed var(--color-border);
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.sp-booking-price {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-primary-blue);
+}
+
+.sp-booking-date {
+  font-size: 0.75rem;
+  color: var(--color-text-medium);
+}
+
+/* =========================================================
+   Right Panel Card - Mobile First
+   ========================================================= */
+.sp-right-panel {
+  border-radius: 14px;
+  padding: 1rem;
+  background: #ffffff;
+}
+
+/* =========================================================
+   Panel Sections
+   ========================================================= */
+.sp-panel-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.sp-panel-divider {
+  height: 1px;
+  background: var(--color-border);
+  margin: 1.25rem 0;
+}
+
+/* =========================================================
+   Service Overview - Mobile First
+   ========================================================= */
+.sp-service-overview {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sp-service-progress-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.sp-service-progress-row .ant-progress {
+  flex: 1;
+  min-width: 0;
+}
+
+.sp-service-percent {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-primary-blue);
+  min-width: 36px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.sp-service-meta {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.5rem;
+}
+
+.sp-service-meta > div {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background: var(--color-bg-light);
+  border-radius: 8px;
+  font-size: 0.75rem;
+  color: var(--color-text-medium);
+}
+
+.sp-service-meta strong {
+  margin-left: auto;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-primary-blue);
+}
+
+.sp-service-meta .anticon-check-circle {
+  color: var(--color-success-green);
+  font-size: 1rem;
+}
+
+.sp-service-meta .anticon-clock-circle {
+  color: var(--color-warning-yellow);
+  font-size: 1rem;
+}
+
+.sp-service-meta .anticon-warning {
+  color: var(--color-danger-red);
+  font-size: 1rem;
+}
+
+/* =========================================================
+   My Services List - Mobile First
+   ========================================================= */
+.sp-my-service-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.875rem 1rem;
+  border-radius: 10px;
+  background: var(--color-bg-light);
+  cursor: pointer;
+  margin-bottom: 0.625rem;
+  gap: 0.75rem;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.sp-my-service-item:hover {
+  background: #f0f6ff;
+  transform: translateY(-1px);
+}
+
+.sp-my-service-item h4 {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-primary-blue);
+  line-height: 1.4;
+}
+
+.sp-my-service-item p {
+  margin: 0.25rem 0 0;
+  font-size: 0.75rem;
+  color: var(--color-text-medium);
+  line-height: 1.4;
+}
+
+.sp-service-status-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.sp-service-status-tag {
+  font-size: 0.6875rem;
+  margin: 0;
+}
+
+.sp-my-service-item .anticon {
+  color: var(--color-text-light);
+  font-size: 0.875rem;
+  flex-shrink: 0;
+}
+
+/* =========================================================
+   Action Items - Mobile First
+   ========================================================= */
+.sp-action-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  border-radius: 10px;
+  margin-bottom: 0.625rem;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.sp-action-item:hover {
+  transform: translateY(-1px);
+}
+
+.sp-action-item > .anticon {
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.sp-action-item > div {
+  flex: 1;
+  min-width: 0;
+}
+
+.sp-action-item strong {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-primary-blue);
+  line-height: 1.4;
+}
+
+.sp-action-item p {
+  margin: 0.25rem 0 0;
+  font-size: 0.75rem;
+  color: var(--color-text-medium);
+  line-height: 1.4;
+}
+
+.sp-action-item > .anticon-arrow-right {
+  font-size: 0.875rem;
+  color: var(--color-text-light);
+  flex-shrink: 0;
+}
+
+/* Action Item Variants */
+.sp-action-pending {
+  background: #fff7e6;
+  border: 1px solid #ffd591;
+}
+
+.sp-action-pending > .anticon-clock-circle {
+  color: var(--color-warning-yellow);
+}
+
+.sp-action-rejected {
+  background: #fff1f0;
+  border: 1px solid #ffccc7;
+}
+
+.sp-action-rejected:hover {
+  background: #ffe8e6;
+}
+
+.sp-action-rejected > .anticon-warning {
+  color: var(--color-danger-red);
+}
+
+.sp-action-draft {
+  background: #f0f6ff;
+  border: 1px solid #bae0ff;
+}
+
+.sp-action-draft:hover {
+  background: #e6f4ff;
+}
+
+.sp-action-draft > .anticon-exclamation-circle {
+  color: #1677ff;
+}
+
+/* ============================================
+   RESPONSIVE BREAKPOINTS
+============================================ */
+
+/* Small Mobile: 375px+ */
+@media (min-width: 375px) {
+  .sp-quick-actions {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Tablet: 640px+ */
+@media (min-width: 640px) {
+  .sp-dashboard {
+    padding: 1.25rem;
+  }
+
+  .sp-dashboard-header h1 {
+    font-size: 1.75rem;
+  }
+
+  .sp-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .sp-quick-actions {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .sp-action-icon {
+    width: 56px;
+    height: 56px;
+    font-size: 1.625rem;
+  }
+
+  .sp-action-card h3 {
+    font-size: 1rem;
+  }
+
+  .sp-service-meta {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+  }
+
+  .sp-booking-card,
+  .sp-request-card {
+    padding: 1.125rem;
+  }
+
+  .sp-booking-header h3,
+  .sp-request-header h3 {
+    font-size: 1rem;
+  }
+
+  .sp-right-panel {
+    padding: 1.25rem;
+  }
+}
+
+/* Desktop: 1024px+ */
+@media (min-width: 1024px) {
+  .sp-dashboard {
+    padding: 1.5rem 2rem;
+  }
+
+  .sp-dashboard-header {
+    margin-bottom: 2rem;
+  }
+
+  .sp-dashboard-header h1 {
+    font-size: 2rem;
+  }
+
+  .sp-dashboard-header p {
+    font-size: 0.9375rem;
+  }
+
+  .sp-stats-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+  }
+
+  .sp-quick-actions {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1.25rem;
+  }
+
+  .sp-action-icon {
+    width: 60px;
+    height: 60px;
+    font-size: 1.75rem;
+  }
+
+  .sp-action-card .ant-card-body {
+    padding: 1.5rem;
+  }
+
+  .sp-section {
+    margin-bottom: 2rem;
+  }
+
+  .sp-section-title {
+    font-size: 1.25rem;
+  }
+
+  /* Two column layout for desktop */
+  .sp-two-column-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  .sp-booking-card,
+  .sp-request-card {
+    padding: 1.25rem;
+  }
+
+  .sp-booking-header h3,
+  .sp-request-header h3 {
+    font-size: 1.0625rem;
+  }
+
+  .sp-booking-price,
+  .sp-request-price {
+    font-size: 1.125rem;
+  }
+
+  .sp-right-panel {
+    padding: 1.5rem;
+  }
+
+  .sp-service-overview {
+    gap: 1.25rem;
+  }
+
+  .sp-service-meta {
+    gap: 0.875rem;
+  }
+
+  .sp-service-meta > div {
+    padding: 0.875rem;
+    font-size: 0.8125rem;
+  }
+
+  .sp-my-service-item {
+    padding: 1rem 1.125rem;
+  }
+
+  .sp-my-service-item h4 {
+    font-size: 0.9375rem;
+  }
+
+  .sp-panel-divider {
+    margin: 1.5rem 0;
+  }
+
+  .sp-action-item {
+    padding: 1rem 1.125rem;
+  }
+}
+
+/* Large Desktop: 1280px+ */
+@media (min-width: 1280px) {
+  .sp-two-column-layout {
+    grid-template-columns: 1.5fr 1fr;
+  }
+
+  .sp-service-meta > div {
+    padding: 1rem;
+  }
+}
+
+/* Extra Large Desktop: 1536px+ */
+@media (min-width: 1536px) {
+  .sp-dashboard {
+    padding: 2rem;
+  }
+
+  .sp-stats-grid {
+    gap: 1.5rem;
+  }
+
+  .sp-quick-actions {
+    gap: 1.5rem;
+  }
+}
