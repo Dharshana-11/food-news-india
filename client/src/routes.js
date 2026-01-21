@@ -100,6 +100,7 @@ export const ROUTES = {
   AGENT_BOOK_SERVICES: "/agent/services/book",
   AGENT_SERVICE_PROVIDERS: "/agent/services/book/:serviceId",
   AGENT_PROVIDER_DETAILS: "/agent/services/book/:serviceId/:providerId",
+  AGENT_CHECKOUT: "/agent/services/book/:serviceId/:providerId/checkout",
   AGENT_MY_BOOKINGS: "/agent/services/bookings",
   AGENT_SERVICE_DETAILS: "/agent/services/:bookingId",
   AGENT_MESSAGES: "/agent/messages",
@@ -139,4 +140,6 @@ export const ROUTES = {
   BUSINESS_OWNER_SERVICE_DETAILS: "/business-owner/services/:bookingId",
   BUSINESS_OWNER_PROVIDER_DETAILS:
     "business-owner/services/book/:serviceId/:providerId",
+  BUSINESS_OWNER_CHECKOUT:
+    "/business-owner/services/book/:serviceId/:providerId/checkout",
 };

@@ -179,7 +179,7 @@ const ServiceDetails = () => {
 
   const canRate = booking.status === "completed" && !booking.rating?.score;
   const canCancel = !["completed", "cancelled", "rejected"].includes(
-    booking.status
+    booking.status,
   );
 
   return (
@@ -213,7 +213,12 @@ const ServiceDetails = () => {
 
           <Divider />
 
-          <Space direction="vertical" size={10}>
+          <Space direction="vertical" size={10} style={{ width: "100%" }}>
+            <div className="service-details-row">
+              <span>Business Owner</span>
+              <strong>{booking.businessOwnerId?.name || "N/A"}</strong>
+            </div>
+
             <div className="service-details-row">
               <span>Service Provider</span>
               <strong>{booking.providerId?.companyName}</strong>
@@ -230,7 +235,7 @@ const ServiceDetails = () => {
               <span>Expected Completion</span>
               <strong>
                 {new Date(booking.expectedCompletionDate).toLocaleDateString(
-                  "en-IN"
+                  "en-IN",
                 )}
               </strong>
             </div>
@@ -240,7 +245,7 @@ const ServiceDetails = () => {
                 <span>Completed On</span>
                 <strong>
                   {new Date(booking.actualCompletionDate).toLocaleDateString(
-                    "en-IN"
+                    "en-IN",
                   )}
                 </strong>
               </div>
