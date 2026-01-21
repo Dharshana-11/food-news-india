@@ -8,7 +8,6 @@ import {
   Modal,
   Input,
   Space,
-  Divider,
   Typography,
 } from "antd";
 import {
@@ -16,11 +15,9 @@ import {
   StarFilled,
   CheckCircleOutlined,
   EnvironmentOutlined,
-  FileTextOutlined,
 } from "@ant-design/icons";
-import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import myServiceServices from "../../../services/myServicesService";
-import bookingService from "../../../services/bookingService";
 import "./ProviderDetails.css";
 import { useAgentContext } from "../../../context/AgentContext";
 import { useAuth } from "../../../context/AuthContext";
@@ -32,19 +29,20 @@ const { Title, Text } = Typography;
 /**
  * ProviderDetails
  * -----------------------------------------------------------------------------
- * Shows service provider details and handles booking.
+ * Shows service provider details and initiates checkout flow.
  *
  * SUPPORTS BOTH:
  * - Business Owner: businessOwnerId = current user
- * - Agent: businessOwnerId from navigation state
+ * - Agent: businessOwnerId from active business context
+ *
+ * Flow: Provider Details → Checkout Page → Booking Created
  */
 const ProviderDetails = () => {
   const [service, setService] = useState(null);
   const [provider, setProvider] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [bookingModal, setBookingModal] = useState(false);
+  const [notesModal, setNotesModal] = useState(false);
   const [notes, setNotes] = useState("");
-  const [submitting, setSubmitting] = useState(false);
   const { currentUser } = useAuth();
   const role = currentUser?.role;
 
@@ -82,44 +80,36 @@ const ProviderDetails = () => {
     }
   };
 
-  const handleBooking = async () => {
-    try {
-      setSubmitting(true);
-
-      if (role === ROLES.AGENT && !activeBusiness) {
-        message.error("Please select a business before booking");
-        return;
-      }
-
-      const bookingData = {
-        complianceItemId: serviceId,
-        providerId,
-        agreedPrice: provider.priceForThisItem,
-        estimatedDays: provider.estimatedDaysForThisItem,
-        notes,
-      };
-
-      console.log(role, activeBusiness, bookingData);
-      if (role === ROLES.AGENT) {
-        bookingData.businessOwnerId = activeBusiness;
-      }
-
-      await bookingService.createBooking(bookingData);
-
-      message.success("Service booked successfully!");
-      setBookingModal(false);
-
-      navigate(
-        role === ROLES.AGENT
-          ? "/agent/services/bookings"
-          : "/business-owner/services/bookings"
-      );
-    } catch (error) {
-      console.error("Error creating booking:", error);
-      message.error(error.message || "Failed to book service");
-    } finally {
-      setSubmitting(false);
+  const handleProceedToCheckout = () => {
+    // Validate agent has selected business
+    if (role === ROLES.AGENT && !activeBusiness) {
+      message.error("Please select a business before proceeding");
+      return;
     }
+
+    // Prepare booking data for checkout
+    const checkoutData = {
+      agreedPrice: provider.priceForThisItem,
+      estimatedDays: provider.estimatedDaysForThisItem,
+      notes: notes.trim(),
+    };
+
+    // Navigate to checkout page with booking data
+    const checkoutRoute =
+      role === ROLES.AGENT
+        ? `/agent/services/book/${serviceId}/${providerId}/checkout`
+        : `/business-owner/services/book/${serviceId}/${providerId}/checkout`;
+
+    navigate(checkoutRoute, { state: checkoutData });
+  };
+
+  const handleBookNow = () => {
+    setNotesModal(true);
+  };
+
+  const handleModalOk = () => {
+    setNotesModal(false);
+    handleProceedToCheckout();
   };
 
   if (loading) {
@@ -219,53 +209,41 @@ const ProviderDetails = () => {
 
       {/* Sticky CTA */}
       <div className="provider-details-cta">
-        <Button
-          type="primary"
-          size="large"
-          block
-          onClick={() => setBookingModal(true)}
-        >
+        <Button type="primary" size="large" block onClick={handleBookNow}>
           Book Now
         </Button>
       </div>
 
-      {/* Booking Modal */}
+      {/* Optional Notes Modal */}
       <Modal
-        title="Confirm Booking"
-        open={bookingModal}
-        onCancel={() => setBookingModal(false)}
-        footer={[
-          <Button key="cancel" onClick={() => setBookingModal(false)}>
-            Cancel
-          </Button>,
-          <Button
-            key="book"
-            type="primary"
-            loading={submitting}
-            onClick={handleBooking}
-          >
-            Confirm Booking
-          </Button>,
-        ]}
+        title="Add Notes (Optional)"
+        open={notesModal}
+        onOk={handleModalOk}
+        onCancel={() => setNotesModal(false)}
+        okText="Proceed to Checkout"
+        cancelText="Cancel"
       >
         <Space direction="vertical" size={12} style={{ width: "100%" }}>
-          <Text>
-            <strong>Service:</strong> {service?.name}
+          <Text type="secondary">
+            Add any special requirements or instructions for the service
+            provider
           </Text>
-          <Text>
-            <strong>Provider:</strong> {provider.companyName}
-          </Text>
-          <Text>
-            <strong>Price:</strong> ₹{provider.priceForThisItem}
-          </Text>
-
-          <Divider />
 
           <TextArea
             rows={4}
-            placeholder="Additional notes (optional)"
+            placeholder="e.g., Urgent request, specific requirements, preferred contact time..."
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
+            maxLength={500}
+            showCount
+            styles={{
+              textarea: {
+                padding: "20px",
+              },
+            }}
+            style={{
+              marginBottom: "16px",
+            }}
           />
         </Space>
       </Modal>

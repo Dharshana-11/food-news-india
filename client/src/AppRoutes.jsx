@@ -49,6 +49,7 @@ import MyServices from "./pages/BusinessOwner/ServiceProvider/MyServices";
 import BookServices from "./pages/BusinessOwner/ServiceProvider/BookServices";
 import ServiceProviders from "./pages/BusinessOwner/ServiceProvider/ServiceProviders";
 import ProviderDetails from "./pages/BusinessOwner/ServiceProvider/ProviderDetails";
+import CheckoutPage from "./pages/BusinessOwner/ServiceProvider/CheckoutPage";
 import MyBookings from "./pages/BusinessOwner/ServiceProvider/MyBookings";
 import ServiceDetails from "./pages/BusinessOwner/ServiceProvider/ServiceDetails";
 import SPBookingRequests from "./pages/ServiceProvider/SPBookingRequests";
@@ -290,6 +291,10 @@ const AppRoutes = () => {
           element={<ProviderDetails />}
         />
         <Route
+          path={ROUTES.BUSINESS_OWNER_CHECKOUT}
+          element={<CheckoutPage />}
+        />
+        <Route
           path={ROUTES.BUSINESS_OWNER_MY_BOOKINGS}
           element={<MyBookings />}
         />
@@ -340,6 +345,7 @@ const AppRoutes = () => {
           path={ROUTES.AGENT_PROVIDER_DETAILS}
           element={<ProviderDetails />}
         />
+        <Route path={ROUTES.AGENT_CHECKOUT} element={<CheckoutPage />} />
         <Route path={ROUTES.AGENT_MY_BOOKINGS} element={<AgentMyBookings />} />
         <Route
           path={ROUTES.AGENT_SERVICE_DETAILS}
