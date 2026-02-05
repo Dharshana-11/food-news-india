@@ -33,8 +33,8 @@ import {
 } from "@ant-design/icons";
 import agentDocumentService from "../../services/agentDocumentService";
 import { ROUTES } from "../../routes";
-import StatsCards from "../BusinessOwner/DocumentVault/StatsCards";
-import DocumentCard from "../BusinessOwner/DocumentVault/DocumentCard";
+import StatsCards from "../businessowner_temp/DocumentVault/StatsCards";
+import DocumentCard from "../businessowner_temp/DocumentVault/DocumentCard";
 import UploadDocumentModal from "./UploadDocumentModal";
 
 import "./AgentBusinessDocuments.css";
@@ -88,7 +88,7 @@ const AgentBusinessDocuments = () => {
 
       const response = await agentDocumentService.getBusinessDocuments(
         relationId,
-        filters
+        filters,
       );
 
       setDocuments(response.data.documents || []);

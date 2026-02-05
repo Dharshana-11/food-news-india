@@ -34,24 +34,24 @@ import TemplateSettings from "./pages/notifications/TemplateSettings";
 import NotificationLogs from "./pages/notifications/NotificationLogs";
 
 import ProfileSelf from "./pages/profile/ProfileSelf";
-import BusinessOwnerDashboard from "./pages/businessowner/BusinessOwnerDashboard";
+import BusinessOwnerDashboard from "./pages/businessowner_temp/BusinessOwnerDashboard";
 import KYCVerification from "./pages/KYCVerification/KYCVerification";
 import KYCGuard from "./components/KYCGuard/KYCGuard";
-import DocumentVault from "./pages/BusinessOwner/DocumentVault/DocumentVault.jsx";
-import MyAgents from "./pages/BusinessOwner/Agents/MyAgents";
-import ViewMyAgent from "./pages/BusinessOwner/Agents/ViewMyAgent";
-import AddAgent from "./pages/BusinessOwner/Agents/AddAgent";
+import DocumentVault from "./pages/businessowner_temp/DocumentVault/DocumentVault";
+import MyAgents from "./pages/businessowner_temp/Agents/MyAgents";
+import ViewMyAgent from "./pages/businessowner_temp/Agents/ViewMyAgent";
+import AddAgent from "./pages/businessowner_temp/Agents/AddAgent";
 
 import AdminLogin from "./pages/auth/AdminLogin";
 import Login from "./pages/auth/Login";
 
-import MyServices from "./pages/BusinessOwner/ServiceProvider/MyServices";
-import BookServices from "./pages/BusinessOwner/ServiceProvider/BookServices";
-import ServiceProviders from "./pages/BusinessOwner/ServiceProvider/ServiceProviders";
-import ProviderDetails from "./pages/BusinessOwner/ServiceProvider/ProviderDetails";
-import CheckoutPage from "./pages/BusinessOwner/ServiceProvider/CheckoutPage";
-import MyBookings from "./pages/BusinessOwner/ServiceProvider/MyBookings";
-import ServiceDetails from "./pages/BusinessOwner/ServiceProvider/ServiceDetails";
+import MyServices from "./pages/businessowner_temp/ServiceProvider/MyServices";
+import BookServices from "./pages/businessowner_temp/ServiceProvider/BookServices";
+import ServiceProviders from "./pages/businessowner_temp/ServiceProvider/ServiceProviders";
+import ProviderDetails from "./pages/businessowner_temp/ServiceProvider/ProviderDetails";
+import CheckoutPage from "./pages/businessowner_temp/ServiceProvider/CheckoutPage";
+import MyBookings from "./pages/businessowner_temp/ServiceProvider/MyBookings";
+import ServiceDetails from "./pages/businessowner_temp/ServiceProvider/ServiceDetails";
 import SPBookingRequests from "./pages/ServiceProvider/SPBookingRequests";
 import SPMyBookings from "./pages/ServiceProvider/SPMyBookings";
 import SPBookingDetails from "./pages/ServiceProvider/SPBookingDetails";
