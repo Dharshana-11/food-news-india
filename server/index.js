@@ -50,6 +50,9 @@ import spBookingRoutes from "./routes/serviceProviderBookingRoutes.js";
 dotenv.config();
 
 const app = express();
+app.get("/", (req, res) => {
+  res.send("Food News India API is running");
+});
 
 /**
  * Middleware Configuration
@@ -59,7 +62,7 @@ app.use(
   cors({
     origin: process.env.FRONTEND_URL, // Allow requests from frontend
     credentials: true, // Enable cookies / session handling
-  })
+  }),
 );
 
 app.use(express.json());
