@@ -37,7 +37,7 @@ import ProfileSelf from "./pages/profile/ProfileSelf";
 import BusinessOwnerDashboard from "./pages/businessowner/BusinessOwnerDashboard";
 import KYCVerification from "./pages/KYCVerification/KYCVerification";
 import KYCGuard from "./components/KYCGuard/KYCGuard";
-import DocumentVault from "./pages/BusinessOwner/DocumentVault/DocumentVault";
+import DocumentVault from "./pages/BusinessOwner/DocumentVault/DocumentVault.jsx";
 import MyAgents from "./pages/BusinessOwner/Agents/MyAgents";
 import ViewMyAgent from "./pages/BusinessOwner/Agents/ViewMyAgent";
 import AddAgent from "./pages/BusinessOwner/Agents/AddAgent";
