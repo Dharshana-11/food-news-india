@@ -34,7 +34,7 @@ export const createSession = async (req, res) => {
     // Close other active sessions
     await UserSession.updateMany(
       { uid, isActive: true, expiresAt: { $gt: now } },
-      { isActive: false, logoutTime: now }
+      { isActive: false, logoutTime: now },
     );
 
     const sessionTTL = Number(process.env.SESSION_TTL_HOURS ?? 1);
@@ -59,8 +59,8 @@ export const createSession = async (req, res) => {
 
     const cookieOptions = {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "Strict" : "Lax",
+      secure: true,
+      sameSite: "none",
       path: "/",
     };
 
@@ -133,8 +133,8 @@ export const refreshSession = async (req, res) => {
 
     const cookieOptions = {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "Strict" : "Lax",
+      secure: true,
+      sameSite: "none",
       path: "/",
     };
 
@@ -206,8 +206,8 @@ export const logoutSession = async (req, res) => {
 
     const cookieOptions = {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "Strict" : "Lax",
+      secure: true,
+      sameSite: "none",
       path: "/",
     };
 
