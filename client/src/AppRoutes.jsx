@@ -127,6 +127,10 @@ const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route
+        path="/admin"
+        element={<Navigate to={ROUTES.ADMIN_LOGIN} replace />}
+      />
 
       {/* PUBLIC ROUTES */}
       <Route path={ROUTES.LOGIN} element={<Login />} />

@@ -15,7 +15,7 @@
  * ------------------------------------------------------------
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Form, Input, Button, Typography, Image, message } from "antd";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
@@ -40,7 +40,17 @@ const { Text, Link } = Typography;
 const AdminLogin = () => {
   const [loadingForm, setLoadingForm] = useState(false);
   const navigate = useNavigate();
-  const { loading, login } = useAuth();
+  const { loading, login, currentUser } = useAuth();
+
+  useEffect(() => {
+    if (!currentUser) return;
+
+    if (currentUser.role === ROLES.SUPER_ADMIN) {
+      navigate(ROUTES.SUPER_ADMIN_DASHBOARD, { replace: true });
+    } else if (currentUser.role === ROLES.ADMIN) {
+      navigate(ROUTES.ADMIN_DASHBOARD, { replace: true });
+    }
+  }, [currentUser, navigate]);
 
   /**
    * @function onFinish
@@ -61,7 +71,7 @@ const AdminLogin = () => {
         return;
       }
 
-      // ✅ Role-based navigation
+      // Role-based navigation
       if (user.role === ROLES.SUPER_ADMIN) {
         message.success(`Welcome ${user.name}!`);
         navigate(ROUTES.SUPER_ADMIN_DASHBOARD);

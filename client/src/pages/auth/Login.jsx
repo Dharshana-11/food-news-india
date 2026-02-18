@@ -26,7 +26,7 @@
  * 5. New user completes profile → Dashboard
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Form,
   Input,
@@ -54,7 +54,26 @@ const Login = () => {
   const [newUserData, setNewUserData] = useState(null);
   const [form] = Form.useForm();
   const navigate = useNavigate();
-  const { loading, loginWithPhone, verifyOTP, completeProfile } = useAuth();
+  const { loading, loginWithPhone, verifyOTP, completeProfile, currentUser } =
+    useAuth();
+
+  useEffect(() => {
+    if (!currentUser) return;
+
+    switch (currentUser.role) {
+      case ROLES.BUSINESS_OWNER:
+        navigate(ROUTES.BUSINESS_OWNER_DASHBOARD, { replace: true });
+        break;
+      case ROLES.AGENT:
+        navigate(ROUTES.AGENT_DASHBOARD, { replace: true });
+        break;
+      case ROLES.SERVICE_PROVIDER:
+        navigate(ROUTES.SERVICE_PROVIDER_DASHBOARD, { replace: true });
+        break;
+      default:
+        break;
+    }
+  }, [currentUser, navigate]);
 
   const formatPhone = (phone) => {
     const cleaned = phone.replace(/\D/g, "");

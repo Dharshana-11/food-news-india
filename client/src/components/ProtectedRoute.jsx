@@ -2,6 +2,7 @@ import { Navigate } from "react-router-dom";
 import { Spin } from "antd";
 import { ROUTES } from "../routes";
 import { useAuth } from "../context/AuthContext";
+import ROLES from "../constants/roles";
 
 /**
  * A route wrapper that protects authenticated pages.
@@ -36,6 +37,13 @@ const ProtectedRoute = ({ allowedRoles, children }) => {
   }
 
   if (!currentUser) {
+    if (
+      allowedRoles?.includes(ROLES.SUPER_ADMIN) ||
+      allowedRoles?.includes(ROLES.ADMIN)
+    ) {
+      return <Navigate to={ROUTES.ADMIN_LOGIN} replace />;
+    }
+
     return <Navigate to={ROUTES.LOGIN} replace />;
   }
 

@@ -30,7 +30,6 @@ import {
 } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
 import { message } from "antd";
-
 import { useAuth } from "../context/AuthContext";
 import ROLES from "../constants/roles";
 import { ROUTES } from "../routes";
@@ -103,7 +102,6 @@ const SideBar = ({ role, isOpen, onClose }) => {
     if (key === "logout") {
       try {
         await logout();
-        navigate(ROUTES.LOGIN);
       } catch (error) {
         console.error("Logout failed:", error);
       }
@@ -406,7 +404,7 @@ const SideBar = ({ role, isOpen, onClose }) => {
       : items.find(
           (item) =>
             location.pathname.startsWith(item?.key) ||
-            item?.paths?.some((p) => location.pathname.startsWith(p))
+            item?.paths?.some((p) => location.pathname.startsWith(p)),
         )?.key || ROUTES.SUPER_ADMIN_DASHBOARD;
 
   // ---------------- RESIZE BEHAVIOR ----------------
