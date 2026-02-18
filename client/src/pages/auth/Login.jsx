@@ -279,44 +279,47 @@ const Login = () => {
 
             {/* Step 0: Phone Number */}
             {step === 0 && (
-              <Form form={form} layout="vertical" onFinish={handleSendOTP}>
-                <Form.Item
-                  label="Mobile Number"
-                  name="phone"
-                  rules={[
-                    { required: true, message: "Enter your mobile number" },
-                    {
-                      pattern: /^[6-9]\d{9}$/,
-                      message: "Enter a valid 10-digit number",
-                    },
-                  ]}
-                >
-                  <Space.Compact style={{ width: "100%" }}>
-                    <Input
-                      value="+91"
-                      disabled
-                      style={{ width: "80px", textAlign: "center" }}
-                    />
-                    <Input
-                      placeholder="Enter mobile number"
-                      maxLength={10}
-                      size="large"
-                      className="login-input"
-                    />
-                  </Space.Compact>
-                </Form.Item>
+              <>
+                <Form form={form} layout="vertical" onFinish={handleSendOTP}>
+                  <Form.Item
+                    label="Mobile Number"
+                    name="phone"
+                    rules={[
+                      { required: true, message: "Enter your mobile number" },
+                      {
+                        pattern: /^[6-9]\d{9}$/,
+                        message: "Enter a valid 10-digit number",
+                      },
+                    ]}
+                  >
+                    <Space.Compact style={{ width: "100%" }}>
+                      <Input
+                        value="+91"
+                        disabled
+                        style={{ width: "80px", textAlign: "center" }}
+                      />
+                      <Input
+                        placeholder="Enter mobile number"
+                        maxLength={10}
+                        size="large"
+                        className="login-input"
+                      />
+                    </Space.Compact>
+                  </Form.Item>
 
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  loading={loading || loadingState}
-                  block
-                  size="large"
-                  className="login-btn-primary"
-                >
-                  Send OTP
-                </Button>
-              </Form>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    loading={loading || loadingState}
+                    block
+                    size="large"
+                    className="login-btn-primary"
+                  >
+                    Send OTP
+                  </Button>
+                </Form>
+                <div id="recaptcha-container" />
+              </>
             )}
 
             {/* Step 1: OTP Verification */}

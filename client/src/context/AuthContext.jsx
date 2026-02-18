@@ -68,12 +68,7 @@ export const AuthProvider = ({ children }) => {
         "recaptcha-container",
         {
           size: "invisible",
-          callback: () => console.log("reCAPTCHA verified"),
-          "expired-callback": () => {
-            console.log("reCAPTCHA expired");
-            window.recaptchaVerifier = null;
-          },
-        }
+        },
       );
     }
     return window.recaptchaVerifier;
@@ -88,14 +83,14 @@ export const AuthProvider = ({ children }) => {
       const userCredential = await signInWithEmailAndPassword(
         auth,
         email,
-        password
+        password,
       );
       const idToken = await userCredential.user.getIdToken();
 
       const response = await api.post(
         ENDPOINTS.CREATE_SESSION,
         {},
-        { headers: { Authorization: `Bearer ${idToken}` } }
+        { headers: { Authorization: `Bearer ${idToken}` } },
       );
 
       const backendUser = response.data.user;
@@ -115,7 +110,7 @@ export const AuthProvider = ({ children }) => {
       const result = await signInWithPhoneNumber(
         auth,
         phoneNumber,
-        appVerifier
+        appVerifier,
       );
 
       setConfirmationResult(result);
@@ -159,7 +154,7 @@ export const AuthProvider = ({ children }) => {
         const sessionResponse = await api.post(
           ENDPOINTS.CREATE_SESSION,
           {},
-          { headers: { Authorization: `Bearer ${idToken}` } }
+          { headers: { Authorization: `Bearer ${idToken}` } },
         );
 
         const backendUser = sessionResponse.data.user;
@@ -200,7 +195,7 @@ export const AuthProvider = ({ children }) => {
       const profileResponse = await api.post(
         ENDPOINTS.COMPLETE_PROFILE,
         { name, role },
-        { headers: { Authorization: `Bearer ${idToken}` } }
+        { headers: { Authorization: `Bearer ${idToken}` } },
       );
 
       const newUser = profileResponse.data.user;
@@ -209,7 +204,7 @@ export const AuthProvider = ({ children }) => {
       const sessionResponse = await api.post(
         ENDPOINTS.CREATE_SESSION,
         {},
-        { headers: { Authorization: `Bearer ${idToken}` } }
+        { headers: { Authorization: `Bearer ${idToken}` } },
       );
 
       const backendUser = sessionResponse.data.user;
@@ -338,7 +333,6 @@ export const AuthProvider = ({ children }) => {
         isRefreshingSession,
       }}
     >
-      <div id="recaptcha-container" />
       {children}
     </AuthContext.Provider>
   );
