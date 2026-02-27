@@ -4,6 +4,7 @@ import ServiceProvider from "../models/ServiceProvider.js";
 import User from "../models/User.js";
 import { getAgentBusinessOwnerIds } from "../services/agentBusinessAccessService.js";
 import ROLES from "../utils/constants/roles.js";
+import Document from "../models/Document.js";
 
 /**
  * Create a new booking
@@ -79,7 +80,7 @@ export const createBooking = async (req, res) => {
 
     // Resolve pricing
     const pricing = provider.pricingPerItem.find(
-      (p) => p.complianceItemId.toString() === complianceItemId
+      (p) => p.complianceItemId.toString() === complianceItemId,
     );
 
     const finalPrice = agreedPrice ?? pricing?.price;
@@ -88,7 +89,7 @@ export const createBooking = async (req, res) => {
     // Calculate expected completion date
     const expectedCompletionDate = new Date();
     expectedCompletionDate.setDate(
-      expectedCompletionDate.getDate() + finalDays
+      expectedCompletionDate.getDate() + finalDays,
     );
 
     // Create booking
@@ -166,7 +167,7 @@ export const getMyBookings = async (req, res) => {
 
       if (filterBusinessOwnerId) {
         const isAllowed = authorizedBusinessOwnerIds.some(
-          (id) => id.toString() === filterBusinessOwnerId
+          (id) => id.toString() === filterBusinessOwnerId,
         );
 
         if (!isAllowed) {
@@ -251,11 +252,6 @@ export const getMyBookings = async (req, res) => {
     });
   }
 };
-/**
- * Get booking details by ID
- *
- * @route   GET /api/bookings/:id
- */
 export const getBookingById = async (req, res) => {
   try {
     const booking = await ServiceBooking.findById(req.booking._id)
@@ -284,7 +280,6 @@ export const getBookingById = async (req, res) => {
     const isProvider = booking.providerId?.userId?.toString() === userId;
     const isAdmin = [ROLES.ADMIN, ROLES.SUPER_ADMIN].includes(userRole);
 
-    // Final authorization check (agent already validated by middleware)
     if (!isOwner && !isProvider && !isAdmin && userRole !== ROLES.AGENT) {
       return res.status(403).json({
         success: false,
@@ -292,9 +287,19 @@ export const getBookingById = async (req, res) => {
       });
     }
 
+    const realDocs = await Document.find({
+      uploadedForUser: booking.businessOwnerId._id,
+      complianceItemId: booking.complianceItemId._id,
+    })
+      .populate("uploadedByUser", "name")
+      .lean();
+
     res.status(200).json({
       success: true,
-      data: booking,
+      data: {
+        ...booking,
+        deliverables: realDocs,
+      },
     });
   } catch (error) {
     console.error("Error fetching booking:", error);
@@ -584,7 +589,7 @@ export const getBookingStats = async (req, res) => {
 
       if (filterBusinessOwnerId) {
         const isAllowed = authorizedBusinessOwnerIds.some(
-          (id) => id.toString() === filterBusinessOwnerId
+          (id) => id.toString() === filterBusinessOwnerId,
         );
 
         if (!isAllowed) {

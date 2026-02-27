@@ -59,7 +59,7 @@ const bookingService = {
   updateBookingStatus: async (id, statusData) => {
     const response = await api.patch(
       ENDPOINTS.BOOKING_UPDATE_STATUS(id),
-      statusData
+      statusData,
     );
     return response.data;
   },
@@ -72,6 +72,14 @@ const bookingService = {
   cancelBooking: async (id, reason) => {
     const response = await api.patch(ENDPOINTS.BOOKING_CANCEL(id), { reason });
     return response.data;
+  },
+
+  getDocumentDownloadUrl: (documentId) => {
+    const baseURL =
+      import.meta.env.VITE_API_URL?.replace(/\/$/, "") ||
+      "http://localhost:5000";
+
+    return `${baseURL}/api/files/documents/${documentId}/download`;
   },
 
   /**

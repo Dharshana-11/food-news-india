@@ -26,7 +26,8 @@ import {
   getMyDocuments,
   getDocumentStats,
   deleteMyDocument,
-  getDocumentUrl,
+  getDocumentViewUrl,
+  getDocumentDownloadUrl,
   renameDocument,
 } from "../../../services/documentVaultService.js";
 
@@ -94,7 +95,7 @@ const DocumentVault = () => {
     if (searchText.trim().length > 0) {
       const query = searchText.toLowerCase();
       const filtered = documents.filter((doc) =>
-        doc?.file?.originalName?.toLowerCase().includes(query)
+        doc?.file?.originalName?.toLowerCase().includes(query),
       );
       setFilteredDocuments(filtered);
     } else {
@@ -148,10 +149,7 @@ const DocumentVault = () => {
    * @param {object} doc
    */
   const handleView = (doc) => {
-    const url = getDocumentUrl(doc?.file?.filePath);
-    if (!url) return message.error("Unable to load the file");
-
-    window.open(url, "_blank", "noopener,noreferrer");
+    window.open(getDocumentViewUrl(doc._id), "_blank", "noopener,noreferrer");
   };
 
   /**
@@ -159,37 +157,7 @@ const DocumentVault = () => {
    * @param {object} doc
    */
   const handleDownload = (doc) => {
-    const url = getDocumentUrl(doc.file.filePath);
-
-    // Create a temporary anchor element
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = doc.file.originalName;
-    link.target = "_blank"; // Fallback for some browsers
-    link.rel = "noopener noreferrer";
-
-    // Append to body, click, and remove
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    // Alternative method using fetch for better cross-browser support
-    fetch(url)
-      .then((response) => response.blob())
-      .then((blob) => {
-        const blobUrl = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = blobUrl;
-        a.download = doc.file.originalName;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(blobUrl);
-      })
-      .catch((error) => {
-        console.error("Download error:", error);
-        message.error("Failed to download document");
-      });
+    window.open(getDocumentDownloadUrl(doc._id), "_blank");
   };
 
   /**

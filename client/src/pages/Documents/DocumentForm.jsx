@@ -77,7 +77,7 @@ const DocumentForm = ({ editingRecord, onSuccess, onCancel }) => {
             uid: "-1",
             name: editingRecord.file.originalName,
             status: "done",
-            url: `http://localhost:5000${editingRecord.file.filePath}`,
+            url: `${import.meta.env.VITE_API_URL}/api/files/documents/${editingRecord._id}`,
           },
         ]);
       }
@@ -100,7 +100,7 @@ const DocumentForm = ({ editingRecord, onSuccess, onCancel }) => {
       setUsers(usersRes.status === "fulfilled" ? usersRes.value : []);
       setKycDocuments(kycRes.status === "fulfilled" ? kycRes.value : []);
       setComplianceItems(
-        complianceRes.status === "fulfilled" ? complianceRes.value : []
+        complianceRes.status === "fulfilled" ? complianceRes.value : [],
       );
     } catch (error) {
       console.error("Failed to load dropdown data:", error);
@@ -130,7 +130,7 @@ const DocumentForm = ({ editingRecord, onSuccess, onCancel }) => {
         if (values.validFrom) {
           formData.append(
             "validFrom",
-            dayjs(values.validFrom).format("YYYY-MM-DD")
+            dayjs(values.validFrom).format("YYYY-MM-DD"),
           );
         }
       }

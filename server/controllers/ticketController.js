@@ -78,7 +78,7 @@ export const createTicket = async (req, res) => {
       req.files?.map((file) => ({
         originalName: file.originalname,
         storedName: file.filename,
-        filePath: `/uploads/documents/${file.filename}`,
+        filePath: `uploads/documents/${file.filename}`,
         fileSize: file.size,
         fileType: file.mimetype,
         storageProvider: "local",
@@ -131,7 +131,7 @@ export const updateTicket = async (req, res) => {
     const updatedTicket = await Ticket.findByIdAndUpdate(
       req.params.id,
       { ...req.body, updatedAt: Date.now() },
-      { new: true }
+      { new: true },
     );
 
     let message = null;
@@ -174,7 +174,7 @@ export const deleteTicket = async (req, res) => {
     const ticket = await Ticket.findByIdAndUpdate(
       req.params.id,
       { isDeleted: true },
-      { new: true }
+      { new: true },
     );
 
     await sendNotification({

@@ -122,7 +122,7 @@ const SPBookingDetails = () => {
       setSubmitting(true);
       const response = await spBookingService.uploadDeliverables(
         bookingId,
-        formData
+        formData,
       );
 
       if (response.success) {
@@ -179,9 +179,9 @@ const SPBookingDetails = () => {
     return transitions[currentStatus] || [];
   };
 
-  const viewDocument = (filePath) => {
-    const url = spBookingService.getDocumentUrl(filePath);
-    window.open(url, "_blank");
+  const viewDocument = (docId) => {
+    const url = spBookingService.getDocumentViewUrl(docId);
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
   if (loading) {
@@ -377,7 +377,7 @@ const SPBookingDetails = () => {
                   <Button
                     type="link"
                     icon={<EyeOutlined />}
-                    onClick={() => viewDocument(doc.file?.filePath)}
+                    onClick={() => viewDocument(doc._id)}
                   >
                     View
                   </Button>

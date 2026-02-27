@@ -45,6 +45,7 @@ import adminServiceRoutes from "./routes/adminServiceRoutes.js";
 import serviceProviderServiceRoutes from "./routes/serviceProviderServiceRoutes.js";
 import serviceProviderDocumentRoutes from "./routes/serviceProviderDocumentRoutes.js";
 import spBookingRoutes from "./routes/serviceProviderBookingRoutes.js";
+import fileRoutes from "./routes/fileRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -103,7 +104,8 @@ app.use("/api/business-types", businessTypeRoutes);
 app.use("/api/admin/compliance-mappings", complianceRequirementMappingRoutes);
 app.use("/api/kyc-documents", kycDocumentRoutes);
 app.use("/api/documents", documentRoutes);
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/api/files", fileRoutes);
 app.use("/api/kyc", kycRoutes); // Register KYC routes
 app.use("/api/business-owner/documents", documentVaultRoutes);
 

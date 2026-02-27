@@ -81,7 +81,7 @@ export const createDocument = async (req, res) => {
 
       const startDate = new Date(validFrom);
       computedValidUntil = new Date(
-        startDate.getTime() + complianceItem.validityDays * 24 * 60 * 60 * 1000
+        startDate.getTime() + complianceItem.validityDays * 24 * 60 * 60 * 1000,
       );
     }
 
@@ -96,7 +96,7 @@ export const createDocument = async (req, res) => {
     const fileMeta = {
       originalName: req.file.originalname,
       storedName: req.file.filename,
-      filePath: `/uploads/documents/${req.file.filename}`,
+      filePath: `uploads/documents/${req.file.filename}`,
       fileSize: req.file.size,
       fileType: req.file.mimetype.split("/")[1],
       storageProvider: "local",
@@ -199,7 +199,7 @@ export const updateDocument = async (req, res) => {
 
     const doc = await Document.findById(req.params.id).populate(
       "complianceItemId",
-      "validityDays"
+      "validityDays",
     );
 
     if (!doc) {
@@ -222,7 +222,7 @@ export const updateDocument = async (req, res) => {
       doc.file = {
         originalName: req.file.originalname,
         storedName: req.file.filename,
-        filePath: `/uploads/documents/${req.file.filename}`,
+        filePath: `uploads/documents/${req.file.filename}`,
         fileSize: req.file.size,
         fileType: req.file.mimetype.split("/")[1],
         storageProvider: "local",
@@ -266,7 +266,7 @@ export const deleteDocument = async (req, res) => {
     const doc = await Document.findByIdAndUpdate(
       req.params.id,
       { status: "trash" },
-      { new: true }
+      { new: true },
     );
 
     if (!doc) {
@@ -312,7 +312,7 @@ export const reviewDocument = async (req, res) => {
         status,
         reviewNotes: notes || "",
       },
-      { new: true }
+      { new: true },
     ).populate("uploadedForUser", "role");
 
     if (!document) {
@@ -323,7 +323,7 @@ export const reviewDocument = async (req, res) => {
     if (document.kycDocumentId) {
       await checkAndUpdateUserVerification(
         document.uploadedForUser._id,
-        document.uploadedForUser.role
+        document.uploadedForUser.role,
       );
     }
 

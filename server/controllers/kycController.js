@@ -36,7 +36,7 @@ export const getKYCRequirements = async (req, res) => {
     })
       .populate("kycDocumentId", "code")
       .select(
-        "kycDocumentId status file validFrom validUntil reviewNotes createdAt"
+        "kycDocumentId status file validFrom validUntil reviewNotes createdAt",
       );
 
     const uploadedMap = {};
@@ -161,7 +161,7 @@ export const uploadKYCDocument = async (req, res) => {
         kycDocumentId: kycDoc._id,
         status: { $ne: "trash" },
       },
-      { status: "trash" }
+      { status: "trash" },
     );
 
     const document = await Document.create({
@@ -171,7 +171,7 @@ export const uploadKYCDocument = async (req, res) => {
       file: {
         originalName: req.file.originalname,
         storedName: req.file.filename,
-        filePath: `/uploads/documents/${req.file.filename}`,
+        filePath: `uploads/documents/${req.file.filename}`,
         fileSize: req.file.size,
         fileType: path
           .extname(req.file.originalname)
@@ -235,7 +235,7 @@ export const updateBusinessProfile = async (req, res) => {
     const businessProfile = await BusinessProfile.findOneAndUpdate(
       { userId: user._id },
       { $set: updates },
-      { new: true, upsert: true }
+      { new: true, upsert: true },
     );
 
     // KYCProfile stays for status/progress ONLY
@@ -286,8 +286,8 @@ export const submitKYCForReview = async (req, res) => {
     const allUploaded = requiredDocs.every((requiredDoc) =>
       uploadedDocs.some(
         (uploadedDoc) =>
-          uploadedDoc.kycDocumentId.toString() === requiredDoc._id.toString()
-      )
+          uploadedDoc.kycDocumentId.toString() === requiredDoc._id.toString(),
+      ),
     );
 
     if (!allUploaded) {
@@ -340,17 +340,17 @@ async function updateKYCProgress(userId) {
     });
 
     const uniqueKycDocIds = new Set(
-      uploadedDocs.map((doc) => doc.kycDocumentId?.toString())
+      uploadedDocs.map((doc) => doc.kycDocumentId?.toString()),
     );
 
     const progress = Math.round(
-      (uniqueKycDocIds.size / requiredDocs.length) * 100
+      (uniqueKycDocIds.size / requiredDocs.length) * 100,
     );
 
     await KYCProfile.findOneAndUpdate(
       { userId },
       { kycProgress: progress },
-      { upsert: true }
+      { upsert: true },
     );
 
     console.log(`KYC Progress updated: ${progress}% for user ${userId}`);
@@ -440,7 +440,7 @@ export const updateAgentProfile = async (req, res) => {
       {
         new: true,
         upsert: true,
-      }
+      },
     );
 
     return res.json({
@@ -510,7 +510,7 @@ export const updateServiceProviderProfile = async (req, res) => {
   const profile = await ServiceProvider.findOneAndUpdate(
     { userId: user._id },
     { $set: updates },
-    { new: true, upsert: true }
+    { new: true, upsert: true },
   );
 
   res.json({

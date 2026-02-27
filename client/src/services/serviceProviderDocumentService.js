@@ -15,11 +15,20 @@ const serviceProviderDocumentService = {
     return response.data;
   },
 
-  getDocumentUrl: (filePath) => {
+  getDocumentViewUrl: (documentId) => {
     const baseURL =
       import.meta.env.VITE_API_URL?.replace(/\/$/, "") ||
       "http://localhost:5000";
-    return `${baseURL}${filePath}`;
+
+    return `${baseURL}/api/files/documents/${documentId}`;
+  },
+
+  getDocumentDownloadUrl: (documentId) => {
+    const baseURL =
+      import.meta.env.VITE_API_URL?.replace(/\/$/, "") ||
+      "http://localhost:5000";
+
+    return `${baseURL}/api/files/documents/${documentId}/download`;
   },
 };
 

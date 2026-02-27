@@ -35,7 +35,7 @@ const agentDocumentService = {
     try {
       const response = await api.get(
         ENDPOINTS.AGENT_BUSINESS_DOCUMENTS(relationId),
-        { params: filters }
+        { params: filters },
       );
       return response.data;
     } catch (error) {
@@ -61,7 +61,7 @@ const agentDocumentService = {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
       return response.data;
     } catch (error) {
@@ -98,11 +98,20 @@ const agentDocumentService = {
    * @param {string} filePath - Document file path
    * @returns {string}
    */
-  getDocumentUrl: (filePath) => {
+  getDocumentViewUrl: (documentId) => {
     const baseURL =
       import.meta.env.VITE_API_URL?.replace(/\/$/, "") ||
       "http://localhost:5000";
-    return `${baseURL}${filePath}`;
+
+    return `${baseURL}/api/files/documents/${documentId}`;
+  },
+
+  getDocumentDownloadUrl: (documentId) => {
+    const baseURL =
+      import.meta.env.VITE_API_URL?.replace(/\/$/, "") ||
+      "http://localhost:5000";
+
+    return `${baseURL}/api/files/documents/${documentId}/download`;
   },
 
   /**
@@ -113,7 +122,7 @@ const agentDocumentService = {
   deleteDocument: async (documentId) => {
     try {
       const response = await api.delete(
-        ENDPOINTS.AGENT_DOCUMENT_DELETE(documentId)
+        ENDPOINTS.AGENT_DOCUMENT_DELETE(documentId),
       );
       return response.data;
     } catch (error) {
@@ -135,7 +144,7 @@ const agentDocumentService = {
     try {
       const response = await api.patch(
         ENDPOINTS.AGENT_DOCUMENT_RENAME(documentId),
-        payload
+        payload,
       );
       return response.data;
     } catch (error) {

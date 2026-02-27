@@ -533,7 +533,7 @@ export const uploadDeliverables = async (req, res) => {
     if (booking.complianceItemId.validityDays) {
       computedValidUntil = new Date(
         computedValidFrom.getTime() +
-          booking.complianceItemId.validityDays * 24 * 60 * 60 * 1000
+          booking.complianceItemId.validityDays * 24 * 60 * 60 * 1000,
       );
     }
 
@@ -541,7 +541,7 @@ export const uploadDeliverables = async (req, res) => {
     const fileMeta = {
       originalName: req.file.originalname,
       storedName: req.file.filename,
-      filePath: `/uploads/documents/${req.file.filename}`,
+      filePath: `uploads/documents/${req.file.filename}`,
       fileSize: req.file.size,
       fileType: req.file.mimetype.split("/")[1],
       storageProvider: "local",

@@ -87,7 +87,7 @@ const Documents = () => {
   useEffect(() => {
     if (searchText) {
       const filtered = allDocuments.filter((doc) =>
-        doc.file?.originalName.toLowerCase().includes(searchText.toLowerCase())
+        doc.file?.originalName.toLowerCase().includes(searchText.toLowerCase()),
       );
       setFilteredDocuments(filtered);
     } else {
@@ -131,8 +131,8 @@ const Documents = () => {
   };
 
   const handleViewFile = (record) => {
-    if (record.file?.filePath) {
-      const fileUrl = `http://localhost:5000${record.file.filePath}`;
+    if (record._id) {
+      const fileUrl = `${import.meta.env.VITE_API_URL}/api/files/documents/${record._id}`;
       window.open(fileUrl, "_blank");
     } else {
       message.warning("File not available");

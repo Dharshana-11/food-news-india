@@ -84,7 +84,7 @@ const serviceProviderBookingService = {
    */
   rejectBooking: async (id, reason) => {
     return safeApiCall(() =>
-      api.patch(`${SP_BOOKING_API}/${id}/reject`, { reason })
+      api.patch(`${SP_BOOKING_API}/${id}/reject`, { reason }),
     );
   },
 
@@ -98,7 +98,7 @@ const serviceProviderBookingService = {
    */
   postServiceUpdate: async (id, updateData) => {
     return safeApiCall(() =>
-      api.post(`${SP_BOOKING_API}/${id}/update`, updateData)
+      api.post(`${SP_BOOKING_API}/${id}/update`, updateData),
     );
   },
 
@@ -112,7 +112,7 @@ const serviceProviderBookingService = {
     return safeApiCall(() =>
       api.post(`${SP_BOOKING_API}/${id}/deliverables`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
-      })
+      }),
     );
   },
 
@@ -121,11 +121,20 @@ const serviceProviderBookingService = {
    * @param {string} filePath - Document file path
    * @returns {string}
    */
-  getDocumentUrl: (filePath) => {
+  getDocumentViewUrl: (documentId) => {
     const baseURL =
       import.meta.env.VITE_API_URL?.replace(/\/$/, "") ||
       "http://localhost:5000";
-    return `${baseURL}${filePath}`;
+
+    return `${baseURL}/api/files/documents/${documentId}`;
+  },
+
+  getDocumentDownloadUrl: (documentId) => {
+    const baseURL =
+      import.meta.env.VITE_API_URL?.replace(/\/$/, "") ||
+      "http://localhost:5000";
+
+    return `${baseURL}/api/files/documents/${documentId}/download`;
   },
 };
 

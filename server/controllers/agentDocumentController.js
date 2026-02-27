@@ -92,7 +92,7 @@ export const getAgentDocumentOverview = async (req, res) => {
 
         // Compliance score (shared service)
         const complianceData = await calculateComplianceScoreForBusiness(
-          businessOwner._id
+          businessOwner._id,
         );
 
         return {
@@ -122,7 +122,7 @@ export const getAgentDocumentOverview = async (req, res) => {
           permissions: relation.permissions,
           acceptedAt: relation.acceptedAt,
         };
-      })
+      }),
     );
 
     res.status(200).json({
@@ -218,7 +218,7 @@ export const getBusinessDocuments = async (req, res) => {
     if (expiry === "expiring_soon") {
       const now = new Date();
       const thirtyDaysFromNow = new Date(
-        now.getTime() + 30 * 24 * 60 * 60 * 1000
+        now.getTime() + 30 * 24 * 60 * 60 * 1000,
       );
 
       filter.validUntil = {
@@ -439,7 +439,7 @@ export const uploadDocumentForBusiness = async (req, res) => {
 
       const startDate = new Date(validFrom);
       computedValidUntil = new Date(
-        startDate.getTime() + complianceItem.validityDays * 24 * 60 * 60 * 1000
+        startDate.getTime() + complianceItem.validityDays * 24 * 60 * 60 * 1000,
       );
     }
 
@@ -453,7 +453,7 @@ export const uploadDocumentForBusiness = async (req, res) => {
       file: {
         originalName: req.file.originalname,
         storedName: req.file.filename,
-        filePath: `/uploads/documents/${req.file.filename}`,
+        filePath: `uploads/documents/${req.file.filename}`,
         fileSize: req.file.size,
         fileType: req.file.mimetype.split("/")[1],
         storageProvider: "local",

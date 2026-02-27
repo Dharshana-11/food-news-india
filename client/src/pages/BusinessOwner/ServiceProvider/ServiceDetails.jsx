@@ -139,25 +139,7 @@ const ServiceDetails = () => {
   };
 
   const handleDownload = (doc) => {
-    if (!doc?.url) {
-      message.error("File not available");
-      return;
-    }
-
-    const baseURL =
-      import.meta.env.VITE_API_URL?.replace(/\/$/, "") ||
-      "http://localhost:5000";
-
-    const fileUrl = `${baseURL}${doc.url}`;
-
-    const link = document.createElement("a");
-    link.href = fileUrl;
-    link.download = doc.name || "document";
-    link.target = "_blank";
-
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    window.open(bookingService.getDocumentDownloadUrl(doc._id), "_blank");
   };
 
   if (loading) {
@@ -291,11 +273,13 @@ const ServiceDetails = () => {
         {booking.documents?.length > 0 && (
           <Card title="Deliverables" className="service-details-card">
             <Space direction="vertical" size={12} style={{ width: "100%" }}>
-              {booking.documents.map((doc, index) => (
+              {booking.deliverables.map((doc, index) => (
                 <div key={index} className="service-details-doc">
                   <div className="service-details-doc-info">
                     <FileTextOutlined />
-                    <span className="service-details-doc-name">{doc.name}</span>
+                    <span className="service-details-doc-name">
+                      {doc.file.originalName}
+                    </span>
                   </div>
                   <Button
                     type="link"

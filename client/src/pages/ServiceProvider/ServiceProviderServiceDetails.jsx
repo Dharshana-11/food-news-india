@@ -64,7 +64,7 @@ const ServiceProviderServiceDetails = () => {
     } catch (error) {
       console.error("Fetch service details error:", error);
       message.error(
-        error.response?.data?.message || "Failed to load service details"
+        error.response?.data?.message || "Failed to load service details",
       );
       navigate("/service-provider/my-services");
     } finally {
@@ -85,7 +85,7 @@ const ServiceProviderServiceDetails = () => {
           fetchServiceDetails();
         } catch (error) {
           message.error(
-            error.response?.data?.message || "Failed to deactivate"
+            error.response?.data?.message || "Failed to deactivate",
           );
         }
       },
@@ -179,11 +179,9 @@ const ServiceProviderServiceDetails = () => {
           icon={<EyeOutlined />}
           onClick={() =>
             window.open(
-              serviceProviderDocumentService.getDocumentUrl(
-                record?.file?.filePath
-              ),
+              serviceProviderDocumentService.getDocumentViewUrl(record?._id),
               "_blank",
-              "noopener,noreferrer"
+              "noopener,noreferrer",
             )
           }
         >

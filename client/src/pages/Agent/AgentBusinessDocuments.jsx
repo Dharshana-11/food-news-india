@@ -129,9 +129,7 @@ const AgentBusinessDocuments = () => {
    * @param {Object} doc - Document object
    */
   const handleView = (doc) => {
-    const url = agentDocumentService.getDocumentUrl(doc?.file?.filePath);
-    if (!url) return message.error("Unable to load the file");
-
+    const url = agentDocumentService.getDocumentViewUrl(doc._id);
     window.open(url, "_blank", "noopener,noreferrer");
   };
 
@@ -141,17 +139,7 @@ const AgentBusinessDocuments = () => {
    * @param {Object} doc - Document object
    */
   const handleDownload = (doc) => {
-    if (!doc?.file?.filePath) {
-      message.error("File not available");
-      return;
-    }
-
-    const link = document.createElement("a");
-    link.href = doc.file.filePath;
-    link.download = doc.file.originalName;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    window.open(agentDocumentService.getDocumentDownloadUrl(doc._id), "_blank");
   };
 
   /**

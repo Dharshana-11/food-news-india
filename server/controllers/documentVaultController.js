@@ -140,14 +140,14 @@ export const uploadMyDocument = async (req, res) => {
 
       const startDate = new Date(validFrom);
       computedValidUntil = new Date(
-        startDate.getTime() + complianceItem.validityDays * 24 * 60 * 60 * 1000
+        startDate.getTime() + complianceItem.validityDays * 24 * 60 * 60 * 1000,
       );
     }
 
     const fileMeta = {
       originalName: req.file.originalname,
       storedName: req.file.filename,
-      filePath: `/uploads/documents/${req.file.filename}`,
+      filePath: `uploads/documents/${req.file.filename}`,
       fileSize: req.file.size,
       fileType: req.file.mimetype?.split("/")[1] ?? "unknown",
       storageProvider: "local",

@@ -110,7 +110,7 @@ const DocumentReviewModal = ({ visible, document, onSuccess, onCancel }) => {
   if (!document) return null;
 
   const fileUrl = document.file
-    ? `http://localhost:5000${document.file.filePath}`
+    ? `${import.meta.env.VITE_API_URL}/api/files/documents/${document._id}`
     : "#";
 
   return (

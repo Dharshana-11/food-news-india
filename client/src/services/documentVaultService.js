@@ -50,7 +50,7 @@ export const uploadDocument = async (formData) => {
   return safeApiCall(() =>
     api.post(DOCUMENT_VAULT_API, formData, {
       headers: { "Content-Type": "multipart/form-data" },
-    })
+    }),
   );
 };
 
@@ -64,7 +64,7 @@ export const renameDocument = async (documentId, newFileName) => {
   return safeApiCall(() =>
     api.patch(`${DOCUMENT_VAULT_API}/${documentId}/rename`, {
       newFileName,
-    })
+    }),
   );
 };
 
@@ -82,12 +82,13 @@ export const deleteMyDocument = async (documentId) => {
  * @param {string} filePath
  * @returns {string}
  */
-export const getDocumentUrl = (filePath) => {
-  const baseURL =
-    import.meta.env.VITE_API_URL?.replace(/\/$/, "") || "http://localhost:5000";
+const API_BASE = (import.meta.env.VITE_API_URL || "http://localhost:5000").replace(/\/$/, "");
 
-  return `${baseURL}${filePath}`;
-};
+export const getDocumentViewUrl = (documentId) =>
+  `${API_BASE}/api/files/documents/${documentId}`;
+
+export const getDocumentDownloadUrl = (documentId) =>
+  `${API_BASE}/api/files/documents/${documentId}/download`;
 
 /**
  * Get statistics for all documents
