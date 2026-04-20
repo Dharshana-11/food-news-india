@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Card,
   Input,
@@ -20,7 +20,7 @@ import {
   SolutionOutlined,
   ShopOutlined,
 } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAgentContext } from "../../../context/AgentContext";
 import myServicesService from "../../../services/myServicesService";
 import agentBusinessService from "../../../services/agentBusinessService";
@@ -51,6 +51,8 @@ const AgentBookServices = () => {
   const { activeBusiness, setActiveBusiness } = useAgentContext();
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const incomingBusinessIdRef = useRef(location.state?.businessOwnerId ?? null);
 
   useEffect(() => {
     fetchBusinesses();
@@ -72,10 +74,13 @@ const AgentBookServices = () => {
       const businessList = response.businesses || [];
       setBusinesses(businessList);
 
-      if (businessList.length > 0 && !selectedBusiness) {
-        const defaultBusiness = businessList[0].businessOwnerId;
-        setSelectedBusiness(defaultBusiness);
-        setActiveBusiness(defaultBusiness);
+      if (businessList.length > 0) {
+        const toSelect =
+          incomingBusinessIdRef.current ??
+          selectedBusiness ??
+          businessList[0].businessOwnerId;
+        setSelectedBusiness(toSelect);
+        setActiveBusiness(toSelect);
       }
     } catch (error) {
       console.error("Error fetching businesses:", error);
@@ -109,7 +114,7 @@ const AgentBookServices = () => {
    * Search filtering
    */
   const filteredServices = services.filter((service) =>
-    service.name.toLowerCase().includes(searchTerm.toLowerCase())
+    service.name.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   /**

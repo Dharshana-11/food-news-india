@@ -76,6 +76,7 @@ const AgentBusinessWorkspace = () => {
       setError(null);
       const response =
         await agentBusinessService.getBusinessWorkspace(relationId);
+      console.log("workspace business object:", response.data.business);
       setWorkspace(response.data);
     } catch (err) {
       console.error("Fetch workspace error:", err);
@@ -246,8 +247,8 @@ const AgentBusinessWorkspace = () => {
                   navigate(
                     ROUTES.AGENT_BUSINESS_DOCUMENTS.replace(
                       ":relationId",
-                      relationId
-                    )
+                      relationId,
+                    ),
                   )
                 }
               >
@@ -264,7 +265,11 @@ const AgentBusinessWorkspace = () => {
               <Card
                 className="action-card"
                 hoverable
-                onClick={() => navigate(ROUTES.BUSINESS_OWNER_MY_SERVICES)}
+                onClick={() =>
+                  navigate(ROUTES.AGENT_BOOK_SERVICES, {
+                    state: { businessOwnerId: business.ownerId },
+                  })
+                }
               >
                 <div
                   className="action-icon"
@@ -281,7 +286,11 @@ const AgentBusinessWorkspace = () => {
             <Card
               className="action-card"
               hoverable
-              onClick={() => navigate(ROUTES.BUSINESS_OWNER_MY_BOOKINGS)}
+              onClick={() =>
+                navigate(ROUTES.AGENT_MY_BOOKINGS, {
+                  state: { businessOwnerId: business.ownerId },
+                })
+              }
             >
               <div
                 className="action-icon"
@@ -328,8 +337,8 @@ const AgentBusinessWorkspace = () => {
                       navigate(
                         ROUTES.AGENT_SERVICE_DETAILS.replace(
                           ":bookingId",
-                          booking._id
-                        )
+                          booking._id,
+                        ),
                       )
                     }
                   >
@@ -370,8 +379,8 @@ const AgentBusinessWorkspace = () => {
                     navigate(
                       ROUTES.AGENT_BUSINESS_DOCUMENTS.replace(
                         ":relationId",
-                        relationId
-                      )
+                        relationId,
+                      ),
                     )
                   }
                 >
@@ -385,7 +394,8 @@ const AgentBusinessWorkspace = () => {
                     percent={
                       documentStats.total
                         ? Math.round(
-                            (documentStats.approved / documentStats.total) * 100
+                            (documentStats.approved / documentStats.total) *
+                              100,
                           )
                         : 0
                     }
@@ -394,7 +404,7 @@ const AgentBusinessWorkspace = () => {
                   <span className="doc-percent">
                     {documentStats.total
                       ? Math.round(
-                          (documentStats.approved / documentStats.total) * 100
+                          (documentStats.approved / documentStats.total) * 100,
                         )
                       : 0}
                     %

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Card,
   Input,
@@ -20,7 +20,7 @@ import {
   StarFilled,
   ShopOutlined,
 } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import bookingService from "../../../services/bookingService";
 import agentBusinessService from "../../../services/agentBusinessService";
 import { ROUTES } from "../../../routes";
@@ -49,6 +49,8 @@ const AgentMyBookings = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const incomingBusinessIdRef = useRef(location.state?.businessOwnerId ?? null);
 
   useEffect(() => {
     fetchBusinesses();
@@ -70,8 +72,12 @@ const AgentMyBookings = () => {
       const businessList = response.businesses || [];
       setBusinesses(businessList);
 
-      if (businessList.length > 0 && !selectedBusiness) {
-        setSelectedBusiness(businessList[0].businessOwnerId);
+      if (businessList.length > 0) {
+        const toSelect =
+          incomingBusinessIdRef.current ?? // highest priority: passed from workspace
+          selectedBusiness ?? // keep existing if already set
+          businessList[0].businessOwnerId; // fallback: first business
+        setSelectedBusiness(toSelect);
       }
     } catch (error) {
       console.error("Error fetching businesses:", error);
@@ -156,12 +162,12 @@ const AgentMyBookings = () => {
 
   const ongoingBookings = filteredBookings.filter((booking) =>
     ["pending", "accepted", "in_progress", "documents_submitted"].includes(
-      booking.status
-    )
+      booking.status,
+    ),
   );
 
   const completedBookings = filteredBookings.filter(
-    (booking) => booking.status === "completed"
+    (booking) => booking.status === "completed",
   );
 
   if (loading) {
@@ -319,8 +325,8 @@ const AgentMyBookings = () => {
                             navigate(
                               ROUTES.AGENT_SERVICE_DETAILS.replace(
                                 ":bookingId",
-                                booking._id
-                              )
+                                booking._id,
+                              ),
                             )
                           }
                         >
@@ -347,7 +353,7 @@ const AgentMyBookings = () => {
                                 <span>
                                   Booked:{" "}
                                   {new Date(
-                                    booking.bookedAt
+                                    booking.bookedAt,
                                   ).toLocaleDateString()}
                                 </span>
                               </div>
@@ -384,8 +390,8 @@ const AgentMyBookings = () => {
                             navigate(
                               ROUTES.AGENT_SERVICE_DETAILS.replace(
                                 ":bookingId",
-                                booking._id
-                              )
+                                booking._id,
+                              ),
                             )
                           }
                         >
@@ -410,7 +416,7 @@ const AgentMyBookings = () => {
                                 <span>
                                   Completed:{" "}
                                   {new Date(
-                                    booking.actualCompletionDate
+                                    booking.actualCompletionDate,
                                   ).toLocaleDateString()}
                                 </span>
                               </div>

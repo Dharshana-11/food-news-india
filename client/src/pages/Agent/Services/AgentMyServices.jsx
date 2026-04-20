@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Card,
   Input,
@@ -20,7 +20,7 @@ import {
   ProfileOutlined,
   ShopOutlined,
 } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import bookingService from "../../../services/bookingService";
 import agentBusinessService from "../../../services/agentBusinessService";
 import { ROUTES } from "../../../routes";
@@ -50,6 +50,8 @@ const AgentMyServices = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const incomingBusinessIdRef = useRef(location.state?.businessOwnerId ?? null);
 
   useEffect(() => {
     fetchBusinesses();
@@ -72,8 +74,12 @@ const AgentMyServices = () => {
       setBusinesses(businessList);
 
       // Auto-select first business if available
-      if (businessList.length > 0 && !selectedBusiness) {
-        setSelectedBusiness(businessList[0].businessOwnerId);
+      if (businessList.length > 0) {
+        const toSelect =
+          incomingBusinessIdRef.current ??
+          selectedBusiness ??
+          businessList[0].businessOwnerId;
+        setSelectedBusiness(toSelect);
       }
     } catch (error) {
       console.error("Error fetching businesses:", error);
@@ -150,17 +156,17 @@ const AgentMyServices = () => {
 
   const ongoingServices = filteredBookings.filter((booking) =>
     ["pending", "accepted", "in_progress", "documents_submitted"].includes(
-      booking.status
-    )
+      booking.status,
+    ),
   );
 
   const completedServices = filteredBookings.filter(
-    (booking) => booking.status === "completed"
+    (booking) => booking.status === "completed",
   );
 
   // Get selected business details
   const selectedBusinessDetails = businesses.find(
-    (b) => b.businessOwnerId === selectedBusiness
+    (b) => b.businessOwnerId === selectedBusiness,
   );
 
   if (loading) {
@@ -264,7 +270,11 @@ const AgentMyServices = () => {
                 <Button
                   type="primary"
                   icon={<FileAddOutlined />}
-                  onClick={() => navigate(ROUTES.AGENT_BOOK_SERVICES)}
+                  onClick={() =>
+                    navigate(ROUTES.AGENT_BOOK_SERVICES, {
+                      state: { businessOwnerId: selectedBusiness },
+                    })
+                  }
                 >
                   Book Services
                 </Button>
@@ -305,8 +315,8 @@ const AgentMyServices = () => {
                             navigate(
                               ROUTES.AGENT_SERVICE_DETAILS.replace(
                                 ":bookingId",
-                                booking._id
-                              )
+                                booking._id,
+                              ),
                             )
                           }
                         >
@@ -336,7 +346,7 @@ const AgentMyServices = () => {
                                   <Text type="secondary">
                                     Booked:{" "}
                                     {new Date(
-                                      booking.bookedAt
+                                      booking.bookedAt,
                                     ).toLocaleDateString()}
                                   </Text>
                                   <Text
@@ -380,8 +390,8 @@ const AgentMyServices = () => {
                             navigate(
                               ROUTES.AGENT_SERVICE_DETAILS.replace(
                                 ":bookingId",
-                                booking._id
-                              )
+                                booking._id,
+                              ),
                             )
                           }
                         >
@@ -409,7 +419,7 @@ const AgentMyServices = () => {
                                   <Text type="secondary">
                                     Completed:{" "}
                                     {new Date(
-                                      booking.actualCompletionDate
+                                      booking.actualCompletionDate,
                                     ).toLocaleDateString()}
                                   </Text>
                                   <Text

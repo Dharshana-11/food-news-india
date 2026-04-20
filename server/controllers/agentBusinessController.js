@@ -74,7 +74,7 @@ export const getMyBusinesses = async (req, res) => {
 
         // Compliance score (shared logic)
         const compliance = await calculateComplianceScoreForBusiness(
-          businessOwner._id
+          businessOwner._id,
         );
 
         // Active bookings
@@ -122,7 +122,7 @@ export const getMyBusinesses = async (req, res) => {
           permissions: relation.permissions,
           acceptedAt: relation.acceptedAt,
         };
-      })
+      }),
     );
 
     return res.status(200).json({
@@ -202,16 +202,13 @@ export const getBusinessWorkspace = async (req, res) => {
         }),
         Document.countDocuments({
           uploadedForUser: businessOwner._id,
-          $or: [
-            { status: "expired" },
-            { validUntil: { $lt: new Date() } },
-          ],
+          $or: [{ status: "expired" }, { validUntil: { $lt: new Date() } }],
         }),
       ]);
 
     // Compliance (shared logic)
     const compliance = await calculateComplianceScoreForBusiness(
-      businessOwner._id
+      businessOwner._id,
     );
 
     const recentBookings = await Booking.find({
@@ -250,6 +247,7 @@ export const getBusinessWorkspace = async (req, res) => {
           state: businessOwner.state,
           address: businessProfile?.registeredAddress || "N/A",
           type: businessProfile?.businessTypeId?.name || "N/A",
+          ownerId: businessOwner._id,
         },
 
         permissions: relation.permissions,
@@ -294,4 +292,3 @@ export const getBusinessWorkspace = async (req, res) => {
     });
   }
 };
-
