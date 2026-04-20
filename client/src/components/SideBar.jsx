@@ -24,6 +24,7 @@ import {
   NotificationOutlined,
   MessageOutlined,
   BellOutlined,
+  ShoppingOutlined,
   ShopOutlined,
   InboxOutlined,
   ShoppingCartOutlined,
@@ -226,6 +227,11 @@ const SideBar = ({ role, isOpen, onClose }) => {
         key: ROUTES.BUSINESS_OWNER_DOCUMENT_VAULT,
         icon: <FileTextOutlined />,
         label: "Document Vault",
+      },
+      {
+        key: ROUTES.BUSINESS_OWNER_BOOK_SERVICES,
+        icon: <ShoppingOutlined />,
+        label: "Book Services",
       },
       // {
       //   key: ROUTES.BUSINESS_OWNER_COMPLIANCE_CALENDAR,

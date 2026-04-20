@@ -29,7 +29,27 @@
    Header
 ============================================ */
 .bo-dashboard-header {
-  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column; /* mobile */
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+/* Left side */
+.bo-header-left {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* Right side */
+.bo-header-right {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.book-services-btn {
+  white-space: nowrap;
+  /* width: 120px; */
 }
 
 .bo-dashboard-header h1 {
@@ -47,6 +67,9 @@
   line-height: 1.5;
 }
 
+/* .bo-header-left{
+  text-align: so;
+} */
 /* ============================================
    Stats Grid - Mobile First
 ============================================ */
@@ -510,8 +533,33 @@
 
 /* Tablet: 640px+ */
 @media (min-width: 640px) {
-  .bo-dashboard {
+  .bo-dashboard-header {
+    flex-direction: row; /* FIX */
+    justify-content: space-between; /* push ends */
+    align-items: center;
     padding: 1.25rem;
+  }
+
+  .bo-header-right {
+    width: auto;
+    justify-content: flex-end;
+  }
+
+  .book-services-btn {
+    background: linear-gradient(
+      135deg,
+      var(--color-primary-orange),
+      var(--color-hover-orange)
+    );
+    border: none;
+    height: 48px;
+    padding: 0 32px;
+    font-weight: 600;
+    font-size: 15px;
+    border-radius: 12px;
+    color: white;
+    box-shadow: 0 4px 12px rgba(255, 108, 31, 0.3);
+    transition: all 0.3s ease;
   }
 
   .bo-dashboard-header h1 {
@@ -565,6 +613,7 @@
 @media (min-width: 1024px) {
   .bo-dashboard {
     padding: 1.5rem 2rem;
+    justify-content: flex-end;
   }
 
   .bo-dashboard-header {

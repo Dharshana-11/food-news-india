@@ -165,7 +165,7 @@ const BusinessOwnerDashboard = () => {
     {
       title: "Book Services",
       icon: <ShoppingOutlined />,
-      path: ROUTES.BUSINESS_OWNER_MY_SERVICES,
+      path: ROUTES.BUSINESS_OWNER_BOOK_SERVICES,
       color: "#ff6c1f",
       bg: "var(--color-bg-orange)",
     },
@@ -239,10 +239,22 @@ const BusinessOwnerDashboard = () => {
 
         {/* Header */}
         <div className="bo-dashboard-header">
-          <h1>Welcome Back!</h1>
-          <p>Manage your compliance, bookings, and documents efficiently</p>
+          <div className="bo-header-left">
+            <h1>Welcome Back!</h1>
+            <p>Manage your compliance, bookings, and documents efficiently</p>
+          </div>
+          <div className="bo-header-right">
+            <Button
+              type="primary"
+              size="large"
+              icon={<ShoppingOutlined />}
+              onClick={() => navigate(ROUTES.BUSINESS_OWNER_BOOK_SERVICES)}
+              className="book-services-btn"
+            >
+              Book Services
+            </Button>
+          </div>
         </div>
-
         {/* Stats Grid */}
         <div className="bo-stats-grid">
           <StatCard
