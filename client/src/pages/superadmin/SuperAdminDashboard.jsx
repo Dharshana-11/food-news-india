@@ -1,33 +1,27 @@
 /**
  * SuperAdminDashboard.jsx
  * ------------------------------------------------------------
- * Main dashboard screen for the Super Admin role.
+ * All data fetched dynamically from GET /api/admin/dashboard/*
  *
- * Displays:
- *  - Key statistics (businesses, agents, tickets, etc.)
- *  - Donut and line charts (compliance overview, activity)
- *  - Pending verifications table
- *  - Service summary, ticket snapshot, and notifications
- *
- * Uses:
- *  - Ant Design for layout and components
- *  - Recharts via ChartCard for visualization
- *  - Custom reusable dashboard widgets
+ * Service Summary widget shows SERVICE APPROVAL STATUS:
+ *   - Pending Approval  (admin action required)
+ *   - Approved Services (live)
+ *   - Rejected / Inactive (needs attention)
  * ------------------------------------------------------------
  */
 
-import React from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { Row, Col, Card, Tag } from "antd";
+import { Row, Col, Card, Tag, Spin, Alert } from "antd";
 import {
   ShopOutlined,
   UserOutlined,
   TeamOutlined,
   FileExclamationOutlined,
   IdcardOutlined,
-  SettingOutlined,
   CheckCircleOutlined,
   ClockCircleOutlined,
+  ExclamationCircleOutlined,
   RightOutlined,
 } from "@ant-design/icons";
 
@@ -39,226 +33,204 @@ import TicketsSnapshot from "../../components/dashboard/TicketsSnapshot";
 import Notifications from "../../components/dashboard/Notifications";
 import { ROUTES } from "../../routes";
 import ROLES from "../../constants/roles";
-import AppLayout from "../../layouts/AppLayout";
+import { fetchAllDashboardData } from "../../services/adminDashboardService";
+
+/* ─────────────────────────────────────────────────────────
+   PENDING VERIFICATIONS TABLE COLUMNS
+───────────────────────────────────────────────────────── */
+
+const pendingColumns = [
+  {
+    title: "Entity Type",
+    dataIndex: "entityType",
+    key: "entityType",
+    render: (type) => {
+      const icon =
+        type === "Business Owner" ? (
+          <ShopOutlined />
+        ) : type === "Agent" ? (
+          <IdcardOutlined />
+        ) : (
+          <TeamOutlined />
+        );
+      return (
+        <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          {icon} {type}
+        </span>
+      );
+    },
+  },
+  { title: "Name", dataIndex: "name", key: "name" },
+  { title: "Category / KYC Type", dataIndex: "category", key: "category" },
+  { title: "Submitted By", dataIndex: "submittedBy", key: "submittedBy" },
+  { title: "Date Submitted", dataIndex: "dateSubmitted", key: "dateSubmitted" },
+  {
+    title: "Status",
+    dataIndex: "status",
+    key: "status",
+    render: (status) => (
+      <Tag color={status === "Pending" ? "orange" : "red"}>{status}</Tag>
+    ),
+  },
+];
+
+/* ─────────────────────────────────────────────────────────
+   COMPONENT
+───────────────────────────────────────────────────────── */
 
 const SuperAdminDashboard = () => {
   const navigate = useNavigate();
 
-  /* =======================================================
-     DASHBOARD DATA
-  ======================================================= */
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [statsData, setStatsData] = useState([]);
+  const [complianceData, setComplianceData] = useState([]);
+  const [activityData, setActivityData] = useState([]);
+  const [allVerifications, setAllVerifications] = useState([]);
+  const [serviceSummaryData, setServiceSummaryData] = useState([]);
+  const [ticketsData, setTicketsData] = useState([]);
+  const [notificationsData, setNotificationsData] = useState([]);
 
-  // ---------- Top Statistic Cards ----------
-  const statsData = [
-    {
-      title: "Total Businesses",
-      value: 123,
-      icon: <ShopOutlined />,
-      path: `${ROUTES.SUPER_ADMIN_USERS}?role=${ROLES.BUSINESS_OWNER}`,
-    },
-    {
-      title: "Agents",
-      value: 45,
-      icon: <UserOutlined />,
-      path: `${ROUTES.SUPER_ADMIN_USERS}?role=${ROLES.AGENT}`,
-    },
-    {
-      title: "Service Providers",
-      value: 67,
-      icon: <TeamOutlined />,
-      path: `${ROUTES.SUPER_ADMIN_USERS}?role=${ROLES.SERVICE_PROVIDER}`,
-    },
-    {
-      title: "Open Tickets",
-      value: 9,
-      icon: <FileExclamationOutlined />,
-      path: ROUTES.SUPER_ADMIN_SUPPORT,
-    },
-  ];
+  /* ── Data loader ─────────────────────────────────── */
+  const loadDashboard = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const {
+        stats,
+        compliance,
+        activity,
+        verifications,
+        services,
+        tickets,
+        notifications,
+      } = await fetchAllDashboardData();
 
-  // ---------- Compliance Donut Chart ----------
-  const complianceData = [
-    { name: "Compliant", value: 58 },
-    { name: "Pending Review", value: 32 },
-    { name: "Non-Compliant", value: 10 },
-  ];
+      /* Stat cards */
+      if (stats) {
+        setStatsData([
+          {
+            title: "Total Businesses",
+            value: stats.totalBusinesses,
+            icon: <ShopOutlined />,
+            path: `${ROUTES.SUPER_ADMIN_USERS}?role=${ROLES.BUSINESS_OWNER}`,
+          },
+          {
+            title: "Agents",
+            value: stats.agents,
+            icon: <UserOutlined />,
+            path: `${ROUTES.SUPER_ADMIN_USERS}?role=${ROLES.AGENT}`,
+          },
+          {
+            title: "Service Providers",
+            value: stats.serviceProviders,
+            icon: <TeamOutlined />,
+            path: `${ROUTES.SUPER_ADMIN_USERS}?role=${ROLES.SERVICE_PROVIDER}`,
+          },
+          {
+            title: "Open Tickets",
+            value: stats.openTickets,
+            icon: <FileExclamationOutlined />,
+            path: ROUTES.SUPER_ADMIN_SUPPORT,
+          },
+        ]);
+      }
 
-  // ---------- Table Columns ----------
-  const pendingColumns = [
-    {
-      title: "Entity Type",
-      dataIndex: "entityType",
-      key: "entityType",
-      render: (type) => {
-        const icon =
-          type === "Business Owner" ? (
-            <ShopOutlined />
-          ) : type === "Agent" ? (
-            <IdcardOutlined />
-          ) : (
-            <TeamOutlined />
-          );
-        return (
-          <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            {icon} {type}
-          </span>
-        );
-      },
-    },
-    { title: "Name", dataIndex: "name", key: "name" },
-    { title: "Category / KYC Type", dataIndex: "category", key: "category" },
-    { title: "Submitted By", dataIndex: "submittedBy", key: "submittedBy" },
-    {
-      title: "Date Submitted",
-      dataIndex: "dateSubmitted",
-      key: "dateSubmitted",
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: (status) => (
-        <Tag color={status === "Pending" ? "orange" : "red"}>{status}</Tag>
-      ),
-    },
-  ];
+      if (compliance) setComplianceData(compliance);
+      if (activity) setActivityData(activity);
+      if (verifications) setAllVerifications(verifications);
 
-  // ---------- Pending Verifications ----------
-  const allVerifications = [
-    {
-      key: 1,
-      entityType: "Business Owner",
-      name: "Aroma Café",
-      category: "Food & Beverages",
-      submittedBy: "Agent 102",
-      dateSubmitted: "2025-10-31",
-      status: "Pending",
-    },
-    {
-      key: 2,
-      entityType: "Agent",
-      name: "Rahul Mehta",
-      category: "KYC Verification",
-      submittedBy: "Self",
-      dateSubmitted: "2025-10-30",
-      status: "Pending",
-    },
-    {
-      key: 3,
-      entityType: "Service Provider",
-      name: "FixIt Plumbing",
-      category: "Maintenance",
-      submittedBy: "Agent 301",
-      dateSubmitted: "2025-10-28",
-      status: "Pending",
-    },
-  ];
+      /* ─────────────────────────────────────────────────
+         Service Summary widget
+         Driven by SERVICE APPROVAL STATUS, not operational
+         status. Mirrors what ServiceApprovalSummary shows:
+           • Pending Approval  → admin needs to act
+           • Approved Services → live & running
+           • Needs Attention   → rejected + inactive
+      ───────────────────────────────────────────────── */
+      if (services) {
+        const safeTotal = services.total || 1; // prevent division by zero
+        setServiceSummaryData([
+          {
+            title: "Pending Approval",
+            value: services.pendingApproval,
+            total: safeTotal,
+            icon: <ClockCircleOutlined />,
+            color: "#fa8c16", // orange — needs admin action
+            path: ROUTES.SUPER_ADMIN_SERVICES_APPROVAL,
+          },
+          {
+            title: "Approved Services",
+            value: services.approved,
+            total: safeTotal,
+            icon: <CheckCircleOutlined />,
+            color: "#52c41a", // green — live
+            path: ROUTES.SUPER_ADMIN_SERVICES_APPROVAL,
+          },
+          {
+            title: "Needs Attention",
+            value: services.needsAttention, // rejected + inactive
+            total: safeTotal,
+            icon: <ExclamationCircleOutlined />,
+            color: "#ff4d4f", // red — provider needs to fix
+            path: ROUTES.SUPER_ADMIN_SERVICES_APPROVAL,
+          },
+        ]);
+      }
 
-  // ---------- Line Chart Activity ----------
-  const activityData = [
-    { name: "Mon", logins: 30, tickets: 20 },
-    { name: "Tue", logins: 50, tickets: 35 },
-    { name: "Wed", logins: 40, tickets: 25 },
-    { name: "Thu", logins: 70, tickets: 45 },
-    { name: "Fri", logins: 55, tickets: 40 },
-    { name: "Sat", logins: 90, tickets: 75 },
-    { name: "Sun", logins: 65, tickets: 55 },
-  ];
+      if (tickets) setTicketsData(tickets);
+      if (notifications) setNotificationsData(notifications);
+    } catch (err) {
+      console.error("Dashboard load error:", err);
+      setError("Failed to load dashboard data. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-  // ---------- Service Summary ----------
-  const serviceSummaryData = [
-    {
-      title: "Active Services",
-      value: 80,
-      total: 100,
-      icon: <CheckCircleOutlined />,
-      color: "#ff6c1f",
-      path: ROUTES.SUPER_ADMIN_SERVICES,
-    },
-    {
-      title: "Under Maintenance",
-      value: 12,
-      total: 100,
-      icon: <SettingOutlined />,
-      color: "#162247",
-      path: ROUTES.SUPER_ADMIN_SERVICES,
-    },
-    {
-      title: "Delayed Responses",
-      value: 8,
-      total: 100,
-      icon: <ClockCircleOutlined />,
-      color: "#ffb400",
-      path: ROUTES.SUPER_ADMIN_SERVICES,
-    },
-  ];
+  useEffect(() => {
+    loadDashboard();
+  }, [loadDashboard]);
 
-  // ---------- Tickets Snapshot ----------
-  const ticketsData = [
-    { type: "Open", count: 12 },
-    { type: "In Progress", count: 8 },
-    { type: "Resolved", count: 40 },
-    { type: "Escalated", count: 3 },
-    { type: "Pending Customer", count: 6 },
-    { type: "System Error", count: 2 },
-    { type: "Verification", count: 10 },
-    { type: "Delayed", count: 4 },
-  ];
-
-  // ---------- Notifications ----------
-  const notificationsData = [
-    {
-      type: "alert",
-      message: "System maintenance scheduled tonight",
-      time: "2 hrs ago",
-      tag: "System",
-      tagColor: "orange",
-    },
-    {
-      type: "success",
-      message: "3 verifications approved",
-      time: "4 hrs ago",
-      tag: "Verification",
-      tagColor: "green",
-    },
-    {
-      type: "warning",
-      message: "2 tickets delayed",
-      time: "1 day ago",
-      tag: "Tickets",
-      tagColor: "volcano",
-    },
-    {
-      type: "info",
-      message: "New service provider sign-up",
-      time: "1 day ago",
-      tag: "Service",
-      tagColor: "blue",
-    },
-    {
-      type: "pending",
-      message: "Agent KYC review pending",
-      time: "2 days ago",
-      tag: "Agent",
-      tagColor: "gold",
-    },
-    {
-      type: "update",
-      message: "Platform UI enhancements deployed",
-      time: "3 days ago",
-      tag: "Release",
-      tagColor: "purple",
-    },
-  ];
-
-  /* =======================================================
+  /* ─────────────────────────────────────────────────────
      RENDER
-  ======================================================= */
+  ───────────────────────────────────────────────────── */
+
+  if (loading) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "60vh",
+        }}
+      >
+        <Spin size="large" tip="Loading dashboard…" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div style={{ padding: 24 }}>
+        <Alert
+          type="error"
+          message={error}
+          action={
+            <a onClick={loadDashboard} style={{ cursor: "pointer" }}>
+              Retry
+            </a>
+          }
+          showIcon
+        />
+      </div>
+    );
+  }
 
   return (
-    // <AppLayout role={ROLES.SUPER_ADMIN}>
     <div className="super-admin-dashboard" style={{ padding: "24px" }}>
-      {/* ---------- Statistic Cards ---------- */}
+      {/* Stat Cards */}
       <Row gutter={[24, 24]} className="stats-row">
         {statsData.map((item, index) => (
           <Col xs={24} sm={12} md={6} key={index}>
@@ -272,7 +244,7 @@ const SuperAdminDashboard = () => {
         ))}
       </Row>
 
-      {/* ---------- Charts Section ---------- */}
+      {/* Charts */}
       <Row gutter={[24, 24]} style={{ marginTop: 20 }}>
         <Col xs={24} md={8}>
           <ChartCard
@@ -293,7 +265,7 @@ const SuperAdminDashboard = () => {
         </Col>
       </Row>
 
-      {/* ---------- Pending Verifications ---------- */}
+      {/* Pending Verifications */}
       <div
         style={{
           background: "#fff",
@@ -334,15 +306,15 @@ const SuperAdminDashboard = () => {
         />
       </div>
 
-      {/* ---------- Summary, Tickets, Notifications ---------- */}
+      {/* Service Summary / Tickets / Notifications */}
       <Row gutter={[24, 24]} style={{ marginTop: 20 }}>
         <Col xs={24} md={8}>
           <Card
-            title="Service Summary"
+            title="Service Approvals"
             extra={
               <a
                 style={{ color: "#162247", fontWeight: "600" }}
-                onClick={() => navigate(ROUTES.SUPER_ADMIN_SERVICES)}
+                onClick={() => navigate(ROUTES.SUPER_ADMIN_SERVICES_APPROVAL)}
               >
                 <RightOutlined />
               </a>

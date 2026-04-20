@@ -46,6 +46,7 @@ import serviceProviderServiceRoutes from "./routes/serviceProviderServiceRoutes.
 import serviceProviderDocumentRoutes from "./routes/serviceProviderDocumentRoutes.js";
 import spBookingRoutes from "./routes/serviceProviderBookingRoutes.js";
 import fileRoutes from "./routes/fileRoutes.js";
+import adminDashboardRoutes from "./routes/adminDashboardRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -87,6 +88,7 @@ app.use("/api/session", sessionRoutes); // Session management routes
 app.use("/api/super-admin", superAdminRoutes); // Super Admin routes
 app.use("/api/tickets", ticketRoutes); // Ticket management routes
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/admin/dashboard", adminDashboardRoutes);
 
 // Service Provider Routes
 app.use("/api/service-provider/my-services", serviceProviderServiceRoutes);

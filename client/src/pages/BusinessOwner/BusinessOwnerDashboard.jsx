@@ -101,7 +101,7 @@ const BusinessOwnerDashboard = () => {
       if (bookingsRes.status === "fulfilled" && bookingsRes.value?.success) {
         const bookingsData = bookingsRes.value.data;
         setRecentBookings(
-          Array.isArray(bookingsData) ? bookingsData.slice(0, 3) : []
+          Array.isArray(bookingsData) ? bookingsData.slice(0, 3) : [],
         );
         newStats.totalBookings = bookingsRes.value.pagination?.total || 0;
 
@@ -113,10 +113,10 @@ const BusinessOwnerDashboard = () => {
               "accepted",
               "in_progress",
               "documents_submitted",
-            ].includes(b.status)
+            ].includes(b.status),
           ).length;
           newStats.completedBookings = bookingsData.filter(
-            (b) => b.status === "completed"
+            (b) => b.status === "completed",
           ).length;
         }
       }
@@ -148,7 +148,7 @@ const BusinessOwnerDashboard = () => {
         const agents = agentsRes.value.agents || [];
 
         newStats.activeAgents = agents.filter(
-          (agent) => agent.status === "active"
+          (agent) => agent.status === "active",
         ).length;
       }
 
@@ -327,8 +327,8 @@ const BusinessOwnerDashboard = () => {
                         navigate(
                           ROUTES.BUSINESS_OWNER_SERVICE_DETAILS.replace(
                             ":bookingId",
-                            booking._id
-                          )
+                            booking._id,
+                          ),
                         )
                       }
                     >
@@ -347,7 +347,7 @@ const BusinessOwnerDashboard = () => {
                         </span>
                         <span className="bo-booking-date">
                           {new Date(
-                            booking.bookedAt || booking.createdAt
+                            booking.bookedAt || booking.createdAt,
                           ).toLocaleDateString()}
                         </span>
                       </div>
@@ -396,8 +396,8 @@ const BusinessOwnerDashboard = () => {
                         navigate(
                           ROUTES.BUSINESS_OWNER_SERVICE_PROVIDERS.replace(
                             ":serviceId",
-                            service._id
-                          )
+                            service._id,
+                          ),
                         )
                       }
                     >
@@ -437,7 +437,7 @@ const BusinessOwnerDashboard = () => {
                         stats.totalDocuments
                           ? Math.round(
                               (stats.approvedDocuments / stats.totalDocuments) *
-                                100
+                                100,
                             )
                           : 0
                       }
@@ -447,7 +447,7 @@ const BusinessOwnerDashboard = () => {
                       {stats.totalDocuments
                         ? Math.round(
                             (stats.approvedDocuments / stats.totalDocuments) *
-                              100
+                              100,
                           )
                         : 0}
                       %

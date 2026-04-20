@@ -158,11 +158,11 @@ const SideBar = ({ role, isOpen, onClose }) => {
         icon: <CustomerServiceOutlined />,
         label: "Support Tickets",
       },
-      {
-        key: ROUTES.SUPER_ADMIN_SETTINGS,
-        icon: <ControlOutlined />,
-        label: "Platform Settings",
-      },
+      // {
+      //   key: ROUTES.SUPER_ADMIN_SETTINGS,
+      //   icon: <ControlOutlined />,
+      //   label: "Platform Settings",
+      // },
       {
         key: ROUTES.NOTIF_OVERVIEW,
         icon: <NotificationOutlined />,
@@ -176,16 +176,16 @@ const SideBar = ({ role, isOpen, onClose }) => {
           ROUTES.NOTIF_LOGS,
         ],
       },
-      {
-        key: ROUTES.SUPER_ADMIN_CONTENT,
-        icon: <FileTextOutlined />,
-        label: "Content Management",
-      },
-      {
-        key: ROUTES.SUPER_ADMIN_AUDIT,
-        icon: <HistoryOutlined />,
-        label: "System Logs",
-      },
+      // {
+      //   key: ROUTES.SUPER_ADMIN_CONTENT,
+      //   icon: <FileTextOutlined />,
+      //   label: "Content Management",
+      // },
+      // {
+      //   key: ROUTES.SUPER_ADMIN_AUDIT,
+      //   icon: <HistoryOutlined />,
+      //   label: "System Logs",
+      // },
       {
         key: ROUTES.SUPER_ADMIN_PROFILE,
         icon: <UserOutlined />,
@@ -227,36 +227,36 @@ const SideBar = ({ role, isOpen, onClose }) => {
         icon: <FileTextOutlined />,
         label: "Document Vault",
       },
-      {
-        key: ROUTES.BUSINESS_OWNER_COMPLIANCE_CALENDAR,
-        icon: <HistoryOutlined />,
-        label: "Compliance Calendar",
-      },
-      {
-        key: ROUTES.BUSINESS_OWNER_TRAINING,
-        icon: <CustomerServiceOutlined />,
-        label: "Training",
-      },
-      {
-        key: ROUTES.BUSINESS_OWNER_CHECKLIST,
-        icon: <FileSearchOutlined />,
-        label: "Compliance Checklist",
-      },
-      {
-        key: ROUTES.BUSINESS_OWNER_MESSAGES,
-        icon: <MessageOutlined />,
-        label: "Messages / Chat",
-      },
-      {
-        key: ROUTES.BUSINESS_OWNER_MY_NOTIFICATIONS,
-        icon: <BellOutlined />,
-        label: "Notifications",
-      },
-      {
-        key: ROUTES.BUSINESS_OWNER_HELP_SUPPORT,
-        icon: <CustomerServiceOutlined />,
-        label: "Help & Support",
-      },
+      // {
+      //   key: ROUTES.BUSINESS_OWNER_COMPLIANCE_CALENDAR,
+      //   icon: <HistoryOutlined />,
+      //   label: "Compliance Calendar",
+      // },
+      // {
+      //   key: ROUTES.BUSINESS_OWNER_TRAINING,
+      //   icon: <CustomerServiceOutlined />,
+      //   label: "Training",
+      // },
+      // {
+      //   key: ROUTES.BUSINESS_OWNER_CHECKLIST,
+      //   icon: <FileSearchOutlined />,
+      //   label: "Compliance Checklist",
+      // },
+      // {
+      //   key: ROUTES.BUSINESS_OWNER_MESSAGES,
+      //   icon: <MessageOutlined />,
+      //   label: "Messages / Chat",
+      // },
+      // {
+      //   key: ROUTES.BUSINESS_OWNER_MY_NOTIFICATIONS,
+      //   icon: <BellOutlined />,
+      //   label: "Notifications",
+      // },
+      // {
+      //   key: ROUTES.BUSINESS_OWNER_HELP_SUPPORT,
+      //   icon: <CustomerServiceOutlined />,
+      //   label: "Help & Support",
+      // },
       { key: "logout", icon: <LogoutOutlined />, label: "Log Out" },
     ];
   }
@@ -299,17 +299,17 @@ const SideBar = ({ role, isOpen, onClose }) => {
         label: "Services",
       },
 
-      {
-        key: ROUTES.AGENT_MESSAGES,
-        icon: <MessageOutlined />,
-        label: "Messages / Chat",
-      },
+      // {
+      //   key: ROUTES.AGENT_MESSAGES,
+      //   icon: <MessageOutlined />,
+      //   label: "Messages / Chat",
+      // },
 
-      {
-        key: ROUTES.AGENT_NOTIFICATIONS,
-        icon: <BellOutlined />,
-        label: "Notifications",
-      },
+      // {
+      //   key: ROUTES.AGENT_NOTIFICATIONS,
+      //   icon: <BellOutlined />,
+      //   label: "Notifications",
+      // },
 
       {
         key: ROUTES.AGENT_PROFILE,
@@ -317,17 +317,17 @@ const SideBar = ({ role, isOpen, onClose }) => {
         label: "My Profile",
       },
 
-      {
-        key: ROUTES.AGENT_PAYMENTS,
-        icon: <FileTextOutlined />,
-        label: "Payments & Wallet",
-      },
+      // {
+      //   key: ROUTES.AGENT_PAYMENTS,
+      //   icon: <FileTextOutlined />,
+      //   label: "Payments & Wallet",
+      // },
 
-      {
-        key: ROUTES.AGENT_HELP_SUPPORT,
-        icon: <CustomerServiceOutlined />,
-        label: "Help & Support",
-      },
+      // {
+      //   key: ROUTES.AGENT_HELP_SUPPORT,
+      //   icon: <CustomerServiceOutlined />,
+      //   label: "Help & Support",
+      // },
 
       { key: "logout", icon: <LogoutOutlined />, label: "Log Out" },
     ];
@@ -362,35 +362,35 @@ const SideBar = ({ role, isOpen, onClose }) => {
         icon: <ShoppingCartOutlined />,
         label: "My Bookings",
       },
-      {
-        key: ROUTES.SERVICE_PROVIDER_MESSAGES,
-        icon: <MessageOutlined />,
-        label: "Messages / Chat",
-      },
+      // {
+      //   key: ROUTES.SERVICE_PROVIDER_MESSAGES,
+      //   icon: <MessageOutlined />,
+      //   label: "Messages / Chat",
+      // },
 
-      {
-        key: ROUTES.SERVICE_PROVIDER_NOTIFICATIONS,
-        icon: <BellOutlined />,
-        label: "Notifications",
-      },
+      // {
+      //   key: ROUTES.SERVICE_PROVIDER_NOTIFICATIONS,
+      //   icon: <BellOutlined />,
+      //   label: "Notifications",
+      // },
 
-      {
-        key: ROUTES.SERVICE_PROVIDER_PROFILE,
-        icon: <UserOutlined />,
-        label: "My Profile",
-      },
+      // {
+      //   key: ROUTES.SERVICE_PROVIDER_PROFILE,
+      //   icon: <UserOutlined />,
+      //   label: "My Profile",
+      // },
 
-      {
-        key: ROUTES.SERVICE_PROVIDER_PAYMENTS,
-        icon: <FileTextOutlined />,
-        label: "Payments & Wallet",
-      },
+      // {
+      //   key: ROUTES.SERVICE_PROVIDER_PAYMENTS,
+      //   icon: <FileTextOutlined />,
+      //   label: "Payments & Wallet",
+      // },
 
-      {
-        key: ROUTES.SERVICE_PROVIDER_HELP_SUPPORT,
-        icon: <CustomerServiceOutlined />,
-        label: "Help & Support",
-      },
+      // {
+      //   key: ROUTES.SERVICE_PROVIDER_HELP_SUPPORT,
+      //   icon: <CustomerServiceOutlined />,
+      //   label: "Help & Support",
+      // },
 
       { key: "logout", icon: <LogoutOutlined />, label: "Log Out" },
     ];
