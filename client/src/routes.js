@@ -82,6 +82,7 @@ export const ROUTES = {
   BUSINESS_OWNER_TRAINING: "/business-owner/training",
   BUSINESS_OWNER_CHECKLIST: "/business-owner/checklist",
   BUSINESS_OWNER_MESSAGES: "/business-owner/messages",
+  BUSINESS_OWNER_PROFILE: "/business-owner/profile",
   BUSINESS_OWNER_MY_NOTIFICATIONS: "/business-owner/notifications",
   BUSINESS_OWNER_HELP_SUPPORT: "/business-owner/support",
 
@@ -113,8 +114,7 @@ export const ROUTES = {
      SERVICE PROVIDER ROUTES
   ========================================================= */
   SERVICE_PROVIDER_DASHBOARD: "/service-provider/dashboard",
-  SERVICE_PROVIDER_KYC: "/service-provider/kyc-verification",
-  SERVICE_PROVIDER_DASHBOARD: "/service-provider/dashboard",
+  SERVICE_PROVIDER_PROFILE: "/service-provider/profile",
   SERVICE_PROVIDER_KYC: "/service-provider/kyc-verification",
   SERVICE_PROVIDER_MY_SERVICES: "/service-provider/my-services",
   SERVICE_PROVIDER_SERVICE_DETAILS: "/service-provider/my-services/:id",

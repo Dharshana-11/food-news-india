@@ -233,6 +233,11 @@ const SideBar = ({ role, isOpen, onClose }) => {
         icon: <ShoppingOutlined />,
         label: "Book Services",
       },
+      {
+        key: ROUTES.BUSINESS_OWNER_PROFILE,
+        icon: <UserOutlined />,
+        label: "My Profile",
+      },
       // {
       //   key: ROUTES.BUSINESS_OWNER_COMPLIANCE_CALENDAR,
       //   icon: <HistoryOutlined />,
@@ -380,11 +385,11 @@ const SideBar = ({ role, isOpen, onClose }) => {
       //   label: "Notifications",
       // },
 
-      // {
-      //   key: ROUTES.SERVICE_PROVIDER_PROFILE,
-      //   icon: <UserOutlined />,
-      //   label: "My Profile",
-      // },
+      {
+        key: ROUTES.SERVICE_PROVIDER_PROFILE,
+        icon: <UserOutlined />,
+        label: "My Profile",
+      },
 
       // {
       //   key: ROUTES.SERVICE_PROVIDER_PAYMENTS,

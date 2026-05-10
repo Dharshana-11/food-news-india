@@ -43,6 +43,9 @@ const Header = ({ onMenuClick }) => {
 
   const roleProfileRoutes = {
     [ROLES.SUPER_ADMIN]: ROUTES.SUPER_ADMIN_PROFILE,
+    [ROLES.AGENT]: ROUTES.AGENT_PROFILE,
+    [ROLES.SERVICE_PROVIDER]: ROUTES.SERVICE_PROVIDER_PROFILE,
+    [ROLES.BUSINESS_OWNER]: ROUTES.BUSINESS_OWNER_PROFILE,
   };
 
   /**
@@ -83,12 +86,14 @@ const Header = ({ onMenuClick }) => {
       {/* ========================= RIGHT SECTION ========================= */}
       <div className="header-right">
         {/* Notifications icon with badge */}
-        <Badge count={2} offset={[-3, 3]} className="badge-custom">
-          <BellOutlined
-            className="notification-icon"
-            onClick={handleNotificationClick}
-          />
-        </Badge>
+        {userRole === ROLES.SUPER_ADMIN && (
+          <Badge count={2} offset={[-3, 3]} className="badge-custom">
+            <BellOutlined
+              className="notification-icon"
+              onClick={handleNotificationClick}
+            />
+          </Badge>
+        )}
 
         {/* User profile icon or image */}
         {userProfilePicture ? (

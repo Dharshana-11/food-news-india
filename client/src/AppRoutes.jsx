@@ -308,6 +308,7 @@ const AppRoutes = () => {
           path={ROUTES.BUSINESS_OWNER_SERVICE_DETAILS}
           element={<ServiceDetails />}
         />
+        <Route path={ROUTES.BUSINESS_OWNER_PROFILE} element={<ProfileSelf />} />
       </Route>
 
       {/* AGENT */}
@@ -398,6 +399,10 @@ const AppRoutes = () => {
         <Route
           path={ROUTES.SERVICE_PROVIDER_BOOKING_DETAILS}
           element={<SPBookingDetails />}
+        />
+        <Route
+          path={ROUTES.SERVICE_PROVIDER_PROFILE}
+          element={<ProfileSelf />}
         />
       </Route>
     </Routes>
