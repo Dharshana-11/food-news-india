@@ -264,8 +264,8 @@
 ========================= */
 .agent-footer {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  align-items: right;
+  justify-content: right;
   padding: 16px 20px;
   border-top: 1px solid #e8e8e8;
   gap: 12px;

@@ -151,7 +151,7 @@ const AddAgent = ({ onBack }) => {
      Helpers
      ========================================================================= */
   const filteredAgents = agents.filter((agent) =>
-    agent.name?.toLowerCase().includes(searchTerm.toLowerCase())
+    agent.name?.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   /* =========================================================================
@@ -264,9 +264,9 @@ const AddAgent = ({ onBack }) => {
 
                   {/* Footer */}
                   <div className="agent-footer">
-                    <span className="agent-commission">
+                    {/* <span className="agent-commission">
                       ₹{agent.monthlyCommission}
-                    </span>
+                    </span> */}
 
                     <div className="add-agent-footer-actions">
                       <Button
@@ -330,7 +330,7 @@ const AddAgent = ({ onBack }) => {
               <div className="invite-modal-bio">{selectedAgent.bio}</div>
             )}
 
-            <div className="invite-modal-commission">
+            {/* <div className="invite-modal-commission">
               <label>Agreed Commission (per month)</label>
               <InputNumber
                 prefix="₹"
@@ -342,7 +342,7 @@ const AddAgent = ({ onBack }) => {
               <small>
                 Commission is fixed by the agent and cannot be changed
               </small>
-            </div>
+            </div> */}
 
             <div className="invite-modal-permissions">
               <div>Permissions Granted</div>

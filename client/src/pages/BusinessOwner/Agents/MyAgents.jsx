@@ -72,7 +72,7 @@ const MyAgents = () => {
    */
   const filterAgentsBySearch = (agents) =>
     agents.filter((agent) =>
-      agent.name?.toLowerCase().includes(searchTerm.toLowerCase())
+      agent.name?.toLowerCase().includes(searchTerm.toLowerCase()),
     );
 
   /**
@@ -125,10 +125,10 @@ const MyAgents = () => {
             </span>
           </div>
 
-          <div className="my-agents-price">
+          {/* <div className="my-agents-price">
             ₹{agent.agreedCommission ?? agent.monthlyCommission ?? 0}
             <span className="per-month"> per month</span>
-          </div>
+          </div> */}
         </div>
 
         <div className="my-agents-rating">
@@ -152,11 +152,11 @@ const MyAgents = () => {
   const filteredAvailableAgents = filterAgentsBySearch(availableAgents);
 
   const activeAgents = filteredMyAgents.filter(
-    (agent) => agent.status === "active"
+    (agent) => agent.status === "active",
   );
 
   const pendingAgents = filteredMyAgents.filter(
-    (agent) => agent.status === "pending"
+    (agent) => agent.status === "pending",
   );
 
   return (
@@ -195,7 +195,7 @@ const MyAgents = () => {
               onClick={() => {
                 if (activeAgents.length > 0) {
                   navigate(
-                    `/business-owner/agents/${activeAgents[0].relationId}`
+                    `/business-owner/agents/${activeAgents[0].relationId}`,
                   );
                 } else if (pendingAgents.length > 0) {
                   message.info("Your agent is still pending");
