@@ -50,6 +50,7 @@ const SPBookingDetails = () => {
   const [submitting, setSubmitting] = useState(false);
   const [fileList, setFileList] = useState([]);
   const [validFrom, setValidFrom] = useState(null);
+  const [validTill, setValidTill] = useState(null);
 
   useEffect(() => {
     if (bookingId) {
@@ -111,11 +112,25 @@ const SPBookingDetails = () => {
       return;
     }
 
+    if (!validFrom) {
+      message.warning("Please select a Valid From date");
+      return;
+    }
+
+    if (validFrom && validTill && validTill.isBefore(validFrom)) {
+      message.warning("Valid Till date must be after Valid From date");
+      return;
+    }
+
     const formData = new FormData();
     formData.append("file", fileList[0].originFileObj);
 
     if (validFrom) {
       formData.append("validFrom", validFrom.toISOString());
+    }
+
+    if (validTill) {
+      formData.append("validUntil", validTill.toISOString());
     }
 
     try {
@@ -130,6 +145,7 @@ const SPBookingDetails = () => {
         setUploadModal(false);
         setFileList([]);
         setValidFrom(null);
+        setValidTill(null);
         fetchBookingDetails();
       } else {
         message.error(response.message || "Failed to upload deliverable");
@@ -218,7 +234,6 @@ const SPBookingDetails = () => {
             <p>Booking ID: {booking.bookingId}</p>
           </div>
         </div>
-
         {/* Service Info Card */}
         <Card className="sp-booking-details-card sp-booking-details-service-card">
           <div className="sp-booking-details-top">
@@ -278,7 +293,6 @@ const SPBookingDetails = () => {
             )}
           </div>
         </Card>
-
         {/* Business Owner Info */}
         <Card
           title="Business Owner Information"
@@ -317,7 +331,6 @@ const SPBookingDetails = () => {
             )}
           </Space>
         </Card>
-
         {/* Timeline */}
         <Card title="Progress Timeline" className="sp-booking-details-card">
           {booking.timeline?.length > 0 ? (
@@ -356,7 +369,6 @@ const SPBookingDetails = () => {
             <Empty description="No updates yet" />
           )}
         </Card>
-
         {/* Deliverables */}
         <Card title="Uploaded Deliverables" className="sp-booking-details-card">
           {booking.deliverables?.length > 0 ? (
@@ -390,31 +402,49 @@ const SPBookingDetails = () => {
         </Card>
 
         {/* Action Buttons */}
-        {booking.status !== "completed" && booking.status !== "cancelled" && (
-          <div className="sp-booking-details-actions">
-            <Button
-              type="default"
-              size="large"
-              icon={<SendOutlined />}
-              onClick={() => setUpdateModal(true)}
-              block
-            >
-              Post Update
-            </Button>
+        {booking.status !== "completed" &&
+          booking.status !== "cancelled" &&
+          booking.status !== "rejected" && (
+            <div className="sp-booking-details-actions">
+              {/* Step 1 & 3: Post Update — shown when accepted or documents_submitted */}
+              {(booking.status === "accepted" ||
+                booking.status === "documents_submitted") && (
+                <Button
+                  type={
+                    booking.status === "documents_submitted"
+                      ? "primary"
+                      : "default"
+                  }
+                  size="large"
+                  icon={<SendOutlined />}
+                  onClick={() => {
+                    if (booking.status === "documents_submitted") {
+                      setUpdateStatus("completed");
+                    }
+                    setUpdateModal(true);
+                  }}
+                  block
+                >
+                  {booking.status === "documents_submitted"
+                    ? "Mark as Completed"
+                    : "Post Update"}
+                </Button>
+              )}
 
-            {booking.status !== "rejected" && (
-              <Button
-                type="primary"
-                size="large"
-                icon={<UploadOutlined />}
-                onClick={() => setUploadModal(true)}
-                block
-              >
-                Upload Deliverable
-              </Button>
-            )}
-          </div>
-        )}
+              {/* Step 2: Upload Deliverable — only when in_progress */}
+              {booking.status === "in_progress" && (
+                <Button
+                  type="primary"
+                  size="large"
+                  icon={<UploadOutlined />}
+                  onClick={() => setUploadModal(true)}
+                  block
+                >
+                  Upload Deliverable
+                </Button>
+              )}
+            </div>
+          )}
 
         {/* Post Update Modal */}
         <Modal
@@ -448,7 +478,11 @@ const SPBookingDetails = () => {
         >
           <Space direction="vertical" style={{ width: "100%" }} size="middle">
             <div>
-              <label className="sp-booking-modal-label">Update Message *</label>
+              <label className="sp-booking-modal-label">
+                {booking.status === "documents_submitted"
+                  ? "Completion Notes *"
+                  : "Update Message *"}
+              </label>
               <TextArea
                 rows={4}
                 placeholder="Describe the progress or update..."
@@ -474,7 +508,6 @@ const SPBookingDetails = () => {
             )}
           </Space>
         </Modal>
-
         {/* Upload Deliverable Modal */}
         <Modal
           title="Upload Deliverable"
@@ -483,6 +516,7 @@ const SPBookingDetails = () => {
             setUploadModal(false);
             setFileList([]);
             setValidFrom(null);
+            setValidTill(null);
           }}
           footer={[
             <Button
@@ -491,6 +525,7 @@ const SPBookingDetails = () => {
                 setUploadModal(false);
                 setFileList([]);
                 setValidFrom(null);
+                setValidTill(null);
               }}
             >
               Cancel
@@ -526,14 +561,27 @@ const SPBookingDetails = () => {
             </div>
 
             <div>
-              <label className="sp-booking-modal-label">
-                Valid From (Optional)
-              </label>
+              <label className="sp-booking-modal-label">Valid From *</label>
               <DatePicker
                 value={validFrom}
                 onChange={setValidFrom}
                 style={{ width: "100%" }}
                 format="DD/MM/YYYY"
+              />
+            </div>
+
+            <div>
+              <label className="sp-booking-modal-label">Valid Till *</label>
+              <DatePicker
+                value={validTill}
+                onChange={setValidTill}
+                style={{ width: "100%" }}
+                format="DD/MM/YYYY"
+                disabledDate={(current) =>
+                  validFrom
+                    ? current && current.isBefore(validFrom, "day")
+                    : false
+                }
               />
             </div>
           </Space>

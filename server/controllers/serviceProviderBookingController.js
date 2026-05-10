@@ -437,6 +437,22 @@ export const postServiceUpdate = async (req, res) => {
         });
       }
 
+      if (status === "completed") {
+        const deliverableCount = await Document.countDocuments({
+          uploadedByUser: req.user._id,
+          uploadedForUser: booking.businessOwnerId,
+          complianceItemId: booking.complianceItemId,
+        });
+
+        if (deliverableCount === 0) {
+          return res.status(400).json({
+            success: false,
+            message:
+              "You must upload at least one deliverable before marking as completed",
+          });
+        }
+      }
+
       booking.status = status;
 
       if (status === "completed" && !booking.actualCompletionDate) {
@@ -494,7 +510,7 @@ export const postServiceUpdate = async (req, res) => {
 export const uploadDeliverables = async (req, res) => {
   try {
     const { id } = req.params;
-    const { validFrom } = req.body;
+    const { validFrom, validUntil } = req.body;
 
     if (!req.file) {
       return res.status(400).json({
@@ -526,15 +542,37 @@ export const uploadDeliverables = async (req, res) => {
       });
     }
 
-    // Calculate validity dates
-    let computedValidFrom = validFrom ? new Date(validFrom) : new Date();
-    let computedValidUntil = null;
+    if (booking.status !== "in_progress") {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Deliverables can only be uploaded when the booking is in progress",
+      });
+    }
 
-    if (booking.complianceItemId.validityDays) {
-      computedValidUntil = new Date(
-        computedValidFrom.getTime() +
-          booking.complianceItemId.validityDays * 24 * 60 * 60 * 1000,
-      );
+    // Calculate validity dates
+    if (!validFrom) {
+      return res.status(400).json({
+        success: false,
+        message: "Valid From date is required",
+      });
+    }
+
+    if (!validUntil) {
+      return res.status(400).json({
+        success: false,
+        message: "Valid Till date is required",
+      });
+    }
+
+    const computedValidFrom = new Date(validFrom);
+    const computedValidUntil = new Date(validUntil);
+
+    if (computedValidUntil <= computedValidFrom) {
+      return res.status(400).json({
+        success: false,
+        message: "Valid Till date must be after Valid From date",
+      });
     }
 
     // Create Document entry
